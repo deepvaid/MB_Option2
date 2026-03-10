@@ -71,6 +71,87 @@ function generateTs(tokens) {
   return header + lines.join('\n') + '\n'
 }
 
+// ── Tokens Studio JSON (for Figma sync) ───────────────────────────────────
+function generateTokensStudio(raw) {
+  const out = { global: {} }
+
+  // Spacing
+  if (raw.spacing) {
+    out.global.spacing = {}
+    for (const [key, val] of Object.entries(raw.spacing)) {
+      if (key.startsWith('$')) continue
+      out.global.spacing[key] = { value: val.$value, type: 'spacing', description: `spacing.${key}` }
+    }
+  }
+
+  // Border radius
+  if (raw.borderRadius) {
+    out.global.borderRadius = {}
+    for (const [key, val] of Object.entries(raw.borderRadius)) {
+      if (key.startsWith('$')) continue
+      out.global.borderRadius[key] = { value: val.$value, type: 'borderRadius', description: `borderRadius.${key}` }
+    }
+  }
+
+  // Shadows
+  if (raw.shadow) {
+    out.global.boxShadow = {}
+    for (const [key, val] of Object.entries(raw.shadow)) {
+      if (key.startsWith('$')) continue
+      out.global.boxShadow[key] = { value: val.$value, type: 'boxShadow', description: `shadow.${key}` }
+    }
+  }
+
+  // Colors — Light, Dark, Sidebar
+  for (const theme of ['light', 'dark', 'sidebar']) {
+    if (!raw.color?.[theme]) continue
+    const groupKey = `color-${theme}`
+    out.global[groupKey] = {}
+    for (const [key, val] of Object.entries(raw.color[theme])) {
+      if (key.startsWith('$')) continue
+      out.global[groupKey][key] = { value: val.$value, type: 'color', description: `color.${theme}.${key}` }
+    }
+  }
+
+  // Typography — font sizes, weights, line heights
+  if (raw.typography?.fontSize) {
+    out.global.fontSize = {}
+    for (const [key, val] of Object.entries(raw.typography.fontSize)) {
+      if (key.startsWith('$')) continue
+      out.global.fontSize[key] = { value: val.$value, type: 'fontSizes', description: `typography.fontSize.${key}` }
+    }
+  }
+  if (raw.typography?.fontWeight) {
+    out.global.fontWeight = {}
+    for (const [key, val] of Object.entries(raw.typography.fontWeight)) {
+      if (key.startsWith('$')) continue
+      out.global.fontWeight[key] = { value: val.$value, type: 'fontWeights', description: `typography.fontWeight.${key}` }
+    }
+  }
+  if (raw.typography?.lineHeight) {
+    out.global.lineHeight = {}
+    for (const [key, val] of Object.entries(raw.typography.lineHeight)) {
+      if (key.startsWith('$')) continue
+      out.global.lineHeight[key] = { value: val.$value, type: 'lineHeights', description: `typography.lineHeight.${key}` }
+    }
+  }
+
+  // Layout
+  if (raw.layout) {
+    out.global.layout = {}
+    for (const [key, val] of Object.entries(raw.layout)) {
+      if (key.startsWith('$')) continue
+      out.global.layout[key] = { value: val.$value, type: 'sizing', description: `layout.${key}` }
+    }
+  }
+
+  // Tokens Studio metadata
+  out.$themes = []
+  out.$metadata = { tokenSetOrder: ['global'] }
+
+  return out
+}
+
 // ── Build ──────────────────────────────────────────────────────────────────
 function build() {
   const raw = JSON.parse(readFileSync(TOKENS_PATH, 'utf-8'))
@@ -81,7 +162,14 @@ function build() {
   writeFileSync(resolve(OUT_DIR, 'variables.css'), generateCss(tokens))
   writeFileSync(resolve(OUT_DIR, 'tokens.ts'), generateTs(tokens))
 
+  // Also regenerate Tokens Studio JSON to keep Figma in sync
+  const FIGMA_EXPORT_DIR = resolve(__dirname, '../../design-kit/figma-export')
+  mkdirSync(FIGMA_EXPORT_DIR, { recursive: true })
+  const tokensStudio = generateTokensStudio(raw)
+  writeFileSync(resolve(FIGMA_EXPORT_DIR, 'tokens-studio.json'), JSON.stringify(tokensStudio, null, 2))
+
   console.log(`✓ Generated ${tokens.length} tokens → ${OUT_DIR}/`)
+  console.log(`✓ Synced tokens-studio.json → ${FIGMA_EXPORT_DIR}/`)
 }
 
 // ── Entry ──────────────────────────────────────────────────────────────────
