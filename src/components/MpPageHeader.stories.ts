@@ -5,6 +5,30 @@ const meta = {
   title: 'Layout/MpPageHeader',
   component: MpPageHeader,
   tags: ['autodocs'],
+  parameters: {
+    docs: {
+      description: {
+        component: `
+### Overview
+The \`MpPageHeader\` sits at the very top of main application views. It provides context (Title, Subtitle, Breadcrumbs) and houses the primary page-level actions.
+
+### 🟢 Do's
+- **Do** include \`breadcrumbs\` on deeper pages (e.g., viewing a specific Campaign or Order) to allow easy backward navigation.
+- **Do** use the \`#actions\` slot strictly for the main primary and secondary actions on the page (e.g., "New Campaign" or "Export").
+- **Do** keep the \`title\` short (1-3 words) and use the \`subtitle\` to explain the purpose of the page if necessary.
+
+### 🔴 Don'ts
+- **Don't** put form inputs, search bars, or complex filters inside the page header. Those belong in toolbars (like \`MpDataTableToolbar\`).
+- **Don't** use this component inside dialogs, drawers, or cards. It spans the full width of the main content area.
+- **Don't** stack too many buttons in the \`#actions\` slot. Limit to 1 primary and 1-2 secondary buttons to avoid clutter.
+
+### 💡 Best Practices
+- **Hierarchy:** The title is rendered as an \`h1\`, making it the most important typographical element on the screen for accessibility and structural clarity.
+- **Responsiveness:** On smaller viewports, ensure that actions wrap properly or fall into a dropdown menu to prevent horizontal scrolling.
+        `,
+      },
+    },
+  },
   argTypes: {
     title: { control: 'text' },
     subtitle: { control: 'text' },

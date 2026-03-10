@@ -3,6 +3,32 @@ import type { Meta, StoryObj } from '@storybook/vue3'
 const meta = {
   title: 'Base/Buttons',
   tags: ['autodocs'],
+  parameters: {
+    docs: {
+      description: {
+        component: `
+### Overview
+Buttons communicate actions that users can take. They are typically placed throughout your UI, in places like dialogs, modal windows, forms, and cards.
+
+### 🟢 Do's
+- **Do** use only one primary (elevated/flat) button per screen or view to clearly indicate the main desired action.
+- **Do** keep labels concise and action-oriented (e.g., "Save changes", "Submit form", "Cancel").
+- **Do** ensure buttons have a clear hierarchy using variants. Primary actions = Flat/Elevated. Secondary actions = Tonal/Outlined. Tertiary actions = Text/Plain.
+
+### 🔴 Don'ts
+- **Don't** use too many buttons on a single screen, which can overwhelm the user and dilute the primary call-to-action.
+- **Don't** use generic labels like "Click Here" or "Submit" if a more descriptive label like "Save Settings" provides better context.
+- **Don't** wrap text inside buttons. Keep labels short enough to fit on a single line.
+
+### 💡 Best Practices
+- **Spacing:** Maintain standard gap spacing (\`ga-3\` or \`12px\`) between adjacent horizontal buttons.
+- **Icons:** Use leading icons (left side) to clarify actions, but avoid trailing icons (right side) unless indicating a dropdown menu or forward navigation.
+- **Destructive Actions:** Use \`color="error"\` exclusively for destructive actions like Delete, Remove, or Discard to warn users of irreversible consequences.
+- **Button Groups:** When grouping related toggle actions (e.g., List/Grid view), wrap them in a \`v-btn-group\` component to visually bind them together.
+        `,
+      },
+    },
+  },
 } satisfies Meta
 
 export default meta

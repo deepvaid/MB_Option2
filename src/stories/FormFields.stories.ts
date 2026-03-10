@@ -4,6 +4,31 @@ import { ref } from 'vue'
 const meta = {
   title: 'Base/Form Fields',
   tags: ['autodocs'],
+  parameters: {
+    docs: {
+      description: {
+        component: `
+### Overview
+Text fields, selects, and textareas let users enter, edit, and select data in forms.
+
+### 🟢 Do's
+- **Do** use the \`variant="outlined"\` style. This is the default style for all Maropost forms.
+- **Do** use \`density="comfortable"\` or \`density="compact"\` depending on the surrounding context and layout tightness.
+- **Do** use \`hide-details="auto"\` or \`hide-details\` to prevent unnecessary vertical spacing when there are no hints or errors.
+
+### 🔴 Don'ts
+- **Don't** use \`variant="filled"\` or \`variant="underlined"\` as these break the visual consistency of the design system.
+- **Don't** use placeholder text as a replacement for labels. Labels should always be present and visible above or floating inside the outline.
+- **Don't** use a standard select if there are more than ~15 items. Use an \`v-autocomplete\` component so users can search.
+
+### 💡 Best Practices
+- **Icons:** Use \`prepend-inner-icon\` for inputs that benefit from visual affordances (like emails, search bars, passwords).
+- **Validation:** Show inline validation errors as soon as the user finishes interacting with a field (on blur), not while they are actively typing.
+- **Password Toggles:** Always include an \`append-inner-icon\` on password fields allowing users to toggle visibility so they can verify their input.
+        `,
+      },
+    },
+  },
 } satisfies Meta
 
 export default meta

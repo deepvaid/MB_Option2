@@ -6,6 +6,30 @@ const meta = {
   title: 'Feedback/MpFloatingBulkBar',
   component: MpFloatingBulkBar,
   tags: ['autodocs'],
+  parameters: {
+    docs: {
+      description: {
+        component: `
+### Overview
+The \`MpFloatingBulkBar\` appears highly visible at the bottom of the screen when a user selects multiple items in a list or grid to perform bulk actions.
+
+### 🟢 Do's
+- **Do** show this bar *only* when \`count > 0\`. It should completely disappear when nothing is selected.
+- **Do** populate the default slot with 2-4 clearly labeled \`v-btn(variant="outlined")\` actions.
+- **Do** ensure your cancel/clear event properly deselects everything in the underlying UI.
+
+### 🔴 Don'ts
+- **Don't** use this component inside modals or drawers. It is designed only for the main page-level workspace.
+- **Don't** provide more than 4 actions, which gets crowded on small screens. Use a dropdown menu if more bulk actions are required.
+- **Don't** use solid/elevated buttons inside the bar; stick to outlined variants to contrast nicely against the solid bar surface.
+
+### 💡 Best Practices
+- **Destructive Actions:** Place dangerous bulk actions (like Delete) at the far right of your button list and color them red (\`color="error"\`).
+- **Z-Index:** This component uses \`position: fixed\` and needs to float above page content. Ensure page footers don't obscure it.
+        `,
+      },
+    },
+  },
   argTypes: {
     count: { control: { type: 'number', min: 0, max: 100 } },
   },
@@ -35,6 +59,7 @@ export const Default: Story = {
       </div>
     `,
   }),
+  args: {} as any, // Fixes TS strict mode error
 }
 
 export const WithThreeSelected: Story = {

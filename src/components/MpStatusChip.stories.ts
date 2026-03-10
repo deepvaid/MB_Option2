@@ -5,6 +5,29 @@ const meta = {
   title: 'Data Display/MpStatusChip',
   component: MpStatusChip,
   tags: ['autodocs'],
+  parameters: {
+    docs: {
+      description: {
+        component: `
+### Overview
+The \`MpStatusChip\` displays the current state of an entity. It automatically applies appropriate Maropost semantic colors based on the text string matching known statuses in the business logic.
+
+### 🟢 Do's
+- **Do** always provide the specific \`type\` (e.g., 'order', 'fulfillment', 'campaign'). This is crucial because a 'Pending' status might mean different things (and need different colors) across different domains.
+- **Do** use \`size="small"\` when placing chips inside Data Tables to conserve vertical space.
+- **Do** use the \`showIcon\` prop explicitly for Fulfillment statuses, where the visual icon adds critical scanning speed for warehouse teams.
+
+### 🔴 Don'ts
+- **Don't** manually override colors via CSS or props. The component is deliberately rigid to enforce platform-wide color consistency for specific status terms.
+- **Don't** use this component for generic tags (like "VIP Customer" or "New"). Use standard \`v-chip\` for general tagging; \`MpStatusChip\` is strictly for workflow states.
+
+### 💡 Best Practices
+- **Fallback:** If a status string is passed that the component doesn't recognize for the given \`type\`, it safely defaults to a neutral gray layout. 
+- **Consistency:** If you are adding a new business status to the backend, ensure you also update the \`MpStatusChip\` logic maps to support it.
+        `,
+      },
+    },
+  },
   argTypes: {
     status: { control: 'text' },
     type: {
@@ -42,6 +65,7 @@ export const OrderStatuses: Story = {
       </div>
     `,
   }),
+  args: {} as any,
 }
 
 export const FulfillmentStatuses: Story = {
@@ -58,6 +82,7 @@ export const FulfillmentStatuses: Story = {
       </div>
     `,
   }),
+  args: {} as any,
 }
 
 export const PaymentStatuses: Story = {
@@ -71,6 +96,7 @@ export const PaymentStatuses: Story = {
       </div>
     `,
   }),
+  args: {} as any,
 }
 
 export const CampaignStatuses: Story = {
@@ -86,6 +112,7 @@ export const CampaignStatuses: Story = {
       </div>
     `,
   }),
+  args: {} as any,
 }
 
 export const AllTypes: Story = {
@@ -127,4 +154,5 @@ export const AllTypes: Story = {
       </div>
     `,
   }),
+  args: {} as any,
 }

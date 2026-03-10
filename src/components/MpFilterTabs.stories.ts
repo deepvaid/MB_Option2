@@ -6,6 +6,30 @@ const meta = {
   title: 'Navigation/MpFilterTabs',
   component: MpFilterTabs,
   tags: ['autodocs'],
+  parameters: {
+    docs: {
+      description: {
+        component: `
+### Overview
+\`MpFilterTabs\` provides horizontal navigation within a page or component, typically used to filter segmented data sets (like "All", "Drafts", "Sent").
+
+### 🟢 Do's
+- **Do** keep tab labels short (1-2 words maximum).
+- **Do** include item \`count\`s when available to give users a preview of how much data exists in that segment before clicking.
+- **Do** ensure there is always an "All" or an equivalent default active tab to show the complete dataset when nothing is filtered.
+
+### 🔴 Don'ts
+- **Don't** use more than 5-6 tabs. If you have too many categories, consider using a \`v-select\` dropdown filter instead.
+- **Don't** use tabs for multi-selection. Tabs are strictly mutually exclusive views. Use Checkboxes or Chip Groups for multi-select.
+- **Don't** mix tabs with counts and tabs without counts in the same group. Keep the data structure consistent within the component.
+
+### 💡 Best Practices
+- **Initial State:** Always v-model the active state to the \`key\` of one of your tabs upon initialization so the UI doesn't load visually un-selected.
+- **Responsive:** The component automatically handles horizontal scrolling on smaller screens via \`overflow-x-auto\` and \`hide-scrollbar\`.
+        `,
+      },
+    },
+  },
 } satisfies Meta<typeof MpFilterTabs>
 
 export default meta
@@ -73,4 +97,5 @@ export const NoCounts: Story = {
       />
     `,
   }),
+  args: {} as any, // Fixes TS strict mode error for missing args on meta type
 }

@@ -5,6 +5,30 @@ const meta = {
   title: 'Data Display/MpKpiCard',
   component: MpKpiCard,
   tags: ['autodocs'],
+  parameters: {
+    docs: {
+      description: {
+        component: `
+### Overview
+\`MpKpiCard\` (Key Performance Indicator) is used primarily on dashboards to show high-level metrics, numbers, and their recent trends at a glance.
+
+### 🟢 Do's
+- **Do** arrange KPI cards in responsive \`v-row\` grids (usually 3 or 4 across on desktop).
+- **Do** use semantic colors for the \`color\` prop based on the metric type (e.g., \`success\` for Revenue, \`primary\` for neutral stats like Total Users).
+- **Do** provide a \`trend\` (e.g., "+12%") and an accompanying \`subStat\` context (e.g., "vs last week") to make the number actionable.
+
+### 🔴 Don'ts
+- **Don't** use complex charts inside a KPI Card. It should strictly contain the single top-level metric.
+- **Don't** stretch KPI cards too wide. If you have only 2 metrics, don't make them 50% width on a huge screen; constrain their max-width.
+- **Don't** forget to set \`trendPositive="true/false"\`. A dropping number isn't always bad (e.g., Bounce Rate dropping is good, Revenue dropping is bad). Control the color explicitly.
+
+### 💡 Best Practices
+- **Icons:** Pick an \`icon\` that cleanly represents the metric, and it will be rendered as a subtle watermarked background.
+- **Typography:** The main value handles very large numbers automatically, but it's best practice to format your inputs cleanly (e.g., "1.2M" instead of "1,200,000" if space is tight).
+        `,
+      },
+    },
+  },
   argTypes: {
     label: { control: 'text' },
     value: { control: 'text' },
@@ -72,4 +96,5 @@ export const DashboardRow: Story = {
       </v-row>
     `,
   }),
+  args: {} as any, // Fixes TS strict mode error
 }

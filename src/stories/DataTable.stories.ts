@@ -7,6 +7,31 @@ import MpEmptyState from '../components/MpEmptyState.vue'
 const meta = {
   title: 'Data Display/DataTable',
   tags: ['autodocs'],
+  parameters: {
+    docs: {
+      description: {
+        component: `
+### Overview
+Data tables display sets of continuous, structured data. They allow users to quickly scan, filter, sort, and take action on large volumes of information.
+
+### 🟢 Do's
+- **Do** align numerical data (like Totals, Prices) to the Right (\`align: 'end'\`) to make it easier to compare magnitudes.
+- **Do** use \`density="comfortable"\` as the default for most lists to balance readability and screen real-estate.
+- **Do** include a clear "Empty State" (using \`MpEmptyState\`) when a table has no data or a search yields no results.
+
+### 🔴 Don'ts
+- **Don't** cram too many columns into a table. If horizontal scroll is required, ensure the primary identifier column (like ID or Name) is pinned to the left.
+- **Don't** use generic status text. Use \`MpStatusChip\` components to provide visual weight and color-coding to statuses.
+- **Don't** overwhelm the row actions. Put the primary action as a visible button or link, and tuck secondary actions into an overflow menu (three dots).
+
+### 💡 Best Practices
+- **Sorting:** Clearly indicate which column is currently sorting the data, and allow sorting on columns where it makes sense (e.g., Dates, Names, Totals).
+- **Bulk Actions:** Use the \`MpDataTableToolbar\` to manage multi-selection. Bulk action buttons should appear conditionally only when items are selected.
+- **Avatars:** Using avatars (initials or images) next to user names significantly speeds up visual scanning for operators.
+        `,
+      },
+    },
+  },
 } satisfies Meta
 
 export default meta

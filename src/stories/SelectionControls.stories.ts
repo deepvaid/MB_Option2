@@ -4,6 +4,31 @@ import { ref } from 'vue'
 const meta = {
   title: 'Base/Selection Controls',
   tags: ['autodocs'],
+  parameters: {
+    docs: {
+      description: {
+        component: `
+### Overview
+Selection controls (Checkboxes, Radios, Switches) allow users to select single or multiple options from different types of lists.
+
+### 🟢 Do's
+- **Do** use **Checkboxes** when users can select multiple options, or for a single binary opt-in (like "I agree to Terms").
+- **Do** use **Radio buttons** when users must select exactly one option from a mutually exclusive list of choices.
+- **Do** use **Switches** when selecting an option causes an immediate action or state change (like turning Dark Mode on/off).
+
+### 🔴 Don'ts
+- **Don't** use a Switch if the user needs to click a "Save" or "Submit" button for the change to take effect. Use a Checkbox instead.
+- **Don't** arrange long lists of radio buttons horizontally. Arrange them vertically so they are easier to scan.
+- **Don't** hide the label. The label should always reside immediately next to the control so users understand what they are toggling.
+
+### 💡 Best Practices
+- **Clickable Area:** The label text must always be clickable to toggle the control. Never make users click exactly on the tiny circle/square.
+- **Indeterminate State:** Use the indeterminate checkbox state (\`-\`) when a parent grouping has some, but not all, of its children selected.
+- **Alignment:** When adding secondary descriptions beneath radio buttons or checkboxes, align the text with the label, not the button itself.
+        `,
+      },
+    },
+  },
 } satisfies Meta
 
 export default meta

@@ -6,6 +6,30 @@ const meta = {
   title: 'Data Display/MpDataTableToolbar',
   component: MpDataTableToolbar,
   tags: ['autodocs'],
+  parameters: {
+    docs: {
+      description: {
+        component: `
+### Overview
+The \`MpDataTableToolbar\` is the primary control surface above Data Tables. It handles searching, filtering, and bulk actions consistently across the application.
+
+### 🟢 Do's
+- **Do** always provide a clear \`title\` to give context to the data grid below it.
+- **Do** provide a specific \`searchPlaceholder\` like "Search contacts..." rather than generic "Search".
+- **Do** use the \`#filter-content\` slot for complex filtering needs, preferring \`v-select\` with \`multiple chips\` for array data.
+
+### 🔴 Don'ts
+- **Don't** use this component outside of the context of a Data Table or large list view.
+- **Don't** hide primary actions inside the \`#actions\` slot if they are critical to the workflow (like "Create New"). Put those in the \`MpPageHeader\` instead.
+- **Don't** build custom active filter chips below the toolbar. Pass your active filters as an array of \`{key, label}\` to the \`active-filters\` prop and let the component render them.
+
+### 💡 Best Practices
+- **Bulk Actions:** Only show bulk actions (in the \`#bulk-actions\` slot) when rows are actually selected. Make dangerous actions (like Delete) use \`color="error"\`.
+- **Select All:** When feeding the \`selected-count\` and \`total-count\` props, ensure your \`@select-all\` handler accurately grabs all valid IDs to sync with the underlying \`v-data-table\`.
+        `,
+      },
+    },
+  },
   argTypes: {
     title: { control: 'text' },
     searchPlaceholder: { control: 'text' },

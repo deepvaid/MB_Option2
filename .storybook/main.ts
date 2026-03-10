@@ -6,6 +6,7 @@ const config: StorybookConfig = {
   stories: ['../src/**/*.stories.@(ts|tsx)'],
   addons: [
     '@storybook/addon-themes',
+    '@storybook/addon-essentials',
   ],
   framework: {
     name: '@storybook/vue3-vite',

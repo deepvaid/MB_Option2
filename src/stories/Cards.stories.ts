@@ -3,6 +3,31 @@ import type { Meta, StoryObj } from '@storybook/vue3'
 const meta = {
   title: 'Base/Cards',
   tags: ['autodocs'],
+  parameters: {
+    docs: {
+      description: {
+        component: `
+### Overview
+Cards contain content and actions about a single subject. They are used to group related information and make it easy to digest.
+
+### 🟢 Do's
+- **Do** use the \`flat\` variant with a \`border\` for almost all standard content areas. This is the Maropost design system default.
+- **Do** use \`tonal\` variants for highlighting specific metrics, statuses, or state-changes (like the Color Accent Cards).
+- **Do** use clear visual hierarchy within cards (e.g., \`text-overline\` for metric titles, \`text-h4\` for the main value).
+
+### 🔴 Don'ts
+- **Don't** use elevation shadows on cards. Our design system relies on flat borders to keep the UI clean and modern.
+- **Don't** nest cards too deeply inside other cards, which creates visual clutter. Use dividers or spacing to separate content within a single card instead.
+- **Don't** overcrowd cards with too many actions. Try to limit primary actions to 1-2 buttons in a \`v-card-actions\` block.
+
+### 💡 Best Practices
+- **Interactivity:** If a card is fully clickable (acts as a large button), ensure you add the \`hover\` prop and use the \`.card-hover\` utility class so users get visual feedback when pointing at it.
+- **Corner Radii:** Our system uses rounded corners. Do not apply \`rounded="0"\` to base cards unless they are bridging completely edge-to-edge on mobile.
+- **Padding:** Maintain consistent padding. The standard is usually \`pa-5\` or \`pa-6\` for main content areas to let the content breathe.
+        `,
+      },
+    },
+  },
 } satisfies Meta
 
 export default meta
