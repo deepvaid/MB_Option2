@@ -133,3 +133,19 @@ tr:hover .action-btns {
 /* ─── Hide Scrollbar Utility ────────────────────────────────── */
 .hide-scrollbar::-webkit-scrollbar { display: none; }
 .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+/* ─── Button Group Fix ──────────────────────────────────────── */
+/* Prevent global .rounded-lg classes from breaking grouped borders */
+.v-btn-group {
+  & > .v-btn:not(:first-child):not(:last-child) {
+    border-radius: 0 !important;
+  }
+  & > .v-btn:first-child:not(:last-child) {
+    border-top-right-radius: 0 !important;
+    border-bottom-right-radius: 0 !important;
+  }
+  & > .v-btn:last-child:not(:first-child) {
+    border-top-left-radius: 0 !important;
+    border-bottom-left-radius: 0 !important;
+  }
+}
