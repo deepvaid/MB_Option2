@@ -2,6 +2,8 @@
 import { ref } from 'vue'
 import { useTheme } from 'vuetify'
 
+const copilotOpen = defineModel<boolean>('copilotOpen', { default: false })
+
 const theme = useTheme()
 const notificationCount = ref(18)
 const userName = ref('Deepak Vaidya')
@@ -29,6 +31,23 @@ function toggleTheme() {
       />
 
       <v-spacer />
+
+      <!-- Da Vinci Copilot trigger -->
+      <v-tooltip text="Da Vinci Copilot" location="bottom">
+        <template v-slot:activator="{ props }">
+          <v-btn
+            v-bind="props"
+            size="small"
+            :variant="copilotOpen ? 'flat' : 'text'"
+            :color="copilotOpen ? 'warning' : undefined"
+            icon
+            @click="copilotOpen = !copilotOpen"
+            class="copilot-trigger"
+          >
+            <v-icon>mdi-creation</v-icon>
+          </v-btn>
+        </template>
+      </v-tooltip>
 
       <!-- Notification bell -->
       <v-btn variant="text" size="small" icon class="position-relative">
@@ -86,5 +105,11 @@ function toggleTheme() {
 }
 .user-menu-trigger:hover {
   background: rgb(var(--v-theme-surface-variant));
+}
+.copilot-trigger {
+  transition: all 0.2s ease;
+}
+.copilot-trigger:hover {
+  color: #FF9800 !important;
 }
 </style>
