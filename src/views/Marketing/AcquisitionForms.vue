@@ -101,7 +101,7 @@ function clearAllFilters() {
         {label:'Avg. Conv. Rate',  value:((forms.reduce((a,f)=>a+f.rate,0)/forms.length)).toFixed(1)+'%', color:'warning', icon:'mdi-percent'},
         {label:'Active Forms',     value:forms.filter(f=>f.status==='Active').length, color:'secondary', icon:'mdi-check-circle-outline'},
       ]" :key="s.label" cols="12" sm="3">
-        <v-card variant="flat" border rounded="xl" class="pa-4">
+        <v-card variant="flat" rounded="xl" class="pa-4 kpi-card">
           <div class="d-flex justify-space-between align-center mb-2">
             <div class="text-caption text-medium-emphasis font-weight-bold text-uppercase">{{ s.label }}</div>
             <v-icon :color="s.color" size="18">{{ s.icon }}</v-icon>
@@ -115,7 +115,7 @@ function clearAllFilters() {
     <div class="d-flex align-center gap-2 overflow-x-auto hide-scrollbar mt-3">
       <v-btn-toggle v-model="viewMode" density="comfortable" mandatory class="bg-transparent" selected-class="bg-blue-darken-3 text-white">
         <v-btn v-for="v in [{val:'grid',icon:'grid',label:'Grid'},{val:'list',icon:'format-list-bulleted',label:'List'}]" :key="v.val" :value="v.val" rounded="pill" variant="flat" size="small"
-               class="text-none px-4 mr-2" :class="viewMode === v.val ? '' : 'bg-grey-lighten-4 text-medium-emphasis border'">
+               class="text-none px-4 mr-2" :class="viewMode === v.val ? '' : 'bg-grey-lighten-4 text-medium-emphasis'">
           <v-icon size="small" class="mr-1">mdi-{{ v.icon }}</v-icon> {{ v.label }}
         </v-btn>
       </v-btn-toggle>
@@ -124,7 +124,7 @@ function clearAllFilters() {
     <!-- Grid View -->
     <v-row v-if="viewMode==='grid'" dense>
       <v-col v-for="form in forms.filter(f=>!search||f.name.toLowerCase().includes(search.toLowerCase()))" :key="form.id" cols="12" sm="6" md="4">
-        <v-card variant="flat" border rounded="xl" class="form-card overflow-hidden">
+        <v-card variant="flat" rounded="xl" class="form-card overflow-hidden">
           <!-- Preview thumbnail -->
           <div class="form-preview d-flex align-center justify-center pa-4" style="height:120px;background:linear-gradient(135deg,rgb(var(--v-theme-primary),0.08),rgb(var(--v-theme-secondary),0.05));">
             <v-icon size="48" color="primary" style="opacity:0.4;">{{ form.type==='Modal'?'mdi-dock-window':'mdi-view-split-vertical' }}</v-icon>
@@ -134,7 +134,7 @@ function clearAllFilters() {
               <div>
                 <div class="text-body-1 font-weight-bold mb-0.5">{{ form.name }}</div>
                 <div class="d-flex align-center gap-2">
-                  <v-chip size="x-small" variant="outlined" color="secondary">{{ form.type }}</v-chip>
+                  <v-chip size="x-small" variant="tonal" color="secondary">{{ form.type }}</v-chip>
                   <v-chip :color="statusColor(form.status)" :prepend-icon="statusIcon(form.status)" size="x-small" variant="flat">{{ form.status }}</v-chip>
                 </div>
               </div>
@@ -146,22 +146,19 @@ function clearAllFilters() {
                   <v-list-item prepend-icon="mdi-pencil-outline" @click="router.push('/acquisition/forms/create')">Edit in Builder</v-list-item>
                   <v-list-item prepend-icon="mdi-content-copy">Duplicate</v-list-item>
                   <v-list-item prepend-icon="mdi-code-tags">Get Embed Code</v-list-item>
-                  <v-divider></v-divider>
-                  <v-list-item prepend-icon="mdi-delete-outline" class="text-error">Delete</v-list-item>
+                  <v-list-item prepend-icon="mdi-delete-outline" class="text-error mt-1">Delete</v-list-item>
                 </v-list>
               </v-menu>
             </div>
-            <div class="d-flex gap-4 mt-3 pt-3 border-t">
+            <div class="d-flex gap-4 mt-4 pt-4">
               <div class="text-center flex-grow-1">
                 <div class="text-h6 font-weight-bold">{{ form.views.toLocaleString() }}</div>
                 <div class="text-caption text-medium-emphasis">Views</div>
               </div>
-              <v-divider vertical></v-divider>
               <div class="text-center flex-grow-1">
                 <div class="text-h6 font-weight-bold text-success">{{ form.conversions.toLocaleString() }}</div>
                 <div class="text-caption text-medium-emphasis">Conversions</div>
               </div>
-              <v-divider vertical></v-divider>
               <div class="text-center flex-grow-1">
                 <div class="text-h6 font-weight-bold text-primary">{{ form.rate }}%</div>
                 <div class="text-caption text-medium-emphasis">Conv. Rate</div>
@@ -169,14 +166,14 @@ function clearAllFilters() {
             </div>
           </div>
           <div class="px-4 pb-4">
-            <v-btn block variant="outlined" color="primary" size="small" class="text-none" prepend-icon="mdi-pencil-outline" @click="router.push('/acquisition/forms/create')">Edit in Builder</v-btn>
+            <v-btn block variant="tonal" color="primary" size="small" class="text-none" prepend-icon="mdi-pencil-outline" @click="router.push('/acquisition/forms/create')">Edit in Builder</v-btn>
           </div>
         </v-card>
       </v-col>
 
       <!-- Empty state / add card -->
       <v-col cols="12" sm="6" md="4">
-        <v-card variant="outlined" rounded="xl" class="pa-6 d-flex flex-column align-center justify-center text-center cursor-pointer add-card" style="min-height:280px;border-style:dashed;" @click="chooseDialog=true">
+        <v-card variant="flat" rounded="xl" class="pa-6 d-flex flex-column align-center justify-center text-center cursor-pointer add-card" style="min-height:280px;" @click="chooseDialog=true">
           <v-icon size="40" color="primary" class="mb-3">mdi-plus-circle-outline</v-icon>
           <div class="text-body-1 font-weight-bold mb-1">Create New Form</div>
           <div class="text-caption text-medium-emphasis">Choose a template and launch the form builder</div>
@@ -185,7 +182,7 @@ function clearAllFilters() {
     </v-row>
 
     <!-- List View -->
-    <v-card v-else variant="flat" border rounded="xl" class="flex-grow-1 d-flex flex-column overflow-hidden">
+    <v-card v-else variant="flat" rounded="xl" class="flex-grow-1 d-flex flex-column overflow-hidden list-card">
       <MpDataTableToolbar
         v-model:search="search"
         title="Forms"
@@ -244,7 +241,7 @@ function clearAllFilters() {
     <!-- ── Template Chooser Dialog ──────────────────────────────── -->
     <v-dialog v-model="chooseDialog" max-width="820" rounded="xl">
       <v-card rounded="xl">
-        <div class="pa-5 border-b d-flex align-center justify-space-between">
+        <div class="pa-5 pb-3 d-flex align-center justify-space-between">
           <div>
             <div class="text-h6 font-weight-bold">Choose a Template</div>
             <div class="text-caption text-medium-emphasis">Pick a starting point or begin from scratch</div>
@@ -268,7 +265,7 @@ function clearAllFilters() {
             <v-col v-for="tmpl in filteredTemplates" :key="tmpl.id" cols="12" sm="6" md="4">
               <v-card
                 @click="selectedTemplate=tmpl.id"
-                :variant="selectedTemplate===tmpl.id?'tonal':'outlined'"
+                :variant="selectedTemplate===tmpl.id?'tonal':'flat'"
                 :color="selectedTemplate===tmpl.id?'primary':'default'"
                 rounded="xl" class="pa-4 cursor-pointer template-card h-100"
                 :class="{selected:selectedTemplate===tmpl.id}">
@@ -276,7 +273,7 @@ function clearAllFilters() {
                   <v-icon :color="tmpl.color" size="28">{{ tmpl.icon }}</v-icon>
                   <div class="d-flex gap-1">
                     <v-chip v-if="tmpl.popular" color="primary" size="x-small" variant="flat" class="font-weight-bold">Popular</v-chip>
-                    <v-chip size="x-small" variant="outlined">{{ tmpl.type }}</v-chip>
+                    <v-chip size="x-small" variant="tonal">{{ tmpl.type }}</v-chip>
                   </div>
                 </div>
                 <div class="text-body-2 font-weight-bold mb-1">{{ tmpl.name }}</div>
@@ -287,7 +284,7 @@ function clearAllFilters() {
           </v-row>
         </div>
 
-        <div class="pa-5 border-t d-flex justify-space-between align-center">
+        <div class="pa-5 pt-3 d-flex justify-space-between align-center">
           <v-btn variant="text" class="text-none" @click="chooseDialog=false">Cancel</v-btn>
           <v-btn color="primary" variant="elevated" class="text-none" :disabled="selectedTemplate===null"
             prepend-icon="mdi-pencil-ruler" @click="openBuilder">Open Builder →</v-btn>
@@ -308,16 +305,31 @@ function clearAllFilters() {
 .gap-5 { gap: 20px; }
 .hide-scrollbar::-webkit-scrollbar { display: none; }
 .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
-.border-b { border-bottom: 1px solid rgba(var(--v-border-color), var(--v-border-opacity)) !important; }
-.border-t { border-top: 1px solid rgba(var(--v-border-color), var(--v-border-opacity)) !important; }
-.form-card { transition: all 0.15s ease; }
-.form-card:hover { transform: translateY(-2px); box-shadow: 0 8px 32px rgba(0,0,0,0.1) !important; }
-.add-card { transition: all 0.15s; }
-.add-card:hover { border-color: rgb(var(--v-theme-primary)) !important; background: rgba(var(--v-theme-primary),0.04); }
-.template-card { position: relative; transition: all 0.15s; }
-.template-card:hover { border-color: rgb(var(--v-theme-primary)) !important; }
-.template-card.selected { border-color: rgb(var(--v-theme-primary)) !important; }
-.selected-check { position:absolute; top:8px; right:8px; }
+.kpi-card {
+  background: rgba(var(--v-theme-surface-variant), 0.35);
+}
+.form-card {
+  transition: all $mp-transition-base;
+  background: rgba(var(--v-theme-surface-variant), 0.25);
+}
+.form-card:hover {
+  transform: translateY(-2px);
+  box-shadow: $mp-shadow-lg !important;
+}
+.list-card {
+  background: rgba(var(--v-theme-surface-variant), 0.2);
+}
+.add-card {
+  transition: all $mp-transition-base;
+  background: rgba(var(--v-theme-surface-variant), 0.15);
+}
+.add-card:hover {
+  background: rgba(var(--v-theme-primary), 0.06);
+}
+.template-card { position: relative; transition: all $mp-transition-base; }
+.template-card:hover { background: rgba(var(--v-theme-primary), 0.04); }
+.template-card.selected { background: rgba(var(--v-theme-primary), 0.08); }
+.selected-check { position: absolute; top: 8px; right: 8px; }
 .ActionButtons { opacity: 0; transition: opacity 0.2s; }
 tr:hover .ActionButtons { opacity: 1; }
 </style>

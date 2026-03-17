@@ -39,15 +39,15 @@ a {
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif !important;
 }
 
-/* ─── Border Utilities ──────────────────────────────────────── */
+/* ─── Border Utilities (subtle) ────────────────────────────── */
 .border-b {
-  border-bottom: 1px solid rgba(var(--v-border-color), var(--v-border-opacity)) !important;
+  border-bottom: 1px solid rgba(var(--v-border-color), 0.08) !important;
 }
 .border-t {
-  border-top: 1px solid rgba(var(--v-border-color), var(--v-border-opacity)) !important;
+  border-top: 1px solid rgba(var(--v-border-color), 0.08) !important;
 }
 .border-r {
-  border-right: 1px solid rgba(var(--v-border-color), var(--v-border-opacity)) !important;
+  border-right: 1px solid rgba(var(--v-border-color), 0.08) !important;
 }
 
 /* ─── Gap Utilities ─────────────────────────────────────────── */
@@ -122,6 +122,28 @@ tr:hover .action-btns {
 .border-dashed {
   border-style: dashed !important;
   border-width: 2px !important;
+}
+
+/* ─── Subtle Dividers (cards, popovers, data-table pagination) ── */
+.v-card .v-divider {
+  opacity: 0.35;
+}
+
+.v-data-table-footer {
+  border-top: 1px solid rgba(var(--v-border-color), 0.06) !important;
+}
+
+.v-table .v-table__wrapper > table > tbody > tr > td {
+  border-bottom-color: rgba(var(--v-border-color), 0.08) !important;
+}
+
+.v-table .v-table__wrapper > table > thead > tr > th {
+  border-bottom-color: rgba(var(--v-border-color), 0.15) !important;
+}
+
+.v-overlay__content .v-divider,
+.v-menu .v-divider {
+  opacity: 0.3;
 }
 
 /* ─── Scrollbar Styling ─────────────────────────────────────── */

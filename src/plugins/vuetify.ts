@@ -156,9 +156,9 @@ export default createVuetify({
       rounded: 'xl',
     },
 
-    // Divider
+    // Divider — subtle by default
     VDivider: {
-      opacity: 1,
+      opacity: 0.6,
     },
   },
 })

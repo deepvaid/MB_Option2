@@ -94,7 +94,7 @@ function sendReply() {
     <div class="d-flex align-center gap-2 overflow-x-auto hide-scrollbar">
       <v-btn-toggle v-model="filterStatus" density="comfortable" mandatory class="bg-transparent" selected-class="bg-blue-darken-3 text-white">
         <v-btn v-for="s in statusOptions" :key="s" :value="s" rounded="pill" variant="flat" size="small"
-          class="text-none px-4 mr-2" :class="filterStatus === s ? '' : 'bg-grey-lighten-4 text-medium-emphasis border'">
+          class="text-none px-4 mr-2" :class="filterStatus === s ? '' : 'bg-grey-lighten-4 text-medium-emphasis'">
           {{ s }}
         </v-btn>
       </v-btn-toggle>

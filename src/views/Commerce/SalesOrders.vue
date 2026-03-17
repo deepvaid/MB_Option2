@@ -114,7 +114,7 @@ function selectAll() {
     </MpPageHeader>
 
     <!-- Main Table Card -->
-    <v-card variant="flat" border rounded="xl" class="flex-grow-1 d-flex flex-column overflow-hidden">
+    <v-card variant="flat" rounded="xl" class="flex-grow-1 d-flex flex-column overflow-hidden table-card">
       <!-- Toolbar -->
       <MpDataTableToolbar
         v-model:search="search"
@@ -229,8 +229,7 @@ function selectAll() {
                 <v-list-item prepend-icon="mdi-pencil-outline" title="Edit order" value="edit"></v-list-item>
                 <v-list-item prepend-icon="mdi-package-check" title="Mark fulfilled" value="fulfill"></v-list-item>
                 <v-list-item prepend-icon="mdi-printer" title="Print invoice" value="print"></v-list-item>
-                <v-divider></v-divider>
-                <v-list-item prepend-icon="mdi-cash-refund" title="Refund" value="refund" class="text-error"></v-list-item>
+                <v-list-item prepend-icon="mdi-cash-refund" title="Refund" value="refund" class="text-error mt-1"></v-list-item>
                 <v-list-item prepend-icon="mdi-cancel" title="Cancel order" value="cancel" class="text-error"></v-list-item>
               </v-list>
             </v-menu>
@@ -240,109 +239,75 @@ function selectAll() {
         <!-- Expanded detail row -->
         <template v-slot:expanded-row="{ columns, item }">
           <tr>
-            <td :colspan="columns.length" class="pa-0 bg-surface-variant">
-              <div class="pa-6">
-                <v-row>
-                  <!-- Customer & Payment -->
-                  <v-col cols="12" md="3">
-                    <div class="text-caption font-weight-bold text-uppercase text-medium-emphasis mb-3">Customer</div>
-                    <div class="d-flex align-center gap-3 mb-4">
-                      <v-avatar color="primary" size="44" class="font-weight-bold text-white">{{ item.customer.avatar }}</v-avatar>
-                      <div>
-                        <div class="font-weight-bold">{{ item.customer.name }}</div>
-                        <div class="text-caption text-medium-emphasis">{{ item.customer.email }}</div>
-                        <div class="text-caption text-medium-emphasis">{{ item.city }}</div>
-                      </div>
-                    </div>
-                    <div class="text-caption font-weight-bold text-uppercase text-medium-emphasis mb-2">Payment</div>
-                    <div class="d-flex align-center gap-2 mb-1">
-                      <v-icon size="16" color="medium-emphasis">mdi-credit-card-outline</v-icon>
-                      <span class="text-body-2">{{ item.paymentMethod }}</span>
-                    </div>
-                    <MpStatusChip :status="item.paymentStatus ?? ''" type="payment" class="mt-2" />
-                    <div v-if="item.notes" class="mt-3 pa-3 rounded-lg border text-caption" style="border-color: rgb(var(--v-theme-warning)) !important; background: rgba(var(--v-theme-warning), 0.08)">
-                      <v-icon size="14" color="warning" class="mr-1">mdi-note-text</v-icon>
-                      {{ item.notes }}
-                    </div>
-                  </v-col>
+            <td :colspan="columns.length" class="pa-0" style="border-bottom: none !important;">
+              <div class="expanded-row-content">
+                <!-- Top bar: Customer + Payment + Fulfillment status + Actions -->
+                <div class="d-flex align-center gap-4 px-5 py-3 expanded-top-bar">
+                  <v-avatar color="primary" size="32" class="font-weight-bold text-white" style="font-size: 12px; flex-shrink: 0;">{{ item.customer.avatar }}</v-avatar>
+                  <div style="min-width: 0;">
+                    <div class="text-body-2 font-weight-medium">{{ item.customer.name }}</div>
+                    <div class="text-caption text-medium-emphasis">{{ item.customer.email }}</div>
+                  </div>
+                  <v-divider vertical class="mx-1" style="height: 28px; opacity: 0.15;" />
+                  <div class="d-flex align-center gap-2">
+                    <v-icon size="14" color="medium-emphasis">mdi-credit-card-outline</v-icon>
+                    <span class="text-caption">{{ item.paymentMethod }}</span>
+                    <MpStatusChip :status="item.paymentStatus ?? ''" type="payment" size="x-small" />
+                  </div>
+                  <v-divider vertical class="mx-1" style="height: 28px; opacity: 0.15;" />
+                  <div class="d-flex align-center gap-2">
+                    <span class="text-caption text-medium-emphasis">Fulfillment:</span>
+                    <MpStatusChip :status="item.fulfillmentStatus ?? ''" type="fulfillment" show-icon size="x-small" />
+                  </div>
+                  <v-spacer />
+                  <div class="d-flex gap-1">
+                    <v-btn variant="flat" color="primary" size="x-small" class="text-none" prepend-icon="mdi-package-check">Mark Fulfilled</v-btn>
+                    <v-btn variant="tonal" size="x-small" class="text-none" prepend-icon="mdi-printer">Print Invoice</v-btn>
+                  </div>
+                </div>
 
-                  <!-- Line Items -->
-                  <v-col cols="12" md="6">
-                    <div class="text-caption font-weight-bold text-uppercase text-medium-emphasis mb-3">Order Items</div>
-                    <v-table density="compact" class="rounded-lg border">
-                      <thead>
-                        <tr class="bg-surface">
-                          <th class="text-caption font-weight-bold">Product</th>
-                          <th class="text-caption font-weight-bold text-center">Qty</th>
-                          <th class="text-caption font-weight-bold text-right">Price</th>
-                          <th class="text-caption font-weight-bold text-right">Total</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        <tr v-for="li in item.lineItems" :key="li.sku">
-                          <td>
-                            <div class="text-body-2 font-weight-medium">{{ (li.product ?? '').substring(0, 35) }}{{ (li.product ?? '').length > 35 ? '...' : '' }}</div>
-                            <div class="text-caption text-medium-emphasis">{{ li.sku }}</div>
-                          </td>
-                          <td class="text-center text-body-2">{{ li.qty }}</td>
-                          <td class="text-right text-body-2">${{ li.price }}</td>
-                          <td class="text-right font-weight-bold text-body-2">${{ (li.qty * parseFloat(li.price)).toFixed(2) }}</td>
-                        </tr>
-                      </tbody>
-                      <tfoot>
-                        <tr class="bg-surface-variant">
-                          <td colspan="3" class="text-right font-weight-bold text-body-2 py-2">Subtotal</td>
-                          <td class="text-right font-weight-bold">${{ item.subtotal }}</td>
-                        </tr>
-                        <tr class="bg-surface-variant">
-                          <td colspan="3" class="text-right text-body-2 py-1">Shipping</td>
-                          <td class="text-right text-body-2">${{ item.shipping }}</td>
-                        </tr>
-                        <tr class="bg-surface-variant">
-                          <td colspan="3" class="text-right font-weight-bold py-2">Order Total</td>
-                          <td class="text-right font-weight-bold text-primary">${{ item.total }}</td>
-                        </tr>
-                      </tfoot>
-                    </v-table>
-                  </v-col>
-
-                  <!-- Fulfillment Timeline + Actions -->
-                  <v-col cols="12" md="3">
-                    <div class="text-caption font-weight-bold text-uppercase text-medium-emphasis mb-3">Fulfillment</div>
-                    <MpStatusChip :status="item.fulfillmentStatus ?? ''" type="fulfillment" show-icon class="mb-4" />
-                    <v-timeline side="end" density="compact" truncate-line="start" class="mb-4">
-                      <v-timeline-item dot-color="success" size="small">
-                        <div class="text-body-2 font-weight-medium">Order Placed</div>
-                        <div class="text-caption text-medium-emphasis">{{ item.date }}</div>
-                      </v-timeline-item>
-                      <v-timeline-item
-                        :dot-color="item.fulfillmentStatus === 'Shipped' ? 'success' : 'grey'"
-                        size="small"
-                      >
-                        <div class="text-body-2 font-weight-medium">Dispatched</div>
-                        <div v-if="item.trackingNumber" class="text-caption text-medium-emphasis">
-                          {{ item.courier ?? '' }}: {{ item.trackingNumber }}
-                        </div>
-                        <div v-else class="text-caption text-medium-emphasis">Pending</div>
-                      </v-timeline-item>
-                      <v-timeline-item
-                        :dot-color="item.status === 'Completed' ? 'success' : 'grey'"
-                        size="small"
-                      >
-                        <div class="text-body-2 font-weight-medium">Completed</div>
-                        <div class="text-caption text-medium-emphasis">
-                          {{ item.status === 'Completed' ? 'Order complete' : 'In progress' }}
-                        </div>
-                      </v-timeline-item>
-                    </v-timeline>
-
-                    <div class="d-flex flex-column gap-2 mt-2">
-                      <v-btn block variant="elevated" color="primary" size="small" class="text-none" prepend-icon="mdi-package-check">Mark Fulfilled</v-btn>
-                      <v-btn block variant="outlined" color="secondary" size="small" class="text-none" prepend-icon="mdi-printer">Print Invoice</v-btn>
-                      <v-btn block variant="text" color="error" size="small" class="text-none" prepend-icon="mdi-cash-refund">Refund Order</v-btn>
-                    </div>
-                  </v-col>
-                </v-row>
+                <!-- Line items table -->
+                <div class="px-5 pb-4 pt-2">
+                  <v-table density="compact" class="rounded-lg expanded-items-table">
+                    <thead>
+                      <tr>
+                        <th class="text-caption font-weight-bold expanded-th">Product</th>
+                        <th class="text-caption font-weight-bold text-center expanded-th" style="width: 50px;">Qty</th>
+                        <th class="text-caption font-weight-bold text-right expanded-th" style="width: 90px;">Price</th>
+                        <th class="text-caption font-weight-bold text-right expanded-th" style="width: 100px;">Total</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr v-for="li in item.lineItems" :key="li.sku">
+                        <td>
+                          <span class="text-body-2 font-weight-medium">{{ (li.product ?? '').substring(0, 50) }}{{ (li.product ?? '').length > 50 ? '…' : '' }}</span>
+                          <span class="text-caption text-medium-emphasis ml-2">{{ li.sku }}</span>
+                        </td>
+                        <td class="text-center text-body-2">{{ li.qty }}</td>
+                        <td class="text-right text-body-2">${{ li.price }}</td>
+                        <td class="text-right font-weight-semibold text-body-2">${{ (li.qty * parseFloat(li.price)).toFixed(2) }}</td>
+                      </tr>
+                    </tbody>
+                    <tfoot>
+                      <tr>
+                        <td colspan="3" class="text-right text-caption text-medium-emphasis py-1">Subtotal</td>
+                        <td class="text-right text-body-2 font-weight-medium">${{ item.subtotal }}</td>
+                      </tr>
+                      <tr>
+                        <td colspan="3" class="text-right text-caption text-medium-emphasis py-0">Shipping</td>
+                        <td class="text-right text-caption">${{ item.shipping }}</td>
+                      </tr>
+                      <tr>
+                        <td colspan="3" class="text-right text-body-2 font-weight-bold py-1">Order Total</td>
+                        <td class="text-right text-body-2 font-weight-bold text-primary">${{ item.total }}</td>
+                      </tr>
+                    </tfoot>
+                  </v-table>
+                  <div v-if="item.notes" class="mt-2 pa-2 rounded-lg d-flex align-center gap-2 text-caption text-medium-emphasis" style="background: rgba(var(--v-theme-warning), 0.06);">
+                    <v-icon size="14" color="warning">mdi-note-text</v-icon>
+                    {{ item.notes }}
+                  </div>
+                </div>
               </div>
             </td>
           </tr>
@@ -359,5 +324,36 @@ function selectAll() {
 }
 .mp-btn-dark:hover {
   opacity: 0.88;
+}
+.table-card {
+  background: rgba(var(--v-theme-surface-variant), 0.2);
+}
+
+/* ─── Expanded Row ───────────────────────────────────────────── */
+.expanded-row-content {
+  background: rgba(var(--v-theme-surface-variant), 0.25);
+  border-top: 1px solid rgba(var(--v-border-color), 0.06);
+}
+
+.expanded-top-bar {
+  border-bottom: 1px solid rgba(var(--v-border-color), 0.06);
+}
+
+.expanded-items-table {
+  background: transparent !important;
+}
+
+.expanded-th {
+  background: rgba(var(--v-theme-surface-variant), 0.4);
+}
+
+.expanded-items-table :deep(th),
+.expanded-items-table :deep(td) {
+  padding: 5px 10px !important;
+  font-size: 13px;
+}
+
+.expanded-items-table :deep(tfoot td) {
+  border-bottom: none !important;
 }
 </style>
