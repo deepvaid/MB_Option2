@@ -41,15 +41,15 @@ defineProps<{
 
 <style scoped>
 .mp-page-title {
-  font-size: 1.65rem;
+  font-size: $mp-typography-fontSize-2xl;
   letter-spacing: -0.4px;
-  line-height: 1.2;
+  line-height: $mp-typography-lineHeight-tight;
 }
 
 .mp-breadcrumb-link {
   color: rgb(var(--v-theme-on-surface));
   opacity: 0.6;
-  transition: opacity 0.15s ease;
+  transition: opacity $mp-transition-fast;
 }
 .mp-breadcrumb-link:hover {
   opacity: 1;

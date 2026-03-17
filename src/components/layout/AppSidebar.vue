@@ -152,23 +152,22 @@ const localRail = ref(props.rail)
     permanent
     width="260"
     class="mp-sidebar"
-    :style="{ background: $mp-sidebar-bg, borderRight: '1px solid ' + $mp-sidebar-border }"
-    style="background: #111928; border-right: 1px solid rgba(255,255,255,0.07);"
+    style="background: var(--mp-color-sidebar-bg); border-right: 1px solid var(--mp-color-sidebar-border);"
   >
     <!-- Logo + collapse toggle -->
-    <div class="d-flex align-center px-3 py-3" style="height: 56px;">
+    <div class="d-flex align-center px-3 py-3" style="height: var(--mp-layout-appbarHeight);">
       <v-btn
         icon="mdi-menu"
         variant="text"
         size="small"
         @click.stop="localRail = !localRail; emit('update:rail', localRail)"
-        style="color: rgba(255,255,255,0.5);"
+        style="color: var(--mp-color-sidebar-textMuted);"
         class="mr-2 flex-shrink-0"
       />
       <template v-if="!localRail">
         <span
           class="font-weight-bold cursor-pointer d-flex align-center gap-1"
-          style="font-size: 17px; letter-spacing: -0.5px; color: #fff;"
+          style="font-size: 17px; letter-spacing: -0.5px; color: var(--mp-color-sidebar-text);"
           @click="$router.push('/dashboard')"
         >
           Maropost
@@ -177,23 +176,23 @@ const localRail = ref(props.rail)
       </template>
     </div>
 
-    <v-divider style="border-color: rgba(255,255,255,0.07);" />
+    <v-divider style="border-color: var(--mp-color-sidebar-border);" />
 
     <!-- Account selector -->
     <div v-if="!localRail" class="px-3 py-2">
-      <v-card variant="flat" rounded="lg" class="pa-2 cursor-pointer" style="background: rgba(255,255,255,0.05);">
+      <v-card variant="flat" rounded="lg" class="pa-2 cursor-pointer" style="background: var(--mp-color-sidebar-hover);">
         <div class="d-flex align-center gap-2">
-          <v-avatar color="primary" size="28" style="font-size: 11px; font-weight: 700;">{{ userInitials }}</v-avatar>
+          <v-avatar color="primary" size="28" style="font-size: var(--mp-typography-fontSize-xs); font-weight: var(--mp-typography-fontWeight-bold);">{{ userInitials }}</v-avatar>
           <div class="flex-grow-1 overflow-hidden">
-            <div class="text-caption font-weight-medium text-truncate" style="color: #fff; line-height: 1.2;">{{ accountName }}</div>
-            <div class="text-caption text-truncate" style="color: rgba(255,255,255,0.45); font-size: 10px;">{{ userName }}</div>
+            <div class="text-caption font-weight-medium text-truncate" style="color: var(--mp-color-sidebar-text); line-height: var(--mp-typography-lineHeight-tight);">{{ accountName }}</div>
+            <div class="text-caption text-truncate" style="color: var(--mp-color-sidebar-textMuted); font-size: var(--mp-typography-fontSize-xs);">{{ userName }}</div>
           </div>
-          <v-icon size="14" style="color: rgba(255,255,255,0.4);">mdi-chevron-down</v-icon>
+          <v-icon size="14" style="color: var(--mp-color-sidebar-textFaint);">mdi-chevron-down</v-icon>
         </div>
       </v-card>
     </div>
     <div v-else class="d-flex justify-center py-2">
-      <v-avatar color="primary" size="32" class="cursor-pointer" style="font-size: 12px; font-weight: 700;">{{ userInitials }}</v-avatar>
+      <v-avatar color="primary" size="32" class="cursor-pointer" style="font-size: var(--mp-typography-fontSize-sm); font-weight: var(--mp-typography-fontWeight-bold);">{{ userInitials }}</v-avatar>
     </div>
 
     <!-- Full Navigation (expanded mode) -->
@@ -209,7 +208,7 @@ const localRail = ref(props.rail)
           base-color="rgba(255,255,255,0.6)"
           active-class="active-nav-item"
           class="mb-1"
-          style="color: rgba(255,255,255,0.75);"
+          style="color: var(--mp-color-sidebar-text);"
         >
           <template v-slot:append v-if="group.badge">
             <v-chip size="x-small" color="success" variant="flat" style="font-size: 9px; height: 16px; padding: 0 5px;">{{ group.badge }}</v-chip>
@@ -224,7 +223,7 @@ const localRail = ref(props.rail)
               :title="group.title"
               rounded="lg"
               base-color="rgba(255,255,255,0.6)"
-              style="color: rgba(255,255,255,0.75);"
+              style="color: var(--mp-color-sidebar-text);"
             >
               <template v-slot:append="{ isActive }" v-if="group.badge">
                 <v-chip size="x-small" color="success" variant="flat" style="font-size: 9px; height: 16px; padding: 0 5px;" class="mr-1">{{ group.badge }}</v-chip>
@@ -237,7 +236,7 @@ const localRail = ref(props.rail)
           <template v-if="group.title === 'Marketing'">
             <div v-for="subGroup in marketingGroups" :key="subGroup">
               <div class="px-4 pt-2 pb-1">
-                <span class="text-uppercase font-weight-bold" style="font-size: 10px; color: rgba(255,255,255,0.3); letter-spacing: 0.08em;">{{ subGroup }}</span>
+                <span class="text-uppercase font-weight-bold" style="font-size: var(--mp-typography-fontSize-xs); color: var(--mp-color-sidebar-textFaint); letter-spacing: 0.08em;">{{ subGroup }}</span>
               </div>
               <v-list-item
                 v-for="item in group.items.filter(i => i.group === subGroup)"
@@ -249,7 +248,7 @@ const localRail = ref(props.rail)
                 base-color="rgba(255,255,255,0.5)"
                 exact
                 class="mb-0.5"
-                style="padding-left: 28px;"
+                style="padding-left: var(--mp-spacing-7);"
               />
             </div>
           </template>
@@ -286,11 +285,11 @@ const localRail = ref(props.rail)
             class="mb-1 justify-center"
           />
         </template>
-        <v-card width="220" elevation="8" rounded="xl" style="background: #1F2937; border: 1px solid rgba(255,255,255,0.1);">
+        <v-card width="220" elevation="8" rounded="xl" style="background: var(--mp-color-sidebar-surface); border: 1px solid var(--mp-color-sidebar-border);">
           <v-list density="compact" class="bg-transparent py-1">
-            <v-list-subheader style="color: rgba(255,255,255,0.5); font-size: 11px;">{{ group.title }}</v-list-subheader>
+            <v-list-subheader style="color: var(--mp-color-sidebar-textMuted); font-size: var(--mp-typography-fontSize-xs);">{{ group.title }}</v-list-subheader>
             <template v-if="group.singleRoute">
-              <v-list-item :to="group.singleRoute" :title="group.title" style="color: #fff;" rounded="lg" />
+              <v-list-item :to="group.singleRoute" :title="group.title" style="color: var(--mp-color-sidebar-text);" rounded="lg" />
             </template>
             <template v-else>
               <v-list-item
@@ -298,7 +297,7 @@ const localRail = ref(props.rail)
                 :key="item.title"
                 :title="item.title"
                 :to="item.route"
-                style="color: rgba(255,255,255,0.75);"
+                style="color: var(--mp-color-sidebar-text);"
                 color="primary"
                 rounded="lg"
                 exact
@@ -311,14 +310,14 @@ const localRail = ref(props.rail)
 
     <!-- Bottom: Help -->
     <template v-slot:append>
-      <v-divider style="border-color: rgba(255,255,255,0.07);" />
+      <v-divider style="border-color: var(--mp-color-sidebar-border);" />
       <div class="pa-2" v-if="!localRail">
-        <v-btn block variant="text" prepend-icon="mdi-help-circle-outline" class="text-none justify-start" style="color: rgba(255,255,255,0.4); font-size: 13px;">
+        <v-btn block variant="text" prepend-icon="mdi-help-circle-outline" class="text-none justify-start" style="color: var(--mp-color-sidebar-textFaint); font-size: var(--mp-typography-fontSize-body);">
           Help & Documentation
         </v-btn>
       </div>
       <div class="d-flex justify-center pa-2" v-else>
-        <v-btn icon="mdi-help-circle-outline" variant="text" size="small" style="color: rgba(255,255,255,0.4);" />
+        <v-btn icon="mdi-help-circle-outline" variant="text" size="small" style="color: var(--mp-color-sidebar-textFaint);" />
       </div>
     </template>
   </v-navigation-drawer>

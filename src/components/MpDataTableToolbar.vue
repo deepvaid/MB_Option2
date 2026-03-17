@@ -27,7 +27,7 @@ function hiddenCount(filters: Array<{ key: string; label: string }>) {
 
 <template>
   <!-- Toolbar row: title + filter button + extra actions + search -->
-  <div class="d-flex align-center ga-3 px-4 pt-4 pb-3" style="min-height: 56px;">
+  <div class="d-flex align-center ga-3 px-4 pt-4 pb-3" style="min-height: var(--mp-layout-appbarHeight);">
     <div v-if="title" class="text-subtitle-1 font-weight-bold">{{ title }}</div>
     <slot name="title" />
     <v-spacer />

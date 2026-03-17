@@ -69,6 +69,6 @@ const emit = defineEmits<{
 </template>
 
 <style scoped>
-.campaign-card { transition: box-shadow 0.2s ease; }
-.campaign-card:hover { box-shadow: 0 2px 12px rgba(0,0,0,0.08); }
+.campaign-card { transition: box-shadow $mp-transition-base; }
+.campaign-card:hover { box-shadow: $mp-shadow-md; }
 </style>

@@ -11,29 +11,30 @@ const emit = defineEmits<{
   action: []
 }>()
 
-const severityConfig: Record<string, { color: string; bg: string }> = {
-  info: { color: '#1976D2', bg: '#E3F2FD' },
-  warning: { color: '#FF9800', bg: '#FFF3E0' },
-  success: { color: '#43A047', bg: '#E8F5E9' },
-  error: { color: '#E53935', bg: '#FFEBEE' },
+// Use Vuetify semantic color names — no hardcoded hex
+const severityColor: Record<string, string> = {
+  info: 'info',
+  warning: 'warning',
+  success: 'success',
+  error: 'error',
 }
 </script>
 
 <template>
   <v-card
-    variant="flat"
+    variant="tonal"
+    :color="severityColor[severity || 'info']"
     rounded="lg"
-    :style="{ background: severityConfig[severity || 'info'].bg, border: `1px solid ${severityConfig[severity || 'info'].color}22` }"
   >
     <v-card-text class="pa-4">
       <div class="d-flex align-start ga-3">
-        <v-icon :color="severityConfig[severity || 'info'].color" size="22">{{ icon || 'mdi-lightbulb-outline' }}</v-icon>
+        <v-icon :color="severityColor[severity || 'info']" size="22">{{ icon || 'mdi-lightbulb-outline' }}</v-icon>
         <div class="flex-grow-1">
           <div class="text-subtitle-2 font-weight-bold mb-1">{{ headline }}</div>
-          <div class="text-body-2 text-medium-emphasis mb-2" style="line-height: 1.5;">{{ description }}</div>
+          <div class="text-body-2 text-medium-emphasis mb-2" style="line-height: var(--mp-typography-lineHeight-normal);">{{ description }}</div>
           <v-btn
             v-if="actionLabel"
-            :color="severityConfig[severity || 'info'].color"
+            :color="severityColor[severity || 'info']"
             variant="tonal"
             size="small"
             class="text-none"

@@ -11,11 +11,12 @@ const emit = defineEmits<{
   use: []
 }>()
 
+// Colors use Vuetify semantic names — no hardcoded hex
 const typeConfig: Record<string, { icon: string; color: string; label: string }> = {
-  email: { icon: 'mdi-email-edit-outline', color: '#1976D2', label: 'Email Copy' },
-  product: { icon: 'mdi-package-variant', color: '#43A047', label: 'Product Description' },
-  blog: { icon: 'mdi-post-outline', color: '#FF9800', label: 'Blog Post' },
-  sms: { icon: 'mdi-message-text-outline', color: '#AB47BC', label: 'SMS Message' },
+  email: { icon: 'mdi-email-edit-outline', color: 'primary', label: 'Email Copy' },
+  product: { icon: 'mdi-package-variant', color: 'success', label: 'Product Description' },
+  blog: { icon: 'mdi-post-outline', color: 'warning', label: 'Blog Post' },
+  sms: { icon: 'mdi-message-text-outline', color: 'secondary', label: 'SMS Message' },
 }
 </script>
 
@@ -31,7 +32,7 @@ const typeConfig: Record<string, { icon: string; color: string; label: string }>
 
       <div class="text-subtitle-2 font-weight-bold mb-2">{{ title }}</div>
 
-      <div class="content-preview pa-3 rounded-lg text-body-2" style="background: #FAFBFC; border: 1px solid rgba(0,0,0,0.06); white-space: pre-line; line-height: 1.6; max-height: 160px; overflow-y: auto;">
+      <div class="content-preview pa-3 rounded-lg text-body-2 bg-surface-variant" style="border: 1px solid rgba(var(--v-border-color), var(--v-border-opacity)); white-space: pre-line; line-height: var(--mp-typography-lineHeight-loose); max-height: 160px; overflow-y: auto;">
         {{ content }}
       </div>
 

@@ -30,9 +30,9 @@ const emit = defineEmits<{
 
       <v-divider class="mb-3" style="opacity: 0.4;" />
 
-      <div class="text-caption font-weight-bold text-uppercase mb-2" style="letter-spacing: 0.5px; font-size: 10px;">Filter Rules</div>
+      <div class="text-caption font-weight-bold text-uppercase mb-2" style="letter-spacing: 0.5px; font-size: var(--mp-typography-fontSize-xs);">Filter Rules</div>
       <div class="d-flex flex-column ga-1 mb-3">
-        <div v-for="(rule, i) in rules" :key="i" class="d-flex align-center ga-2 pa-2 rounded" style="background: #F5F7FA;">
+        <div v-for="(rule, i) in rules" :key="i" class="d-flex align-center ga-2 pa-2 rounded bg-surface-variant">
           <v-icon size="14" color="teal">mdi-filter-outline</v-icon>
           <span class="text-body-2">{{ rule }}</span>
         </div>

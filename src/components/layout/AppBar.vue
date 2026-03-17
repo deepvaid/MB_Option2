@@ -26,7 +26,7 @@ function toggleTheme() {
         prepend-inner-icon="mdi-magnify"
         placeholder="Search campaigns, contacts, orders..."
         rounded="pill"
-        style="max-width: 360px;"
+        style="max-width: var(--mp-layout-searchMaxWidth);"
         bg-color="surface-variant"
       />
 
@@ -68,7 +68,7 @@ function toggleTheme() {
       <v-menu location="bottom end" offset="8">
         <template v-slot:activator="{ props }">
           <div v-bind="props" class="d-flex align-center gap-2 cursor-pointer pa-1 rounded-lg user-menu-trigger">
-            <v-avatar color="primary" size="30" style="font-size: 11px; font-weight: 700; color: #fff;">{{ userInitials }}</v-avatar>
+            <v-avatar color="primary" size="30" style="font-size: var(--mp-typography-fontSize-xs); font-weight: var(--mp-typography-fontWeight-bold); color: white;">{{ userInitials }}</v-avatar>
             <span class="text-body-2 font-weight-medium d-none d-sm-block">{{ userName }}</span>
             <v-icon size="16" color="medium-emphasis">mdi-chevron-down</v-icon>
           </div>
@@ -77,10 +77,10 @@ function toggleTheme() {
           <v-list>
             <v-list-item class="py-3">
               <template v-slot:prepend>
-                <v-avatar color="primary" size="40" style="font-weight: 700; color: #fff;">{{ userInitials }}</v-avatar>
+                <v-avatar color="primary" size="40" style="font-weight: var(--mp-typography-fontWeight-bold); color: white;">{{ userInitials }}</v-avatar>
               </template>
               <v-list-item-title class="font-weight-bold">{{ userName }}</v-list-item-title>
-              <v-list-item-subtitle style="font-size: 12px;">deepak.v@maropost.com</v-list-item-subtitle>
+              <v-list-item-subtitle style="font-size: var(--mp-typography-fontSize-sm);">deepak.v@maropost.com</v-list-item-subtitle>
             </v-list-item>
           </v-list>
           <v-divider />
@@ -101,15 +101,15 @@ function toggleTheme() {
 
 <style scoped>
 .user-menu-trigger {
-  transition: background 0.15s ease;
+  transition: background $mp-transition-fast;
 }
 .user-menu-trigger:hover {
   background: rgb(var(--v-theme-surface-variant));
 }
 .copilot-trigger {
-  transition: all 0.2s ease;
+  transition: all $mp-transition-base;
 }
 .copilot-trigger:hover {
-  color: #FF9800 !important;
+  color: rgb(var(--v-theme-warning)) !important;
 }
 </style>

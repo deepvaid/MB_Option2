@@ -141,8 +141,8 @@ function newChat() {
         <v-icon color="white" size="22">mdi-creation</v-icon>
       </div>
       <div class="flex-grow-1">
-        <div class="text-subtitle-2 font-weight-bold" style="line-height: 1.2;">Da Vinci Bot</div>
-        <div class="text-caption text-medium-emphasis" style="font-size: 11px;">Intelligent AI assistant</div>
+        <div class="text-subtitle-2 font-weight-bold" style="line-height: var(--mp-typography-lineHeight-tight);">Da Vinci Bot</div>
+        <div class="text-caption text-medium-emphasis" style="font-size: var(--mp-typography-fontSize-xs);">Intelligent AI assistant</div>
       </div>
       <v-btn icon size="32" color="primary" variant="flat" @click="newChat">
         <v-icon size="18">mdi-plus</v-icon>
@@ -289,8 +289,8 @@ function newChat() {
           auto-grow
           max-rows="5"
           class="mb-1 px-1"
-          style="font-size: 14px;"
-          @keydown.enter.prevent="sendQuery"
+          style="font-size: var(--mp-typography-fontSize-body);"
+          @keydown.enter.exact.prevent="sendQuery"
         />
         <div class="d-flex align-center justify-space-between mt-1">
           <div class="d-flex align-center ga-1">
@@ -320,12 +320,12 @@ function newChat() {
 
 <style scoped>
 .da-vinci-bot {
-  background: #F8F9FA;
+  background: rgb(var(--v-theme-background));
 }
 
 .da-vinci-header {
   background: rgb(var(--v-theme-surface));
-  border-bottom: 1px solid rgba(0,0,0,0.06);
+  border-bottom: 1px solid rgba(var(--v-border-color), var(--v-border-opacity));
   z-index: 2;
 }
 
@@ -333,6 +333,7 @@ function newChat() {
   width: 36px;
   height: 36px;
   border-radius: 50%;
+  /* Brand-specific AI avatar gradient — orange is intentional */
   background: linear-gradient(135deg, #FF9800 0%, #F57C00 100%);
   display: flex;
   align-items: center;
@@ -341,20 +342,20 @@ function newChat() {
 }
 
 .suggestion-card {
-  transition: all 0.2s ease;
-  border-color: rgba(0, 0, 0, 0.08) !important;
+  transition: all $mp-transition-base;
+  border-color: rgba(var(--v-border-color), var(--v-border-opacity)) !important;
   background: rgb(var(--v-theme-surface));
   cursor: pointer;
 }
 .suggestion-card:hover {
   border-color: rgb(var(--v-theme-primary)) !important;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
-  background: #FAFAFA;
+  box-shadow: $mp-shadow-sm;
+  background: rgb(var(--v-theme-surface-variant));
 }
 
 .user-bubble {
-  background: linear-gradient(135deg, #42A5F5 0%, #1E88E5 100%);
-  border-radius: 18px 18px 4px 18px;
+  background: linear-gradient(135deg, rgb(var(--v-theme-primary)) 0%, rgba(var(--v-theme-primary), 0.8) 100%);
+  border-radius: 18px 18px $mp-radius-sm 18px;
   max-width: 85%;
   display: inline-flex;
 }
@@ -367,8 +368,8 @@ function newChat() {
 .typing-indicator .dot {
   width: 6px;
   height: 6px;
-  background: rgba(0,0,0,0.4);
-  border-radius: 50%;
+  background: rgba(var(--v-theme-on-surface), 0.4);
+  border-radius: $mp-radius-full;
   animation: typing 1.4s infinite ease-in-out both;
 }
 .typing-indicator .dot:nth-child(1) { animation-delay: -0.32s; }

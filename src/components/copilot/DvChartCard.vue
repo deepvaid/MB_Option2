@@ -7,7 +7,14 @@ defineProps<{
   seriesNames?: string[]
 }>()
 
-const colors = ['#1976D2', '#42A5F5', '#90CAF9', '#BBDEFB', '#E3F2FD']
+// Chart series palette — references Vuetify theme primary via CSS custom properties
+const colors = [
+  'rgb(var(--v-theme-primary))',
+  'rgba(var(--v-theme-primary), 0.65)',
+  'rgba(var(--v-theme-primary), 0.45)',
+  'rgba(var(--v-theme-primary), 0.25)',
+  'rgba(var(--v-theme-primary), 0.12)',
+]
 
 function getMax(bars: number[][]) {
   return Math.max(...bars.map(b => b.reduce((s, v) => s + v, 0)))
@@ -59,8 +66,8 @@ function getMax(bars: number[][]) {
 </template>
 
 <style scoped>
-.chart-area { display: flex; gap: 4px; height: 140px; }
-.chart-y-labels { display: flex; flex-direction: column; justify-content: space-between; font-size: 10px; color: rgba(0,0,0,0.45); min-width: 36px; text-align: right; padding-right: 6px; }
-.chart-bars-wrap { display: flex; align-items: flex-end; gap: 3px; flex: 1; border-left: 1px solid rgba(0,0,0,0.08); border-bottom: 1px solid rgba(0,0,0,0.08); padding: 0 2px; }
+.chart-area { display: flex; gap: $mp-space-1; height: 140px; }
+.chart-y-labels { display: flex; flex-direction: column; justify-content: space-between; font-size: $mp-typography-fontSize-xs; color: rgba(var(--v-theme-on-surface), 0.45); min-width: 36px; text-align: right; padding-right: 6px; }
+.chart-bars-wrap { display: flex; align-items: flex-end; gap: 3px; flex: 1; border-left: 1px solid rgba(var(--v-border-color), var(--v-border-opacity)); border-bottom: 1px solid rgba(var(--v-border-color), var(--v-border-opacity)); padding: 0 2px; }
 .chart-bar-col { flex: 1; display: flex; flex-direction: column-reverse; }
 </style>
