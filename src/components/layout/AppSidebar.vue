@@ -126,8 +126,10 @@ const navGroups: NavGroup[] = [
   {
     title: 'Settings',
     icon: 'mdi-cog-outline',
-    singleRoute: '/settings',
-    items: []
+    items: [
+      { title: 'Workspace Settings', route: '/settings' },
+      { title: 'Design System', route: '/design-system' },
+    ]
   },
 ]
 

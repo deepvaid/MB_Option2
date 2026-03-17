@@ -36,18 +36,18 @@ a {
 }
 
 .v-application {
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif !important;
+  font-family: var(--mp-typography-fontFamily-base);
 }
 
-/* ─── Border Utilities (subtle) ────────────────────────────── */
+/* ─── Border Utilities (token-driven via mp-theme-aliases.css) ─ */
 .border-b {
-  border-bottom: 1px solid rgba(var(--v-border-color), 0.08) !important;
+  border-bottom: 1px solid var(--mp-border-subtle);
 }
 .border-t {
-  border-top: 1px solid rgba(var(--v-border-color), 0.08) !important;
+  border-top: 1px solid var(--mp-border-subtle);
 }
 .border-r {
-  border-right: 1px solid rgba(var(--v-border-color), 0.08) !important;
+  border-right: 1px solid var(--mp-border-subtle);
 }
 
 /* ─── Gap Utilities ─────────────────────────────────────────── */
@@ -124,26 +124,43 @@ tr:hover .action-btns {
   border-width: 2px !important;
 }
 
-/* ─── Subtle Dividers (cards, popovers, data-table pagination) ── */
+/* ─── Card dividers (token: color.*.borderDividerMuted) ── */
 .v-card .v-divider {
-  opacity: 0.35;
+  opacity: 1;
+  border-top-color: var(--mp-color-light-borderDividerMuted);
 }
 
-.v-data-table-footer {
-  border-top: 1px solid rgba(var(--v-border-color), 0.06) !important;
+.v-application.v-theme--maropostDark .v-card .v-divider {
+  border-top-color: var(--mp-color-dark-borderDividerMuted);
+}
+
+/* VDataTable: divider above footer — token: color.light/dark.borderTableFooterDivider */
+.v-data-table > .v-divider {
+  opacity: 1;
+  border-top-color: var(--mp-border-table-footer-divider);
+}
+
+.v-data-table .v-data-table-footer {
+  border-top-width: 0;
+  border-top-style: none;
 }
 
 .v-table .v-table__wrapper > table > tbody > tr > td {
-  border-bottom-color: rgba(var(--v-border-color), 0.08) !important;
+  border-bottom-color: var(--mp-border-table-row);
 }
 
 .v-table .v-table__wrapper > table > thead > tr > th {
-  border-bottom-color: rgba(var(--v-border-color), 0.15) !important;
+  border-bottom-color: var(--mp-border-table-header);
 }
 
-.v-overlay__content .v-divider,
-.v-menu .v-divider {
-  opacity: 0.3;
+/* Teleported overlays are outside .v-application — use theme class + raw token vars */
+.v-overlay__content .v-divider {
+  opacity: 1;
+  border-top-color: var(--mp-color-light-borderDividerMuted);
+}
+
+.v-theme--maropostDark .v-overlay__content .v-divider {
+  border-top-color: var(--mp-color-dark-borderDividerMuted);
 }
 
 /* ─── Scrollbar Styling ─────────────────────────────────────── */

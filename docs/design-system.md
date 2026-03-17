@@ -21,6 +21,11 @@ All tokens are defined in `src/design-tokens/tokens.json` and auto-generated int
 | `background` | `#F9FAFB` | Page canvas |
 | `surface` | `#FFFFFF` | Cards, drawers, modals |
 | `border` | `#E5E7EB` | Card borders, dividers |
+| `borderSubtle` | (rgba) | Utility borders (`.border-b` / `.border-t`) |
+| `borderTableRow` | (rgba) | `v-data-table` row separators |
+| `borderTableHeader` | (rgba) | Table header bottom edge |
+| `borderTableFooterDivider` | (rgba) | Line above pagination |
+| `borderDividerMuted` | (rgba) | Card & overlay dividers |
 | `textPrimary` | `#111928` | Headings, body text |
 | `textMuted` | `#6B7280` | Descriptions, secondary text |
 

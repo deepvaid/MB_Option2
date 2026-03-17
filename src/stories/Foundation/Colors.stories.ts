@@ -1,5 +1,19 @@
 import type { Meta, StoryObj } from '@storybook/vue3'
 import { VContainer, VRow, VCol, VCard, VCardText } from 'vuetify/components'
+import {
+  mp_color_light_primary,
+  mp_color_light_primaryDarken,
+  mp_color_light_secondary,
+  mp_color_light_secondaryDarken,
+  mp_color_light_success,
+  mp_color_light_warning,
+  mp_color_light_error,
+  mp_color_light_info,
+  mp_color_light_background,
+  mp_color_light_surface,
+  mp_color_light_surfaceVariant,
+  mp_color_light_border,
+} from '@/design-tokens/generated/tokens'
 
 const meta = {
   title: 'Foundation/Colors',
@@ -62,24 +76,24 @@ export default meta
 type Story = StoryObj<typeof meta>
 
 const colorSwatches = [
-  { name: 'Primary', hex: '#0091FF', class: 'primary' },
-  { name: 'Primary Darken 1', hex: '#0073C6', class: 'primary-darken-1' },
-  { name: 'Secondary', hex: '#7E3AF2', class: 'secondary' },
-  { name: 'Secondary Darken 1', hex: '#6A2CB8', class: 'secondary-darken-1' },
+  { name: 'Primary', value: mp_color_light_primary, class: 'bg-primary' },
+  { name: 'Primary Darken 1', value: mp_color_light_primaryDarken, class: 'bg-primary-darken-1' },
+  { name: 'Secondary', value: mp_color_light_secondary, class: 'bg-secondary' },
+  { name: 'Secondary Darken 1', value: mp_color_light_secondaryDarken, class: 'bg-secondary-darken-1' },
 ]
 
 const semanticColors = [
-  { name: 'Success', hex: '#0E9F6E', class: 'success' },
-  { name: 'Warning', hex: '#D97706', class: 'warning' },
-  { name: 'Error', hex: '#E02424', class: 'error' },
-  { name: 'Info', hex: '#1A56DB', class: 'info' },
+  { name: 'Success', value: mp_color_light_success, class: 'bg-success' },
+  { name: 'Warning', value: mp_color_light_warning, class: 'bg-warning' },
+  { name: 'Error', value: mp_color_light_error, class: 'bg-error' },
+  { name: 'Info', value: mp_color_light_info, class: 'bg-info' },
 ]
 
 const surfaceColors = [
-  { name: 'Background', hex: '#F9FAFB', class: 'bg-grey-1' },
-  { name: 'Surface', hex: '#FFFFFF', class: 'bg-white' },
-  { name: 'Surface Variant', hex: '#F3F4F6', class: 'bg-grey-2' },
-  { name: 'Border', hex: '#E5E7EB', class: 'border' },
+  { name: 'Background', value: mp_color_light_background, class: 'bg-background' },
+  { name: 'Surface', value: mp_color_light_surface, class: 'bg-surface' },
+  { name: 'Surface Variant', value: mp_color_light_surfaceVariant, class: 'bg-surface-variant' },
+  { name: 'Border', value: mp_color_light_border, class: 'bg-surface' },
 ]
 
 export const BrandColors: Story = {
@@ -91,13 +105,13 @@ export const BrandColors: Story = {
         <v-row>
           <v-col v-for="color in colorSwatches" :key="color.name" cols="12" sm="6" md="3" class="mb-4">
             <v-card flat border class="overflow-hidden">
-              <div :style="{ backgroundColor: color.hex, height: '120px' }" class="d-flex align-center justify-center">
-                <span class="text-white font-weight-medium text-caption">{{ color.hex }}</span>
+              <div :class="['d-flex align-center justify-center py-10', color.class]">
+                <span class="text-white font-weight-medium text-caption">{{ color.value }}</span>
               </div>
               <v-card-text class="pa-3">
                 <p class="text-subtitle-2 font-weight-medium mb-1">{{ color.name }}</p>
                 <p class="text-caption text-medium-emphasis mb-2">{{ color.class }}</p>
-                <p class="text-caption text-disabled">{{ color.hex }}</p>
+                <p class="text-caption text-disabled">{{ color.value }}</p>
               </v-card-text>
             </v-card>
           </v-col>
@@ -119,13 +133,13 @@ export const SemanticColors: Story = {
         <v-row>
           <v-col v-for="color in semanticColors" :key="color.name" cols="12" sm="6" md="3" class="mb-4">
             <v-card flat border class="overflow-hidden">
-              <div :style="{ backgroundColor: color.hex, height: '120px' }" class="d-flex align-center justify-center">
-                <span class="text-white font-weight-medium text-caption">{{ color.hex }}</span>
+              <div :class="['d-flex align-center justify-center py-10', color.class]">
+                <span class="text-white font-weight-medium text-caption">{{ color.value }}</span>
               </div>
               <v-card-text class="pa-3">
                 <p class="text-subtitle-2 font-weight-medium mb-1">{{ color.name }}</p>
                 <p class="text-caption text-medium-emphasis mb-2">{{ color.class }}</p>
-                <p class="text-caption text-disabled">{{ color.hex }}</p>
+                <p class="text-caption text-disabled">{{ color.value }}</p>
               </v-card-text>
             </v-card>
           </v-col>
@@ -147,13 +161,16 @@ export const SurfaceColors: Story = {
         <v-row>
           <v-col v-for="color in surfaceColors" :key="color.name" cols="12" sm="6" md="3" class="mb-4">
             <v-card flat border class="overflow-hidden">
-              <div :style="{ backgroundColor: color.hex, height: '120px', border: '1px solid #E5E7EB' }" class="d-flex align-center justify-center">
-                <span class="text-caption text-medium-emphasis">{{ color.hex }}</span>
+              <div
+                :class="['d-flex align-center justify-center py-10', color.class]"
+                :style="color.name === 'Border' ? { border: '1px solid rgb(var(--v-theme-border))' } : undefined"
+              >
+                <span class="text-caption text-medium-emphasis">{{ color.value }}</span>
               </div>
               <v-card-text class="pa-3">
                 <p class="text-subtitle-2 font-weight-medium mb-1">{{ color.name }}</p>
                 <p class="text-caption text-medium-emphasis mb-2">{{ color.class }}</p>
-                <p class="text-caption text-disabled">{{ color.hex }}</p>
+                <p class="text-caption text-disabled">{{ color.value }}</p>
               </v-card-text>
             </v-card>
           </v-col>
@@ -175,7 +192,7 @@ export const OnColors: Story = {
         <v-row>
           <v-col cols="12" sm="6" md="3" class="mb-4">
             <v-card flat border class="overflow-hidden">
-              <div style="background-color: #0091FF; height: 120px;" class="d-flex align-center justify-center pa-4">
+              <div class="bg-primary d-flex align-center justify-center py-10 px-4">
                 <span class="text-on-primary text-body-1 font-weight-medium">Text on Primary</span>
               </div>
               <v-card-text class="pa-3">
@@ -186,7 +203,7 @@ export const OnColors: Story = {
           </v-col>
           <v-col cols="12" sm="6" md="3" class="mb-4">
             <v-card flat border class="overflow-hidden">
-              <div style="background-color: #7E3AF2; height: 120px;" class="d-flex align-center justify-center pa-4">
+              <div class="bg-secondary d-flex align-center justify-center py-10 px-4">
                 <span class="text-on-secondary text-body-1 font-weight-medium">Text on Secondary</span>
               </div>
               <v-card-text class="pa-3">
@@ -197,7 +214,7 @@ export const OnColors: Story = {
           </v-col>
           <v-col cols="12" sm="6" md="3" class="mb-4">
             <v-card flat border class="overflow-hidden">
-              <div style="background-color: #0E9F6E; height: 120px;" class="d-flex align-center justify-center pa-4">
+              <div class="bg-success d-flex align-center justify-center py-10 px-4">
                 <span class="text-white text-body-1 font-weight-medium">Text on Success</span>
               </div>
               <v-card-text class="pa-3">
@@ -208,7 +225,7 @@ export const OnColors: Story = {
           </v-col>
           <v-col cols="12" sm="6" md="3" class="mb-4">
             <v-card flat border class="overflow-hidden">
-              <div style="background-color: #E02424; height: 120px;" class="d-flex align-center justify-center pa-4">
+              <div class="bg-error d-flex align-center justify-center py-10 px-4">
                 <span class="text-white text-body-1 font-weight-medium">Text on Error</span>
               </div>
               <v-card-text class="pa-3">

@@ -1,0 +1,17 @@
+/**
+ * Theme-scoped aliases for borders (uses generated --mp-color-* from tokens.json).
+ * Default matches light theme; dark overrides when Vuetify switches theme.
+ */
+:root {
+  --mp-border-subtle: var(--mp-color-light-borderSubtle);
+  --mp-border-table-row: var(--mp-color-light-borderTableRow);
+  --mp-border-table-header: var(--mp-color-light-borderTableHeader);
+  --mp-border-table-footer-divider: var(--mp-color-light-borderTableFooterDivider);
+}
+
+.v-application.v-theme--maropostDark {
+  --mp-border-subtle: var(--mp-color-dark-borderSubtle);
+  --mp-border-table-row: var(--mp-color-dark-borderTableRow);
+  --mp-border-table-header: var(--mp-color-dark-borderTableHeader);
+  --mp-border-table-footer-divider: var(--mp-color-dark-borderTableFooterDivider);
+}

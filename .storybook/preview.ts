@@ -10,6 +10,8 @@ import * as components from 'vuetify/components'
 import * as directives from 'vuetify/directives'
 
 // Global styles
+import '../src/design-tokens/generated/variables.css'
+import '../src/styles/mp-theme-aliases.css'
 import '../src/styles/global.scss'
 
 // Design tokens — auto-generated from tokens.json (same source as vuetify.ts)

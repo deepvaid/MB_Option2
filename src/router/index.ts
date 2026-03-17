@@ -80,6 +80,7 @@ const routes = [
 
   // 10. Settings & User Account (all panels live inside /settings)
   { path: '/settings', name: 'Settings', component: () => import('@/views/Settings/Settings.vue') },
+  { path: '/design-system', name: 'DesignSystemDemo', component: () => import('@/views/Settings/DesignSystemDemo.vue') },
   { path: '/billing', redirect: '/settings' },
   { path: '/users', redirect: '/settings' },
   { path: '/profile', redirect: '/settings' },

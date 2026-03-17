@@ -344,14 +344,6 @@ function selectAll() {
   opacity: 0.88;
 }
 
-:deep(.v-data-table-footer) {
-  border-top: 1px solid rgba(var(--v-border-color), 0.08) !important;
-}
-
-:deep(.v-data-table > .v-divider) {
-  opacity: 0.15;
-}
-
 :deep(.v-data-table thead tr) {
   border-bottom: 1px solid rgba(var(--v-border-color), 0.15);
 }
