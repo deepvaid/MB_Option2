@@ -95,8 +95,12 @@ const activityFeed = [
       <v-col cols="12" lg="4">
         <v-card variant="flat" border rounded="xl" class="h-100 pa-5">
           <MpSectionHeader title="Recent Activity" />
-          <v-list lines="two" density="compact" class="pa-0">
-            <v-list-item v-for="(item, idx) in activityFeed" :key="idx" class="px-0 mb-2">
+          <v-list lines="two" density="compact" :border="false" class="pa-0">
+            <v-list-item
+              v-for="(item, idx) in activityFeed"
+              :key="idx"
+              class="px-5 py-3 border-b"
+            >
               <template v-slot:prepend>
                 <v-avatar :color="item.color" variant="tonal" size="36" class="mr-3">
                   <v-icon :color="item.color" size="18">{{ item.icon }}</v-icon>
@@ -119,7 +123,7 @@ const activityFeed = [
             <div class="text-h6 font-weight-medium">Top Campaigns by Revenue</div>
             <v-btn variant="text" size="small" color="primary" class="text-none" to="/campaigns">View All</v-btn>
           </div>
-          <v-list lines="two" density="compact" class="pa-0">
+          <v-list lines="two" density="compact" :border="false" class="pa-0">
             <v-list-item v-for="camp in topSendingCampaigns" :key="camp.id" class="px-5 py-3 border-b">
               <template v-slot:prepend>
                 <v-avatar color="success" variant="tonal" size="36" class="mr-3">
@@ -145,7 +149,7 @@ const activityFeed = [
             <div class="text-h6 font-weight-medium">Recent Orders</div>
             <v-btn variant="text" size="small" color="primary" class="text-none" to="/commerce/orders">View All</v-btn>
           </div>
-          <v-list lines="two" density="compact" class="pa-0">
+          <v-list lines="two" density="compact" :border="false" class="pa-0">
             <v-list-item v-for="order in recentOrders" :key="order.id" class="px-5 py-3 border-b">
               <template v-slot:prepend>
                 <v-avatar color="primary" variant="tonal" size="36" class="mr-3 font-weight-bold text-caption">{{ order.customer.avatar }}</v-avatar>
@@ -165,3 +169,4 @@ const activityFeed = [
     </v-row>
   </div>
 </template>
+

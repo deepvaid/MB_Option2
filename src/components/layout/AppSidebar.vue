@@ -1,5 +1,7 @@
 <script setup lang="ts">
 import { ref } from 'vue'
+import { useRouter } from 'vue-router'
+import maropostLogo from '@/assets/logo-svg.svg'
 
 const props = defineProps<{
   modelValue: boolean
@@ -137,6 +139,11 @@ const marketingGroups = ['Campaigns', 'Acquisition', 'Automation', 'Content']
 
 const localDrawer = ref(props.modelValue)
 const localRail = ref(props.rail)
+const router = useRouter()
+
+function goTo(route: string) {
+  router.push(route)
+}
 </script>
 
 <template>
@@ -146,26 +153,22 @@ const localRail = ref(props.rail)
     permanent
     width="260"
     class="mp-sidebar"
-    style="background: var(--mp-color-sidebar-bg);"
   >
     <!-- Logo + collapse toggle -->
-    <div class="d-flex align-center px-3 py-3" style="height: var(--mp-layout-appbarHeight);">
+    <div class="d-flex align-center px-3 py-3 sidebar-header">
       <v-btn
         icon="mdi-menu"
         variant="text"
         size="small"
         @click.stop="localRail = !localRail; emit('update:rail', localRail)"
-        style="color: var(--mp-color-sidebar-textMuted);"
-        class="mr-2 flex-shrink-0"
+        class="mr-2 flex-shrink-0 sidebar-muted"
       />
       <template v-if="!localRail">
         <span
-          class="font-weight-bold cursor-pointer d-flex align-center gap-1"
-          style="font-size: 17px; letter-spacing: -0.5px; color: var(--mp-color-sidebar-text);"
+          class="font-weight-bold cursor-pointer d-flex align-center gap-1 sidebar-logo"
           @click="$router.push('/dashboard')"
         >
-          Maropost
-          <v-chip size="x-small" color="primary" variant="flat" class="ml-1 px-1" style="font-size: 9px; height: 16px;">X</v-chip>
+          <img :src="maropostLogo" alt="Maropost" class="sidebar-brand-logo" />
         </span>
       </template>
     </div>
@@ -173,22 +176,20 @@ const localRail = ref(props.rail)
     <div class="my-1" />
 
     <!-- Full Navigation (expanded mode) -->
-    <v-list density="compact" nav class="px-2 py-1" v-if="!localRail" style="overflow-y: auto;">
+    <v-list density="compact" nav class="px-2 py-1 sidebar-scroll" v-if="!localRail">
       <template v-for="group in navGroups" :key="group.title">
         <v-list-item
           v-if="group.singleRoute"
           :to="group.singleRoute"
+          @click="goTo(group.singleRoute)"
           :prepend-icon="group.icon"
           :title="group.title"
           rounded="lg"
-          color="primary"
-          base-color="rgba(255,255,255,0.6)"
           active-class="active-nav-item"
-          class="mb-1"
-          style="color: var(--mp-color-sidebar-text);"
+          class="mb-1 sidebar-text"
         >
           <template v-slot:append v-if="group.badge">
-            <v-chip size="x-small" color="success" variant="flat" style="font-size: 9px; height: 16px; padding: 0 5px;">{{ group.badge }}</v-chip>
+            <v-chip size="x-small" color="success" variant="flat" class="sidebar-chip">{{ group.badge }}</v-chip>
           </template>
         </v-list-item>
 
@@ -199,11 +200,10 @@ const localRail = ref(props.rail)
               :prepend-icon="group.icon"
               :title="group.title"
               rounded="lg"
-              base-color="rgba(255,255,255,0.6)"
-              style="color: var(--mp-color-sidebar-text);"
+              class="sidebar-text"
             >
               <template v-slot:append="{ isActive }" v-if="group.badge">
-                <v-chip size="x-small" color="success" variant="flat" style="font-size: 9px; height: 16px; padding: 0 5px;" class="mr-1">{{ group.badge }}</v-chip>
+                <v-chip size="x-small" color="success" variant="flat" class="mr-1 sidebar-chip">{{ group.badge }}</v-chip>
                 <v-icon>{{ isActive ? 'mdi-chevron-up' : 'mdi-chevron-down' }}</v-icon>
               </template>
             </v-list-item>
@@ -213,19 +213,17 @@ const localRail = ref(props.rail)
           <template v-if="group.title === 'Marketing'">
             <div v-for="subGroup in marketingGroups" :key="subGroup">
               <div class="px-4 pt-2 pb-1">
-                <span class="text-uppercase font-weight-bold" style="font-size: var(--mp-typography-fontSize-xs); color: var(--mp-color-sidebar-textFaint); letter-spacing: 0.08em;">{{ subGroup }}</span>
+                <span class="text-uppercase font-weight-bold sidebar-subgroup">{{ subGroup }}</span>
               </div>
               <v-list-item
                 v-for="item in group.items.filter(i => i.group === subGroup)"
                 :key="item.title"
                 :title="item.title"
                 :to="item.route"
+                @click="goTo(item.route)"
                 rounded="lg"
-                color="primary"
-                base-color="rgba(255,255,255,0.5)"
                 exact
-                class="mb-0.5"
-                style="padding-left: var(--mp-spacing-7);"
+                class="mb-0.5 sidebar-child-item sidebar-text"
               />
             </div>
           </template>
@@ -237,11 +235,10 @@ const localRail = ref(props.rail)
               :key="item.title"
               :title="item.title"
               :to="item.route"
+              @click="goTo(item.route)"
               rounded="lg"
-              color="primary"
-              base-color="rgba(255,255,255,0.5)"
               exact
-              class="mb-0.5"
+              class="mb-0.5 sidebar-child-item sidebar-text"
             />
           </template>
         </v-list-group>
@@ -256,17 +253,16 @@ const localRail = ref(props.rail)
             v-bind="props"
             :prepend-icon="group.icon"
             :to="group.singleRoute"
+            @click="group.singleRoute && goTo(group.singleRoute)"
             rounded="lg"
-            base-color="rgba(255,255,255,0.5)"
-            color="primary"
             class="mb-1 justify-center"
           />
         </template>
-        <v-card width="220" elevation="8" rounded="xl" style="background: var(--mp-color-sidebar-surface);">
+        <v-card width="220" flat border rounded="xl" class="sidebar-surface">
           <v-list density="compact" class="bg-transparent py-1">
-            <v-list-subheader style="color: var(--mp-color-sidebar-textMuted); font-size: var(--mp-typography-fontSize-xs);">{{ group.title }}</v-list-subheader>
+            <v-list-subheader class="sidebar-subheader">{{ group.title }}</v-list-subheader>
             <template v-if="group.singleRoute">
-              <v-list-item :to="group.singleRoute" :title="group.title" style="color: var(--mp-color-sidebar-text);" rounded="lg" />
+              <v-list-item :to="group.singleRoute" :title="group.title" @click="goTo(group.singleRoute)" class="sidebar-text" rounded="lg" />
             </template>
             <template v-else>
               <v-list-item
@@ -274,8 +270,8 @@ const localRail = ref(props.rail)
                 :key="item.title"
                 :title="item.title"
                 :to="item.route"
-                style="color: var(--mp-color-sidebar-text);"
-                color="primary"
+                @click="goTo(item.route)"
+                class="sidebar-text"
                 rounded="lg"
                 exact
               />
@@ -289,30 +285,84 @@ const localRail = ref(props.rail)
     <template v-slot:append>
       <div class="my-1" />
       <div class="pa-2" v-if="!localRail">
-        <v-btn block variant="text" prepend-icon="mdi-help-circle-outline" class="text-none justify-start" style="color: var(--mp-color-sidebar-textFaint); font-size: var(--mp-typography-fontSize-body);">
+        <v-btn block variant="text" prepend-icon="mdi-help-circle-outline" class="text-none justify-start sidebar-help">
           Help & Documentation
         </v-btn>
       </div>
       <div class="d-flex justify-center pa-2" v-else>
-        <v-btn icon="mdi-help-circle-outline" variant="text" size="small" style="color: var(--mp-color-sidebar-textFaint);" />
+        <v-btn icon="mdi-help-circle-outline" variant="text" size="small" class="sidebar-muted" />
       </div>
     </template>
   </v-navigation-drawer>
 </template>
 
-<style scoped>
+<style scoped lang="scss">
+.mp-sidebar {
+  background: var(--mp-color-sidebar-bg);
+}
+.sidebar-header {
+  height: var(--mp-layout-appbarHeight);
+}
+.sidebar-scroll {
+  overflow-y: auto;
+}
+.sidebar-muted {
+  color: var(--mp-color-sidebar-textMuted);
+}
+.sidebar-text {
+  color: var(--mp-color-sidebar-text);
+}
+.sidebar-logo {
+  min-height: 24px;
+}
+.sidebar-brand-logo {
+  height: 24px;
+  width: auto;
+  display: block;
+}
+.sidebar-chip {
+  font-size: 9px;
+  height: 16px;
+  padding: 0 5px;
+}
+.sidebar-subgroup {
+  font-size: var(--mp-typography-fontSize-xs);
+  color: var(--mp-color-sidebar-textFaint);
+  letter-spacing: 0.08em;
+}
+.sidebar-child-item {
+  padding-left: var(--mp-spacing-7);
+}
+.sidebar-surface {
+  background: var(--mp-color-sidebar-surface);
+}
+.sidebar-subheader {
+  color: var(--mp-color-sidebar-textMuted);
+  font-size: var(--mp-typography-fontSize-xs);
+}
+.sidebar-help {
+  color: var(--mp-color-sidebar-textFaint);
+  font-size: var(--mp-typography-fontSize-body);
+}
 :deep(.active-nav-item) {
-  background: rgba(var(--v-theme-primary), 0.15) !important;
-  color: rgb(var(--v-theme-primary)) !important;
+  background: rgba(var(--v-theme-primary), 0.15);
+  color: rgb(var(--v-theme-primary));
   font-weight: 600;
 }
 :deep(.v-list-group__items .v-list-item--active) {
-  background: rgba(var(--v-theme-primary), 0.15) !important;
-  color: rgb(var(--v-theme-primary)) !important;
+  background: rgba(var(--v-theme-primary), 0.15);
+  color: rgb(var(--v-theme-primary));
   font-weight: 600;
 }
 :deep(.v-list-group__items .v-list-item--active .v-list-item-title) {
-  color: rgb(var(--v-theme-primary)) !important;
+  color: rgb(var(--v-theme-primary));
   font-weight: 600;
+}
+:deep(.mp-sidebar .v-list-item__prepend .v-icon),
+:deep(.mp-sidebar .v-list-item-title) {
+  color: var(--mp-color-sidebar-text);
+}
+:deep(.mp-sidebar .v-list-item-subtitle) {
+  color: var(--mp-color-sidebar-textMuted);
 }
 </style>

@@ -29,7 +29,7 @@ function toggleTheme() {
         prepend-inner-icon="mdi-magnify"
         placeholder="Search campaigns, contacts, orders..."
         rounded="pill"
-        style="max-width: var(--mp-layout-searchMaxWidth);"
+        class="appbar-search"
         bg-color="surface-variant"
       />
 
@@ -37,40 +37,40 @@ function toggleTheme() {
       <v-menu location="bottom start" offset="8">
         <template v-slot:activator="{ props }">
           <div v-bind="props" class="d-flex align-center gap-2 cursor-pointer pa-1 pl-2 rounded-lg account-switcher-trigger">
-            <v-avatar color="primary" size="26" style="font-size: var(--mp-typography-fontSize-xs); font-weight: var(--mp-typography-fontWeight-bold); color: white;">{{ userInitials }}</v-avatar>
-            <div class="d-none d-md-block" style="line-height: 1.2;">
-              <div class="text-caption font-weight-medium text-truncate" style="max-width: 160px;">{{ accountName }}</div>
-              <div class="text-caption text-medium-emphasis" style="font-size: var(--mp-typography-fontSize-xs);">{{ userName }}</div>
+            <v-avatar color="primary" size="26" class="appbar-avatar-sm">{{ userInitials }}</v-avatar>
+            <div class="d-none d-md-block account-summary">
+              <div class="text-caption font-weight-medium text-truncate account-name">{{ accountName }}</div>
+              <div class="text-caption text-medium-emphasis account-user">{{ userName }}</div>
             </div>
             <v-icon size="14" color="medium-emphasis">mdi-chevron-down</v-icon>
           </div>
         </template>
-        <v-card width="320" rounded="xl" elevation="8" class="account-switcher-card">
+        <v-card width="320" rounded="xl" flat border class="account-switcher-card">
           <!-- Current account header -->
           <div class="account-menu-header d-flex align-center gap-3">
-            <v-avatar color="primary" size="40" style="font-weight: var(--mp-typography-fontWeight-bold); color: white; flex-shrink: 0;">{{ userInitials }}</v-avatar>
-            <div style="min-width: 0;">
+            <v-avatar color="primary" size="40" class="appbar-avatar-md">{{ userInitials }}</v-avatar>
+            <div class="account-min-width">
               <div class="font-weight-semibold text-body-2 text-truncate">{{ accountName }}</div>
               <div class="text-caption text-medium-emphasis">{{ userName }}</div>
             </div>
           </div>
           <v-divider />
-          <v-list density="compact" class="pa-3">
-            <v-list-subheader class="text-uppercase mb-1" style="font-size: 11px; letter-spacing: 0.05em;">Switch Account</v-list-subheader>
+          <v-list density="compact" :border="false" class="pa-3">
+            <v-list-subheader class="text-uppercase mb-1 appbar-subheader">Switch Account</v-list-subheader>
             <v-list-item rounded="lg" class="mb-1 account-list-item" active active-color="primary">
               <template v-slot:prepend>
-                <v-avatar size="28" color="primary" variant="tonal" class="mr-3" style="font-size:11px; font-weight:700;">MP</v-avatar>
+                <v-avatar size="28" color="primary" variant="tonal" class="mr-3 appbar-avatar-initials">MP</v-avatar>
               </template>
-              <div class="text-body-2 font-weight-medium" style="white-space:normal; line-height:1.3;">MMC-MSC-MCC Scooter Village</div>
+              <div class="text-body-2 font-weight-medium account-item-text">MMC-MSC-MCC Scooter Village</div>
               <template v-slot:append>
                 <v-icon size="16" color="primary">mdi-check-circle</v-icon>
               </template>
             </v-list-item>
             <v-list-item rounded="lg" class="account-list-item">
               <template v-slot:prepend>
-                <v-avatar size="28" color="secondary" variant="tonal" class="mr-3" style="font-size:11px; font-weight:700;">MD</v-avatar>
+                <v-avatar size="28" color="secondary" variant="tonal" class="mr-3 appbar-avatar-initials">MD</v-avatar>
               </template>
-              <div class="text-body-2" style="white-space:normal; line-height:1.3;">Maropost Demo Store</div>
+              <div class="text-body-2 account-item-text">Maropost Demo Store</div>
             </v-list-item>
           </v-list>
         </v-card>
@@ -100,7 +100,7 @@ function toggleTheme() {
       <!-- Notification bell -->
       <v-btn variant="text" size="small" icon class="position-relative">
         <v-icon>mdi-bell-outline</v-icon>
-        <v-badge v-if="notificationCount > 0" :content="notificationCount" color="error" floating style="font-size: 10px;" />
+        <v-badge v-if="notificationCount > 0" :content="notificationCount" color="error" floating class="notification-badge" />
       </v-btn>
 
       <!-- Theme toggle -->
@@ -116,7 +116,7 @@ function toggleTheme() {
       <v-menu location="bottom end" offset="8">
         <template v-slot:activator="{ props }">
           <div v-bind="props" class="d-flex align-center gap-2 cursor-pointer pa-1 rounded-lg user-menu-trigger">
-            <v-avatar color="primary" size="30" class="user-avatar-ring" style="font-size: var(--mp-typography-fontSize-xs); font-weight: var(--mp-typography-fontWeight-bold); color: white;">{{ userInitials }}</v-avatar>
+            <v-avatar color="primary" size="30" class="user-avatar-ring appbar-avatar-sm">{{ userInitials }}</v-avatar>
             <span class="text-body-2 font-weight-medium d-none d-sm-block">{{ userName }}</span>
             <v-icon size="16" color="medium-emphasis">mdi-chevron-down</v-icon>
           </div>
@@ -124,7 +124,7 @@ function toggleTheme() {
         <v-card min-width="280" rounded="xl" elevation="0" class="user-menu-card">
           <!-- User header -->
           <div class="user-menu-header d-flex align-center gap-3">
-            <v-avatar color="primary" size="44" style="font-weight: var(--mp-typography-fontWeight-bold); color: white; flex-shrink: 0;">{{ userInitials }}</v-avatar>
+            <v-avatar color="primary" size="44" class="appbar-avatar-lg">{{ userInitials }}</v-avatar>
             <div>
               <div class="font-weight-bold text-body-2">{{ userName }}</div>
               <div class="text-caption text-medium-emphasis">{{ userEmail }}</div>
@@ -135,16 +135,16 @@ function toggleTheme() {
           <v-divider class="mx-4" />
 
           <!-- Personal -->
-          <v-list density="compact" class="px-3 pt-3 pb-1">
-            <v-list-subheader class="text-uppercase font-weight-bold" style="font-size: var(--mp-typography-fontSize-xs); letter-spacing: 0.05em;">Personal</v-list-subheader>
+          <v-list density="compact" :border="false" class="px-3 pt-3 pb-1">
+            <v-list-subheader class="text-uppercase font-weight-bold appbar-subheader">Personal</v-list-subheader>
             <v-list-item prepend-icon="mdi-account-outline" title="My Profile" subtitle="View and edit your info" to="/settings" rounded="lg" class="mb-1" />
           </v-list>
 
           <v-divider class="mx-4" />
 
           <!-- Account -->
-          <v-list density="compact" class="px-3 pt-3 pb-1">
-            <v-list-subheader class="text-uppercase font-weight-bold" style="font-size: var(--mp-typography-fontSize-xs); letter-spacing: 0.05em;">Account</v-list-subheader>
+          <v-list density="compact" :border="false" class="px-3 pt-3 pb-1">
+            <v-list-subheader class="text-uppercase font-weight-bold appbar-subheader">Account</v-list-subheader>
             <v-list-item prepend-icon="mdi-cog-outline" title="Account Settings" subtitle="Company, users, permissions" to="/settings" rounded="lg" class="mb-1" />
             <v-list-item prepend-icon="mdi-credit-card-outline" title="Billing" subtitle="Plan, usage, invoices" to="/settings" rounded="lg" class="mb-1" />
           </v-list>
@@ -152,7 +152,7 @@ function toggleTheme() {
           <v-divider class="mx-4" />
 
           <!-- Sign Out -->
-          <v-list density="compact" class="px-3 py-2">
+          <v-list density="compact" :border="false" class="px-3 py-2">
             <v-list-item prepend-icon="mdi-logout" title="Sign Out" rounded="lg" class="sign-out-item" color="error" />
           </v-list>
         </v-card>
@@ -176,7 +176,7 @@ function toggleTheme() {
   box-shadow: 0 0 0 2px rgba(var(--v-theme-primary), 0.35);
 }
 .user-menu-card {
-  box-shadow: $mp-shadow-lg !important;
+  box-shadow: $mp-shadow-md;
 }
 .user-menu-header {
   background: rgba(var(--v-theme-primary), 0.03);
@@ -186,7 +186,7 @@ function toggleTheme() {
   transition: background $mp-transition-fast;
 }
 .sign-out-item:hover {
-  background: rgba(var(--v-theme-error), 0.06) !important;
+  background: rgba(var(--v-theme-error), 0.06);
 }
 .account-switcher-trigger {
   transition: background $mp-transition-fast;
@@ -195,7 +195,7 @@ function toggleTheme() {
   background: rgb(var(--v-theme-surface-variant));
 }
 .account-switcher-card {
-  box-shadow: $mp-shadow-lg !important;
+  box-shadow: $mp-shadow-md;
 }
 .account-menu-header {
   padding: $mp-space-5;
@@ -205,6 +205,52 @@ function toggleTheme() {
   transition: all $mp-transition-base;
 }
 .copilot-trigger:hover {
-  color: rgb(var(--v-theme-warning)) !important;
+  color: rgb(var(--v-theme-warning));
+}
+
+.appbar-search {
+  max-width: var(--mp-layout-searchMaxWidth);
+}
+.appbar-avatar-sm {
+  font-size: var(--mp-typography-fontSize-xs);
+  font-weight: var(--mp-typography-fontWeight-bold);
+  color: rgb(var(--v-theme-on-primary));
+}
+.appbar-avatar-md {
+  font-weight: var(--mp-typography-fontWeight-bold);
+  color: rgb(var(--v-theme-on-primary));
+  flex-shrink: 0;
+}
+.appbar-avatar-lg {
+  font-weight: var(--mp-typography-fontWeight-bold);
+  color: rgb(var(--v-theme-on-primary));
+  flex-shrink: 0;
+}
+.account-summary {
+  line-height: 1.2;
+}
+.account-name {
+  max-width: 160px;
+}
+.account-user {
+  font-size: var(--mp-typography-fontSize-xs);
+}
+.appbar-subheader {
+  font-size: var(--mp-typography-fontSize-xs);
+  letter-spacing: 0.05em;
+}
+.appbar-avatar-initials {
+  font-size: var(--mp-typography-fontSize-xs);
+  font-weight: var(--mp-typography-fontWeight-bold);
+}
+.account-item-text {
+  white-space: normal;
+  line-height: 1.3;
+}
+.account-min-width {
+  min-width: 0;
+}
+.notification-badge {
+  font-size: var(--mp-typography-fontSize-xs);
 }
 </style>

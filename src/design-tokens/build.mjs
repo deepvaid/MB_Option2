@@ -46,26 +46,72 @@ function toTsName(path) {
   return 'mp_' + path.map(p => p.replace(/-/g, '_')).join('_')
 }
 
+function parseAlias(value) {
+  if (typeof value !== 'string') return null
+  const match = value.match(/^\{([^}]+)\}$/)
+  if (!match) return null
+  return match[1].split('.')
+}
+
+function createTokenIndex(tokens) {
+  const index = new Map()
+  for (const token of tokens) {
+    index.set(token.path.join('.'), token)
+  }
+  return index
+}
+
+function resolveAliasValue(token, tokenIndex, stack = new Set()) {
+  const key = token.path.join('.')
+  if (stack.has(key)) {
+    throw new Error(`Circular token reference detected: ${[...stack, key].join(' -> ')}`)
+  }
+
+  const aliasPath = parseAlias(token.value)
+  if (!aliasPath) return token.value
+
+  const aliasKey = aliasPath.join('.')
+  const targetToken = tokenIndex.get(aliasKey)
+  if (!targetToken) {
+    throw new Error(`Unknown token reference: {${aliasKey}} in ${key}`)
+  }
+
+  stack.add(key)
+  const resolved = resolveAliasValue(targetToken, tokenIndex, stack)
+  stack.delete(key)
+  return resolved
+}
+
 function generateScss(tokens) {
   const header = '// Auto-generated from tokens.json — do not edit\n\n'
-  const lines = tokens.map(t => `${toScssName(t.path)}: ${t.value};`)
+  const lines = tokens.map(t => {
+    const aliasPath = parseAlias(t.value)
+    const value = aliasPath ? toScssName(aliasPath) : t.value
+    return `${toScssName(t.path)}: ${value};`
+  })
   return header + lines.join('\n') + '\n'
 }
 
 function generateCss(tokens) {
   const header = '/* Auto-generated from tokens.json — do not edit */\n\n:root {\n'
-  const lines = tokens.map(t => `  ${toCssName(t.path)}: ${t.value};`)
+  const lines = tokens.map(t => {
+    const aliasPath = parseAlias(t.value)
+    const value = aliasPath ? `var(${toCssName(aliasPath)})` : t.value
+    return `  ${toCssName(t.path)}: ${value};`
+  })
   return header + lines.join('\n') + '\n}\n'
 }
 
 function generateTs(tokens) {
+  const tokenIndex = createTokenIndex(tokens)
   const header = '// Auto-generated from tokens.json — do not edit\n\n'
   const lines = tokens.map(t => {
-    if (typeof t.value === 'number') {
-      return `export const ${toTsName(t.path)} = ${t.value}`
+    const resolvedValue = resolveAliasValue(t, tokenIndex)
+    if (typeof resolvedValue === 'number') {
+      return `export const ${toTsName(t.path)} = ${resolvedValue}`
     }
     // Escape single quotes inside values, or use backticks for safety
-    const escaped = String(t.value).replace(/\\/g, '\\\\').replace(/`/g, '\\`').replace(/\$/g, '\\$')
+    const escaped = String(resolvedValue).replace(/\\/g, '\\\\').replace(/`/g, '\\`').replace(/\$/g, '\\$')
     return `export const ${toTsName(t.path)} = \`${escaped}\``
   })
   return header + lines.join('\n') + '\n'
@@ -133,6 +179,63 @@ function generateTokensStudio(raw) {
     for (const [key, val] of Object.entries(raw.typography.lineHeight)) {
       if (key.startsWith('$')) continue
       out.global.lineHeight[key] = { value: val.$value, type: 'lineHeights', description: `typography.lineHeight.${key}` }
+    }
+  }
+  if (raw.typography?.fontFamily) {
+    out.global.fontFamily = {}
+    for (const [key, val] of Object.entries(raw.typography.fontFamily)) {
+      if (key.startsWith('$')) continue
+      out.global.fontFamily[key] = { value: val.$value, type: 'fontFamilies', description: `typography.fontFamily.${key}` }
+    }
+  }
+
+  // Component tokens — button + card radii
+  if (raw.component?.button?.radius) {
+    out.global['component-button-radius'] = {}
+    for (const [key, val] of Object.entries(raw.component.button.radius)) {
+      if (key.startsWith('$')) continue
+      out.global['component-button-radius'][key] = {
+        value: val.$value,
+        type: 'borderRadius',
+        description: `component.button.radius.${key}`
+      }
+    }
+  }
+  if (raw.component?.button?.typography) {
+    out.global['component-button-typography'] = {}
+    for (const [key, val] of Object.entries(raw.component.button.typography)) {
+      if (key.startsWith('$')) continue
+      const type =
+        key === 'fontSize' ? 'fontSizes'
+        : key === 'fontWeight' ? 'fontWeights'
+        : 'typography'
+      out.global['component-button-typography'][key] = {
+        value: val.$value,
+        type,
+        description: `component.button.typography.${key}`
+      }
+    }
+  }
+  if (raw.component?.input?.radius) {
+    out.global['component-input-radius'] = {}
+    for (const [key, val] of Object.entries(raw.component.input.radius)) {
+      if (key.startsWith('$')) continue
+      out.global['component-input-radius'][key] = {
+        value: val.$value,
+        type: 'borderRadius',
+        description: `component.input.radius.${key}`
+      }
+    }
+  }
+  if (raw.component?.card?.radius) {
+    out.global['component-card-radius'] = {}
+    for (const [key, val] of Object.entries(raw.component.card.radius)) {
+      if (key.startsWith('$')) continue
+      out.global['component-card-radius'][key] = {
+        value: val.$value,
+        type: 'borderRadius',
+        description: `component.card.radius.${key}`
+      }
     }
   }
 
