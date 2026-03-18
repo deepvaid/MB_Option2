@@ -1,0 +1,74 @@
+name: Token Sync Pipeline
+
+on:
+  push:
+    branches: ['tokens/studio-sync']
+    paths: ['src/design-tokens/tokens.json']
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+
+concurrency:
+  group: token-sync-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build-and-pr:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout tokens/studio-sync
+        uses: actions/checkout@v4
+        with:
+          ref: tokens/studio-sync
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10.28.0
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --no-frozen-lockfile
+
+      - name: Build design tokens
+        run: pnpm tokens:build
+
+      - name: Generate Tokens Studio export
+        run: pnpm tokens:push-figma
+
+      - name: Commit generated files
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: "[chore]: auto-regenerate design tokens from Figma"
+          file_pattern: "src/design-tokens/generated/* design-kit/figma-export/tokens-studio.json"
+
+      - name: Create PR to master
+        uses: peter-evans/create-pull-request@v6
+        with:
+          base: master
+          branch: tokens/studio-sync
+          title: "[tokens]: design token update from Figma"
+          body: |
+            ## Token Update from Figma
+
+            Auto-generated from Token Studio push to `tokens/studio-sync`.
+
+            **Changed file:** `src/design-tokens/tokens.json`
+
+            **Review checklist:**
+            - [ ] Token values look correct
+            - [ ] Generated SCSS/CSS/TS files are consistent
+            - [ ] No unintended color or spacing regressions
+
+            ---
+            *This PR was auto-created by the token sync pipeline.*
+          labels: "tokens,design-system"

@@ -163,14 +163,15 @@ function generateTokensStudio(raw) {
     }
   }
 
-  // Colors — Light, Dark, Sidebar
+  // Colors — separate token sets for Light, Dark, Sidebar (Supernova-compatible)
+  const colorSetMap = { light: 'Colors/Light', dark: 'Colors/Dark', sidebar: 'Colors/Sidebar' }
   for (const theme of ['light', 'dark', 'sidebar']) {
     if (!raw.color?.[theme]) continue
-    const groupKey = `color-${theme}`
-    out.global[groupKey] = {}
+    const setName = colorSetMap[theme]
+    out[setName] = {}
     for (const [key, val] of Object.entries(raw.color[theme])) {
       if (key.startsWith('$')) continue
-      out.global[groupKey][key] = { value: val.$value, type: 'color', description: `color.${theme}.${key}` }
+      out[setName][key] = { value: val.$value, type: 'color', description: `color.${theme}.${key}` }
     }
   }
 
@@ -263,9 +264,35 @@ function generateTokensStudio(raw) {
     }
   }
 
-  // Tokens Studio metadata
-  out.$themes = []
-  out.$metadata = { tokenSetOrder: ['global'] }
+  // Tokens Studio metadata — list all token sets for Supernova mapping
+  out.$themes = [
+    {
+      id: 'maropost-light',
+      name: 'Light',
+      group: 'Maropost',
+      selectedTokenSets: {
+        'global': 'enabled',
+        'Colors/Light': 'enabled',
+      }
+    },
+    {
+      id: 'maropost-dark',
+      name: 'Dark',
+      group: 'Maropost',
+      selectedTokenSets: {
+        'global': 'enabled',
+        'Colors/Dark': 'enabled',
+      }
+    }
+  ]
+  out.$metadata = {
+    tokenSetOrder: [
+      'global',
+      'Colors/Light',
+      'Colors/Dark',
+      'Colors/Sidebar',
+    ]
+  }
 
   return out
 }

@@ -18,7 +18,12 @@
     "design-kit:push-connect": "npx @figma/code-connect publish --token $FIGMA_TOKEN",
     "design-kit:push-variables": "node design-kit/scripts/push-variables.mjs",
     "tokens:sync-figma": "node design-kit/scripts/sync-from-figma.mjs && npm run tokens:build",
-    "tokens:push-figma": "node src/design-tokens/build.mjs --push-figma"
+    "tokens:push-figma": "node src/design-tokens/build.mjs --push-figma",
+    "supernova:info": "node scripts/supernova-sync.mjs --info",
+    "supernova:sync": "node scripts/supernova-sync.mjs",
+    "supernova:sync:tokens": "node scripts/supernova-sync.mjs --tokens",
+    "supernova:sync:storybook": "node scripts/supernova-sync.mjs --storybook",
+    "supernova:storybook:sync": "npx @supernovaio/cli sync-storybook --storybookPath ./dist-storybook"
   },
   "dependencies": {
     "@mdi/font": "^7.4.47",
