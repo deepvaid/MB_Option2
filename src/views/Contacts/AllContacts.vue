@@ -10,7 +10,6 @@ import MpDataTableToolbar from '@/components/MpDataTableToolbar.vue'
 const router = useRouter()
 const store = useContactsStore()
 const search = ref('')
-const searchActive = ref(false)
 const selected = ref<number[]>([])
 
 // Quick-Add drawer
