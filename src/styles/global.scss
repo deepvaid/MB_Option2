@@ -227,3 +227,26 @@ tr:hover .action-btns {
     border-bottom-left-radius: 0 !important;
   }
 }
+
+// ─── Sidebar border reset ──────────────────────────────────────────────────
+// VList has border:true globally, which adds an unwanted border inside the sidebar.
+.mp-sidebar .v-list {
+  border: none !important;
+  box-shadow: none !important;
+}
+
+// ─── Sidebar icon colour fix ───────────────────────────────────────────────
+// Vuetify applies the light-theme colour (rgba 0,0,0,0.87) to icons inside
+// the navigation drawer because the component inherits the app theme.
+// Override here globally so rail-mode icons are visible on the dark sidebar.
+.mp-sidebar .v-icon {
+  color: var(--mp-color-sidebar-text) !important;
+  opacity: 1 !important;
+  font-size: 20px;
+  -webkit-text-stroke: 0.5px var(--mp-color-sidebar-bg);
+}
+
+// Popover list text — match sidebar font-size
+.rail-popover .v-list-item-title {
+  font-size: 13px !important;
+}

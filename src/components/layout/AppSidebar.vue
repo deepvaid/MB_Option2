@@ -60,7 +60,7 @@ const navGroups: NavGroup[] = [
   },
   {
     title: 'Products',
-    icon: 'mdi-package-variant-closed',
+    icon: 'mdi-package-variant',
     items: [
       { title: 'Products List',          route: '/commerce/products' },
       { title: 'Inventory',              route: '/commerce/inventory' },
@@ -151,7 +151,9 @@ function goTo(route: string) {
     v-model="localDrawer"
     :rail="localRail"
     permanent
+    :mobile-breakpoint="0"
     width="260"
+    theme="maropostDark"
     class="mp-sidebar"
   >
     <!-- Logo + collapse toggle -->
@@ -246,23 +248,25 @@ function goTo(route: string) {
     </v-list>
 
     <!-- Rail Mode Icons Only -->
-    <v-list density="compact" nav class="px-1 py-1" v-else>
+    <div class="d-flex flex-column align-center px-1 py-1 rail-icon-list" v-else>
       <v-menu v-for="group in navGroups" :key="group.title" location="end" open-on-hover offset="8">
         <template v-slot:activator="{ props }">
-          <v-list-item
+          <v-btn
             v-bind="props"
-            :prepend-icon="group.icon"
+            :icon="group.icon"
+            variant="text"
+            size="40"
             :to="group.singleRoute"
             @click="group.singleRoute && goTo(group.singleRoute)"
             rounded="lg"
-            class="mb-1 justify-center"
+            class="mb-1 sidebar-text rail-icon-btn"
           />
         </template>
-        <v-card width="220" flat border rounded="xl" class="sidebar-surface">
+        <v-card width="220" flat border rounded="xl" class="sidebar-surface rail-popover">
           <v-list density="compact" class="bg-transparent py-1">
             <v-list-subheader class="sidebar-subheader">{{ group.title }}</v-list-subheader>
             <template v-if="group.singleRoute">
-              <v-list-item :to="group.singleRoute" :title="group.title" @click="goTo(group.singleRoute)" class="sidebar-text" rounded="lg" />
+              <v-list-item :to="group.singleRoute" :title="group.title" @click="goTo(group.singleRoute)" class="sidebar-text rail-popover-item" rounded="lg" slim />
             </template>
             <template v-else>
               <v-list-item
@@ -271,15 +275,16 @@ function goTo(route: string) {
                 :title="item.title"
                 :to="item.route"
                 @click="goTo(item.route)"
-                class="sidebar-text"
+                class="sidebar-text rail-popover-item"
                 rounded="lg"
+                slim
                 exact
               />
             </template>
           </v-list>
         </v-card>
       </v-menu>
-    </v-list>
+    </div>
 
     <!-- Bottom: Help -->
     <template v-slot:append>
@@ -336,6 +341,16 @@ function goTo(route: string) {
 .sidebar-surface {
   background: var(--mp-color-sidebar-surface);
 }
+.rail-icon-list {
+  overflow-y: auto;
+}
+.rail-icon-btn {
+  color: var(--mp-color-sidebar-text) !important;
+}
+.rail-popover-item {
+  font-size: var(--mp-typography-fontSize-sm);
+  min-height: 32px;
+}
 .sidebar-subheader {
   color: var(--mp-color-sidebar-textMuted);
   font-size: var(--mp-typography-fontSize-xs);
@@ -358,11 +373,11 @@ function goTo(route: string) {
   color: rgb(var(--v-theme-primary));
   font-weight: 600;
 }
-:deep(.mp-sidebar .v-list-item__prepend .v-icon),
-:deep(.mp-sidebar .v-list-item-title) {
+:deep(.v-list-item__prepend .v-icon),
+:deep(.v-list-item-title) {
   color: var(--mp-color-sidebar-text);
 }
-:deep(.mp-sidebar .v-list-item-subtitle) {
+:deep(.v-list-item-subtitle) {
   color: var(--mp-color-sidebar-textMuted);
 }
 </style>

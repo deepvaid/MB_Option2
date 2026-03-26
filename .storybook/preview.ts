@@ -167,7 +167,23 @@ const preview: Preview = {
   ],
   parameters: {
     layout: 'fullscreen',
-    backgrounds: { disable: true }, // Vuetify handles backgrounds
+    backgrounds: { disable: true },
+    options: {
+      storySort: {
+        order: [
+          'Foundation', ['Colors', 'Typography', 'Spacing & Layout', 'Design System Demo'],
+          'Base',
+          'Layout',
+          'Data Display',
+          'Navigation',
+          'Feedback',
+          'Overlays',
+          'Copilot',
+          'AI',
+          '*',
+        ],
+      },
+    },
   },
 }
 
