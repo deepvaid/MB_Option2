@@ -7,7 +7,7 @@ defineProps<{
 </script>
 
 <template>
-  <div class="mp-page-header mb-6">
+  <div class="mp-page-header mb-8">
     <!-- Breadcrumbs -->
     <nav v-if="breadcrumbs?.length" class="mp-breadcrumbs d-flex align-center gap-1 mb-3">
       <template v-for="(crumb, i) in breadcrumbs" :key="i">
@@ -25,12 +25,12 @@ defineProps<{
     </nav>
 
     <!-- Header row -->
-    <div class="d-flex align-start justify-space-between pb-5 border-b">
-      <div>
-        <h1 class="mp-page-title font-weight-bold">{{ title }}</h1>
-        <p v-if="subtitle" class="text-medium-emphasis text-body-2 mb-0 mt-1">{{ subtitle }}</p>
+    <div class="mp-page-header__body d-flex align-start justify-space-between pb-5">
+      <div class="mp-page-header__copy">
+        <h1 class="mp-page-title font-weight-bold mb-0">{{ title }}</h1>
+        <p v-if="subtitle" class="mp-page-subtitle text-medium-emphasis text-body-2 mb-0 mt-2">{{ subtitle }}</p>
       </div>
-      <div v-if="$slots.actions" class="d-flex gap-2 align-center flex-shrink-0" style="margin-top: 2px;">
+      <div v-if="$slots.actions" class="mp-page-header__actions d-flex gap-2 align-center flex-shrink-0">
         <slot name="actions" />
       </div>
     </div>
@@ -39,20 +39,38 @@ defineProps<{
   <slot name="tabs" />
 </template>
 
-<style scoped>
+<style scoped lang="scss">
 .mp-page-title {
-  font-size: $mp-typography-fontSize-2xl;
-  letter-spacing: -0.4px;
+  font-size: clamp(2.1rem, 3vw, 2.7rem);
+  letter-spacing: -0.045em;
   line-height: $mp-typography-lineHeight-tight;
 }
 
+.mp-page-subtitle {
+  max-width: 760px;
+  line-height: 1.6;
+}
+
+.mp-page-header__body {
+  border-bottom: 1px solid var(--mp-border-subtle);
+  padding-bottom: 28px;
+}
+
+.mp-page-header__copy {
+  min-width: 0;
+  max-width: 780px;
+}
+
+.mp-page-header__actions {
+  padding-top: 6px;
+}
+
 .mp-breadcrumb-link {
-  color: rgb(var(--v-theme-on-surface));
-  opacity: 0.6;
-  transition: opacity $mp-transition-fast;
+  color: rgba(var(--v-theme-on-surface), 0.56);
+  transition: color $mp-transition-fast;
 }
 .mp-breadcrumb-link:hover {
-  opacity: 1;
+  color: rgb(var(--v-theme-secondary));
   text-decoration: underline !important;
 }
 

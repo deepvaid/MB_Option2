@@ -10,5 +10,5 @@
     "resolveJsonModule": true,
     "types": ["node"]
   },
-  "exclude": ["node_modules", "artifacts", "apps/storybook/storybook-static"]
+  "exclude": ["node_modules", "artifacts", "dist-storybook"]
 }

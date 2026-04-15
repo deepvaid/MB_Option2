@@ -3,8 +3,15 @@ name: Visual Parity
 on:
   pull_request:
     paths:
-      - 'apps/storybook/**'
+      - '.storybook/**'
+      - 'src/**/*.stories.ts'
+      - 'src/**/*.stories.tsx'
+      - 'packages/marobase-ui/src/**/*.stories.ts'
+      - 'packages/marobase-ui/src/**/*.stories.tsx'
+      - 'packages/marobase-ui/src/docs/**'
+      - 'packages/marobase-ui/src/visual*'
       - 'scripts/visual/**'
+      - 'docs/visual/**'
       - 'tests/visual/**'
       - 'artifacts/figma-baselines/**'
       - 'playwright.visual.config.ts'
@@ -46,11 +53,11 @@ jobs:
         run: pnpm visual:baseline
 
       - name: Build Storybook
-        run: pnpm --filter storybook build
+        run: pnpm build-storybook
 
       - name: Serve Storybook
         run: |
-          npx http-server apps/storybook/storybook-static -p 6006 > /tmp/storybook.log 2>&1 &
+          npx http-server dist-storybook -p 6006 > /tmp/storybook.log 2>&1 &
           npx wait-on http://127.0.0.1:6006
 
       - name: Capture Storybook screenshots

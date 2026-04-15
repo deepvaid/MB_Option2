@@ -7,7 +7,7 @@ const __dirname = path.dirname(__filename);
 const rootDir = path.resolve(__dirname, '../..');
 
 const reportJsonPath = path.join(rootDir, 'artifacts/visual-diff-report.json');
-const outputDocPath = path.join(rootDir, 'apps/storybook/src/docs/shared/ParityStatus.mdx');
+const outputDocPath = path.join(rootDir, 'docs/visual/ParityStatus.mdx');
 
 function formatPercent(value) {
   if (!Number.isFinite(value)) return 'n/a';

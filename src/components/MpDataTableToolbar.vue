@@ -53,114 +53,125 @@ function hiddenCount(filters: Array<{ key: string; label: string }>) {
 </script>
 
 <template>
-  <!-- Toolbar row: title + filter button + extra actions + search -->
-  <div class="d-flex align-center ga-3 px-4 pt-4 pb-3 mp-toolbar-row">
-    <div v-if="title" class="text-subtitle-1 font-weight-bold">{{ title }}</div>
-    <slot name="title" />
-    <v-spacer />
-
-    <!-- Filter button — only rendered if #filter-content slot is provided -->
-    <v-menu
-      v-if="$slots['filter-content']"
-      v-model="filterMenu"
-      :close-on-content-click="false"
-      location="bottom end"
-    >
-      <template v-slot:activator="{ props: menuProps }">
-        <v-btn
-          v-bind="menuProps"
-          variant="outlined"
-          class="text-none text-medium-emphasis mp-filter-btn"
-          prepend-icon="mdi-filter-variant"
-          rounded="lg"
-        >
-          Filter
-          <v-badge
-            v-if="activeFilters?.length"
-            :content="activeFilters.length"
-            color="primary"
-            floating
-            class="ml-1"
-          />
-        </v-btn>
-      </template>
-      <v-card min-width="280" max-width="320" flat border rounded="xl" class="mt-1">
-        <slot name="filter-content" />
-        <v-divider class="mp-divider-muted" />
-        <div class="d-flex justify-end ga-2 pa-3">
-          <v-btn variant="text" size="small" class="text-none" @click="$emit('clearFilters')">Clear all</v-btn>
-          <v-btn color="primary" variant="flat" size="small" class="text-none" @click="filterMenu = false">Done</v-btn>
+  <div class="mp-toolbar-shell">
+    <!-- Top row: title, counts, filters, search, and actions -->
+    <div class="d-flex align-start justify-space-between ga-6 px-6 pt-6 pb-4 mp-toolbar-row">
+      <div class="mp-toolbar-heading">
+        <div v-if="title" class="text-subtitle-1 font-weight-bold">{{ title }}</div>
+        <div v-if="totalCount != null" class="text-caption text-medium-emphasis mt-1">
+          {{ totalCount }} records
         </div>
-      </v-card>
-    </v-menu>
+        <slot name="title" />
+      </div>
 
-    <!-- Column visibility toggle -->
-    <v-menu
-      v-if="headers?.length"
-      :close-on-content-click="false"
-      location="bottom end"
-    >
-      <template v-slot:activator="{ props: menuProps }">
-        <v-btn
-          v-bind="menuProps"
-          variant="outlined"
-          icon="mdi-view-column-outline"
-          rounded="lg"
-          class="text-medium-emphasis mp-filter-btn"
+      <div class="d-flex align-center ga-2 flex-wrap justify-end">
+        <!-- Filter button — only rendered if #filter-content slot is provided -->
+        <v-menu
+          v-if="$slots['filter-content']"
+          v-model="filterMenu"
+          :close-on-content-click="false"
+          location="bottom end"
         >
-          <v-icon>mdi-view-column-outline</v-icon>
-          <v-badge
-            v-if="hiddenColumns.length"
-            :content="hiddenColumns.length"
-            color="primary"
-            floating
-          />
-        </v-btn>
-      </template>
-      <v-card min-width="220" max-width="280" flat border rounded="xl" class="mt-1">
-        <div class="pa-3">
-          <div class="text-subtitle-2 font-weight-bold mb-2">Toggle columns</div>
-          <v-checkbox
-            v-for="h in toggleableHeaders"
-            :key="h.key"
-            :label="h.title"
-            :model-value="isColumnVisible(h.key)"
-            density="compact"
+          <template v-slot:activator="{ props: menuProps }">
+            <v-btn
+              v-bind="menuProps"
+              variant="outlined"
+              aria-label="Open table filters"
+              class="text-none text-medium-emphasis mp-filter-btn"
+              prepend-icon="mdi-filter-variant"
+              rounded="xl"
+            >
+              Filter
+              <v-badge
+                v-if="activeFilters?.length"
+                :content="activeFilters.length"
+                color="primary"
+                floating
+                class="ml-1"
+              />
+            </v-btn>
+          </template>
+          <v-card min-width="280" max-width="320" flat border rounded="xl" class="mt-1 mp-toolbar-panel">
+            <slot name="filter-content" />
+            <v-divider class="mp-divider-muted" />
+            <div class="d-flex justify-end ga-2 pa-3">
+              <v-btn variant="text" size="small" class="text-none" @click="$emit('clearFilters')">Clear all</v-btn>
+              <v-btn color="primary" variant="flat" size="small" class="text-none" @click="filterMenu = false">Done</v-btn>
+            </div>
+          </v-card>
+        </v-menu>
+
+        <!-- Column visibility toggle -->
+        <v-menu
+          v-if="headers?.length"
+          :close-on-content-click="false"
+          location="bottom end"
+        >
+          <template v-slot:activator="{ props: menuProps }">
+            <v-btn
+              v-bind="menuProps"
+              variant="outlined"
+              icon="mdi-view-column-outline"
+              aria-label="Toggle visible columns"
+              rounded="xl"
+              class="text-medium-emphasis mp-filter-btn"
+            >
+              <v-icon>mdi-view-column-outline</v-icon>
+              <v-badge
+                v-if="hiddenColumns.length"
+                :content="hiddenColumns.length"
+                color="primary"
+                floating
+              />
+            </v-btn>
+          </template>
+          <v-card min-width="220" max-width="280" flat border rounded="xl" class="mt-1 mp-toolbar-panel">
+            <div class="pa-3">
+              <div class="text-subtitle-2 font-weight-bold mb-2">Toggle columns</div>
+              <v-checkbox
+                v-for="h in toggleableHeaders"
+                :key="h.key"
+                :label="h.title"
+                :model-value="isColumnVisible(h.key)"
+                density="compact"
+                hide-details
+                class="mp-column-checkbox"
+                @update:model-value="toggleColumn(h.key)"
+              />
+            </div>
+            <v-divider class="mp-divider-muted" />
+            <div class="d-flex justify-end pa-3">
+              <v-btn
+                variant="text"
+                size="small"
+                class="text-none"
+                :disabled="!hiddenColumns.length"
+                @click="resetColumns"
+              >
+                Reset
+              </v-btn>
+            </div>
+          </v-card>
+        </v-menu>
+
+        <!-- Extra action buttons (export, columns toggle, etc.) -->
+        <slot name="actions" />
+
+        <!-- Search field -->
+        <div class="mp-toolbar-search">
+          <v-text-field
+            v-model="search"
+            prepend-inner-icon="mdi-magnify"
+            :placeholder="searchPlaceholder ?? 'Search...'"
+            :aria-label="searchPlaceholder ?? 'Search records'"
+            variant="outlined"
+            density="comfortable"
             hide-details
-            class="mp-column-checkbox"
-            @update:model-value="toggleColumn(h.key)"
+            clearable
+            rounded="xl"
           />
         </div>
-        <v-divider class="mp-divider-muted" />
-        <div class="d-flex justify-end pa-3">
-          <v-btn
-            variant="text"
-            size="small"
-            class="text-none"
-            :disabled="!hiddenColumns.length"
-            @click="resetColumns"
-          >
-            Reset
-          </v-btn>
-        </div>
-      </v-card>
-    </v-menu>
-
-    <!-- Extra action buttons (export, columns toggle, etc.) -->
-    <slot name="actions" />
-
-    <!-- Search field -->
-    <div class="mp-toolbar-search">
-      <v-text-field
-        v-model="search"
-        prepend-inner-icon="mdi-magnify"
-        :placeholder="searchPlaceholder ?? 'Search...'"
-        variant="outlined"
-        density="compact"
-        hide-details
-        clearable
-        rounded="lg"
-      />
+      </div>
     </div>
   </div>
 
@@ -177,8 +188,8 @@ function hiddenCount(filters: Array<{ key: string; label: string }>) {
         size="small"
         closable
         variant="outlined"
-        color="primary"
-        rounded="lg"
+        color="secondary"
+        rounded="xl"
         @click:close="$emit('removeFilter', f.key)"
       >
         {{ f.label }}
@@ -188,7 +199,7 @@ function hiddenCount(filters: Array<{ key: string; label: string }>) {
         size="small"
         variant="outlined"
         color="medium-emphasis"
-        rounded="lg"
+        rounded="xl"
       >
         + {{ hiddenCount(activeFilters) }} more
       </v-chip>
@@ -201,7 +212,7 @@ function hiddenCount(filters: Array<{ key: string; label: string }>) {
   <!-- Inline bulk action bar -->
   <v-expand-transition>
     <div v-if="selectedCount && selectedCount > 0" class="px-4 pb-3">
-      <div class="d-flex align-center ga-3 pa-3 rounded-lg bg-surface-variant">
+      <div class="mp-toolbar-bulk d-flex align-center ga-3 pa-3 rounded-lg bg-surface-variant">
         <span class="text-body-2 font-weight-bold">
           {{ selectedCount }}
           <span v-if="totalCount" class="font-weight-regular text-medium-emphasis">
@@ -226,6 +237,7 @@ function hiddenCount(filters: Array<{ key: string; label: string }>) {
           variant="text"
           size="small"
           density="comfortable"
+          aria-label="Clear selected rows"
           @click="$emit('clearSelection')"
         />
       </div>
@@ -239,14 +251,24 @@ function hiddenCount(filters: Array<{ key: string; label: string }>) {
 <style scoped lang="scss">
 @import '@/design-tokens/generated/_variables.scss';
 
+.mp-toolbar-shell {
+  background: transparent;
+}
+
 .mp-toolbar-row {
   min-height: $mp-layout-appbarHeight;
 }
 .mp-filter-btn {
-  height: $mp-spacing-10;
+  height: 40px;
+  background: rgb(var(--v-theme-surface));
+  border-color: var(--mp-border-subtle) !important;
+}
+.mp-filter-btn:hover {
+  background: rgba(var(--v-theme-surface-variant), 0.72);
 }
 .mp-toolbar-search {
-  width: 220px;
+  width: 300px;
+  min-width: 240px;
 }
 .mp-divider-vertical {
   height: $mp-spacing-6;
@@ -257,9 +279,31 @@ function hiddenCount(filters: Array<{ key: string; label: string }>) {
 .mp-divider-toolbar {
   opacity: 0.12;
 }
+.mp-toolbar-panel {
+  border-color: var(--mp-border-subtle);
+}
+.mp-toolbar-heading {
+  min-width: 0;
+}
+.mp-toolbar-bulk {
+  border: 1px solid var(--mp-border-subtle);
+  box-shadow: none;
+}
 .mp-column-checkbox {
   :deep(.v-label) {
     font-size: 13px;
   }
+}
+
+:deep(.mp-toolbar-search .v-field) {
+  background: rgb(var(--v-theme-surface));
+}
+
+:deep(.mp-toolbar-search .v-field__outline) {
+  color: rgba(var(--v-theme-border), 1);
+}
+
+:deep(.mp-toolbar-search .v-field--focused .v-field__outline) {
+  color: rgba(var(--v-theme-secondary), 0.16);
 }
 </style>

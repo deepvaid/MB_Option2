@@ -3,7 +3,7 @@
 This runbook is for stakeholder demos where a design token is changed in Figma and reflected in both:
 
 - Marobase app route: `/design-system`
-- Storybook story: `Foundation/Design System Demo`
+- Root Storybook story: `Foundation/Design System Demo`
 
 ## Demo Objective
 
@@ -15,7 +15,7 @@ Show that Marobase has one token-driven system where design updates from Figma f
 2. Figma token sync path is configured to push updates that are consumed by:
    - `design-kit/figma-export/tokens-studio.json`
 3. Local repo is clean enough to pull latest token updates.
-4. You can run both app and Storybook locally.
+4. You can run both the app and the root Storybook locally.
 
 ## Live Demo Script
 
@@ -42,7 +42,7 @@ What this does:
 2. Syncs values into `src/design-tokens/tokens.json`
 3. Rebuilds generated outputs in `src/design-tokens/generated/`
 
-### Step 3: Show app + Storybook reflect the same update
+### Step 3: Show app + root Storybook reflect the same update
 
 Run (or keep running):
 
@@ -59,7 +59,7 @@ Open:
 Narrate:
 
 - Both surfaces use the same token source and component system.
-- App and Storybook now match without manual style overrides.
+- App and the root Storybook now match without manual style overrides.
 - This lowers design-engineering drift and speeds release confidence.
 
 ## Recommended On-Screen Highlights
@@ -70,7 +70,7 @@ In app (`/design-system`):
 - Spacing scale bars
 - Mp* component section (`MpStatusChip`, `MpDataTableToolbar`, `MpFloatingBulkBar`, `MpFormDrawer`)
 
-In Storybook:
+In the root Storybook:
 
 - `Foundation/Design System Demo`
 - `Foundation/Colors`

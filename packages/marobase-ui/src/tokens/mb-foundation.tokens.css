@@ -1,0 +1,136 @@
+:root,
+:root[data-theme='light'],
+html[data-theme='light'],
+html.theme-light {
+  --mb-font-family-base: Inter, 'Noto Sans', 'Segoe UI', sans-serif;
+  --mb-font-family-mono: 'JetBrains Mono', 'Fira Code', monospace;
+
+  --mb-font-size-xs: 11px;
+  --mb-font-size-sm: 12px;
+  --mb-font-size-body: 14px;
+  --mb-font-size-md: 16px;
+  --mb-font-size-lg: 18px;
+  --mb-font-size-xl: 22px;
+
+  --mb-font-weight-regular: 400;
+  --mb-font-weight-medium: 500;
+  --mb-font-weight-semibold: 600;
+  --mb-font-weight-bold: 700;
+
+  --mb-line-height-tight: 1.2;
+  --mb-line-height-normal: 1.5;
+  --mb-line-height-relaxed: 1.75;
+
+  --mb-letter-spacing-tight: -0.01em;
+  --mb-letter-spacing-normal: 0;
+  --mb-letter-spacing-wide: 0.02em;
+
+  --mb-space-1: 4px;
+  --mb-space-2: 8px;
+  --mb-space-3: 12px;
+  --mb-space-4: 16px;
+  --mb-space-5: 20px;
+  --mb-space-6: 24px;
+  --mb-space-8: 32px;
+
+  --mb-radius-sm: 6px;
+  --mb-radius-md: 8px;
+  --mb-radius-lg: 12px;
+  --mb-radius-xl: 16px;
+  --mb-radius-pill: 9999px;
+
+  --mb-control-height-sm: 32px;
+  --mb-control-height-md: 40px;
+  --mb-control-height-lg: 48px;
+
+  --mb-control-padding-x-sm: 10px;
+  --mb-control-padding-x-md: 12px;
+  --mb-control-padding-x-lg: 16px;
+
+  --mb-control-padding-y-sm: 6px;
+  --mb-control-padding-y-md: 10px;
+  --mb-control-padding-y-lg: 12px;
+
+  --mb-control-gap-sm: 6px;
+  --mb-control-gap-md: 8px;
+  --mb-control-gap-lg: 10px;
+
+  --mb-focus-ring: 0 0 0 3px rgba(18, 168, 245, 0.22);
+  --mb-focus-ring-strong: 0 0 0 3px rgba(18, 168, 245, 0.32);
+  --mb-motion-fast: 0.15s ease;
+  --mb-motion-base: 0.2s ease;
+
+  --mb-shadow-sm: 0 1px 2px rgba(16, 32, 51, 0.06);
+  --mb-shadow-md: 0 8px 24px rgba(16, 32, 51, 0.08);
+  --mb-shadow-lg: 0 16px 40px rgba(16, 32, 51, 0.12);
+
+  --mb-color-background: #fbfcfe;
+  --mb-color-surface: #ffffff;
+  --mb-color-surface-raised: #fcfdff;
+  --mb-color-surface-subtle: #f2f7fb;
+  --mb-color-text: #111827;
+  --mb-color-text-muted: #687686;
+  --mb-color-text-soft: #8795a5;
+  --mb-color-border: #d7e2eb;
+  --mb-color-border-strong: #c3d3df;
+  --mb-color-border-subtle: rgba(11, 53, 88, 0.08);
+  --mb-color-primary: #12a8f5;
+  --mb-color-primary-hover: #0b92da;
+  --mb-color-primary-active: #087cbd;
+  --mb-color-primary-soft: #e8f6fe;
+  --mb-color-primary-soft-hover: #d9f0fd;
+  --mb-color-primary-soft-active: #c7e7fa;
+  --mb-color-on-primary: #052944;
+  --mb-color-secondary: #0b3558;
+  --mb-color-secondary-soft: #eaf3fa;
+  --mb-color-success: #0e8b64;
+  --mb-color-success-soft: #e5f5ee;
+  --mb-color-warning: #b7791f;
+  --mb-color-warning-soft: #f8eedc;
+  --mb-color-error: #c33b31;
+  --mb-color-error-soft: #faecea;
+  --mb-color-info: #0b92da;
+  --mb-color-info-soft: #eaf4fb;
+}
+
+:root[data-theme='dark'],
+html[data-theme='dark'],
+html.theme-dark,
+html.v-theme--dark {
+  --mb-focus-ring: 0 0 0 3px rgba(89, 194, 255, 0.24);
+  --mb-focus-ring-strong: 0 0 0 3px rgba(89, 194, 255, 0.34);
+  --mb-motion-fast: 0.15s ease;
+  --mb-motion-base: 0.2s ease;
+
+  --mb-shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
+  --mb-shadow-md: 0 10px 28px rgba(0, 0, 0, 0.28);
+  --mb-shadow-lg: 0 18px 48px rgba(0, 0, 0, 0.34);
+
+  --mb-color-background: #0c1a2b;
+  --mb-color-surface: #12253d;
+  --mb-color-surface-raised: #17314f;
+  --mb-color-surface-subtle: #1b3654;
+  --mb-color-text: #edf7ff;
+  --mb-color-text-muted: #b3c6da;
+  --mb-color-text-soft: #8ca3bb;
+  --mb-color-border: #2b4768;
+  --mb-color-border-strong: #416286;
+  --mb-color-border-subtle: rgba(245, 248, 252, 0.08);
+  --mb-color-primary: #59c2ff;
+  --mb-color-primary-hover: #7ad0ff;
+  --mb-color-primary-active: #37a8ea;
+  --mb-color-primary-soft: #163553;
+  --mb-color-primary-soft-hover: #1c4165;
+  --mb-color-primary-soft-active: #112a43;
+  --mb-color-on-primary: #041829;
+  --mb-color-secondary: #d6eaff;
+  --mb-color-secondary-soft: #1c344d;
+  --mb-color-success: #7fd1a2;
+  --mb-color-success-soft: #203729;
+  --mb-color-warning: #efc36e;
+  --mb-color-warning-soft: #342a18;
+  --mb-color-error: #ff9a8f;
+  --mb-color-error-soft: #3d2321;
+  --mb-color-info: #8fd4ff;
+  --mb-color-info-soft: #1a3448;
+}

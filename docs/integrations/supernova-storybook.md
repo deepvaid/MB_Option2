@@ -1,10 +1,10 @@
 # Supernova + Storybook Integration Runbook
 
-This repository is configured to sync Storybook to Supernova on every push to `main` with GitHub Actions.
+This repository is configured to sync the root Storybook to Supernova on every push to `main` with GitHub Actions.
 
 ## What Gets Automated
 
-1. Build Storybook static output from `/Users/deepakvaidya/Documents/marobase/apps/storybook`.
+1. Build the root Storybook static output from `dist-storybook/`.
 2. Import/update that output in Supernova using a stable `sourceId`.
 3. Run on every `main` push and on manual workflow dispatch.
 
@@ -24,9 +24,9 @@ Set these in GitHub: `Settings` -> `Secrets and variables` -> `Actions`.
 Run once locally to create the initial Storybook source in Supernova.
 
 ```bash
-cd /Users/deepakvaidya/Documents/marobase
+cd .
 pnpm install
-pnpm storybook:build
+pnpm build-storybook
 npm install -g @supernovaio/cli
 
 export SUPERNOVA_TOKEN="<your-supernova-token>"
@@ -43,21 +43,21 @@ After bootstrap:
 
 ## CI Sync Workflow
 
-- Workflow file: `/Users/deepakvaidya/Documents/marobase/.github/workflows/supernova-storybook-sync.yml`
+- Workflow file: `./.github/workflows/supernova-storybook-sync.yml`
 - Trigger:
   - push to `main`
   - manual `workflow_dispatch`
 - Command used in CI:
-  - `pnpm storybook:build`
+  - `pnpm build-storybook`
   - `pnpm supernova:storybook:sync`
 
-The sync script is `/Users/deepakvaidya/Documents/marobase/scripts/supernova/sync-storybook.ts`.
+The sync script is `./scripts/supernova/sync-storybook.ts`.
 
 ## Local Manual Sync (After Bootstrap)
 
 ```bash
-cd /Users/deepakvaidya/Documents/marobase
-pnpm storybook:build
+cd .
+pnpm build-storybook
 pnpm supernova:storybook:sync
 ```
 
@@ -118,6 +118,6 @@ Fix:
 
 If sync breaks production docs:
 
-1. Disable workflow `/Users/deepakvaidya/Documents/marobase/.github/workflows/supernova-storybook-sync.yml` temporarily.
+1. Disable workflow `./.github/workflows/supernova-storybook-sync.yml` temporarily.
 2. Re-run the previous known-good sync manually from local.
 3. Restore workflow after correcting secrets or IDs.

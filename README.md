@@ -8,7 +8,7 @@ Modern component library and UX playground for the Maropost Commerce + Marketing
 npm install
 npm run tokens:build
 npm run dev          # App → http://localhost:5173
-npm run storybook    # Components → http://localhost:6006
+npm run storybook    # Root Storybook → http://localhost:6006
 ```
 
 ## What's Inside
@@ -16,20 +16,20 @@ npm run storybook    # Components → http://localhost:6006
 - **11 reusable components** — `Mp*` prefixed, Vuetify-based, with Storybook stories
 - **80+ page views** — Full replica of Maropost across Commerce, Marketing, Contacts, Analytics, Products, Service, Settings
 - **Design token system** — JSON source of truth → auto-generated SCSS, CSS vars, TypeScript
-- **Storybook 8** — Interactive component docs with light/dark theme toggle
+- **Storybook 9** — Interactive component docs with light/dark theme toggle
 - **Vercel deploy** — One-click preview URLs for stakeholder review
 - **AI agent files** — `CLAUDE.md` + `.cursorrules` for Claude CLI and Cursor
 
 ## Stack
 
-Vue 3.5 · Vuetify 3.12 · TypeScript 5.9 · Vite 7 · Pinia 3 · Storybook 8
+Vue 3.5 · Vuetify 3.12 · TypeScript 5.9 · Vite 7 · Pinia 3 · Storybook 9
 
 ## Scripts
 
 | Command | What |
 |---------|------|
 | `npm run dev` | App dev server |
-| `npm run storybook` | Component preview |
+| `npm run storybook` | Root Storybook preview |
 | `npm run build` | Production build |
 | `npm run build-storybook` | Static Storybook |
 | `npm run tokens:build` | Generate tokens |
@@ -52,9 +52,10 @@ Vue 3.5 · Vuetify 3.12 · TypeScript 5.9 · Vite 7 · Pinia 3 · Storybook 8
 ## First-Time Storybook Setup
 
 ```bash
-npm install -D storybook @storybook/vue3-vite @storybook/addon-essentials @storybook/addon-themes
 npm run storybook
 ```
+
+The root workspace already includes the pinned Storybook dependencies, so no extra install step is required.
 
 ## Deploy to Vercel
 

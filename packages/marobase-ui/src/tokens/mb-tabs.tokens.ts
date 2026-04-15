@@ -9,15 +9,15 @@ export interface MbTabsTokenBundle {
 
 export const mbTabsTokens: MbTabsTokenBundle = {
   light: {
-    '--mb-tabs-border-color': '#e6e8eb',
+    '--mb-tabs-border-color': 'rgba(16, 32, 51, 0.08)',
     '--mb-tabs-tab-color': '#7d868c',
-    '--mb-tabs-active-border-color': '#0091ff',
-    '--mb-tabs-focus-ring': '0 0 0 3px #cde6fe'
+    '--mb-tabs-active-border-color': '#6bbd5b',
+    '--mb-tabs-focus-ring': '0 0 0 3px rgba(107, 189, 91, 0.18)'
   },
   dark: {
-    '--mb-tabs-border-color': '#2a3342',
+    '--mb-tabs-border-color': 'rgba(245, 248, 252, 0.08)',
     '--mb-tabs-tab-color': '#97a3b5',
-    '--mb-tabs-active-border-color': '#89a8ff',
-    '--mb-tabs-focus-ring': '0 0 0 3px #304d84'
+    '--mb-tabs-active-border-color': '#8ccb78',
+    '--mb-tabs-focus-ring': '0 0 0 3px rgba(140, 203, 120, 0.22)'
   }
 };

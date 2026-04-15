@@ -17,7 +17,7 @@ npm run tokens:build
 npm run dev
 # → http://localhost:5173
 
-# In a second terminal, start Storybook
+# In a second terminal, start the root Storybook
 npm run storybook
 # → http://localhost:6006
 ```
@@ -29,7 +29,7 @@ npm run storybook
 | Terminal | Command | Purpose |
 |----------|---------|---------|
 | 1 | `npm run dev` | App dev server with HMR |
-| 2 | `npm run storybook` | Component preview |
+| 2 | `npm run storybook` | Root Storybook preview |
 | 3 | `npm run tokens:watch` | Auto-rebuild tokens on change |
 
 ### Creating a New Component
@@ -75,7 +75,7 @@ export const Default: Story = {
 }
 ```
 
-3. Verify in Storybook: `http://localhost:6006`
+3. Verify in the root Storybook: `http://localhost:6006`
 
 ### Modifying a Design Token
 
@@ -128,11 +128,8 @@ Optional longer explanation.
 
 ## Storybook Dependencies
 
-When setting up for the first time, install Storybook:
-
-```bash
-npm install -D storybook @storybook/vue3-vite @storybook/addon-essentials @storybook/addon-themes
-```
+The root workspace already carries the pinned Storybook dependencies.
+Use `npm run storybook` directly after installing repo dependencies.
 
 ## Useful Links
 

@@ -5,7 +5,7 @@
 1. Start Storybook:
 
 ```bash
-pnpm --filter storybook dev
+pnpm storybook
 ```
 
 2. Export/update Figma baselines:
@@ -26,9 +26,9 @@ pnpm visual:test
 pnpm visual:report
 ```
 
-This command also regenerates Storybook parity badges/docs in:
+This command also regenerates the parity status doc in:
 
-- `apps/storybook/src/docs/shared/ParityStatus.mdx`
+- `docs/visual/ParityStatus.mdx`
 
 ## CI
 

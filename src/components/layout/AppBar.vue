@@ -18,17 +18,17 @@ function toggleTheme() {
 </script>
 
 <template>
-  <v-app-bar height="56" color="surface" flat>
-    <div class="w-100 d-flex align-center px-4 gap-3">
+  <v-app-bar height="56" color="surface" flat class="mp-appbar">
+    <div class="mp-appbar-shell w-100 d-flex align-center px-4 gap-3">
       <!-- Global search -->
       <v-text-field
-        density="compact"
-        variant="solo-filled"
-        flat
+        density="comfortable"
+        variant="outlined"
         hide-details
         prepend-inner-icon="mdi-magnify"
         placeholder="Search campaigns, contacts, orders..."
-        rounded="pill"
+        aria-label="Search workspace content"
+        rounded="lg"
         class="appbar-search"
         bg-color="surface-variant"
       />
@@ -36,14 +36,19 @@ function toggleTheme() {
       <!-- Account switcher -->
       <v-menu location="bottom start" offset="8">
         <template v-slot:activator="{ props }">
-          <div v-bind="props" class="d-flex align-center gap-2 cursor-pointer pa-1 pl-2 rounded-lg account-switcher-trigger">
-            <v-avatar color="primary" size="26" class="appbar-avatar-sm">{{ userInitials }}</v-avatar>
+          <button
+            v-bind="props"
+            type="button"
+            :aria-label="`Switch workspace. Current workspace ${accountName}`"
+            class="d-flex align-center gap-2 cursor-pointer py-1 px-2 rounded-lg account-switcher-trigger"
+          >
+            <v-avatar color="primary" size="26" class="appbar-avatar-sm account-avatar">{{ userInitials }}</v-avatar>
             <div class="d-none d-md-block account-summary">
               <div class="text-caption font-weight-medium text-truncate account-name">{{ accountName }}</div>
               <div class="text-caption text-medium-emphasis account-user">{{ userName }}</div>
             </div>
             <v-icon size="14" color="medium-emphasis">mdi-chevron-down</v-icon>
-          </div>
+          </button>
         </template>
         <v-card width="320" rounded="xl" flat border class="account-switcher-card">
           <!-- Current account header -->
@@ -87,10 +92,10 @@ function toggleTheme() {
             v-bind="props"
             size="small"
             :variant="copilotOpen ? 'flat' : 'text'"
-            :color="copilotOpen ? 'warning' : undefined"
             icon
+            :aria-label="copilotOpen ? 'Close Da Vinci Copilot' : 'Open Da Vinci Copilot'"
             @click="copilotOpen = !copilotOpen"
-            class="copilot-trigger"
+            :class="['copilot-trigger', { 'copilot-trigger--active': copilotOpen }]"
           >
             <v-icon>mdi-creation</v-icon>
           </v-btn>
@@ -98,7 +103,13 @@ function toggleTheme() {
       </v-tooltip>
 
       <!-- Notification bell -->
-      <v-btn variant="text" size="small" icon class="position-relative">
+      <v-btn
+        variant="text"
+        size="small"
+        icon
+        class="position-relative"
+        :aria-label="notificationCount > 0 ? `Notifications, ${notificationCount} unread` : 'Notifications'"
+      >
         <v-icon>mdi-bell-outline</v-icon>
         <v-badge v-if="notificationCount > 0" :content="notificationCount" color="error" floating class="notification-badge" />
       </v-btn>
@@ -106,7 +117,14 @@ function toggleTheme() {
       <!-- Theme toggle -->
       <v-tooltip text="Toggle dark mode" location="bottom">
         <template v-slot:activator="{ props }">
-          <v-btn v-bind="props" icon="mdi-theme-light-dark" variant="text" size="small" @click="toggleTheme" />
+          <v-btn
+            v-bind="props"
+            icon="mdi-theme-light-dark"
+            variant="text"
+            size="small"
+            :aria-label="theme.global.current.value.dark ? 'Switch to light theme' : 'Switch to dark theme'"
+            @click="toggleTheme"
+          />
         </template>
       </v-tooltip>
 
@@ -115,11 +133,16 @@ function toggleTheme() {
       <!-- User menu -->
       <v-menu location="bottom end" offset="8">
         <template v-slot:activator="{ props }">
-          <div v-bind="props" class="d-flex align-center gap-2 cursor-pointer pa-1 rounded-lg user-menu-trigger">
+          <button
+            v-bind="props"
+            type="button"
+            aria-label="Open user menu"
+            class="d-flex align-center gap-2 cursor-pointer py-1 px-2 rounded-lg user-menu-trigger"
+          >
             <v-avatar color="primary" size="30" class="user-avatar-ring appbar-avatar-sm">{{ userInitials }}</v-avatar>
             <span class="text-body-2 font-weight-medium d-none d-sm-block">{{ userName }}</span>
             <v-icon size="16" color="medium-emphasis">mdi-chevron-down</v-icon>
-          </div>
+          </button>
         </template>
         <v-card min-width="280" rounded="xl" elevation="0" class="user-menu-card">
           <!-- User header -->
@@ -162,25 +185,42 @@ function toggleTheme() {
 </template>
 
 <style scoped lang="scss">
+.mp-appbar {
+  border-bottom: 1px solid var(--mp-border-subtle);
+  background: rgb(var(--v-theme-surface));
+}
+
+.mp-appbar-shell {
+  min-width: 0;
+  padding-block: 8px;
+}
+
 .user-menu-trigger {
-  transition: background $mp-transition-fast;
+  transition: background $mp-transition-fast, border-color $mp-transition-fast;
+  appearance: none;
+  border: 1px solid transparent;
+  background: transparent;
+  font: inherit;
+  text-align: left;
 }
 .user-menu-trigger:hover {
-  background: rgb(var(--v-theme-surface-variant));
+  background: rgba(var(--v-theme-surface-variant), 0.58);
+  border-color: rgba(var(--v-theme-border), 0.92);
 }
 .user-avatar-ring {
-  box-shadow: 0 0 0 2px rgba(var(--v-theme-primary), 0.15);
+  box-shadow: inset 0 0 0 1px rgba(var(--v-theme-secondary), 0.08);
   transition: box-shadow $mp-transition-fast;
 }
 .user-menu-trigger:hover .user-avatar-ring {
-  box-shadow: 0 0 0 2px rgba(var(--v-theme-primary), 0.35);
+  box-shadow: inset 0 0 0 1px rgba(var(--v-theme-secondary), 0.12);
 }
 .user-menu-card {
-  box-shadow: $mp-shadow-md;
+  box-shadow: none;
+  border-color: var(--mp-border-subtle);
 }
 .user-menu-header {
-  background: rgba(var(--v-theme-primary), 0.03);
-  padding: $mp-space-5;
+  background: rgba(var(--v-theme-surface-variant), 0.66);
+  padding: $mp-space-6;
 }
 .sign-out-item {
   transition: background $mp-transition-fast;
@@ -189,27 +229,97 @@ function toggleTheme() {
   background: rgba(var(--v-theme-error), 0.06);
 }
 .account-switcher-trigger {
-  transition: background $mp-transition-fast;
+  transition: background $mp-transition-fast, border-color $mp-transition-fast;
+  appearance: none;
+  border: 1px solid transparent;
+  background: transparent;
+  font: inherit;
+  text-align: left;
 }
 .account-switcher-trigger:hover {
-  background: rgb(var(--v-theme-surface-variant));
+  background: rgba(var(--v-theme-surface-variant), 0.58);
+  border-color: rgba(var(--v-theme-border), 0.92);
+}
+
+.user-menu-trigger:focus-visible,
+.account-switcher-trigger:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(var(--v-theme-primary), 0.18);
 }
 .account-switcher-card {
-  box-shadow: $mp-shadow-md;
+  box-shadow: none;
+  border-color: var(--mp-border-subtle);
 }
 .account-menu-header {
-  padding: $mp-space-5;
-  background: rgba(var(--v-theme-surface-variant), 0.4);
+  padding: $mp-space-6;
+  background: rgba(var(--v-theme-surface-variant), 0.66);
 }
 .copilot-trigger {
-  transition: all $mp-transition-base;
+  transition: background-color $mp-transition-base, color $mp-transition-base, border-color $mp-transition-base, box-shadow $mp-transition-base, transform $mp-transition-base;
+  border: 1px solid var(--mp-aurora-border);
+  background: var(--mp-aurora-soft-gradient);
+  color: rgb(var(--v-theme-primary));
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.35);
 }
 .copilot-trigger:hover {
-  color: rgb(var(--v-theme-warning));
+  color: rgb(var(--v-theme-primary));
+  border-color: rgba(79, 109, 255, 0.32);
+  box-shadow: var(--mp-aurora-shadow);
+}
+
+.copilot-trigger--active {
+  background: var(--mp-aurora-gradient) !important;
+  color: var(--mp-aurora-ink) !important;
+  border-color: transparent;
+  box-shadow: var(--mp-aurora-shadow);
+}
+
+.copilot-trigger--active:hover {
+  filter: brightness(1.03);
+}
+
+:deep(.copilot-trigger .v-btn__overlay) {
+  opacity: 0 !important;
+}
+
+:deep(.copilot-trigger .v-icon) {
+  color: inherit !important;
 }
 
 .appbar-search {
-  max-width: var(--mp-layout-searchMaxWidth);
+  flex: 1 1 var(--mp-layout-searchMaxWidth);
+  max-width: 440px;
+  min-width: 240px;
+}
+
+:deep(.appbar-search .v-field) {
+  border-radius: 999px;
+  background: rgb(var(--v-theme-surface));
+}
+
+:deep(.appbar-search .v-field__outline) {
+  color: rgba(var(--v-theme-border), 1);
+}
+
+:deep(.appbar-search .v-field--focused .v-field__outline) {
+  color: rgba(var(--v-theme-secondary), 0.18);
+}
+
+.account-avatar {
+  color: rgb(var(--v-theme-secondary));
+}
+
+:deep(.appbar-search .v-field__input) {
+  font-size: 0.94rem;
+}
+
+:deep(.account-list-item.v-list-item--active) {
+  background: rgba(var(--v-theme-primary), 0.22);
+  color: rgb(var(--v-theme-secondary));
+}
+
+:deep(.account-list-item.v-list-item--active .v-list-item__overlay) {
+  opacity: 0;
 }
 .appbar-avatar-sm {
   font-size: var(--mp-typography-fontSize-xs);

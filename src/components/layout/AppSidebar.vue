@@ -153,26 +153,26 @@ function goTo(route: string) {
     permanent
     :mobile-breakpoint="0"
     width="260"
-    theme="maropostDark"
     class="mp-sidebar"
   >
     <!-- Logo + collapse toggle -->
-    <div class="d-flex align-center px-3 py-3 sidebar-header">
+    <div class="sidebar-header px-3 py-3">
       <v-btn
         icon="mdi-menu"
         variant="text"
         size="small"
+        :aria-label="localRail ? 'Expand navigation sidebar' : 'Collapse navigation sidebar'"
         @click.stop="localRail = !localRail; emit('update:rail', localRail)"
         class="mr-2 flex-shrink-0 sidebar-muted"
       />
-      <template v-if="!localRail">
-        <span
-          class="font-weight-bold cursor-pointer d-flex align-center gap-1 sidebar-logo"
-          @click="$router.push('/dashboard')"
-        >
-          <img :src="maropostLogo" alt="Maropost" class="sidebar-brand-logo" />
-        </span>
-      </template>
+      <button
+        type="button"
+        class="d-flex align-center gap-3 cursor-pointer sidebar-brand sidebar-brand-button"
+        aria-label="Go to dashboard"
+        @click="$router.push('/dashboard')"
+      >
+        <img :src="maropostLogo" alt="Maropost" class="sidebar-brand-logo" />
+      </button>
     </div>
 
     <div class="my-1" />
@@ -256,6 +256,7 @@ function goTo(route: string) {
             :icon="group.icon"
             variant="text"
             size="40"
+            :aria-label="group.title"
             :to="group.singleRoute"
             @click="group.singleRoute && goTo(group.singleRoute)"
             rounded="lg"
@@ -290,12 +291,12 @@ function goTo(route: string) {
     <template v-slot:append>
       <div class="my-1" />
       <div class="pa-2" v-if="!localRail">
-        <v-btn block variant="text" prepend-icon="mdi-help-circle-outline" class="text-none justify-start sidebar-help">
+        <v-btn block variant="text" prepend-icon="mdi-help-circle-outline" class="text-none justify-start sidebar-help" aria-label="Open help and documentation">
           Help & Documentation
         </v-btn>
       </div>
       <div class="d-flex justify-center pa-2" v-else>
-        <v-btn icon="mdi-help-circle-outline" variant="text" size="small" class="sidebar-muted" />
+        <v-btn icon="mdi-help-circle-outline" variant="text" size="small" class="sidebar-muted" aria-label="Open help and documentation" />
       </div>
     </template>
   </v-navigation-drawer>
@@ -304,12 +305,35 @@ function goTo(route: string) {
 <style scoped lang="scss">
 .mp-sidebar {
   background: var(--mp-color-sidebar-bg);
+  border-right: 1px solid var(--mp-color-sidebar-border);
 }
 .sidebar-header {
   height: var(--mp-layout-appbarHeight);
+  display: flex;
+  align-items: center;
+  padding-inline: 16px;
+}
+.sidebar-brand {
+  min-width: 0;
+}
+.sidebar-brand-button {
+  appearance: none;
+  width: 100%;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  text-align: left;
+  font: inherit;
+}
+.sidebar-brand-button:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(var(--v-theme-primary), 0.18);
+  border-radius: 16px;
 }
 .sidebar-scroll {
   overflow-y: auto;
+  padding-top: 8px;
+  padding-bottom: 12px;
 }
 .sidebar-muted {
   color: var(--mp-color-sidebar-textMuted);
@@ -321,7 +345,7 @@ function goTo(route: string) {
   min-height: 24px;
 }
 .sidebar-brand-logo {
-  height: 24px;
+  height: 28px;
   width: auto;
   display: block;
 }
@@ -329,6 +353,9 @@ function goTo(route: string) {
   font-size: 9px;
   height: 16px;
   padding: 0 5px;
+  border-radius: 999px;
+  background: rgba(var(--v-theme-primary), 0.74) !important;
+  color: rgb(var(--v-theme-on-primary)) !important;
 }
 .sidebar-subgroup {
   font-size: var(--mp-typography-fontSize-xs);
@@ -340,6 +367,7 @@ function goTo(route: string) {
 }
 .sidebar-surface {
   background: var(--mp-color-sidebar-surface);
+  box-shadow: none;
 }
 .rail-icon-list {
   overflow-y: auto;
@@ -360,17 +388,19 @@ function goTo(route: string) {
   font-size: var(--mp-typography-fontSize-body);
 }
 :deep(.active-nav-item) {
-  background: rgba(var(--v-theme-primary), 0.15);
-  color: rgb(var(--v-theme-primary));
+  background: rgba(var(--v-theme-primary), 0.28);
+  box-shadow: inset 0 0 0 1px rgba(var(--v-theme-secondary), 0.08);
+  color: rgb(var(--v-theme-secondary));
   font-weight: 600;
 }
 :deep(.v-list-group__items .v-list-item--active) {
-  background: rgba(var(--v-theme-primary), 0.15);
-  color: rgb(var(--v-theme-primary));
+  background: rgba(var(--v-theme-primary), 0.22);
+  box-shadow: inset 0 0 0 1px rgba(var(--v-theme-secondary), 0.08);
+  color: rgb(var(--v-theme-secondary));
   font-weight: 600;
 }
 :deep(.v-list-group__items .v-list-item--active .v-list-item-title) {
-  color: rgb(var(--v-theme-primary));
+  color: rgb(var(--v-theme-secondary));
   font-weight: 600;
 }
 :deep(.v-list-item__prepend .v-icon),
@@ -379,5 +409,27 @@ function goTo(route: string) {
 }
 :deep(.v-list-item-subtitle) {
   color: var(--mp-color-sidebar-textMuted);
+}
+
+:deep(.v-list-item) {
+  min-height: 42px;
+  margin-bottom: 2px;
+}
+
+:deep(.v-list-item:hover > .v-list-item__overlay) {
+  opacity: 0.04;
+}
+
+:deep(.v-list-group__items) {
+  padding-top: 2px;
+  padding-bottom: 4px;
+}
+
+:deep(.v-list-group__items .v-list-item) {
+  margin-left: 6px;
+}
+
+:deep(.v-list-item--nav) {
+  border-radius: 16px !important;
 }
 </style>

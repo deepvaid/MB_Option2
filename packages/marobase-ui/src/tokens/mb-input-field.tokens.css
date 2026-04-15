@@ -1,69 +1,95 @@
+@import './mb-foundation.tokens.css';
+
 :root,
 :root[data-theme='light'],
 html[data-theme='light'],
 html.theme-light {
-  --mb-if-font-family: Inter, 'Noto Sans', 'Segoe UI', sans-serif;
-  --mb-if-letter-spacing: 0px;
+  --mb-if-font-family: var(--mb-font-family-base);
+  --mb-if-letter-spacing: var(--mb-letter-spacing-normal);
 
-  --mb-if-label-size: 16px;
-  --mb-if-label-line-height: 24px;
-  --mb-if-label-weight: 500;
-  --mb-if-label-color: #11181c;
-  --mb-if-label-gap: 12px;
-  --mb-if-required-size: 14px;
-  --mb-if-required-line-height: 20px;
-  --mb-if-required-color: #e54d2e;
+  --mb-if-label-size: var(--mb-font-size-body);
+  --mb-if-label-line-height: 20px;
+  --mb-if-label-weight: var(--mb-font-weight-semibold);
+  --mb-if-label-color: var(--mb-color-text);
+  --mb-if-label-gap: var(--mb-space-2);
+  --mb-if-required-size: var(--mb-font-size-sm);
+  --mb-if-required-line-height: 16px;
+  --mb-if-required-color: var(--mb-color-primary);
 
-  --mb-if-control-height: 48px;
-  --mb-if-control-gap: 12px;
+  --mb-if-control-height: var(--mb-control-height-lg);
+  --mb-if-control-gap: var(--mb-control-gap-md);
   --mb-if-control-padding-x: 16px;
   --mb-if-control-padding-y: 12px;
-  --mb-if-radius: 6px;
-  --mb-if-bg: #ffffff;
-  --mb-if-bg-disabled: #f5f7f9;
-  --mb-if-border: #c1c8cd;
-  --mb-if-border-hover: #aeb8bf;
-  --mb-if-border-focus: #0091ff;
-  --mb-if-border-error: #e54d2e;
-  --mb-if-focus-ring: 0 0 0 3px #cde6fe;
+  --mb-if-radius: var(--mb-radius-pill);
+  --mb-if-bg: var(--mb-color-surface);
+  --mb-if-bg-disabled: var(--mb-color-surface-subtle);
+  --mb-if-border: var(--mb-color-border);
+  --mb-if-border-hover: var(--mb-color-primary);
+  --mb-if-border-focus: var(--mb-color-primary);
+  --mb-if-border-error: var(--mb-color-error);
+  --mb-if-focus-ring: var(--mb-focus-ring);
 
-  --mb-if-value-size: 16px;
-  --mb-if-value-line-height: 24px;
-  --mb-if-value-weight: 400;
-  --mb-if-value-color: #11181c;
-  --mb-if-addon-color: #7d868c;
-  --mb-if-placeholder-color: #7d868c;
-  --mb-if-icon-color: #7d868c;
-  --mb-if-icon-size: 24px;
+  --mb-if-value-size: var(--mb-font-size-body);
+  --mb-if-value-line-height: 20px;
+  --mb-if-value-weight: var(--mb-font-weight-regular);
+  --mb-if-value-color: var(--mb-color-text);
+  --mb-if-addon-color: var(--mb-color-text-muted);
+  --mb-if-placeholder-color: var(--mb-color-text-soft);
+  --mb-if-icon-color: var(--mb-color-text-muted);
+  --mb-if-icon-size: 20px;
   --mb-if-icon-stroke: 2px;
   --mb-if-icon-corner: 4px;
-  --mb-if-rhombus-size: 14px;
+  --mb-if-rhombus-size: 12px;
 
-  --mb-if-message-gap: 8px;
-  --mb-if-message-size: 14px;
-  --mb-if-message-line-height: 20px;
-  --mb-if-hint-color: #889096;
-  --mb-if-error-color: #e54d2e;
-  --mb-if-disabled-text: #9aa3aa;
+  --mb-if-message-gap: var(--mb-space-2);
+  --mb-if-message-size: var(--mb-font-size-sm);
+  --mb-if-message-line-height: 16px;
+  --mb-if-hint-color: var(--mb-color-text-muted);
+  --mb-if-error-color: var(--mb-color-error);
+  --mb-if-disabled-text: #8a98a9;
 }
 
 :root[data-theme='dark'],
 html[data-theme='dark'],
 html.theme-dark,
 html.v-theme--dark {
-  --mb-if-label-color: #e5eaf2;
-  --mb-if-bg: #121923;
-  --mb-if-bg-disabled: #1a2430;
-  --mb-if-border: #405978;
-  --mb-if-border-hover: #5678b8;
-  --mb-if-border-focus: #89a8ff;
-  --mb-if-border-error: #ff8f7a;
-  --mb-if-focus-ring: 0 0 0 3px #304d84;
-  --mb-if-value-color: #e5eaf2;
-  --mb-if-addon-color: #c5cfde;
-  --mb-if-placeholder-color: #97a3b5;
-  --mb-if-icon-color: #c5cfde;
-  --mb-if-hint-color: #97a3b5;
-  --mb-if-error-color: #ff8f7a;
-  --mb-if-disabled-text: #617084;
+  --mb-if-font-family: var(--mb-font-family-base);
+  --mb-if-letter-spacing: var(--mb-letter-spacing-normal);
+  --mb-if-label-size: var(--mb-font-size-body);
+  --mb-if-label-line-height: 20px;
+  --mb-if-label-weight: var(--mb-font-weight-semibold);
+  --mb-if-label-color: var(--mb-color-text);
+  --mb-if-label-gap: var(--mb-space-2);
+  --mb-if-required-size: var(--mb-font-size-sm);
+  --mb-if-required-line-height: 16px;
+  --mb-if-required-color: var(--mb-color-primary);
+  --mb-if-control-height: var(--mb-control-height-lg);
+  --mb-if-control-gap: var(--mb-control-gap-md);
+  --mb-if-control-padding-x: 16px;
+  --mb-if-control-padding-y: 12px;
+  --mb-if-radius: var(--mb-radius-pill);
+  --mb-if-bg: var(--mb-color-surface);
+  --mb-if-bg-disabled: var(--mb-color-surface-subtle);
+  --mb-if-border: var(--mb-color-border);
+  --mb-if-border-hover: var(--mb-color-primary-soft-hover);
+  --mb-if-border-focus: var(--mb-color-primary-soft-hover);
+  --mb-if-border-error: var(--mb-color-error);
+  --mb-if-focus-ring: var(--mb-focus-ring);
+  --mb-if-value-size: var(--mb-font-size-body);
+  --mb-if-value-line-height: 20px;
+  --mb-if-value-weight: var(--mb-font-weight-regular);
+  --mb-if-value-color: var(--mb-color-text);
+  --mb-if-addon-color: var(--mb-color-text-muted);
+  --mb-if-placeholder-color: var(--mb-color-text-soft);
+  --mb-if-icon-color: var(--mb-color-text-muted);
+  --mb-if-icon-size: 20px;
+  --mb-if-icon-stroke: 2px;
+  --mb-if-icon-corner: 4px;
+  --mb-if-rhombus-size: 12px;
+  --mb-if-message-gap: var(--mb-space-2);
+  --mb-if-message-size: var(--mb-font-size-sm);
+  --mb-if-message-line-height: 16px;
+  --mb-if-hint-color: var(--mb-color-text-muted);
+  --mb-if-error-color: var(--mb-color-error);
+  --mb-if-disabled-text: #8093a8;
 }

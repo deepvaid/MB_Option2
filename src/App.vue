@@ -16,6 +16,8 @@ const isFullPage = computed(() => !!route.meta?.fullPage)
 
 <template>
   <v-app>
+    <a v-if="!isFullPage" href="#main-content" class="skip-link">Skip to main content</a>
+
     <AppSidebar
       v-if="!isFullPage"
       v-model="drawer"
@@ -25,8 +27,13 @@ const isFullPage = computed(() => !!route.meta?.fullPage)
 
     <AppBar v-if="!isFullPage" v-model:copilot-open="copilotOpen" />
 
-    <v-main :style="{ background: 'rgb(var(--v-theme-background))' }">
-      <v-container v-if="!isFullPage" fluid class="pa-6">
+    <v-main
+      id="main-content"
+      role="main"
+      tabindex="-1"
+      :style="{ background: 'rgb(var(--v-theme-background))' }"
+    >
+      <v-container v-if="!isFullPage" fluid class="mp-main-shell">
         <router-view />
       </v-container>
       <router-view v-else />
@@ -50,10 +57,42 @@ const isFullPage = computed(() => !!route.meta?.fullPage)
 </template>
 
 <style>
+.skip-link {
+  position: absolute;
+  left: 16px;
+  top: -48px;
+  z-index: 1000;
+  padding: 10px 14px;
+  border-radius: 999px;
+  background: rgb(var(--v-theme-primary));
+  color: rgb(var(--v-theme-on-primary));
+  font-weight: 600;
+  transition: top 0.2s ease;
+}
+
+.skip-link:focus {
+  top: 16px;
+}
+
+.mp-main-shell {
+  padding: 40px !important;
+}
+
+@media (max-width: 1024px) {
+  .mp-main-shell {
+    padding: 28px !important;
+  }
+}
+
+@media (max-width: 640px) {
+  .mp-main-shell {
+    padding: 20px !important;
+  }
+}
+
 .copilot-drawer .v-navigation-drawer__content {
   display: flex;
   flex-direction: column;
   overflow: hidden !important;
 }
 </style>
-

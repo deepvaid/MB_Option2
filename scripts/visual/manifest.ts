@@ -48,7 +48,7 @@ export function baselineRelativePath(testCase: Pick<VisualCase, 'viewport' | 'th
 }
 
 export async function loadManifest(rootDir: string): Promise<VisualManifest> {
-  const manifestPath = path.join(rootDir, 'apps/storybook/src/visual-manifest.json');
+  const manifestPath = path.join(rootDir, 'scripts/visual/visual-manifest.json');
   const raw = await readFile(manifestPath, 'utf8');
   const manifest = JSON.parse(raw) as VisualManifest;
 

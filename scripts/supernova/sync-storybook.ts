@@ -13,7 +13,7 @@ type RequiredEnv = 'SUPERNOVA_TOKEN' | 'SUPERNOVA_DESIGN_SYSTEM_ID';
 const REQUIRED_ENV: RequiredEnv[] = ['SUPERNOVA_TOKEN', 'SUPERNOVA_DESIGN_SYSTEM_ID'];
 const storybookDir = process.env.SUPERNOVA_STORYBOOK_PATH
   ? path.resolve(rootDir, process.env.SUPERNOVA_STORYBOOK_PATH)
-  : path.resolve(rootDir, 'apps/storybook/storybook-static');
+  : path.resolve(rootDir, 'dist-storybook');
 
 function getEnv(name: string): string | undefined {
   const value = process.env[name];
@@ -36,7 +36,7 @@ async function ensureStorybookExists() {
       [
         `Storybook static directory not found: ${storybookDir}`,
         'Build Storybook first:',
-        'pnpm storybook:build'
+        'pnpm build-storybook'
       ].join('\n')
     );
   }

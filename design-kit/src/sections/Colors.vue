@@ -60,50 +60,47 @@ function textColor(hex: string): string {
 <template>
   <div>
     <div class="mb-6">
-      <div style="font-size: 28px; font-weight: 700; font-family: Inter, sans-serif; color: #111928;">Colors</div>
-      <div class="text-medium-emphasis mt-1">Semantic color palette from <code>tokens.json</code> — light, dark, and sidebar themes</div>
+      <div class="d-flex align-center gap-2 mb-2">
+        <v-chip size="x-small" variant="tonal" color="primary" label>Token source</v-chip>
+        <span class="text-caption text-medium-emphasis">Structured palette exploration</span>
+      </div>
+      <div class="design-kit-section-title">Colors</div>
+      <div class="text-medium-emphasis mt-1">
+        Semantic color palette from <code>tokens.json</code> with light, dark, and sidebar sets.
+      </div>
     </div>
 
     <div v-for="group in groups" :key="group.label" class="mb-8">
-      <div style="font-size: 16px; font-weight: 600; font-family: Inter, sans-serif; margin-bottom: 12px; color: #111928;">
-        {{ group.label }}
+      <div class="d-flex align-center justify-space-between mb-3">
+        <div class="design-kit-group-title">{{ group.label }}</div>
+        <v-chip size="x-small" variant="tonal" color="secondary">{{ group.colors.length }} tokens</v-chip>
       </div>
 
-      <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 12px;">
+      <div class="design-kit-color-grid">
         <div
           v-for="color in group.colors"
           :key="color.token"
-          style="border-radius: 8px; overflow: hidden; border: 1px solid #E5E7EB;"
+          class="design-kit-color-card"
         >
           <!-- Color swatch -->
           <div
-            :style="{
-              background: color.value,
-              height: '72px',
-              display: 'flex',
-              alignItems: 'flex-end',
-              padding: '8px',
-            }"
+            class="design-kit-swatch"
+            :style="{ background: color.value }"
           >
             <span
-              :style="{
-                color: textColor(color.value),
-                fontSize: '11px',
-                fontWeight: '500',
-                fontFamily: 'JetBrains Mono, monospace',
-                opacity: 0.9,
-              }"
+              class="design-kit-mono design-kit-swatch-text"
+              :style="{ color: textColor(color.value) }"
             >
               {{ color.value }}
             </span>
           </div>
 
           <!-- Meta -->
-          <div style="background: #FFFFFF; padding: 8px 10px;">
-            <div style="font-size: 12px; font-weight: 600; font-family: Inter, sans-serif; color: #111928;">
+          <div class="design-kit-card-meta">
+            <div class="design-kit-token-name">
               {{ color.name }}
             </div>
-            <div style="font-size: 11px; font-family: JetBrains Mono, monospace; color: #6B7280; margin-top: 2px;">
+            <div class="design-kit-mono design-kit-token-path">
               {{ color.token }}
             </div>
           </div>
@@ -112,3 +109,65 @@ function textColor(hex: string): string {
     </div>
   </div>
 </template>
+
+<style scoped>
+.design-kit-section-title {
+  font-size: 28px;
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  color: rgb(var(--v-theme-on-surface));
+}
+
+.design-kit-group-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: rgb(var(--v-theme-on-surface));
+}
+
+.design-kit-color-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 12px;
+}
+
+.design-kit-color-card {
+  overflow: hidden;
+  border-radius: 12px;
+  border: 1px solid rgba(var(--v-border-color), var(--v-border-opacity));
+  background: rgb(var(--v-theme-surface));
+}
+
+.design-kit-swatch {
+  height: 76px;
+  display: flex;
+  align-items: flex-end;
+  padding: 10px;
+}
+
+.design-kit-swatch-text {
+  font-size: 11px;
+  font-weight: 500;
+  opacity: 0.95;
+}
+
+.design-kit-card-meta {
+  background: rgba(var(--v-theme-surface-variant), 0.45);
+  padding: 10px 12px;
+}
+
+.design-kit-token-name {
+  font-size: 12px;
+  font-weight: 600;
+  color: rgb(var(--v-theme-on-surface));
+}
+
+.design-kit-token-path {
+  font-size: 11px;
+  color: rgb(var(--v-theme-on-surface-variant));
+  margin-top: 2px;
+}
+
+.design-kit-mono {
+  font-family: 'JetBrains Mono', 'Fira Code', monospace;
+}
+</style>

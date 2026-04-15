@@ -10,79 +10,12 @@ import * as components from 'vuetify/components'
 import * as directives from 'vuetify/directives'
 
 // Global styles
+import '@marobase/ui/tokens/index.css'
 import '../src/design-tokens/generated/variables.css'
 import '../src/styles/mp-theme-aliases.css'
 import '../src/styles/global.scss'
 
-// Design tokens — auto-generated from tokens.json (same source as vuetify.ts)
-import {
-  mp_color_light_background, mp_color_light_surface, mp_color_light_surfaceVariant,
-  mp_color_light_onSurfaceVariant, mp_color_light_primary, mp_color_light_primaryDarken,
-  mp_color_light_secondary, mp_color_light_secondaryDarken, mp_color_light_success,
-  mp_color_light_successDarken, mp_color_light_warning, mp_color_light_warningDarken,
-  mp_color_light_error, mp_color_light_errorDarken, mp_color_light_info,
-  mp_color_light_onPrimary, mp_color_light_onSecondary, mp_color_light_onSuccess,
-  mp_color_light_onError, mp_color_light_onWarning, mp_color_light_border,
-  mp_color_dark_background, mp_color_dark_surface, mp_color_dark_surfaceVariant,
-  mp_color_dark_onSurfaceVariant, mp_color_dark_primary, mp_color_dark_primaryDarken,
-  mp_color_dark_secondary, mp_color_dark_secondaryDarken, mp_color_dark_success,
-  mp_color_dark_warning, mp_color_dark_error, mp_color_dark_info,
-  mp_color_dark_onPrimary, mp_color_dark_border,
-  mp_typography_fontFamily_base,
-  mp_component_button_typography_fontSize,
-  mp_component_button_typography_fontWeight,
-  mp_component_button_typography_letterSpacing,
-  mp_component_button_radius_default,
-  mp_component_input_radius_default,
-} from '../src/design-tokens/generated/tokens'
-
-// ── Shared Vuetify instance (driven by design tokens — mirrors src/plugins/vuetify.ts) ─
-const maropostLight = {
-  dark: false,
-  colors: {
-    background:          mp_color_light_background,
-    surface:             mp_color_light_surface,
-    'surface-variant':   mp_color_light_surfaceVariant,
-    'on-surface-variant': mp_color_light_onSurfaceVariant,
-    primary:             mp_color_light_primary,
-    'primary-darken-1':  mp_color_light_primaryDarken,
-    secondary:           mp_color_light_secondary,
-    'secondary-darken-1': mp_color_light_secondaryDarken,
-    success:             mp_color_light_success,
-    'success-darken-1':  mp_color_light_successDarken,
-    warning:             mp_color_light_warning,
-    'warning-darken-1':  mp_color_light_warningDarken,
-    error:               mp_color_light_error,
-    'error-darken-1':    mp_color_light_errorDarken,
-    info:                mp_color_light_info,
-    'on-primary':        mp_color_light_onPrimary,
-    'on-secondary':      mp_color_light_onSecondary,
-    'on-success':        mp_color_light_onSuccess,
-    'on-error':          mp_color_light_onError,
-    'on-warning':        mp_color_light_onWarning,
-    border:              mp_color_light_border,
-  },
-}
-
-const maropostDark = {
-  dark: true,
-  colors: {
-    background:          mp_color_dark_background,
-    surface:             mp_color_dark_surface,
-    'surface-variant':   mp_color_dark_surfaceVariant,
-    'on-surface-variant': mp_color_dark_onSurfaceVariant,
-    primary:             mp_color_dark_primary,
-    'primary-darken-1':  mp_color_dark_primaryDarken,
-    secondary:           mp_color_dark_secondary,
-    'secondary-darken-1': mp_color_dark_secondaryDarken,
-    success:             mp_color_dark_success,
-    warning:             mp_color_dark_warning,
-    error:               mp_color_dark_error,
-    info:                mp_color_dark_info,
-    'on-primary':        mp_color_dark_onPrimary,
-    border:              mp_color_dark_border,
-  },
-}
+import { maropostDark, maropostDefaults, maropostLight } from '../src/plugins/maropostTheme'
 
 const vuetify = createVuetify({
   components,
@@ -91,31 +24,7 @@ const vuetify = createVuetify({
     defaultTheme: 'maropostLight',
     themes: { maropostLight, maropostDark },
   },
-  defaults: {
-    VBtn: {
-      style: `
-        letter-spacing: ${mp_component_button_typography_letterSpacing};
-        font-weight: ${mp_component_button_typography_fontWeight};
-        text-transform: none;
-        font-family: ${mp_typography_fontFamily_base};
-        font-size: ${mp_component_button_typography_fontSize};
-        border-radius: ${mp_component_button_radius_default};
-      `,
-    },
-    VCard: { variant: 'flat', border: true, class: 'mp-card' },
-    VTextField: { variant: 'outlined', hideDetails: 'auto', style: `border-radius: ${mp_component_input_radius_default};` },
-    VSelect: { variant: 'outlined', hideDetails: 'auto', style: `border-radius: ${mp_component_input_radius_default};` },
-    VAutocomplete: { variant: 'outlined', hideDetails: 'auto', style: `border-radius: ${mp_component_input_radius_default};` },
-    VCombobox: { variant: 'outlined', hideDetails: 'auto', style: `border-radius: ${mp_component_input_radius_default};` },
-    VTextarea: { variant: 'outlined', hideDetails: 'auto', style: `border-radius: ${mp_component_input_radius_default};` },
-    VChip: { rounded: 'md' },
-    VDataTable: { fixedHeader: true, hover: true, density: 'comfortable', itemsPerPage: 15 },
-    VNavigationDrawer: { elevation: 0 },
-    VAppBar: { elevation: 0 },
-    VDialog: { rounded: 'xl' },
-    VDivider: { opacity: 0.6 },
-    VList: { elevation: 0, border: true, rounded: 'lg' },
-  },
+  defaults: maropostDefaults,
 })
 
 // ── Register plugins globally for all stories ──────────────────────────────
@@ -124,44 +33,91 @@ setup((app) => {
   app.use(createPinia())
 })
 
+function normalizeTheme(theme: string) {
+  return theme === 'maropostDark' || theme === 'dark' ? 'dark' : 'light'
+}
+
+function syncDocumentTheme(theme: 'light' | 'dark') {
+  if (typeof document === 'undefined') {
+    return
+  }
+
+  const isDark = theme === 'dark'
+  const root = document.documentElement
+  const body = document.body
+
+  root.dataset.theme = theme
+  root.classList.toggle('theme-dark', isDark)
+  root.classList.toggle('theme-light', !isDark)
+  root.classList.toggle('v-theme--dark', isDark)
+  root.classList.toggle('v-theme--light', !isDark)
+
+  if (body) {
+    body.dataset.theme = theme
+    body.classList.toggle('theme-dark', isDark)
+    body.classList.toggle('theme-light', !isDark)
+    body.classList.toggle('v-theme--dark', isDark)
+    body.classList.toggle('v-theme--light', !isDark)
+  }
+}
+
 // ── Storybook preview config ───────────────────────────────────────────────
 const preview: Preview = {
   globalTypes: {
     theme: {
-      description: 'Vuetify theme',
+      description: 'Visual theme',
       toolbar: {
         title: 'Theme',
         icon: 'paintbrush',
         items: [
-          { value: 'maropostLight', title: 'Light' },
-          { value: 'maropostDark', title: 'Dark' },
+          { value: 'light', title: 'Light' },
+          { value: 'dark', title: 'Dark' },
         ],
         dynamicTitle: true,
       },
     },
   },
   initialGlobals: {
-    theme: 'maropostLight',
+    theme: 'light',
   },
   decorators: [
     (story, context) => ({
       components: { story },
-      // Use setup() so the theme binding is truly reactive when toggled in the toolbar.
-      // Crucially we use a plain <div> instead of <v-main> — v-main is a Vuetify layout
-      // container that registers itself with the layout system and sets CSS variables
-      // (--v-layout-left/right/top/bottom) that confuse v-dialog and v-navigation-drawer
-      // overlay positioning in the Storybook iframe environment.
       setup() {
-        return { sbTheme: context.globals.theme || 'maropostLight' }
+        const theme = normalizeTheme(String(context.globals.theme ?? 'light'))
+        const vuetifyTheme = theme === 'dark' ? 'maropostDark' : 'maropostLight'
+        const isVisualParity = Boolean((context.parameters as { visualParity?: boolean }).visualParity)
+
+        syncDocumentTheme(theme)
+
+        return {
+          isVisualParity,
+          theme,
+          vuetifyTheme,
+        }
       },
       template: `
-        <v-app>
-          <v-theme-provider :theme="sbTheme">
-            <div class="pa-6 mp-story-canvas">
-              <story />
-            </div>
-          </v-theme-provider>
-        </v-app>
+        <div
+          class="mp-storybook-root"
+          :class="theme === 'dark' ? 'mp-storybook-root--dark' : 'mp-storybook-root--light'"
+          :data-theme="theme"
+          data-visual-root
+        >
+          <v-app>
+            <v-theme-provider :theme="vuetifyTheme">
+              <div v-if="isVisualParity" class="mp-visual-shell">
+                <div class="mp-visual-stage">
+                  <div class="mp-visual-stage__content">
+                    <story />
+                  </div>
+                </div>
+              </div>
+              <div v-else class="pa-6 mp-story-canvas">
+                <story />
+              </div>
+            </v-theme-provider>
+          </v-app>
+        </div>
       `,
     }),
   ],
@@ -180,6 +136,8 @@ const preview: Preview = {
           'Overlays',
           'Copilot',
           'AI',
+          'Marobase',
+          'Visual Parity',
           '*',
         ],
       },
@@ -188,3 +146,77 @@ const preview: Preview = {
 }
 
 export default preview
+
+if (typeof document !== 'undefined' && !document.getElementById('mp-storybook-preview-style')) {
+  const style = document.createElement('style')
+  style.id = 'mp-storybook-preview-style'
+  style.textContent = `
+    :root {
+      --mp-visual-stage-bg: #f4f7fb;
+      --mp-visual-stage-border: #d5deea;
+      --mp-visual-stage-text: #122033;
+    }
+
+    html[data-theme='dark'],
+    html.theme-dark,
+    html.v-theme--dark {
+      --mp-visual-stage-bg: #111a27;
+      --mp-visual-stage-border: #273448;
+      --mp-visual-stage-text: #edf3fb;
+    }
+
+    .mp-storybook-root,
+    .mp-storybook-root .v-application,
+    .mp-storybook-root .v-application__wrap {
+      min-height: 100vh;
+      width: 100%;
+    }
+
+    .mp-storybook-root .v-application {
+      background: transparent;
+    }
+
+    .mp-visual-shell {
+      display: grid;
+      min-height: 100vh;
+      place-items: center;
+      padding: 24px;
+      box-sizing: border-box;
+      color: var(--mp-visual-stage-text);
+    }
+
+    .mp-visual-stage {
+      width: 960px;
+      height: 540px;
+      box-sizing: border-box;
+      overflow: hidden;
+      display: grid;
+      place-items: center;
+      background: var(--mp-visual-stage-bg);
+      border: 1px solid var(--mp-visual-stage-border);
+      color: var(--mp-visual-stage-text);
+    }
+
+    .mp-visual-stage__content {
+      width: 100%;
+      height: 100%;
+      min-width: 0;
+      min-height: 0;
+      overflow: hidden;
+      display: grid;
+      place-items: center;
+      box-sizing: border-box;
+      contain: strict;
+    }
+
+    .mp-visual-stage,
+    .mp-visual-stage *,
+    .mp-visual-stage *::before,
+    .mp-visual-stage *::after {
+      animation: none !important;
+      transition: none !important;
+      caret-color: transparent !important;
+    }
+  `
+  document.head.appendChild(style)
+}

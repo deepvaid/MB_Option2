@@ -64,7 +64,8 @@ const iconMap: Record<string, Record<string, string>> = {
 }
 
 const chipColor = computed(() => {
-  return colorMap[props.type]?.[props.status] ?? colorMap.general[props.status] ?? 'default'
+  const fallbackColors = colorMap.general ?? {}
+  return colorMap[props.type]?.[props.status] ?? fallbackColors[props.status] ?? 'default'
 })
 
 const chipIcon = computed(() => {

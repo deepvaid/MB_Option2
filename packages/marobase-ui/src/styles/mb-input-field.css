@@ -8,7 +8,7 @@
   align-items: center;
   color: var(--mb-if-label-color);
   display: inline-flex;
-  gap: 2px;
+  gap: var(--mb-space-1);
   margin: 0 0 var(--mb-if-label-gap) 0;
 }
 
@@ -36,6 +36,10 @@
   min-height: var(--mb-if-control-height);
   padding: var(--mb-if-control-padding-y) var(--mb-if-control-padding-x);
   width: 100%;
+  transition:
+    border-color var(--mb-motion-fast),
+    box-shadow var(--mb-motion-fast),
+    background-color var(--mb-motion-fast);
 }
 
 .mb-if__left-addon {
@@ -107,6 +111,7 @@
 
 .mb-if[data-state='default'] .mb-if__control:hover {
   border-color: var(--mb-if-border-hover);
+  box-shadow: none;
 }
 
 .mb-if[data-state='focus'] .mb-if__control {

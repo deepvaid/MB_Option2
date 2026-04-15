@@ -92,7 +92,13 @@ function sendReply() {
 
     <!-- Filter chips -->
     <div class="d-flex align-center gap-2 overflow-x-auto hide-scrollbar">
-      <v-btn-toggle v-model="filterStatus" density="comfortable" mandatory class="bg-transparent" selected-class="bg-blue-darken-3 text-white">
+      <v-btn-toggle
+        v-model="filterStatus"
+        density="comfortable"
+        mandatory
+        class="mp-toggle-group mp-toggle-group--pills bg-transparent"
+        selected-class="bg-primary text-white"
+      >
         <v-btn v-for="s in statusOptions" :key="s" :value="s" rounded="pill" variant="flat" size="small"
           class="text-none px-4 mr-2" :class="filterStatus === s ? '' : 'bg-grey-lighten-4 text-medium-emphasis'">
           {{ s }}
@@ -108,7 +114,15 @@ function sendReply() {
         class="flex-grow-1 pa-0"
         style="min-height: unset;"
       />
-      <v-btn-toggle v-model="tab" density="compact" variant="outlined" divided class="bg-surface border" rounded="lg" mandatory>
+      <v-btn-toggle
+        v-model="tab"
+        density="compact"
+        variant="outlined"
+        divided
+        class="mp-toggle-group mp-toggle-group--segmented bg-surface border"
+        rounded="lg"
+        mandatory
+      >
         <v-btn value="list" class="text-none" size="small">
           <v-icon size="16" class="mr-1">mdi-format-list-bulleted</v-icon> List
         </v-btn>

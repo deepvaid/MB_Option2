@@ -26,13 +26,13 @@ vercel --prod
 
 ### What Gets Deployed
 - **App** → `https://your-project.vercel.app/` (Vue app from `dist/`)
-- **Storybook** → `https://your-project.vercel.app/storybook/` (from `dist-storybook/`)
+- **Root Storybook** → `https://your-project.vercel.app/storybook/` (from `dist-storybook/`)
 
 ### Build Pipeline
 The `vercel.json` build command runs:
 1. `npm run tokens:build` — Generate design token files
 2. `npm run build` — TypeScript check + Vite production build
-3. `npm run build-storybook` — Build Storybook static site
+3. `npm run build-storybook` — Build the root Storybook static site
 
 ## Preview Deployments
 
@@ -79,9 +79,9 @@ vercel promote [deployment-url]
 Run `npm run type-check` locally and fix all errors before pushing.
 
 **Storybook build fails:**
-Make sure Storybook dependencies are installed:
+Make sure the root Storybook dependencies are installed:
 ```bash
-npm install -D storybook @storybook/vue3-vite @storybook/addon-essentials @storybook/addon-themes
+npm install
 ```
 
 **Token generation fails:**

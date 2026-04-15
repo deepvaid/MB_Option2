@@ -52,7 +52,7 @@ jobs:
           fi
 
       - name: Build Storybook static site
-        run: pnpm storybook:build
+        run: pnpm build-storybook
 
       - name: Install Supernova CLI
         run: npm install --global @supernovaio/cli

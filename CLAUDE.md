@@ -25,7 +25,7 @@ This is NOT a production app — it uses mock data and has no backend API.
 | State | Pinia | 3.x |
 | Routing | Vue Router | 5.x |
 | Icons | MDI (`@mdi/font`) | 7.x |
-| Docs | Storybook 8 (`@storybook/vue3-vite`) | 8.x |
+| Docs | Storybook 9 (`@storybook/vue3-vite`) | 9.1.x |
 | Tokens | Custom build script (zero-dep) | — |
 
 ---

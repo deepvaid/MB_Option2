@@ -2,6 +2,7 @@
   border-bottom: 1px solid var(--mb-tabs-border-color);
   display: inline-flex;
   font-family: var(--mb-tabs-font-family);
+  padding-bottom: 2px;
 }
 
 .mb-tabs__list {
@@ -13,8 +14,9 @@
 .mb-tabs__tab {
   align-items: center;
   background: transparent;
-  border: 0;
-  border-bottom: var(--mb-tabs-active-border-size) solid transparent;
+  border: 1px solid transparent;
+  border-bottom-color: transparent;
+  border-radius: var(--mb-radius-pill);
   color: var(--mb-tabs-tab-color);
   cursor: pointer;
   display: inline-flex;
@@ -23,6 +25,11 @@
   justify-content: center;
   margin-bottom: calc(-1 * var(--mb-tabs-border-overlap));
   padding: var(--mb-tabs-tab-padding-y) var(--mb-tabs-tab-padding-x);
+  transition:
+    color var(--mb-motion-fast),
+    border-color var(--mb-motion-fast),
+    box-shadow var(--mb-motion-fast),
+    background-color var(--mb-motion-fast);
 }
 
 .mb-tabs__icon {
@@ -49,7 +56,7 @@
 
 .mb-tabs__dot {
   background: var(--mb-tabs-dot-color);
-  border-radius: 999px;
+  border-radius: var(--mb-radius-pill);
   display: inline-block;
   height: var(--mb-tabs-dot-size);
   width: var(--mb-tabs-dot-size);
@@ -59,7 +66,7 @@
   align-items: center;
   background: var(--mb-tabs-badge-bg);
   border: 2px solid var(--mb-tabs-badge-border);
-  border-radius: 999px;
+  border-radius: var(--mb-radius-pill);
   color: var(--mb-tabs-badge-color);
   display: inline-flex;
   font-size: var(--mb-tabs-badge-size);
@@ -72,7 +79,8 @@
 }
 
 .mb-tabs__tab[data-active='true'] {
-  border-bottom-color: var(--mb-tabs-active-border-color);
+  border-color: var(--mb-tabs-active-border-color);
+  background: var(--mb-color-primary-soft);
   color: var(--mb-tabs-tab-active-color);
 }
 
@@ -86,6 +94,10 @@
   border-radius: var(--mb-tabs-focus-radius);
   box-shadow: var(--mb-tabs-focus-ring);
   outline: none;
+}
+
+.mb-tabs__tab:hover:not(:disabled) {
+  background: var(--mb-color-surface-subtle);
 }
 
 .mb-tabs__tab:disabled,

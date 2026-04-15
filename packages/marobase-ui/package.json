@@ -44,7 +44,8 @@
     "./tokens/mb-text-area.css": "./src/tokens/mb-text-area.tokens.css",
     "./tokens/mb-timeline.css": "./src/tokens/mb-timeline.tokens.css",
     "./tokens/mb-tooltip.css": "./src/tokens/mb-tooltip.tokens.css",
-    "./tokens/mb-wysiwyg-editor.css": "./src/tokens/mb-wysiwyg-editor.tokens.css"
+    "./tokens/mb-wysiwyg-editor.css": "./src/tokens/mb-wysiwyg-editor.tokens.css",
+    "./tokens/index.css": "./src/tokens/index.css"
   },
   "peerDependencies": {
     "vue": "^3.5.0"

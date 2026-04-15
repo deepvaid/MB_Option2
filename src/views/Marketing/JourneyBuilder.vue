@@ -116,7 +116,16 @@ const typeBadgeColor = (t: NodeType) => ({ trigger:'secondary', email:'primary',
       <!-- Node Palette Sidebar -->
       <div class="border-r bg-surface d-flex flex-column" style="width:232px;flex-shrink:0;overflow-y:auto;">
         <div class="pa-3 border-b">
-          <v-btn-toggle v-model="sidebarTab" density="compact" variant="outlined" divided mandatory rounded="lg" style="width:100%;">
+          <v-btn-toggle
+            v-model="sidebarTab"
+            density="compact"
+            variant="outlined"
+            divided
+            mandatory
+            rounded="lg"
+            class="mp-toggle-group mp-toggle-group--segmented"
+            style="width:100%;"
+          >
             <v-btn value="triggers" class="text-none" size="small" style="flex:1;">Triggers</v-btn>
             <v-btn value="actions" class="text-none" size="small" style="flex:1;">Actions</v-btn>
           </v-btn-toggle>

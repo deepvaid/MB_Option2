@@ -126,6 +126,13 @@ function sendSuggestion(text: string) {
   processQuery(text)
 }
 
+function onSuggestionKeydown(event: KeyboardEvent, text: string) {
+  if (event.key === 'Enter' || event.key === ' ') {
+    event.preventDefault()
+    sendSuggestion(text)
+  }
+}
+
 function newChat() {
   chatMode.value = false
   messages.value = []
@@ -144,15 +151,15 @@ function newChat() {
         <div class="text-subtitle-2 font-weight-bold da-vinci-title">Da Vinci Bot</div>
         <div class="text-caption text-medium-emphasis da-vinci-subtitle">Intelligent AI assistant</div>
       </div>
-      <v-btn icon size="32" color="primary" variant="flat" @click="newChat">
+      <v-btn icon size="32" variant="flat" class="da-vinci-accent-btn" aria-label="Start a new chat" @click="newChat">
         <v-icon size="18">mdi-plus</v-icon>
         <v-tooltip activator="parent" location="bottom">New chat</v-tooltip>
       </v-btn>
-      <v-btn icon size="32" variant="text" @click="onExpand">
+      <v-btn icon size="32" variant="text" :aria-label="isExpanded ? 'Collapse Da Vinci drawer' : 'Expand Da Vinci drawer'" @click="onExpand">
         <v-icon size="18">{{ isExpanded ? 'mdi-arrow-collapse' : 'mdi-arrow-expand' }}</v-icon>
         <v-tooltip activator="parent" location="bottom">{{ isExpanded ? 'Collapse' : 'Expand' }}</v-tooltip>
       </v-btn>
-      <v-btn icon size="32" variant="text" @click="emit('close')">
+      <v-btn icon size="32" variant="text" aria-label="Close Da Vinci drawer" @click="emit('close')">
         <v-icon size="18">mdi-close</v-icon>
         <v-tooltip activator="parent" location="bottom">Close</v-tooltip>
       </v-btn>
@@ -185,10 +192,28 @@ function newChat() {
               <span class="text-caption font-weight-bold text-uppercase mp-label-caps">Commerce</span>
             </div>
             <div class="d-flex flex-column ga-2">
-              <v-card variant="outlined" rounded="lg" class="suggestion-card" @click="sendSuggestion('Top 10 products by revenue')">
+              <v-card
+                variant="outlined"
+                rounded="lg"
+                class="suggestion-card"
+                role="button"
+                tabindex="0"
+                aria-label="Run suggestion: Top 10 products by revenue"
+                @click="sendSuggestion('Top 10 products by revenue')"
+                @keydown="onSuggestionKeydown($event, 'Top 10 products by revenue')"
+              >
                 <v-card-text class="py-2 px-3 text-body-2 font-weight-medium">Top 10 products by revenue</v-card-text>
               </v-card>
-              <v-card variant="outlined" rounded="lg" class="suggestion-card" @click="sendSuggestion('Compare this month vs last month')">
+              <v-card
+                variant="outlined"
+                rounded="lg"
+                class="suggestion-card"
+                role="button"
+                tabindex="0"
+                aria-label="Run suggestion: Compare this month vs last month"
+                @click="sendSuggestion('Compare this month vs last month')"
+                @keydown="onSuggestionKeydown($event, 'Compare this month vs last month')"
+              >
                 <v-card-text class="py-2 px-3 text-body-2 font-weight-medium">Compare this month vs last month</v-card-text>
               </v-card>
             </div>
@@ -201,10 +226,28 @@ function newChat() {
               <span class="text-caption font-weight-bold text-uppercase mp-label-caps">Marketing</span>
             </div>
             <div class="d-flex flex-column ga-2">
-              <v-card variant="outlined" rounded="lg" class="suggestion-card" @click="sendSuggestion('Create a flash sale campaign')">
+              <v-card
+                variant="outlined"
+                rounded="lg"
+                class="suggestion-card"
+                role="button"
+                tabindex="0"
+                aria-label="Run suggestion: Create a flash sale campaign"
+                @click="sendSuggestion('Create a flash sale campaign')"
+                @keydown="onSuggestionKeydown($event, 'Create a flash sale campaign')"
+              >
                 <v-card-text class="py-2 px-3 text-body-2 font-weight-medium">Create a flash sale campaign</v-card-text>
               </v-card>
-              <v-card variant="outlined" rounded="lg" class="suggestion-card" @click="sendSuggestion('Write an email for our spring sale')">
+              <v-card
+                variant="outlined"
+                rounded="lg"
+                class="suggestion-card"
+                role="button"
+                tabindex="0"
+                aria-label="Run suggestion: Write an email for our spring sale"
+                @click="sendSuggestion('Write an email for our spring sale')"
+                @keydown="onSuggestionKeydown($event, 'Write an email for our spring sale')"
+              >
                 <v-card-text class="py-2 px-3 text-body-2 font-weight-medium">Write an email for our spring sale</v-card-text>
               </v-card>
             </div>
@@ -217,10 +260,28 @@ function newChat() {
               <span class="text-caption font-weight-bold text-uppercase mp-label-caps">Automation & Customers</span>
             </div>
             <div class="d-flex flex-column ga-2">
-              <v-card variant="outlined" rounded="lg" class="suggestion-card" @click="sendSuggestion('Set up abandoned cart recovery')">
+              <v-card
+                variant="outlined"
+                rounded="lg"
+                class="suggestion-card"
+                role="button"
+                tabindex="0"
+                aria-label="Run suggestion: Set up abandoned cart recovery"
+                @click="sendSuggestion('Set up abandoned cart recovery')"
+                @keydown="onSuggestionKeydown($event, 'Set up abandoned cart recovery')"
+              >
                 <v-card-text class="py-2 px-3 text-body-2 font-weight-medium">Set up abandoned cart recovery</v-card-text>
               </v-card>
-              <v-card variant="outlined" rounded="lg" class="suggestion-card" @click="sendSuggestion('Find high-value customers who haven\'t ordered in 90 days')">
+              <v-card
+                variant="outlined"
+                rounded="lg"
+                class="suggestion-card"
+                role="button"
+                tabindex="0"
+                aria-label="Run suggestion: Find high-value customers who have not ordered in 90 days"
+                @click="sendSuggestion('Find high-value customers who haven\'t ordered in 90 days')"
+                @keydown="onSuggestionKeydown($event, 'Find high-value customers who haven\'t ordered in 90 days')"
+              >
                 <v-card-text class="py-2 px-3 text-body-2 font-weight-medium">Find lapsed high-value customers</v-card-text>
               </v-card>
             </div>
@@ -241,7 +302,7 @@ function newChat() {
           <!-- Assistant response -->
           <div v-else class="mb-8">
             <div class="d-flex align-start ga-3 mb-2">
-              <v-avatar size="24" color="primary" class="mt-1">
+              <v-avatar size="24" class="mt-1 da-vinci-avatar da-vinci-avatar--assistant">
                 <v-icon size="14" color="white">mdi-creation</v-icon>
               </v-avatar>
               <div class="text-body-2 pt-1 da-vinci-assistant-text">{{ msg.text }}</div>
@@ -266,7 +327,7 @@ function newChat() {
 
         <!-- Typing Indicator -->
         <div v-if="isTyping" class="mb-4 d-flex align-start ga-3">
-           <v-avatar size="24" color="primary" class="mt-1">
+           <v-avatar size="24" class="mt-1 da-vinci-avatar da-vinci-avatar--assistant">
               <v-icon size="14" color="white">mdi-creation</v-icon>
            </v-avatar>
            <div class="typing-indicator pa-3 rounded-lg bg-surface-variant d-flex align-center ga-1">
@@ -282,6 +343,7 @@ function newChat() {
         <v-textarea
           v-model="inputText"
           placeholder="Ask Da Vinci..."
+          aria-label="Ask Da Vinci"
           variant="plain"
           density="compact"
           hide-details
@@ -293,19 +355,20 @@ function newChat() {
         />
         <div class="d-flex align-center justify-space-between mt-1">
           <div class="d-flex align-center ga-1">
-            <v-btn icon size="32" variant="text" color="medium-emphasis">
+            <v-btn icon size="32" variant="text" color="medium-emphasis" aria-label="Attach a file">
               <v-icon size="20">mdi-paperclip</v-icon>
             </v-btn>
           </div>
           <div class="d-flex align-center ga-1">
-            <v-btn icon size="32" variant="text" color="medium-emphasis">
+            <v-btn icon size="32" variant="text" color="medium-emphasis" aria-label="Start voice input">
               <v-icon size="20">mdi-microphone-outline</v-icon>
             </v-btn>
             <v-btn
               icon
               size="32"
-              :color="inputText.trim() ? 'primary' : 'surface-variant'"
               :variant="inputText.trim() ? 'flat' : 'flat'"
+              :class="['da-vinci-send-btn', { 'da-vinci-send-btn--active': inputText.trim() }]"
+              :aria-label="inputText.trim() ? 'Send message' : 'Type a message to enable send'"
               @click="sendQuery"
             >
               <v-icon size="18" :color="inputText.trim() ? 'white' : 'medium-emphasis'">mdi-arrow-up</v-icon>
@@ -319,7 +382,10 @@ function newChat() {
 
 <style scoped lang="scss">
 .da-vinci-bot {
-  background: rgb(var(--v-theme-background));
+  background:
+    radial-gradient(circle at top right, rgba(34, 199, 255, 0.08), transparent 26%),
+    radial-gradient(circle at left 24%, rgba(82, 216, 155, 0.08), transparent 22%),
+    rgb(var(--v-theme-background));
   height: 100%;
   overflow: hidden;
 }
@@ -332,7 +398,10 @@ function newChat() {
 }
 .da-vinci-chat-scroll {
   overflow-y: auto;
-  background: rgb(var(--v-theme-surface));
+  background:
+    radial-gradient(circle at top right, rgba(79, 109, 255, 0.05), transparent 18%),
+    radial-gradient(circle at left 18%, rgba(34, 199, 255, 0.05), transparent 14%),
+    rgb(var(--v-theme-surface));
 }
 .mp-label-caps {
   letter-spacing: 0.05em;
@@ -346,30 +415,69 @@ function newChat() {
 }
 .da-vinci-input-card {
   background: rgb(var(--v-theme-surface));
+  border-color: rgba(79, 109, 255, 0.14) !important;
+  box-shadow: 0 10px 28px rgba(83, 107, 180, 0.06);
 }
 .da-vinci-textarea {
   font-size: var(--mp-typography-fontSize-body);
 }
 
 .da-vinci-header {
+  position: relative;
+  overflow: hidden;
   background: rgb(var(--v-theme-surface));
   border-bottom: 1px solid rgba(var(--v-border-color), var(--v-border-opacity));
   z-index: 2;
+}
+
+.da-vinci-header::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: var(--mp-aurora-glow);
+  opacity: 0.85;
+  pointer-events: none;
+}
+
+.da-vinci-header > * {
+  position: relative;
+  z-index: 1;
 }
 
 .da-vinci-avatar {
   width: 36px;
   height: 36px;
   border-radius: 50%;
-  background: linear-gradient(
-    135deg,
-    rgb(var(--v-theme-warning)) 0%,
-    rgb(var(--v-theme-warning-darken-1)) 100%
-  );
+  background: var(--mp-aurora-gradient);
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: $mp-shadow-sm;
+  box-shadow: var(--mp-aurora-shadow);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+}
+
+.da-vinci-avatar--assistant {
+  width: 24px;
+  height: 24px;
+  box-shadow: 0 8px 20px rgba(67, 105, 214, 0.14);
+}
+
+.da-vinci-accent-btn {
+  background: var(--mp-aurora-gradient) !important;
+  color: var(--mp-aurora-ink) !important;
+  box-shadow: var(--mp-aurora-shadow);
+}
+
+.da-vinci-accent-btn:hover {
+  filter: brightness(1.03);
+}
+
+:deep(.da-vinci-accent-btn .v-btn__overlay) {
+  opacity: 0 !important;
+}
+
+:deep(.da-vinci-accent-btn .v-icon) {
+  color: inherit !important;
 }
 
 .suggestion-card {
@@ -379,9 +487,15 @@ function newChat() {
   cursor: pointer;
 }
 .suggestion-card:hover {
-  border-color: rgb(var(--v-theme-primary));
-  box-shadow: $mp-shadow-sm;
+  border-color: rgba(79, 109, 255, 0.3);
+  box-shadow: var(--mp-aurora-shadow);
   background: rgb(var(--v-theme-surface-variant));
+}
+
+.suggestion-card:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(var(--v-theme-primary), 0.18);
+  border-color: rgb(var(--v-theme-primary));
 }
 
 .user-bubble {
@@ -393,6 +507,26 @@ function newChat() {
 
 .da-vinci-input {
   background: transparent;
+}
+
+.da-vinci-send-btn {
+  background: rgb(var(--v-theme-surface-variant)) !important;
+  color: rgb(var(--v-theme-on-surface)) !important;
+  transition: background-color $mp-transition-base, box-shadow $mp-transition-base, filter $mp-transition-base;
+}
+
+.da-vinci-send-btn--active {
+  background: var(--mp-aurora-gradient) !important;
+  color: var(--mp-aurora-ink) !important;
+  box-shadow: var(--mp-aurora-shadow);
+}
+
+.da-vinci-send-btn--active:hover {
+  filter: brightness(1.03);
+}
+
+:deep(.da-vinci-send-btn .v-btn__overlay) {
+  opacity: 0 !important;
 }
 
 /* Typing indicator */

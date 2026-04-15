@@ -1,9 +1,11 @@
 <script setup lang="ts">
+import { computed, ref } from 'vue'
 import { useAnalyticsStore } from '@/stores/useAnalytics'
 import { useCommerceStore } from '@/stores/useCommerce'
 import { useCampaignsStore } from '@/stores/useCampaigns'
 import MpPageHeader from '@/components/MpPageHeader.vue'
 import MpKpiCard from '@/components/MpKpiCard.vue'
+import MpOverviewChart from '@/components/MpOverviewChart.vue'
 import MpSectionHeader from '@/components/MpSectionHeader.vue'
 import MpStatusChip from '@/components/MpStatusChip.vue'
 
@@ -42,6 +44,45 @@ const kpiCards = [
 const recentOrders = commerce.orders.slice(0, 6)
 const topSendingCampaigns = campaigns.campaigns.filter(c => c.status === 'Sent').slice(0, 5)
 
+type OverviewRange = '7D' | '30D' | '3M' | 'YTD'
+
+const chartRange = ref<OverviewRange>('30D')
+const chartRanges: OverviewRange[] = ['7D', '30D', '3M', 'YTD']
+const overviewDatasets: Record<OverviewRange, Array<{ label: string; revenue: number; engagement: number; orders: number }>> = {
+  '7D': [
+    { label: 'Mon', revenue: 28400, engagement: 22.1, orders: 96 },
+    { label: 'Tue', revenue: 30200, engagement: 23.2, orders: 112 },
+    { label: 'Wed', revenue: 29750, engagement: 22.8, orders: 108 },
+    { label: 'Thu', revenue: 32100, engagement: 24.4, orders: 121 },
+    { label: 'Fri', revenue: 34680, engagement: 25.2, orders: 136 },
+    { label: 'Sat', revenue: 33540, engagement: 24.1, orders: 130 },
+    { label: 'Sun', revenue: 35980, engagement: 26.5, orders: 144 },
+  ],
+  '30D': [
+    { label: 'Week 1', revenue: 154000, engagement: 21.8, orders: 482 },
+    { label: 'Week 2', revenue: 176200, engagement: 23.4, orders: 530 },
+    { label: 'Week 3', revenue: 163800, engagement: 22.7, orders: 501 },
+    { label: 'Week 4', revenue: 198500, engagement: 25.6, orders: 604 },
+    { label: 'Week 5', revenue: 214900, engagement: 27.2, orders: 662 },
+    { label: 'Today', revenue: 228400, engagement: 28.1, orders: 708 },
+  ],
+  '3M': [
+    { label: 'Jan', revenue: 382000, engagement: 20.2, orders: 1290 },
+    { label: 'Feb', revenue: 418000, engagement: 22.6, orders: 1442 },
+    { label: 'Mar', revenue: 453000, engagement: 23.8, orders: 1578 },
+    { label: 'Apr', revenue: 498000, engagement: 25.1, orders: 1710 },
+    { label: 'May', revenue: 542000, engagement: 26.3, orders: 1884 },
+    { label: 'Jun', revenue: 586000, engagement: 27.6, orders: 2012 },
+  ],
+  'YTD': [
+    { label: 'Jan', revenue: 382000, engagement: 20.2, orders: 1290 },
+    { label: 'Feb', revenue: 418000, engagement: 22.6, orders: 1442 },
+    { label: 'Mar', revenue: 453000, engagement: 23.8, orders: 1578 },
+  ],
+}
+
+const overviewChartPoints = computed(() => overviewDatasets[chartRange.value])
+
 const activityFeed = [
   { icon: 'mdi-email-check', color: 'success', text: 'Campaign "Flash Sale — 40% Off Sitewide" completed with 12,891 clicks.', time: '10 mins ago' },
   { icon: 'mdi-account-check', color: 'primary', text: 'Segment "Lapsed 90 Days" recalculated: 4,201 contacts.', time: '1 hour ago' },
@@ -65,37 +106,45 @@ const activityFeed = [
     </MpPageHeader>
 
     <!-- KPI Metric Cards -->
-    <v-row class="mb-6" dense>
+    <v-row class="dashboard-kpi-row mb-8">
       <v-col v-for="card in kpiCards" :key="card.label" cols="12" sm="6" lg="3">
         <MpKpiCard v-bind="card" />
       </v-col>
     </v-row>
 
     <!-- Main Body: Chart Area + Activity Feed -->
-    <v-row class="mb-6" dense>
+    <v-row class="dashboard-main-row mb-8">
       <v-col cols="12" lg="8">
-        <v-card variant="flat" border rounded="xl" class="pa-5" style="min-height: 340px;">
+        <v-card variant="flat" border rounded="xl" class="dashboard-surface-card dashboard-overview-card pa-6 d-flex flex-column">
           <MpSectionHeader title="Revenue & Engagement Overview">
             <template #actions>
-              <v-btn v-for="r in ['7D','30D','3M','YTD']" :key="r"
-                :variant="r === '30D' ? 'elevated' : 'text'"
-                :color="r === '30D' ? 'primary' : 'medium-emphasis'"
-                size="x-small" class="text-none">{{ r }}</v-btn>
+              <v-btn-toggle
+                v-model="chartRange"
+                mandatory
+                divided
+                density="comfortable"
+                class="mp-toggle-group mp-toggle-group--segmented"
+                aria-label="Select overview date range"
+              >
+                <v-btn
+                  v-for="range in chartRanges"
+                  :key="range"
+                  :value="range"
+                  size="small"
+                  class="text-none px-3"
+                >
+                  {{ range }}
+                </v-btn>
+              </v-btn-toggle>
             </template>
           </MpSectionHeader>
-          <v-card variant="outlined" class="d-flex align-center justify-center border-dashed" style="height: 260px;" color="surface-variant">
-            <div class="text-center">
-              <v-icon size="48" color="medium-emphasis" class="mb-3">mdi-chart-line</v-icon>
-              <div class="text-body-2 text-medium-emphasis font-weight-medium">Interactive Chart Component</div>
-              <div class="text-caption text-medium-emphasis">Integrate Recharts, Chart.js, or ApexCharts here</div>
-            </div>
-          </v-card>
+          <MpOverviewChart :points="overviewChartPoints" class="dashboard-overview-chart flex-grow-1" />
         </v-card>
       </v-col>
       <v-col cols="12" lg="4">
-        <v-card variant="flat" border rounded="xl" class="h-100 pa-5">
+        <v-card variant="flat" border rounded="xl" class="dashboard-surface-card dashboard-activity-card pa-6 d-flex flex-column">
           <MpSectionHeader title="Recent Activity" />
-          <v-list lines="two" density="compact" :border="false" class="pa-0">
+          <v-list lines="two" density="compact" :border="false" class="dashboard-activity-list pa-0 flex-grow-1">
             <v-list-item
               v-for="(item, idx) in activityFeed"
               :key="idx"
@@ -116,14 +165,14 @@ const activityFeed = [
     </v-row>
 
     <!-- Bottom Split: Top Campaigns + Recent Orders -->
-    <v-row dense>
+    <v-row class="dashboard-bottom-row">
       <v-col cols="12" lg="6">
-        <v-card variant="flat" border rounded="xl">
-          <div class="pa-5 d-flex justify-space-between align-center border-b">
+        <v-card variant="flat" border rounded="xl" class="dashboard-surface-card">
+          <div class="dashboard-section-card__header d-flex justify-space-between align-center border-b">
             <div class="text-h6 font-weight-medium">Top Campaigns by Revenue</div>
             <v-btn variant="text" size="small" color="primary" class="text-none" to="/campaigns">View All</v-btn>
           </div>
-          <v-list lines="two" density="compact" :border="false" class="pa-0">
+          <v-list lines="two" density="compact" :border="false" class="dashboard-section-card__list pa-0">
             <v-list-item v-for="camp in topSendingCampaigns" :key="camp.id" class="px-5 py-3 border-b">
               <template v-slot:prepend>
                 <v-avatar color="success" variant="tonal" size="36" class="mr-3">
@@ -144,12 +193,12 @@ const activityFeed = [
       </v-col>
 
       <v-col cols="12" lg="6">
-        <v-card variant="flat" border rounded="xl">
-          <div class="pa-5 d-flex justify-space-between align-center border-b">
+        <v-card variant="flat" border rounded="xl" class="dashboard-surface-card">
+          <div class="dashboard-section-card__header d-flex justify-space-between align-center border-b">
             <div class="text-h6 font-weight-medium">Recent Orders</div>
             <v-btn variant="text" size="small" color="primary" class="text-none" to="/commerce/orders">View All</v-btn>
           </div>
-          <v-list lines="two" density="compact" :border="false" class="pa-0">
+          <v-list lines="two" density="compact" :border="false" class="dashboard-section-card__list pa-0">
             <v-list-item v-for="order in recentOrders" :key="order.id" class="px-5 py-3 border-b">
               <template v-slot:prepend>
                 <v-avatar color="primary" variant="tonal" size="36" class="mr-3 font-weight-bold text-caption">{{ order.customer.avatar }}</v-avatar>
@@ -170,3 +219,78 @@ const activityFeed = [
   </div>
 </template>
 
+<style scoped lang="scss">
+.dashboard-kpi-row,
+.dashboard-main-row,
+.dashboard-bottom-row {
+  row-gap: 24px;
+}
+
+.dashboard-surface-card {
+  height: 100%;
+}
+
+.dashboard-overview-card,
+.dashboard-activity-card {
+  padding: 28px !important;
+}
+
+.dashboard-overview-chart {
+  margin-top: 8px;
+}
+
+.dashboard-activity-list :deep(.v-list-item),
+.dashboard-section-card__list :deep(.v-list-item) {
+  padding-inline: 28px !important;
+  padding-block: 18px !important;
+}
+
+.dashboard-activity-list :deep(.v-list-item__prepend),
+.dashboard-section-card__list :deep(.v-list-item__prepend) {
+  margin-inline-end: 16px !important;
+}
+
+.dashboard-activity-list :deep(.v-list-item__append),
+.dashboard-section-card__list :deep(.v-list-item__append) {
+  margin-inline-start: 18px !important;
+}
+
+.dashboard-activity-list :deep(.v-list-item-title),
+.dashboard-section-card__list :deep(.v-list-item-title) {
+  line-height: 1.28;
+}
+
+.dashboard-section-card__header {
+  padding: 24px 28px 20px;
+}
+
+.dashboard-section-card__list {
+  padding-bottom: 8px !important;
+}
+
+.dashboard-section-card__list :deep(.v-list-item-subtitle) {
+  margin-top: 4px;
+}
+
+@media (max-width: 1279px) {
+  .dashboard-kpi-row,
+  .dashboard-main-row,
+  .dashboard-bottom-row {
+    row-gap: 20px;
+  }
+
+  .dashboard-overview-card,
+  .dashboard-activity-card {
+    padding: 24px !important;
+  }
+
+  .dashboard-activity-list :deep(.v-list-item),
+  .dashboard-section-card__list :deep(.v-list-item) {
+    padding-inline: 24px !important;
+  }
+
+  .dashboard-section-card__header {
+    padding: 22px 24px 18px;
+  }
+}
+</style>

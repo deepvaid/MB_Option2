@@ -14,7 +14,7 @@ Generated outputs:
   ├── variables.css     (CSS custom properties)
   └── tokens.ts         (TypeScript constants)
         ↓
-Used by Vue components + Storybook
+Used by Vue components + the root Storybook
 ```
 
 ---

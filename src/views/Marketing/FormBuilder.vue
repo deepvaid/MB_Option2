@@ -150,7 +150,15 @@ function finish() { saveSnack.value = true; setTimeout(() => router.push('/marke
           <v-text-field v-if="pageTarget==='specific'" v-model="specificUrl" label="URL Pattern (supports *)" variant="outlined" density="compact" class="mb-4"></v-text-field>
           <v-divider class="my-4"></v-divider>
           <div class="text-caption text-medium-emphasis font-weight-bold text-uppercase mb-3">Devices</div>
-          <v-btn-toggle v-model="deviceTarget" density="compact" variant="outlined" divided rounded="lg" mandatory class="mb-4">
+          <v-btn-toggle
+            v-model="deviceTarget"
+            density="compact"
+            variant="outlined"
+            divided
+            rounded="lg"
+            mandatory
+            class="mp-toggle-group mp-toggle-group--segmented mb-4"
+          >
             <v-btn value="all" class="text-none" size="small">All</v-btn>
             <v-btn value="desktop" class="text-none" size="small" prepend-icon="mdi-monitor">Desktop</v-btn>
             <v-btn value="mobile" class="text-none" size="small" prepend-icon="mdi-cellphone">Mobile</v-btn>
@@ -176,7 +184,16 @@ function finish() { saveSnack.value = true; setTimeout(() => router.push('/marke
         <!-- Left: Elements / Styles Panel -->
         <div class="border-r bg-surface d-flex flex-column overflow-hidden" style="width:260px;flex-shrink:0;">
           <div class="pa-3 border-b">
-            <v-btn-toggle v-model="selectedTab" density="compact" variant="outlined" divided mandatory rounded="lg" style="width:100%;">
+            <v-btn-toggle
+              v-model="selectedTab"
+              density="compact"
+              variant="outlined"
+              divided
+              mandatory
+              rounded="lg"
+              class="mp-toggle-group mp-toggle-group--segmented"
+              style="width:100%;"
+            >
               <v-btn value="elements" class="text-none" size="small" style="flex:1;">Elements</v-btn>
               <v-btn value="styles" class="text-none" size="small" style="flex:1;">Styles</v-btn>
             </v-btn-toggle>
@@ -236,7 +253,15 @@ function finish() { saveSnack.value = true; setTimeout(() => router.push('/marke
         <!-- Center: Device Preview -->
         <div class="flex-grow-1 bg-background d-flex flex-column align-center overflow-auto pa-6">
           <div class="d-flex align-center gap-2 mb-4">
-            <v-btn-toggle v-model="previewDevice" density="compact" variant="outlined" divided mandatory rounded="lg">
+            <v-btn-toggle
+              v-model="previewDevice"
+              density="compact"
+              variant="outlined"
+              divided
+              mandatory
+              rounded="lg"
+              class="mp-toggle-group mp-toggle-group--segmented"
+            >
               <v-btn value="desktop" class="text-none" size="small" prepend-icon="mdi-monitor">Desktop</v-btn>
               <v-btn value="mobile" class="text-none" size="small" prepend-icon="mdi-cellphone">Mobile</v-btn>
             </v-btn-toggle>
