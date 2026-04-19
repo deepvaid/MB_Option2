@@ -1,6 +1,4 @@
 import { createApp } from 'vue'
-import ApexCharts from 'apexcharts'
-import VueApexCharts from 'vue3-apexcharts'
 import App from './App.vue'
 import { registerPlugins } from './plugins'
 import './design-tokens/generated/variables.css'
@@ -24,7 +22,5 @@ if (typeof window !== 'undefined') {
 }
 
 registerPlugins(app)
-app.use(VueApexCharts)
-app.config.globalProperties.$apexcharts = ApexCharts
 
 app.mount('#app')

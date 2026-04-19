@@ -34,6 +34,38 @@ interface LayoutItem {
 
 const layout = ref<LayoutItem[]>([])
 
+function normalizeLayout(items: Array<{ i: string; x: number; y: number; w: number; h: number }>): LayoutItem[] {
+  return [...items]
+    .map((item) => ({
+      i: item.i,
+      x: item.x,
+      y: item.y,
+      w: item.w,
+      h: item.h,
+    }))
+    .sort((left, right) => left.i.localeCompare(right.i))
+}
+
+function layoutsMatch(
+  left: Array<{ i: string; x: number; y: number; w: number; h: number }>,
+  right: Array<{ i: string; x: number; y: number; w: number; h: number }>,
+): boolean {
+  if (left.length !== right.length) return false
+
+  const normalizedLeft = normalizeLayout(left)
+  const normalizedRight = normalizeLayout(right)
+
+  return normalizedLeft.every((item, index) => {
+    const comparison = normalizedRight[index]
+    return comparison
+      && item.i === comparison.i
+      && item.x === comparison.x
+      && item.y === comparison.y
+      && item.w === comparison.w
+      && item.h === comparison.h
+  })
+}
+
 const layoutFromWidgets = computed<LayoutItem[]>(() =>
   props.widgets.map((widget) => {
     const fallback = getDefaultPreset(widget.type)
@@ -54,12 +86,15 @@ const widgetsById = computed(() => new Map(props.widgets.map((widget) => [widget
 watch(
   layoutFromWidgets,
   (nextLayout) => {
+    if (layoutsMatch(layout.value, nextLayout)) return
     layout.value = nextLayout
   },
   { immediate: true, deep: true },
 )
 
 function handleLayoutUpdate(nextLayout: Array<{ i: string; x: number; y: number; w: number; h: number }>) {
+  if (!props.editMode) return
+  if (layoutsMatch(nextLayout, layoutFromWidgets.value)) return
   emit('updateLayout', nextLayout)
 }
 </script>
