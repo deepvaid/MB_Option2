@@ -6,6 +6,6 @@ import { createPinia } from 'pinia'
 export function registerPlugins (app: App) {
   app
     .use(vuetify)
-    .use(router)
     .use(createPinia())
+    .use(router)
 }

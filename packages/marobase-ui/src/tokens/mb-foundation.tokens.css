@@ -1,7 +1,9 @@
 :root,
 :root[data-theme='light'],
 html[data-theme='light'],
-html.theme-light {
+html.theme-light,
+.v-theme--maropostLight,
+.v-application.v-theme--maropostLight {
   --mb-font-family-base: Inter, 'Noto Sans', 'Segoe UI', sans-serif;
   --mb-font-family-mono: 'JetBrains Mono', 'Fira Code', monospace;
 
@@ -10,12 +12,26 @@ html.theme-light {
   --mb-font-size-body: 14px;
   --mb-font-size-md: 16px;
   --mb-font-size-lg: 18px;
-  --mb-font-size-xl: 22px;
+  --mb-font-size-xl: 24px;
+
+  --mb-font-size-display-sm: 32px;
+  --mb-font-size-display-md: 44px;
+  --mb-font-size-display-lg: 60px;
+  --mb-font-size-display-xl: 80px;
+
+  --mb-line-height-display: 1.05;
+  --mb-line-height-hero: 0.98;
+
+  --mb-letter-spacing-snug: -0.01em;
+  --mb-letter-spacing-tighter: -0.02em;
+  --mb-letter-spacing-hero: -0.035em;
+  --mb-letter-spacing-eyebrow: 0.06em;
 
   --mb-font-weight-regular: 400;
   --mb-font-weight-medium: 500;
   --mb-font-weight-semibold: 600;
   --mb-font-weight-bold: 700;
+  --mb-font-weight-heavy: 800;
 
   --mb-line-height-tight: 1.2;
   --mb-line-height-normal: 1.5;
@@ -34,9 +50,10 @@ html.theme-light {
   --mb-space-8: 32px;
 
   --mb-radius-sm: 6px;
-  --mb-radius-md: 8px;
-  --mb-radius-lg: 12px;
-  --mb-radius-xl: 16px;
+  --mb-radius-md: 14px;
+  --mb-radius-lg: 20px;
+  --mb-radius-xl: 28px;
+  --mb-radius-2xl: 36px;
   --mb-radius-pill: 9999px;
 
   --mb-control-height-sm: 32px;
@@ -60,17 +77,17 @@ html.theme-light {
   --mb-motion-fast: 0.15s ease;
   --mb-motion-base: 0.2s ease;
 
-  --mb-shadow-sm: 0 1px 2px rgba(16, 32, 51, 0.06);
-  --mb-shadow-md: 0 8px 24px rgba(16, 32, 51, 0.08);
-  --mb-shadow-lg: 0 16px 40px rgba(16, 32, 51, 0.12);
+  --mb-shadow-sm: 0 1px 2px rgba(11, 53, 88, 0.04);
+  --mb-shadow-md: 0 2px 16px -8px rgba(11, 53, 88, 0.08);
+  --mb-shadow-lg: 0 8px 32px -12px rgba(11, 53, 88, 0.1);
 
-  --mb-color-background: #fbfcfe;
+  --mb-color-background: #faf8f5;
   --mb-color-surface: #ffffff;
-  --mb-color-surface-raised: #fcfdff;
-  --mb-color-surface-subtle: #f2f7fb;
-  --mb-color-text: #111827;
-  --mb-color-text-muted: #687686;
-  --mb-color-text-soft: #8795a5;
+  --mb-color-surface-raised: #ffffff;
+  --mb-color-surface-subtle: #f5f2ed;
+  --mb-color-text: #15223b;
+  --mb-color-text-muted: #5b6b7e;
+  --mb-color-text-soft: #7c8998;
   --mb-color-border: #d7e2eb;
   --mb-color-border-strong: #c3d3df;
   --mb-color-border-subtle: rgba(11, 53, 88, 0.08);
@@ -96,7 +113,9 @@ html.theme-light {
 :root[data-theme='dark'],
 html[data-theme='dark'],
 html.theme-dark,
-html.v-theme--dark {
+html.v-theme--dark,
+.v-theme--maropostDark,
+.v-application.v-theme--maropostDark {
   --mb-focus-ring: 0 0 0 3px rgba(89, 194, 255, 0.24);
   --mb-focus-ring-strong: 0 0 0 3px rgba(89, 194, 255, 0.34);
   --mb-motion-fast: 0.15s ease;

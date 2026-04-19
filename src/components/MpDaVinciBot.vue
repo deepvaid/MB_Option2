@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { ref, nextTick } from 'vue'
+import { computed, nextTick, ref } from 'vue'
+import { useRoute } from 'vue-router'
 
 // Import rich components
 import DvChartCard from './copilot/DvChartCard.vue'
@@ -11,12 +12,19 @@ import DvContentCard from './copilot/DvContentCard.vue'
 import DvSegmentCard from './copilot/DvSegmentCard.vue'
 import DvActionCard from './copilot/DvActionCard.vue'
 import DvInsightCard from './copilot/DvInsightCard.vue'
+import DvWidgetDraftCard from './copilot/DvWidgetDraftCard.vue'
+import { useAccountsStore } from '@/stores/useAccounts'
+import { useDashboardsStore } from '@/stores/useDashboards'
+import type { DashboardWidgetDraft } from '@/stores/dashboards/types'
 
 const emit = defineEmits<{
   close: []
   expand: []
 }>()
 
+const route = useRoute()
+const accountsStore = useAccountsStore()
+const dashboardsStore = useDashboardsStore()
 const isExpanded = ref(false)
 
 function onExpand() {
@@ -35,13 +43,83 @@ interface ChatMessage {
   text?: string
   time?: string
   componentData?: {
-    type: 'chart' | 'kpi' | 'table' | 'campaign' | 'journey' | 'content' | 'segment' | 'action' | 'insight'
+    type: 'chart' | 'kpi' | 'table' | 'campaign' | 'journey' | 'content' | 'segment' | 'action' | 'insight' | 'widgetDraft'
     props: any
   }[]
 }
 
 const messages = ref<ChatMessage[]>([])
 const chatContainer = ref<HTMLElement | null>(null)
+
+const routeAccountId = computed(() => {
+  const accountId = Array.isArray(route.params.accountId)
+    ? route.params.accountId[0]
+    : route.params.accountId
+
+  return accountId
+})
+
+const routeDashboardId = computed(() => {
+  const dashboardId = Array.isArray(route.params.dashboardId)
+    ? route.params.dashboardId[0]
+    : route.params.dashboardId
+
+  return dashboardId
+})
+
+const isDashboardRoute = computed(() => route.name === 'Dashboard' || route.name === 'DashboardDetail')
+const activeAccount = computed(() => {
+  if (!routeAccountId.value) return accountsStore.activeAccount
+  return accountsStore.accounts.find((account) => account.id === routeAccountId.value) ?? accountsStore.activeAccount
+})
+const activeDashboard = computed(() => {
+  if (!isDashboardRoute.value || !routeAccountId.value) return null
+  return dashboardsStore.getDashboardById(routeAccountId.value, routeDashboardId.value) ?? null
+})
+
+const emptyStateGreeting = computed(() => (
+  isDashboardRoute.value && activeDashboard.value
+    ? `Shape ${activeDashboard.value.name} with Da Vinci`
+    : 'Hi, Admin'
+))
+
+const emptyStateDescription = computed(() => (
+  isDashboardRoute.value && activeDashboard.value
+    ? 'Ask for a KPI, trend, comparison, or table widget and I will draft it for the active dashboard.'
+    : 'Ask me anything about your store, or try a suggestion below.'
+))
+
+const heroInsight = computed(() => (
+  isDashboardRoute.value && activeDashboard.value
+    ? {
+        headline: 'Turn prompts into widgets',
+        description: `Da Vinci can draft widgets for ${activeDashboard.value.name} using the workspace data sources already available on this account.`,
+        severity: 'info' as const,
+        actionLabel: 'Try a dashboard prompt',
+      }
+    : {
+        headline: 'Revenue dropped 15% this week',
+        description: 'Your abandoned cart rate increased to 72%. I suggest enabling the Abandoned Cart Recovery journey.',
+        severity: 'warning' as const,
+        actionLabel: 'View Report',
+      }
+))
+
+const dashboardSuggestions = computed(() => {
+  const suggestions = ['Show open rate trend for last 30 days']
+
+  if (activeAccount.value.subscriptions.includes('commerce')) {
+    suggestions.push('Create a revenue by channel widget', 'Add a recent orders table')
+  } else {
+    suggestions.push('Add a top campaigns table', 'Show contact growth trend')
+  }
+
+  if (activeAccount.value.subscriptions.includes('service')) {
+    suggestions.push('Show ticket volume over time')
+  }
+
+  return suggestions.slice(0, 4)
+})
 
 /* ── Pre-configured Use Cases (Simulated AI) ──────────────────── */
 const useCaseSimulations: Record<string, ChatMessage['componentData']> = {
@@ -90,7 +168,30 @@ function processQuery(text: string) {
 
   // Find simulated response or fallback
   let responseData = useCaseSimulations[text]
-  let fallbackText = ''
+  let responseText = ''
+
+  if (!responseData && routeAccountId.value && activeDashboard.value) {
+    const widgetDraft: DashboardWidgetDraft | null = dashboardsStore.buildAiWidgetDraft(
+      routeAccountId.value,
+      activeDashboard.value.id,
+      text,
+    )
+
+    if (widgetDraft) {
+      responseText = `I drafted a ${widgetDraft.type} widget for ${activeDashboard.value.name}. You can add it directly or refine it first.`
+      responseData = [
+        {
+          type: 'widgetDraft',
+          props: {
+            accountId: routeAccountId.value,
+            dashboardId: activeDashboard.value.id,
+            draft: widgetDraft,
+            filters: activeDashboard.value.filters,
+          },
+        },
+      ]
+    }
+  }
 
   if (!responseData) {
     // Check for partial matches
@@ -98,10 +199,30 @@ function processQuery(text: string) {
     if (match) {
       responseData = useCaseSimulations[match]
     } else {
-      fallbackText = "I've analyzed your request. Here is what I found based on your store's recent activity."
-      responseData = [
-        { type: 'insight', props: { headline: 'Custom Query Processed', description: 'This is a simulated response. Try asking about "Top 10 products" or "Create a flash sale".', severity: 'info' } }
-      ]
+      responseText = isDashboardRoute.value
+        ? "I couldn't map that to a supported widget yet. Try asking for revenue, orders, open rate, campaigns, contact growth, or ticket volume."
+        : "I've analyzed your request. Here is what I found based on your store's recent activity."
+      responseData = isDashboardRoute.value
+        ? [
+            {
+              type: 'insight',
+              props: {
+                headline: 'Try a widget-ready prompt',
+                description: 'Use prompts like “Create a revenue by channel widget”, “Show open rate trend for last 30 days”, or “Add a recent orders table”.',
+                severity: 'info',
+              },
+            },
+          ]
+        : [
+            {
+              type: 'insight',
+              props: {
+                headline: 'Custom Query Processed',
+                description: 'This is a simulated response. Try asking about "Top 10 products" or "Create a flash sale".',
+                severity: 'info',
+              },
+            },
+          ]
     }
   }
 
@@ -111,7 +232,7 @@ function processQuery(text: string) {
     messages.value.push({
       id: (Date.now() + 1).toString(),
       role: 'assistant',
-      text: fallbackText || "Here are the results you requested:",
+      text: responseText || 'Here are the results you requested:',
       componentData: responseData
     })
     scrollToBottom()
@@ -170,18 +291,41 @@ function newChat() {
       <!-- ─── EMPTY STATE ─── -->
       <div v-if="!chatMode" class="da-vinci-empty pa-5">
         <div class="mb-6 mt-2">
-          <h3 class="text-h5 font-weight-bold mb-1">Hi, Admin</h3>
-          <p class="text-body-2 text-medium-emphasis">Ask me anything about your store, or try a suggestion below.</p>
+          <h3 class="text-h5 font-weight-bold mb-1">{{ emptyStateGreeting }}</h3>
+          <p class="text-body-2 text-medium-emphasis">{{ emptyStateDescription }}</p>
         </div>
 
         <!-- Proactive Insight -->
         <DvInsightCard
-          headline="Revenue dropped 15% this week"
-          description="Your abandoned cart rate increased to 72%. I suggest enabling the Abandoned Cart Recovery journey."
-          severity="warning"
-          actionLabel="View Report"
+          :headline="heroInsight.headline"
+          :description="heroInsight.description"
+          :severity="heroInsight.severity"
+          :action-label="heroInsight.actionLabel"
           class="mb-6"
         />
+
+        <div v-if="isDashboardRoute" class="mb-6">
+          <div class="d-flex align-center ga-2 mb-3">
+            <v-icon size="16" color="primary">mdi-view-dashboard-edit-outline</v-icon>
+            <span class="text-caption font-weight-bold text-uppercase mp-label-caps">Dashboard Widgets</span>
+          </div>
+          <div class="d-flex flex-column ga-2">
+            <v-card
+              v-for="suggestion in dashboardSuggestions"
+              :key="suggestion"
+              variant="outlined"
+              rounded="lg"
+              class="suggestion-card"
+              role="button"
+              tabindex="0"
+              :aria-label="`Run suggestion: ${suggestion}`"
+              @click="sendSuggestion(suggestion)"
+              @keydown="onSuggestionKeydown($event, suggestion)"
+            >
+              <v-card-text class="py-2 px-3 text-body-2 font-weight-medium">{{ suggestion }}</v-card-text>
+            </v-card>
+          </div>
+        </div>
 
         <!-- Categorized Suggestions -->
         <div class="suggestions-grid">
@@ -320,6 +464,7 @@ function newChat() {
                 <DvSegmentCard v-else-if="comp.type === 'segment'" v-bind="comp.props" />
                 <DvActionCard v-else-if="comp.type === 'action'" v-bind="comp.props" />
                 <DvInsightCard v-else-if="comp.type === 'insight'" v-bind="comp.props" />
+                <DvWidgetDraftCard v-else-if="comp.type === 'widgetDraft'" v-bind="comp.props" />
               </template>
             </div>
           </div>

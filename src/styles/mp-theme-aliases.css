@@ -4,14 +4,27 @@
  */
 :root {
   --mp-border-subtle: var(--mp-color-light-borderSubtle);
+  --mp-border-hairline: var(--mp-color-neutral-hairline);
   --mp-border-table-row: var(--mp-color-light-borderTableRow);
   --mp-border-table-header: var(--mp-color-light-borderTableHeader);
   --mp-border-table-footer-divider: var(--mp-color-light-borderTableFooterDivider);
+  --mp-surface-tint: var(--mp-color-light-surfaceTint);
+  --mp-surface-warm: var(--mp-color-neutral-100);
 }
 
 .v-application.v-theme--maropostDark {
   --mp-border-subtle: var(--mp-color-dark-borderSubtle);
+  --mp-border-hairline: var(--mp-color-dark-borderSubtle);
   --mp-border-table-row: var(--mp-color-dark-borderTableRow);
   --mp-border-table-header: var(--mp-color-dark-borderTableHeader);
   --mp-border-table-footer-divider: var(--mp-color-dark-borderTableFooterDivider);
+  --mp-surface-tint: rgba(89, 194, 255, 0.08);
+  --mp-surface-warm: var(--mp-color-dark-surfaceVariant);
+  --mp-color-sidebar-bg: var(--mp-color-dark-background);
+  --mp-color-sidebar-surface: var(--mp-color-dark-surface);
+  --mp-color-sidebar-border: var(--mp-color-dark-borderSubtle);
+  --mp-color-sidebar-text: var(--mp-color-dark-textPrimary);
+  --mp-color-sidebar-textMuted: var(--mp-color-dark-textMuted);
+  --mp-color-sidebar-textFaint: rgba(151, 174, 202, 0.62);
+  --mp-color-sidebar-hover: rgba(89, 194, 255, 0.14);
 }

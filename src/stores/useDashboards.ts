@@ -1,0 +1,874 @@
+import { computed, ref } from 'vue'
+import { defineStore } from 'pinia'
+import { useAccountsStore, type Account } from '@/stores/useAccounts'
+import {
+  getAvailableMetrics,
+  getMetricDescriptor,
+  isDashboardSourceAvailable,
+} from '@/stores/dashboards/metricCatalog'
+import {
+  getDefaultPreset,
+  getPreset,
+  type WidgetSize,
+} from '@/components/dashboards/widgetSizePresets'
+import type {
+  Dashboard,
+  DashboardAccent,
+  DashboardComparisonMode,
+  DashboardDatePreset,
+  DashboardLayout,
+  DashboardWidget,
+  DashboardWidgetDraft,
+  DashboardWidgetType,
+} from '@/stores/dashboards/types'
+
+interface PersistedAccountDashboards {
+  dashboards: Dashboard[]
+}
+
+interface PersistedDashboardStateV1 {
+  version: 1
+  accounts: Record<string, PersistedAccountDashboards>
+}
+
+interface PersistedDashboardStateV2 {
+  version: 2
+  accounts: Record<string, PersistedAccountDashboards>
+}
+
+type AnyPersistedDashboardState = PersistedDashboardStateV1 | PersistedDashboardStateV2
+
+const STORAGE_KEY = 'mp.dashboard-hub.v4'
+const LEGACY_STORAGE_KEY_V1 = 'mp.dashboard-hub.v1'
+const MAX_WIDGETS_PER_DASHBOARD = 24
+const PERSIST_DEBOUNCE_MS = 250
+
+function nowIso(): string {
+  return new Date().toISOString()
+}
+
+function deepClone<T>(value: T): T {
+  return JSON.parse(JSON.stringify(value)) as T
+}
+
+function createWidgetId(): string {
+  return `widget-${Math.random().toString(36).slice(2, 10)}`
+}
+
+function createDashboardId(accountId: string, slug: string): string {
+  return `${accountId}-${slug}`
+}
+
+function createDefaultFilters(): Dashboard['filters'] {
+  return {
+    preset: '30D',
+    comparison: 'previous_period',
+  }
+}
+
+function createLayout(x: number, y: number, w: number, h: number, minW = 2, minH = 2): DashboardLayout {
+  return { x, y, w, h, minW, minH }
+}
+
+function makeWidget(
+  title: string,
+  metricId: DashboardWidget['metricId'],
+  type: DashboardWidgetType,
+  layout: DashboardLayout,
+): DashboardWidget {
+  const metric = getMetricDescriptor(metricId)
+  if (!metric) {
+    throw new Error(`Unknown metric "${metricId}"`)
+  }
+
+  const preset = getDefaultPreset(type)
+  return {
+    id: createWidgetId(),
+    type,
+    title,
+    dataSource: metric.dataSource,
+    metricId,
+    layout: {
+      ...layout,
+      minW: layout.minW ?? preset.minW,
+      minH: layout.minH ?? preset.minH,
+    },
+    drilldown: metric.drilldown,
+  }
+}
+
+function buildHomeWidgets(account: Account): DashboardWidget[] {
+  const widgets: DashboardWidget[] = []
+
+  if (account.subscriptions.includes('commerce')) {
+    widgets.push(
+      makeWidget('Revenue', 'commerce_revenue', 'kpi', createLayout(0, 0, 3, 3)),
+      makeWidget('Orders', 'commerce_orders', 'kpi', createLayout(3, 0, 3, 3)),
+      makeWidget('Open Rate', 'marketing_open_rate', 'kpi', createLayout(6, 0, 3, 3)),
+      makeWidget('Total Contacts', 'contacts_total', 'kpi', createLayout(9, 0, 3, 3)),
+      makeWidget('Revenue Over Time', 'commerce_revenue_over_time', 'timeseries', createLayout(0, 3, 7, 7)),
+      makeWidget('Top Campaigns', 'marketing_top_campaigns', 'table', createLayout(7, 3, 5, 7)),
+      makeWidget('Recent Orders', 'commerce_recent_orders', 'table', createLayout(0, 10, 7, 7)),
+      makeWidget('Revenue by Channel', 'commerce_revenue_by_channel', 'bar', createLayout(7, 10, 5, 7)),
+      makeWidget('Email Volume', 'marketing_email_volume', 'timeseries', createLayout(0, 17, 6, 7)),
+      makeWidget('Email Address by Domain', 'contacts_by_domain', 'bar', createLayout(6, 17, 6, 7)),
+    )
+  } else {
+    widgets.push(
+      makeWidget('Total Revenue', 'analytics_total_revenue', 'kpi', createLayout(0, 0, 3, 3)),
+      makeWidget('Open Rate', 'marketing_open_rate', 'kpi', createLayout(3, 0, 3, 3)),
+      makeWidget('Active Subscribers', 'analytics_active_subscribers', 'kpi', createLayout(6, 0, 3, 3)),
+      makeWidget('Total Contacts', 'contacts_total', 'kpi', createLayout(9, 0, 3, 3)),
+      makeWidget('Sends Over Time', 'analytics_sends_over_time', 'timeseries', createLayout(0, 3, 7, 7)),
+      makeWidget('Top Campaigns', 'marketing_top_campaigns', 'table', createLayout(7, 3, 5, 7)),
+      makeWidget('Contact Growth', 'contacts_growth', 'timeseries', createLayout(0, 10, 7, 7)),
+      makeWidget('Campaign Revenue', 'marketing_campaign_revenue', 'bar', createLayout(7, 10, 5, 7)),
+      makeWidget('Email Volume', 'marketing_email_volume', 'timeseries', createLayout(0, 17, 6, 7)),
+      makeWidget('Subscriber Summary', 'contacts_subscriber_summary', 'table', createLayout(6, 17, 6, 7)),
+    )
+  }
+
+  if (account.subscriptions.includes('service')) {
+    widgets.push(
+      makeWidget('Open Tickets', 'service_open_tickets', 'kpi', createLayout(0, 24, 3, 3)),
+      makeWidget('Unresolved Tickets', 'service_unresolved_tickets', 'kpi', createLayout(3, 24, 3, 3)),
+      makeWidget('Ticket Volume', 'service_ticket_volume', 'timeseries', createLayout(6, 24, 6, 7)),
+      makeWidget('Tickets by Channel', 'service_tickets_by_channel', 'bar', createLayout(0, 27, 6, 7)),
+    )
+  }
+
+  return widgets
+}
+
+function buildSeedDashboards(account: Account): Dashboard[] {
+  const createdAt = nowIso()
+  const baseDashboards: Dashboard[] = [
+    {
+      id: createDashboardId(account.id, 'home'),
+      accountId: account.id,
+      kind: 'system',
+      name: 'Home',
+      description: 'Your curated Maropost command center with quick business context.',
+      icon: 'mdi-view-dashboard-outline',
+      accent: 'primary',
+      isDefault: true,
+      favorite: true,
+      widgets: buildHomeWidgets(account),
+      filters: createDefaultFilters(),
+      createdAt,
+      updatedAt: createdAt,
+    },
+  ]
+
+  if (account.subscriptions.includes('commerce')) {
+    baseDashboards.push(
+      {
+        id: createDashboardId(account.id, 'commerce-overview'),
+        accountId: account.id,
+        kind: 'system',
+        name: 'Commerce Overview',
+        description: 'Revenue, order, and fulfillment context for merchants.',
+        icon: 'mdi-cart-outline',
+        accent: 'success',
+        isDefault: false,
+        widgets: [
+          makeWidget('Revenue', 'commerce_revenue', 'kpi', createLayout(0, 0, 4, 3)),
+          makeWidget('Average Order Value', 'commerce_aov', 'kpi', createLayout(4, 0, 4, 3)),
+          makeWidget('Orders', 'commerce_orders', 'kpi', createLayout(8, 0, 4, 3)),
+          makeWidget('Revenue Over Time', 'commerce_revenue_over_time', 'timeseries', createLayout(0, 3, 8, 7)),
+          makeWidget('Revenue by Channel', 'commerce_revenue_by_channel', 'bar', createLayout(8, 3, 4, 7)),
+          makeWidget('Recent Orders', 'commerce_recent_orders', 'table', createLayout(0, 10, 12, 7)),
+        ],
+        filters: createDefaultFilters(),
+        createdAt,
+        updatedAt: createdAt,
+      },
+      {
+        id: createDashboardId(account.id, 'marketing-performance'),
+        accountId: account.id,
+        kind: 'system',
+        name: 'Marketing Performance',
+        description: 'Campaign and engagement signals for merchants and marketers.',
+        icon: 'mdi-bullhorn-outline',
+        accent: 'secondary',
+        isDefault: false,
+        widgets: [
+          makeWidget('Open Rate', 'marketing_open_rate', 'kpi', createLayout(0, 0, 3, 3)),
+          makeWidget('Click Rate', 'marketing_click_rate', 'kpi', createLayout(3, 0, 3, 3)),
+          makeWidget('Campaign Sends', 'marketing_sends', 'kpi', createLayout(6, 0, 3, 3)),
+          makeWidget('Deliverability Score', 'marketing_deliverability_score', 'kpi', createLayout(9, 0, 3, 3)),
+          makeWidget('Total Campaign Revenue', 'marketing_total_campaign_revenue', 'timeseries', createLayout(0, 3, 7, 7)),
+          makeWidget('Email Volume', 'marketing_email_volume', 'timeseries', createLayout(7, 3, 5, 7)),
+          makeWidget('Recent Sent Campaigns', 'marketing_recent_campaigns', 'table', createLayout(0, 10, 12, 7)),
+          makeWidget('Campaign Revenue by Folder', 'marketing_campaign_revenue', 'bar', createLayout(0, 17, 6, 7)),
+          makeWidget('Open Rate Trend', 'marketing_open_rate_over_time', 'timeseries', createLayout(6, 17, 6, 7)),
+        ],
+        filters: createDefaultFilters(),
+        createdAt,
+        updatedAt: createdAt,
+      },
+    )
+  } else {
+    baseDashboards.push(
+      {
+        id: createDashboardId(account.id, 'marketing-performance'),
+        accountId: account.id,
+        kind: 'system',
+        name: 'Marketing Performance',
+        description: 'Engagement and campaign health for growth teams.',
+        icon: 'mdi-bullhorn-outline',
+        accent: 'secondary',
+        isDefault: false,
+        widgets: [
+          makeWidget('Open Rate', 'marketing_open_rate', 'kpi', createLayout(0, 0, 3, 3)),
+          makeWidget('Click Rate', 'marketing_click_rate', 'kpi', createLayout(3, 0, 3, 3)),
+          makeWidget('Campaign Sends', 'marketing_sends', 'kpi', createLayout(6, 0, 3, 3)),
+          makeWidget('Deliverability Score', 'marketing_deliverability_score', 'kpi', createLayout(9, 0, 3, 3)),
+          makeWidget('Total Campaign Revenue', 'marketing_total_campaign_revenue', 'timeseries', createLayout(0, 3, 7, 7)),
+          makeWidget('Email Volume', 'marketing_email_volume', 'timeseries', createLayout(7, 3, 5, 7)),
+          makeWidget('Recent Sent Campaigns', 'marketing_recent_campaigns', 'table', createLayout(0, 10, 12, 7)),
+          makeWidget('Campaign Revenue by Folder', 'marketing_campaign_revenue', 'bar', createLayout(0, 17, 6, 7)),
+          makeWidget('Open Rate Trend', 'marketing_open_rate_over_time', 'timeseries', createLayout(6, 17, 6, 7)),
+        ],
+        filters: createDefaultFilters(),
+        createdAt,
+        updatedAt: createdAt,
+      },
+      {
+        id: createDashboardId(account.id, 'campaign-analytics'),
+        accountId: account.id,
+        kind: 'system',
+        name: 'Campaign Analytics',
+        description: 'A campaign-centric summary that links into analytics reporting.',
+        icon: 'mdi-chart-box-outline',
+        accent: 'info',
+        isDefault: false,
+        widgets: [
+          makeWidget('Total Revenue', 'analytics_total_revenue', 'kpi', createLayout(0, 0, 4, 3)),
+          makeWidget('Active Subscribers', 'analytics_active_subscribers', 'kpi', createLayout(4, 0, 4, 3)),
+          makeWidget('Campaign Sends', 'marketing_sends', 'kpi', createLayout(8, 0, 4, 3)),
+          makeWidget('Sends Over Time', 'analytics_sends_over_time', 'timeseries', createLayout(0, 3, 8, 7)),
+          makeWidget('Top Campaigns', 'marketing_top_campaigns', 'table', createLayout(8, 3, 4, 7)),
+          makeWidget('Contact Growth', 'contacts_growth', 'timeseries', createLayout(0, 10, 12, 7)),
+        ],
+        filters: createDefaultFilters(),
+        createdAt,
+        updatedAt: createdAt,
+      },
+    )
+  }
+
+  if (account.subscriptions.includes('service')) {
+    baseDashboards.push({
+      id: createDashboardId(account.id, 'service-overview'),
+      accountId: account.id,
+      kind: 'system',
+      name: 'Service Overview',
+      description: 'Ticket backlog, channel distribution, and support health.',
+      icon: 'mdi-headset',
+      accent: 'warning',
+      isDefault: false,
+      widgets: [
+        makeWidget('New Tickets', 'service_new_tickets', 'kpi', createLayout(0, 0, 3, 3)),
+        makeWidget('Open Tickets', 'service_open_tickets', 'kpi', createLayout(3, 0, 3, 3)),
+        makeWidget('Pending & On-Hold', 'service_pending_tickets', 'kpi', createLayout(6, 0, 3, 3)),
+        makeWidget('Unresolved Tickets', 'service_unresolved_tickets', 'kpi', createLayout(9, 0, 3, 3)),
+        makeWidget('Ticket Volume', 'service_ticket_volume', 'timeseries', createLayout(0, 3, 8, 7)),
+        makeWidget('Resolution Rate', 'service_resolution_rate', 'kpi', createLayout(8, 3, 4, 3)),
+        makeWidget('Tickets by Channel', 'service_tickets_by_channel', 'bar', createLayout(0, 10, 6, 7)),
+        makeWidget('Tickets by Type', 'service_tickets_by_type', 'bar', createLayout(6, 10, 6, 7)),
+        makeWidget('Recent Tickets', 'service_recent_tickets', 'table', createLayout(0, 17, 12, 7)),
+      ],
+      filters: createDefaultFilters(),
+      createdAt,
+      updatedAt: createdAt,
+    })
+  }
+
+  baseDashboards.push({
+    id: createDashboardId(account.id, 'contacts-audience'),
+    accountId: account.id,
+    kind: 'system',
+    name: 'Contacts & Audience',
+    description: 'Audience composition, subscriber health, and growth insights.',
+    icon: 'mdi-account-group-outline',
+    accent: 'info',
+    isDefault: false,
+    widgets: [
+      makeWidget('Total Contacts', 'contacts_total', 'kpi', createLayout(0, 0, 3, 3)),
+      makeWidget('Subscribed Contacts', 'contacts_subscribed', 'kpi', createLayout(3, 0, 3, 3)),
+      makeWidget('Contact Growth', 'contacts_growth', 'timeseries', createLayout(6, 0, 6, 7)),
+      makeWidget('Email Address by Domain', 'contacts_by_domain', 'bar', createLayout(0, 7, 6, 7)),
+      makeWidget('Subscriber Summary', 'contacts_subscriber_summary', 'table', createLayout(6, 7, 6, 7)),
+      makeWidget('Top Segments', 'contacts_top_segments', 'table', createLayout(0, 14, 12, 7)),
+    ],
+    filters: createDefaultFilters(),
+    createdAt,
+    updatedAt: createdAt,
+  })
+
+  return baseDashboards
+}
+
+function readPersistedState(): PersistedDashboardStateV2 {
+  if (typeof window === 'undefined') {
+    return { version: 2, accounts: {} }
+  }
+
+  try {
+    const raw = window.localStorage.getItem(STORAGE_KEY)
+    if (raw) {
+      const parsed = JSON.parse(raw) as AnyPersistedDashboardState
+      if (parsed?.version === 2) return parsed
+      if (parsed?.version === 1) return migrateV1(parsed)
+    }
+
+    // Migrate from legacy v1 storage key if present.
+    const legacyRaw = window.localStorage.getItem(LEGACY_STORAGE_KEY_V1)
+    if (legacyRaw) {
+      const legacyParsed = JSON.parse(legacyRaw) as AnyPersistedDashboardState
+      if (legacyParsed?.version === 1) return migrateV1(legacyParsed)
+    }
+
+    return { version: 2, accounts: {} }
+  } catch {
+    return { version: 2, accounts: {} }
+  }
+}
+
+function migrateV1(state: PersistedDashboardStateV1): PersistedDashboardStateV2 {
+  const migrated: PersistedDashboardStateV2 = {
+    version: 2,
+    accounts: {},
+  }
+
+  for (const [accountId, payload] of Object.entries(state.accounts)) {
+    migrated.accounts[accountId] = {
+      dashboards: payload.dashboards.map((dashboard) => ({
+        ...dashboard,
+        accent: dashboard.accent ?? 'primary',
+        favorite: dashboard.favorite ?? dashboard.isDefault,
+        lastViewedAt: dashboard.lastViewedAt,
+      })),
+    }
+  }
+
+  return migrated
+}
+
+let persistTimer: ReturnType<typeof setTimeout> | null = null
+
+function persistState(accounts: Record<string, Dashboard[]>) {
+  if (typeof window === 'undefined') return
+  if (persistTimer) clearTimeout(persistTimer)
+  persistTimer = setTimeout(() => {
+    try {
+      const payload: PersistedDashboardStateV2 = {
+        version: 2,
+        accounts: Object.fromEntries(
+          Object.entries(accounts).map(([accountId, dashboards]) => [
+            accountId,
+            { dashboards },
+          ]),
+        ),
+      }
+      window.localStorage.setItem(STORAGE_KEY, JSON.stringify(payload))
+    } catch {
+      // ignore storage failures
+    }
+  }, PERSIST_DEBOUNCE_MS)
+}
+
+function mergeSeededDashboards(seedDashboards: Dashboard[], persistedDashboards: Dashboard[] | undefined): Dashboard[] {
+  if (!persistedDashboards?.length) return seedDashboards
+
+  const persistedById = new Map(persistedDashboards.map((dashboard) => [dashboard.id, dashboard]))
+  const merged = seedDashboards.map((dashboard) => {
+    const persisted = persistedById.get(dashboard.id)
+    if (!persisted) return dashboard
+    return {
+      ...deepClone(dashboard),
+      ...deepClone(persisted),
+      id: dashboard.id,
+      accountId: dashboard.accountId,
+      kind: 'system' as const,
+    }
+  })
+
+  const customDashboards = persistedDashboards.filter((dashboard) => dashboard.kind === 'custom')
+  merged.push(...deepClone(customDashboards))
+
+  const firstMerged = merged[0]
+  if (firstMerged && !merged.some((dashboard) => dashboard.isDefault)) {
+    firstMerged.isDefault = true
+  }
+
+  return merged
+}
+
+function getNextLayout(type: DashboardWidgetType, widgets: DashboardWidget[]): DashboardLayout {
+  const currentMaxY = widgets.reduce((max, widget) => Math.max(max, widget.layout.y + widget.layout.h), 0)
+  const preset = getDefaultPreset(type)
+  return {
+    x: 0,
+    y: currentMaxY,
+    w: preset.w,
+    h: preset.h,
+    minW: preset.minW,
+    minH: preset.minH,
+  }
+}
+
+function getAccountById(accountId: string, accounts: Account[]): Account | undefined {
+  return accounts.find((account) => account.id === accountId)
+}
+
+function isDraftSupportedForAccount(
+  account: Account | undefined,
+  draft: DashboardWidgetDraft,
+  metric: ReturnType<typeof getMetricDescriptor>,
+): boolean {
+  if (!account || !metric) return false
+  if (metric.dataSource !== draft.dataSource) return false
+  if (!metric.supportedWidgetTypes.includes(draft.type)) return false
+  return isDashboardSourceAvailable(metric.dataSource, account)
+}
+
+export const useDashboardsStore = defineStore('dashboards', () => {
+  const accountsStore = useAccountsStore()
+  const dashboardsByAccount = ref<Record<string, Dashboard[]>>({})
+  const widgetEditorDraft = ref<DashboardWidgetDraft | null>(null)
+
+  const persistedState = ref(readPersistedState())
+
+  function writeState() {
+    persistState(dashboardsByAccount.value)
+  }
+
+  function ensureAccountDashboards(accountId: string) {
+    if (dashboardsByAccount.value[accountId]) return
+    const account = getAccountById(accountId, accountsStore.accounts)
+    if (!account) return
+
+    const seeded = buildSeedDashboards(account)
+    const persisted = persistedState.value.accounts[accountId]?.dashboards
+    dashboardsByAccount.value[accountId] = mergeSeededDashboards(seeded, persisted)
+    writeState()
+  }
+
+  function getDashboardsForAccount(accountId: string): Dashboard[] {
+    ensureAccountDashboards(accountId)
+    return dashboardsByAccount.value[accountId] ?? []
+  }
+
+  function getDashboardById(accountId: string, dashboardId: string | undefined): Dashboard | undefined {
+    const dashboards = getDashboardsForAccount(accountId)
+    if (!dashboardId) {
+      return dashboards.find((dashboard) => dashboard.isDefault) ?? dashboards[0]
+    }
+    return dashboards.find((dashboard) => dashboard.id === dashboardId)
+  }
+
+  function getDefaultDashboard(accountId: string): Dashboard | undefined {
+    return getDashboardById(accountId, undefined)
+  }
+
+  function createDashboard(accountId: string, name: string, options?: {
+    description?: string
+    icon?: string
+    accent?: DashboardAccent
+  }): Dashboard | undefined {
+    const dashboards = getDashboardsForAccount(accountId)
+    if (!dashboards.length) return undefined
+
+    const timestamp = nowIso()
+    const dashboard: Dashboard = {
+      id: createDashboardId(accountId, `custom-${Math.random().toString(36).slice(2, 8)}`),
+      accountId,
+      kind: 'custom',
+      name,
+      description: options?.description ?? 'A user-managed dashboard tailored to your workflow.',
+      icon: options?.icon ?? 'mdi-view-grid-plus-outline',
+      accent: options?.accent ?? 'primary',
+      isDefault: false,
+      favorite: false,
+      widgets: [],
+      filters: createDefaultFilters(),
+      createdAt: timestamp,
+      updatedAt: timestamp,
+    }
+
+    dashboards.push(dashboard)
+    writeState()
+    return dashboard
+  }
+
+  function renameDashboard(accountId: string, dashboardId: string, name: string) {
+    updateDashboard(accountId, dashboardId, { name })
+  }
+
+  function updateDashboard(
+    accountId: string,
+    dashboardId: string,
+    patch: Partial<Pick<Dashboard, 'name' | 'description' | 'icon' | 'accent'>>,
+  ) {
+    const dashboard = getDashboardById(accountId, dashboardId)
+    if (!dashboard) return
+    if (patch.name !== undefined) {
+      const trimmed = patch.name.trim()
+      if (!trimmed) return
+      dashboard.name = trimmed.slice(0, 60)
+    }
+    if (patch.description !== undefined) {
+      dashboard.description = patch.description.slice(0, 240)
+    }
+    if (patch.icon !== undefined) {
+      dashboard.icon = patch.icon
+    }
+    if (patch.accent !== undefined) {
+      dashboard.accent = patch.accent
+    }
+    dashboard.updatedAt = nowIso()
+    writeState()
+  }
+
+  function duplicateDashboard(accountId: string, dashboardId: string): Dashboard | undefined {
+    const dashboard = getDashboardById(accountId, dashboardId)
+    if (!dashboard) return undefined
+
+    const duplicate = deepClone(dashboard)
+    duplicate.id = createDashboardId(accountId, `custom-${Math.random().toString(36).slice(2, 8)}`)
+    duplicate.kind = 'custom'
+    duplicate.name = `${dashboard.name} Copy`
+    duplicate.isDefault = false
+    duplicate.favorite = false
+    duplicate.lastViewedAt = undefined
+    duplicate.createdAt = nowIso()
+    duplicate.updatedAt = duplicate.createdAt
+    duplicate.widgets = duplicate.widgets.map((widget) => ({ ...widget, id: createWidgetId() }))
+
+    getDashboardsForAccount(accountId).push(duplicate)
+    writeState()
+    return duplicate
+  }
+
+  function deleteDashboard(accountId: string, dashboardId: string) {
+    const dashboards = getDashboardsForAccount(accountId)
+    const dashboard = dashboards.find((entry) => entry.id === dashboardId)
+    if (!dashboard || dashboard.kind === 'system') return
+
+    const wasDefault = dashboard.isDefault
+    dashboardsByAccount.value[accountId] = dashboards.filter((entry) => entry.id !== dashboardId)
+
+    if (wasDefault) {
+      const next = dashboardsByAccount.value[accountId][0]
+      if (next) next.isDefault = true
+    }
+
+    writeState()
+  }
+
+  function setDefaultDashboard(accountId: string, dashboardId: string) {
+    getDashboardsForAccount(accountId).forEach((dashboard) => {
+      dashboard.isDefault = dashboard.id === dashboardId
+    })
+    writeState()
+  }
+
+  function toggleFavorite(accountId: string, dashboardId: string) {
+    const dashboard = getDashboardById(accountId, dashboardId)
+    if (!dashboard) return
+    dashboard.favorite = !dashboard.favorite
+    dashboard.updatedAt = nowIso()
+    writeState()
+  }
+
+  function markVisited(accountId: string, dashboardId: string) {
+    const dashboard = getDashboardById(accountId, dashboardId)
+    if (!dashboard) return
+    dashboard.lastViewedAt = nowIso()
+    writeState()
+  }
+
+  function bulkDelete(accountId: string, ids: string[]) {
+    const idSet = new Set(ids)
+    const dashboards = getDashboardsForAccount(accountId)
+    let defaultRemoved = false
+
+    const remaining = dashboards.filter((dashboard) => {
+      if (!idSet.has(dashboard.id)) return true
+      if (dashboard.kind === 'system') return true
+      if (dashboard.isDefault) defaultRemoved = true
+      return false
+    })
+
+    dashboardsByAccount.value[accountId] = remaining
+
+    const firstRemaining = remaining[0]
+    if (defaultRemoved && firstRemaining) {
+      firstRemaining.isDefault = true
+    }
+
+    writeState()
+  }
+
+  function bulkDuplicate(accountId: string, ids: string[]): Dashboard[] {
+    const created: Dashboard[] = []
+    ids.forEach((id) => {
+      const duplicate = duplicateDashboard(accountId, id)
+      if (duplicate) created.push(duplicate)
+    })
+    return created
+  }
+
+  function resetSystemDashboard(accountId: string, dashboardId: string) {
+    const account = getAccountById(accountId, accountsStore.accounts)
+    if (!account) return
+
+    const seededDashboard = buildSeedDashboards(account).find((dashboard) => dashboard.id === dashboardId)
+    const dashboards = getDashboardsForAccount(accountId)
+    const index = dashboards.findIndex((dashboard) => dashboard.id === dashboardId)
+    if (!seededDashboard || index === -1) return
+
+    const existing = dashboards[index]
+    if (!existing) return
+    dashboards[index] = {
+      ...seededDashboard,
+      isDefault: existing.isDefault,
+      favorite: existing.favorite,
+    }
+    writeState()
+  }
+
+  function updateDashboardFilters(
+    accountId: string,
+    dashboardId: string,
+    preset: DashboardDatePreset,
+    comparison: DashboardComparisonMode,
+  ) {
+    const dashboard = getDashboardById(accountId, dashboardId)
+    if (!dashboard) return
+    dashboard.filters = { preset, comparison }
+    dashboard.updatedAt = nowIso()
+    writeState()
+  }
+
+  function addWidget(accountId: string, draft: DashboardWidgetDraft): DashboardWidget | undefined {
+    const dashboard = getDashboardById(accountId, draft.dashboardId)
+    if (!dashboard || dashboard.widgets.length >= MAX_WIDGETS_PER_DASHBOARD) return undefined
+
+    const account = getAccountById(accountId, accountsStore.accounts)
+    const metric = getMetricDescriptor(draft.metricId)
+    if (!metric || !isDraftSupportedForAccount(account, draft, metric)) return undefined
+
+    const widget: DashboardWidget = {
+      id: createWidgetId(),
+      type: draft.type,
+      title: draft.title,
+      dataSource: draft.dataSource,
+      metricId: draft.metricId,
+      dimension: draft.dimension,
+      layout: {
+        ...getNextLayout(draft.type, dashboard.widgets),
+        ...draft.layout,
+      },
+      filters: draft.filters,
+      drilldown: draft.drilldown ?? metric.drilldown,
+      aiProvenance: draft.aiProvenance,
+    }
+
+    dashboard.widgets.push(widget)
+    dashboard.updatedAt = nowIso()
+    writeState()
+    return widget
+  }
+
+  function updateWidget(accountId: string, draft: DashboardWidgetDraft) {
+    if (!draft.widgetId) return
+    const dashboard = getDashboardById(accountId, draft.dashboardId)
+    const account = getAccountById(accountId, accountsStore.accounts)
+    const metric = getMetricDescriptor(draft.metricId)
+    if (!dashboard || !metric || !isDraftSupportedForAccount(account, draft, metric)) return
+    const widget = dashboard.widgets.find((entry) => entry.id === draft.widgetId)
+    if (!widget) return
+
+    widget.type = draft.type
+    widget.title = draft.title
+    widget.dataSource = draft.dataSource
+    widget.metricId = draft.metricId
+    widget.dimension = draft.dimension
+    widget.filters = draft.filters
+    widget.drilldown = draft.drilldown ?? metric.drilldown
+    widget.aiProvenance = draft.aiProvenance
+    widget.layout = {
+      ...widget.layout,
+      ...draft.layout,
+    }
+    dashboard.updatedAt = nowIso()
+    writeState()
+  }
+
+  function removeWidget(accountId: string, dashboardId: string, widgetId: string) {
+    const dashboard = getDashboardById(accountId, dashboardId)
+    if (!dashboard) return
+    dashboard.widgets = dashboard.widgets.filter((widget) => widget.id !== widgetId)
+    dashboard.updatedAt = nowIso()
+    writeState()
+  }
+
+  function resizeWidget(
+    accountId: string,
+    dashboardId: string,
+    widgetId: string,
+    size: WidgetSize,
+  ) {
+    const dashboard = getDashboardById(accountId, dashboardId)
+    if (!dashboard) return
+    const widget = dashboard.widgets.find((entry) => entry.id === widgetId)
+    if (!widget) return
+    const preset = getPreset(widget.type, size)
+    widget.layout = {
+      ...widget.layout,
+      w: preset.w,
+      h: preset.h,
+      minW: preset.minW,
+      minH: preset.minH,
+    }
+    dashboard.updatedAt = nowIso()
+    writeState()
+  }
+
+  function updateLayout(
+    accountId: string,
+    dashboardId: string,
+    layout: Array<{ i: string; x: number; y: number; w: number; h: number }>,
+  ) {
+    const dashboard = getDashboardById(accountId, dashboardId)
+    if (!dashboard) return
+    const layoutById = new Map(layout.map((entry) => [entry.i, entry]))
+
+    dashboard.widgets = dashboard.widgets.map((widget) => {
+      const nextLayout = layoutById.get(widget.id)
+      if (!nextLayout) return widget
+      return {
+        ...widget,
+        layout: {
+          ...widget.layout,
+          x: nextLayout.x,
+          y: nextLayout.y,
+          w: nextLayout.w,
+          h: nextLayout.h,
+        },
+      }
+    })
+
+    dashboard.updatedAt = nowIso()
+    writeState()
+  }
+
+  function openWidgetEditor(draft: DashboardWidgetDraft) {
+    widgetEditorDraft.value = deepClone(draft)
+  }
+
+  function closeWidgetEditor() {
+    widgetEditorDraft.value = null
+  }
+
+  function openWidgetEditorForWidget(accountId: string, dashboardId: string, widgetId: string) {
+    const dashboard = getDashboardById(accountId, dashboardId)
+    const widget = dashboard?.widgets.find((entry) => entry.id === widgetId)
+    if (!dashboard || !widget) return
+
+    openWidgetEditor({
+      dashboardId,
+      widgetId: widget.id,
+      type: widget.type,
+      title: widget.title,
+      dataSource: widget.dataSource,
+      metricId: widget.metricId,
+      dimension: widget.dimension,
+      filters: widget.filters,
+      drilldown: widget.drilldown,
+      layout: widget.layout,
+      aiProvenance: widget.aiProvenance,
+    })
+  }
+
+  function buildAiWidgetDraft(accountId: string, dashboardId: string, prompt: string): DashboardWidgetDraft | null {
+    const account = getAccountById(accountId, accountsStore.accounts)
+    if (!account) return null
+
+    const availableMetrics = getAvailableMetrics(account)
+    const normalizedPrompt = prompt.toLowerCase()
+
+    const scored = availableMetrics
+      .map((metric) => ({
+        metric,
+        score: metric.aiKeywords.reduce(
+          (total, keyword) => total + (normalizedPrompt.includes(keyword.toLowerCase()) ? keyword.length : 0),
+          0,
+        ),
+      }))
+      .filter((entry) => entry.score > 0 && isDashboardSourceAvailable(entry.metric.dataSource, account))
+      .sort((left, right) => right.score - left.score)
+
+    const bestMatch = scored[0]?.metric
+    if (!bestMatch) return null
+
+    let type: DashboardWidgetType = bestMatch.defaultWidgetType
+    if (bestMatch.supportedWidgetTypes.includes('table') && /(table|list|recent|top)/.test(normalizedPrompt)) {
+      type = 'table'
+    } else if (bestMatch.supportedWidgetTypes.includes('bar') && /(by|channel|segment|status)/.test(normalizedPrompt)) {
+      type = 'bar'
+    } else if (bestMatch.supportedWidgetTypes.includes('timeseries') && /(trend|over time|last|history)/.test(normalizedPrompt)) {
+      type = 'timeseries'
+    } else if (bestMatch.supportedWidgetTypes.includes('kpi') && /(kpi|summary|headline)/.test(normalizedPrompt)) {
+      type = 'kpi'
+    }
+
+    return {
+      dashboardId,
+      type,
+      title: bestMatch.defaultTitle,
+      dataSource: bestMatch.dataSource,
+      metricId: bestMatch.id,
+      drilldown: bestMatch.drilldown,
+      aiProvenance: {
+        prompt,
+        summary: `Da Vinci mapped your prompt to ${bestMatch.label} as a ${type} widget.`,
+      },
+    }
+  }
+
+  const dashboards = computed(() => dashboardsByAccount.value)
+
+  return {
+    dashboards,
+    widgetEditorDraft,
+    ensureAccountDashboards,
+    getDashboardsForAccount,
+    getDashboardById,
+    getDefaultDashboard,
+    createDashboard,
+    renameDashboard,
+    updateDashboard,
+    duplicateDashboard,
+    deleteDashboard,
+    setDefaultDashboard,
+    toggleFavorite,
+    markVisited,
+    bulkDelete,
+    bulkDuplicate,
+    resetSystemDashboard,
+    updateDashboardFilters,
+    addWidget,
+    updateWidget,
+    removeWidget,
+    resizeWidget,
+    updateLayout,
+    openWidgetEditor,
+    closeWidgetEditor,
+    openWidgetEditorForWidget,
+    buildAiWidgetDraft,
+  }
+})

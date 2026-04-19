@@ -510,9 +510,7 @@ function formatNumber(value: number) {
 }
 
 .mp-overview-chart__stat--context {
-  background:
-    linear-gradient(180deg, rgba(255, 255, 255, 0.72), rgba(255, 255, 255, 0.32)),
-    rgba(var(--v-theme-surface-variant), 0.52);
+  background: rgba(var(--v-theme-surface-variant), 0.52);
 }
 
 .mp-overview-chart__eyebrow {
@@ -553,7 +551,7 @@ function formatNumber(value: number) {
   border: 1px solid rgba(var(--v-theme-border), 0.8);
   background:
     radial-gradient(circle at top left, rgba(34, 199, 255, 0.08), transparent 30%),
-    linear-gradient(180deg, rgba(255, 255, 255, 0.84), rgba(var(--v-theme-surface), 0.98));
+    rgb(var(--v-theme-surface));
   overflow: hidden;
   padding: 10px 10px 4px;
 }

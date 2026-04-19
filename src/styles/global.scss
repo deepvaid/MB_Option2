@@ -1,7 +1,50 @@
 /* ═══════════════════════════════════════════════════════════════
    Maropost Global Styles
    ═══════════════════════════════════════════════════════════════ */
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+
+/* ─── Display type utility classes (Inter, tightened for size) ─ */
+.mp-display-sm,
+.mp-display-md,
+.mp-display-lg,
+.mp-display-xl {
+  font-family: var(--mp-typography-fontFamily-base);
+  color: rgb(var(--v-theme-on-background));
+  font-feature-settings: 'ss01', 'cv11';
+  margin: 0;
+}
+.mp-display-sm {
+  font-size: var(--mp-typography-display-sm-fontSize);
+  line-height: var(--mp-typography-display-sm-lineHeight);
+  letter-spacing: var(--mp-typography-display-sm-letterSpacing);
+  font-weight: var(--mp-typography-display-sm-fontWeight);
+}
+.mp-display-md {
+  font-size: var(--mp-typography-display-md-fontSize);
+  line-height: var(--mp-typography-display-md-lineHeight);
+  letter-spacing: var(--mp-typography-display-md-letterSpacing);
+  font-weight: var(--mp-typography-display-md-fontWeight);
+}
+.mp-display-lg {
+  font-size: var(--mp-typography-display-lg-fontSize);
+  line-height: var(--mp-typography-display-lg-lineHeight);
+  letter-spacing: var(--mp-typography-display-lg-letterSpacing);
+  font-weight: var(--mp-typography-display-lg-fontWeight);
+}
+.mp-display-xl {
+  font-size: var(--mp-typography-display-xl-fontSize);
+  line-height: var(--mp-typography-display-xl-lineHeight);
+  letter-spacing: var(--mp-typography-display-xl-letterSpacing);
+  font-weight: var(--mp-typography-display-xl-fontWeight);
+}
+
+.mp-eyebrow {
+  font-size: var(--mp-typography-fontSize-xs);
+  font-weight: var(--mp-typography-fontWeight-semibold);
+  letter-spacing: var(--mp-typography-letterSpacing-eyebrow);
+  text-transform: uppercase;
+  color: rgb(var(--v-theme-on-surface-variant));
+}
 
 *, *::before, *::after {
   box-sizing: border-box;
@@ -82,10 +125,34 @@ a {
 
 /* Token-driven card radius that responds to rendered card size */
 .v-card.mp-card {
-  container-type: inline-size;
-  border-radius: var(--mp-component-card-radius-md) !important;
+  border-radius: 20px !important;
   background: rgb(var(--v-theme-surface));
   box-shadow: none;
+  border-color: var(--mp-color-neutral-hairline, rgba(11, 53, 88, 0.08)) !important;
+}
+
+/* Soft-tone card variant — subtle blue tint for secondary surfaces */
+.v-card.mp-card--soft {
+  background: var(--mp-color-blue-50) !important;
+  border-color: transparent !important;
+}
+
+/* Warm-tone card variant — for content-first surfaces */
+.v-card.mp-card--warm {
+  background: var(--mp-color-neutral-100) !important;
+  border-color: transparent !important;
+}
+
+.v-card.mp-card--hover {
+  transition:
+    transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1),
+    box-shadow 0.3s cubic-bezier(0.2, 0.8, 0.2, 1),
+    border-color $mp-transition-fast;
+}
+
+.v-card.mp-card--hover:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--mp-shadow-md);
 }
 
 .v-btn {
@@ -176,18 +243,6 @@ a {
   color: rgb(var(--v-theme-on-primary)) !important;
 }
 
-@container (max-width: 359px) {
-  .v-card.mp-card {
-    border-radius: var(--mp-component-card-radius-sm) !important;
-  }
-}
-
-@container (min-width: 720px) {
-  .v-card.mp-card {
-    border-radius: var(--mp-component-card-radius-lg) !important;
-  }
-}
-
 /* ─── Border Utilities (token-driven via mp-theme-aliases.css) ─ */
 .border-b {
   border-bottom: 1px solid var(--mp-border-subtle);
@@ -258,15 +313,20 @@ tr:focus-within .action-btns {
   opacity: 1;
 }
 
-/* ─── Card Hover Lift ───────────────────────────────────────── */
+/* ─── Card Hover Lift (humane, subtle) ───────────────────────── */
 .card-hover {
-  transition: box-shadow $mp-transition-fast, transform $mp-transition-fast;
+  transition:
+    transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1),
+    box-shadow 0.3s cubic-bezier(0.2, 0.8, 0.2, 1),
+    border-color 0.2s ease,
+    background-color 0.2s ease;
   cursor: pointer;
+  will-change: transform;
 }
 .card-hover:hover {
-  transform: none;
-  box-shadow: none !important;
-  border-color: rgba(var(--v-theme-primary), 0.12) !important;
+  transform: translateY(-2px);
+  box-shadow: var(--mp-shadow-md);
+  border-color: rgba(var(--v-theme-primary), 0.24) !important;
 }
 
 /* ─── Settings Card Hover ───────────────────────────────────── */

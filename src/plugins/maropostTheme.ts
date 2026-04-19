@@ -47,9 +47,13 @@ import {
 export const maropostLight = {
   dark: false,
   colors: {
+    // Accessibility note:
+    // Prefer blue-700 (#0A7AB5) or darker for text on light surfaces.
+    // blue-500 / blue-600 are accent tones and may fail AA for body-size text.
     background: mp_color_light_background,
     surface: mp_color_light_surface,
     'surface-variant': mp_color_light_surfaceVariant,
+    'surface-tint': '#EAF6FE',
     'on-surface-variant': mp_color_light_onSurfaceVariant,
     primary: mp_color_light_primary,
     'primary-darken-1': mp_color_light_primaryDarken,
@@ -70,6 +74,13 @@ export const maropostLight = {
     'on-warning': mp_color_light_onWarning,
     'on-surface': mp_color_light_textPrimary,
     'on-background': mp_color_light_textPrimary,
+    'blue-50': '#EAF6FE',
+    'blue-100': '#D3ECFD',
+    'blue-200': '#A8DAFB',
+    'blue-700': '#0A7AB5',
+    'blue-900': '#0B3558',
+    'neutral-100': '#F5F2ED',
+    'neutral-200': '#EDE8DF',
   },
 }
 
@@ -104,13 +115,14 @@ export const maropostDefaults = {
       font-family: ${mp_typography_fontFamily_base};
       font-size: ${mp_component_button_typography_fontSize};
       border-radius: ${mp_component_button_radius_default};
-      min-height: 40px;
-      padding-inline: 16px;
+      min-height: 44px;
+      padding-inline: 20px;
     `,
   },
   VCard: {
     variant: 'flat',
     border: true,
+    rounded: 'lg',
     class: 'mp-card',
   },
   VTextField: {
@@ -170,6 +182,7 @@ export const maropostDefaults = {
   },
   VDialog: {
     rounded: 'xl',
+    style: 'border-radius: 28px;',
   },
   VDivider: {
     opacity: 0.72,

@@ -15,7 +15,8 @@ export default defineConfig({
   ],
   resolve: {
     alias: {
-      '@': fileURLToPath(new URL('./src', import.meta.url))
+      '@': fileURLToPath(new URL('./src', import.meta.url)),
+      '@marobase/ui': fileURLToPath(new URL('./packages/marobase-ui/src/index.ts', import.meta.url)),
     }
   },
   css: {

@@ -3,6 +3,7 @@ export { default as MbAlert } from './components/MbAlert.vue';
 export { default as MbAvatar } from './components/MbAvatar.vue';
 export { default as MbBadge } from './components/MbBadge.vue';
 export { default as MbBreadcrumbs } from './components/MbBreadcrumbs.vue';
+export { default as MbCard } from './components/MbCard.vue';
 export { default as MbButton } from './components/MbButton.vue';
 export { default as MbButtonGroup } from './components/MbButtonGroup.vue';
 export { default as MbChip } from './components/MbChip.vue';
@@ -36,6 +37,8 @@ export { default as MbTextArea } from './components/MbTextArea.vue';
 export { default as MbTimeline } from './components/MbTimeline.vue';
 export { default as MbTooltip } from './components/MbTooltip.vue';
 export { default as MbWysiwygEditor } from './components/MbWysiwygEditor.vue';
+export { default as MbStatCard } from './components/MbStatCard.vue';
+export { default as MbPageHeader } from './components/MbPageHeader.vue';
 export type {
   MbAccordionItem,
   MbAccordionProps,
@@ -64,6 +67,12 @@ export type {
   MbBreadcrumbsProps,
   MbBreadcrumbsState
 } from './components/MbBreadcrumbs.types';
+export type {
+  MbCardPadding,
+  MbCardProps,
+  MbCardRadius,
+  MbCardTone
+} from './components/MbCard.types';
 export type {
   MbButtonIconMode,
   MbButtonProps,
@@ -238,6 +247,15 @@ export type {
   MbTooltipPlacement,
   MbTooltipProps
 } from './components/MbTooltip.types';
+export type {
+  MbStatCardProps,
+  MbStatCardTone,
+  MbStatCardTrend
+} from './components/MbStatCard.types';
+export type {
+  MbPageHeaderProps,
+  MbPageHeaderBreadcrumb
+} from './components/MbPageHeader.types';
 export { mbAccordionTokens } from './tokens/mb-accordion.tokens';
 export { mbAlertTokens } from './tokens/mb-alert.tokens';
 export { mbAvatarTokens } from './tokens/mb-avatar.tokens';

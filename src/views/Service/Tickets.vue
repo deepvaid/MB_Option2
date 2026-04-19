@@ -2,7 +2,6 @@
 import { ref, computed } from 'vue'
 import { useTicketsStore } from '@/stores/useTickets'
 import MpPageHeader from '@/components/MpPageHeader.vue'
-import MpDataTableToolbar from '@/components/MpDataTableToolbar.vue'
 
 const store = useTicketsStore()
 const tab = ref('list')
@@ -91,42 +90,47 @@ function sendReply() {
     </MpPageHeader>
 
     <!-- Filter chips -->
-    <div class="d-flex align-center gap-2 overflow-x-auto hide-scrollbar">
-      <v-btn-toggle
-        v-model="filterStatus"
-        density="comfortable"
-        mandatory
-        class="mp-toggle-group mp-toggle-group--pills bg-transparent"
-        selected-class="bg-primary text-white"
+    <div class="d-flex align-center ga-2 flex-wrap tickets-filter-row">
+      <v-btn
+        v-for="s in statusOptions"
+        :key="s"
+        :variant="filterStatus === s ? 'flat' : 'tonal'"
+        :color="filterStatus === s ? 'primary' : undefined"
+        rounded="pill"
+        size="small"
+        class="text-none px-4 tickets-filter-pill"
+        :class="{ 'tickets-filter-pill--inactive': filterStatus !== s }"
+        @click="filterStatus = s"
       >
-        <v-btn v-for="s in statusOptions" :key="s" :value="s" rounded="pill" variant="flat" size="small"
-          class="text-none px-4 mr-2" :class="filterStatus === s ? '' : 'bg-grey-lighten-4 text-medium-emphasis'">
-          {{ s }}
-        </v-btn>
-      </v-btn-toggle>
+        {{ s }}
+      </v-btn>
     </div>
 
     <!-- Toolbar: Search + View Toggle -->
-    <div class="d-flex align-center gap-3">
-      <MpDataTableToolbar
-        v-model:search="search"
-        search-placeholder="Search tickets by ID, subject, or customer…"
-        class="flex-grow-1 pa-0"
-        style="min-height: unset;"
+    <div class="d-flex align-center ga-3 tickets-toolbar">
+      <v-text-field
+        v-model="search"
+        prepend-inner-icon="mdi-magnify"
+        placeholder="Search tickets by ID, subject, or customer…"
+        aria-label="Search tickets"
+        variant="outlined"
+        density="comfortable"
+        hide-details
+        clearable
+        rounded="pill"
+        class="flex-grow-1 tickets-search"
       />
       <v-btn-toggle
         v-model="tab"
         density="compact"
-        variant="outlined"
-        divided
-        class="mp-toggle-group mp-toggle-group--segmented bg-surface border"
-        rounded="lg"
         mandatory
+        rounded="lg"
+        class="tickets-view-toggle"
       >
-        <v-btn value="list" class="text-none" size="small">
+        <v-btn value="list" size="small" variant="text" class="text-none">
           <v-icon size="16" class="mr-1">mdi-format-list-bulleted</v-icon> List
         </v-btn>
-        <v-btn value="kanban" class="text-none" size="small">
+        <v-btn value="kanban" size="small" variant="text" class="text-none">
           <v-icon size="16" class="mr-1">mdi-view-column</v-icon> Kanban
         </v-btn>
       </v-btn-toggle>
@@ -272,9 +276,9 @@ function sendReply() {
                 </v-list>
               </v-menu>
             </div>
-            <div class="d-flex gap-2">
-              <v-btn variant="outlined" class="text-none" color="warning" size="small">Close Ticket</v-btn>
-              <v-btn color="primary" variant="elevated" class="text-none" prepend-icon="mdi-send" :disabled="!replyBody.trim()" @click="sendReply">Send Reply</v-btn>
+            <div class="d-flex ga-2 align-center">
+              <v-btn variant="text" class="text-none text-medium-emphasis" size="small">Close Ticket</v-btn>
+              <v-btn color="secondary" variant="flat" class="text-none" prepend-icon="mdi-send" :disabled="!replyBody.trim()" @click="sendReply">Send Reply</v-btn>
             </div>
           </div>
         </div>
@@ -390,6 +394,42 @@ function sendReply() {
 .gap-5 { gap: 20px; }
 .hide-scrollbar::-webkit-scrollbar { display: none; }
 .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+.tickets-filter-row {
+  row-gap: 8px;
+}
+.tickets-filter-pill {
+  letter-spacing: 0;
+  font-weight: 600;
+}
+.tickets-filter-pill--inactive {
+  background: rgba(var(--v-theme-on-surface), 0.04) !important;
+  color: rgba(var(--v-theme-on-surface), 0.72) !important;
+}
+.tickets-toolbar {
+  min-height: 44px;
+}
+.tickets-search :deep(.v-field) {
+  background: rgb(var(--v-theme-surface));
+}
+.tickets-view-toggle {
+  height: 40px;
+  border: 1px solid rgba(var(--v-border-color), var(--v-border-opacity));
+  background: rgb(var(--v-theme-surface));
+  overflow: hidden;
+}
+.tickets-view-toggle :deep(.v-btn) {
+  height: 100%;
+  border-radius: 0;
+  padding-inline: 14px;
+  color: rgba(var(--v-theme-on-surface), 0.72);
+  letter-spacing: 0;
+}
+.tickets-view-toggle :deep(.v-btn.v-btn--active) {
+  background: rgba(var(--v-theme-primary), 0.12);
+  color: rgb(var(--v-theme-secondary));
+  font-weight: 600;
+}
 .border-b { border-bottom: 1px solid rgba(var(--v-border-color), var(--v-border-opacity)) !important; }
 .border-t { border-top: 1px solid rgba(var(--v-border-color), var(--v-border-opacity)) !important; }
 .border { border: 1px solid rgba(var(--v-border-color), var(--v-border-opacity)) !important; }

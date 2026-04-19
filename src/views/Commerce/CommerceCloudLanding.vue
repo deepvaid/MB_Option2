@@ -1,0 +1,519 @@
+<script setup lang="ts">
+import { computed } from 'vue'
+import { MbCard } from '@marobase/ui'
+
+const heroMetrics = [
+  { label: 'Storefronts', value: '12', icon: 'mdi-storefront-outline' },
+  { label: 'Products', value: '2.4K', icon: 'mdi-package-variant-closed' },
+  { label: 'Markets', value: '8', icon: 'mdi-earth' },
+] as const
+
+const heroBars = [38, 52, 46, 64, 58, 72, 81, 74, 92, 85, 78, 88] as const
+
+const trustBrands = [
+  { name: 'SEIKO', weight: 600, letterSpacing: '0.18em' },
+  { name: 'LUXOTTICA', weight: 600, letterSpacing: '0.2em' },
+  { name: 'BioTRUST', weight: 700, letterSpacing: '0' },
+  { name: 'weber', weight: 700, letterSpacing: '0' },
+  { name: 'Mercedes-Benz', weight: 500, letterSpacing: '0' },
+] as const
+
+const capabilities = [
+  {
+    icon: 'mdi-storefront-outline',
+    title: 'Run multiple storefronts from one shared catalog',
+    body: 'Manage all storefronts centrally without duplication, so inventory, pricing and product data stay in sync wherever you sell.',
+  },
+  {
+    icon: 'mdi-cart-outline',
+    title: 'Unified orders and fulfillment across channels',
+    body: 'See every order from every channel in one queue, route shipments automatically, and keep customers updated with real-time status.',
+  },
+  {
+    icon: 'mdi-chart-timeline-variant',
+    title: 'Operational visibility built for scale',
+    body: 'Track revenue, inventory and fulfillment health across brands and markets with dashboards built for commerce operators.',
+  },
+] as const
+
+const barPath = computed(() => heroBars
+  .map((value, index) => {
+    const width = 100 / heroBars.length
+    const x = index * width + width * 0.18
+    const w = width * 0.64
+    const height = (value / 100) * 72
+    const y = 80 - height
+    return `M ${x} ${y} h ${w} v ${height} h -${w} Z`
+  })
+  .join(' '))
+</script>
+
+<template>
+  <div class="commerce-landing">
+    <section class="commerce-landing__hero">
+      <div class="commerce-landing__hero-inner">
+        <div class="commerce-landing__hero-copy">
+          <span class="commerce-landing__eyebrow">Commerce Cloud</span>
+          <h1 class="commerce-landing__title">
+            Operate your entire commerce business from
+            <span class="commerce-landing__title-accent">one platform</span>
+          </h1>
+          <p class="commerce-landing__subtitle">
+            Unify products, inventory, orders, and fulfillment to scale without operational complexity
+          </p>
+          <v-btn
+            class="commerce-landing__cta text-none"
+            color="secondary"
+            size="large"
+            variant="flat"
+            rounded="lg"
+          >
+            Talk to Sales
+          </v-btn>
+        </div>
+
+        <MbCard radius="xl" padding="lg" class="commerce-landing__hero-card">
+          <div class="commerce-landing__hero-metrics">
+            <div
+              v-for="metric in heroMetrics"
+              :key="metric.label"
+              class="commerce-landing__hero-metric"
+            >
+              <span class="commerce-landing__hero-metric-head">
+                <v-icon size="14" class="commerce-landing__hero-metric-icon">{{ metric.icon }}</v-icon>
+                <span class="commerce-landing__hero-metric-label">{{ metric.label }}</span>
+              </span>
+              <span class="commerce-landing__hero-metric-value">{{ metric.value }}</span>
+            </div>
+          </div>
+
+          <div class="commerce-landing__hero-chart" aria-hidden="true">
+            <svg viewBox="0 0 100 80" preserveAspectRatio="none" role="presentation">
+              <defs>
+                <linearGradient id="commerce-landing-bar" x1="0" x2="0" y1="0" y2="1">
+                  <stop offset="0%" stop-color="#4cc5ff" />
+                  <stop offset="100%" stop-color="#12a8f5" />
+                </linearGradient>
+              </defs>
+              <path :d="barPath" fill="url(#commerce-landing-bar)" />
+            </svg>
+          </div>
+
+          <div class="commerce-landing__hero-footer">
+            <div class="commerce-landing__hero-footer-cell">
+              <span class="commerce-landing__hero-metric-label">Orders Today</span>
+              <span class="commerce-landing__hero-footer-value">847</span>
+            </div>
+            <div class="commerce-landing__hero-footer-cell">
+              <span class="commerce-landing__hero-metric-label">Real-time Sync</span>
+              <span class="commerce-landing__hero-footer-status">
+                <span class="commerce-landing__status-dot" />
+                Active
+              </span>
+            </div>
+          </div>
+        </MbCard>
+      </div>
+    </section>
+
+    <section class="commerce-landing__trust">
+      <div class="commerce-landing__trust-inner">
+        <div class="commerce-landing__trust-label">
+          Trusted by<br />brands
+        </div>
+        <div class="commerce-landing__trust-brands">
+          <span
+            v-for="brand in trustBrands"
+            :key="brand.name"
+            class="commerce-landing__trust-brand"
+            :style="{ fontWeight: brand.weight, letterSpacing: brand.letterSpacing }"
+          >
+            {{ brand.name }}
+          </span>
+        </div>
+      </div>
+    </section>
+
+    <section class="commerce-landing__narrative">
+      <p>
+        As your business grows, managing storefronts, inventory, and orders
+        across multiple systems creates <strong>fragmentation and slows execution</strong>.
+      </p>
+      <p>
+        Commerce Cloud brings everything into a <strong>single operational backbone</strong>
+        &mdash; giving your team full control and visibility without adding systems or overhead.
+      </p>
+    </section>
+
+    <section class="commerce-landing__capabilities">
+      <header class="commerce-landing__capabilities-head">
+        <h2 class="commerce-landing__section-title">Key capabilities</h2>
+        <p class="commerce-landing__section-subtitle">
+          Everything you need to scale your commerce operations
+        </p>
+      </header>
+
+      <div class="commerce-landing__capabilities-list">
+        <MbCard
+          v-for="capability in capabilities"
+          :key="capability.title"
+          radius="xl"
+          padding="lg"
+          class="commerce-landing__capability"
+        >
+          <div class="commerce-landing__capability-inner">
+            <div class="commerce-landing__capability-copy">
+              <span class="commerce-landing__capability-icon" aria-hidden="true">
+                <v-icon size="20">{{ capability.icon }}</v-icon>
+              </span>
+              <h3 class="commerce-landing__capability-title">{{ capability.title }}</h3>
+              <p class="commerce-landing__capability-body">{{ capability.body }}</p>
+            </div>
+            <div class="commerce-landing__capability-visual" aria-hidden="true">
+              <span class="commerce-landing__capability-visual-placeholder">
+                <v-icon size="36">{{ capability.icon }}</v-icon>
+              </span>
+            </div>
+          </div>
+        </MbCard>
+      </div>
+    </section>
+  </div>
+</template>
+
+<style scoped lang="scss">
+.commerce-landing {
+  display: flex;
+  flex-direction: column;
+  gap: 72px;
+  padding-bottom: 96px;
+  color: var(--mb-color-text);
+}
+
+.commerce-landing__hero-inner {
+  display: grid;
+  grid-template-columns: 1.05fr 0.95fr;
+  gap: 48px;
+  align-items: center;
+  max-width: 1120px;
+  margin: 0 auto;
+  padding: 8px 0 32px;
+}
+
+.commerce-landing__eyebrow {
+  display: inline-flex;
+  align-items: center;
+  padding: 6px 14px;
+  border-radius: 999px;
+  background: var(--mb-color-primary-soft);
+  color: var(--mb-color-primary);
+  font-size: var(--mb-font-size-sm);
+  font-weight: var(--mb-font-weight-semibold);
+  letter-spacing: 0.02em;
+  margin-bottom: 20px;
+}
+
+.commerce-landing__title {
+  font-family: var(--mb-font-family-base);
+  font-weight: var(--mb-font-weight-heavy, 800);
+  font-size: clamp(2.4rem, 4.2vw, 3.6rem);
+  line-height: 1.08;
+  letter-spacing: var(--mb-letter-spacing-tighter);
+  margin: 0 0 20px;
+  color: var(--mb-color-text);
+}
+
+.commerce-landing__title-accent {
+  color: var(--mb-color-primary);
+  display: inline-block;
+}
+
+.commerce-landing__subtitle {
+  font-size: 1.06rem;
+  line-height: 1.55;
+  color: var(--mb-color-text-muted);
+  margin: 0 0 32px;
+  max-width: 440px;
+}
+
+.commerce-landing__cta {
+  padding-inline: 28px !important;
+  font-weight: var(--mb-font-weight-semibold);
+}
+
+.commerce-landing__hero-card {
+  width: 100%;
+  max-width: 480px;
+  margin-left: auto;
+  gap: 20px;
+}
+
+.commerce-landing__hero-metrics {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.commerce-landing__hero-metric {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 14px 16px;
+  border: 1px solid var(--mb-color-border-subtle);
+  border-radius: var(--mb-radius-md);
+  background: var(--mb-color-surface);
+}
+
+.commerce-landing__hero-metric-head {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--mb-color-text-muted);
+}
+
+.commerce-landing__hero-metric-icon {
+  color: var(--mb-color-primary);
+}
+
+.commerce-landing__hero-metric-label {
+  font-size: var(--mb-font-size-xs);
+  text-transform: uppercase;
+  letter-spacing: var(--mb-letter-spacing-eyebrow);
+  font-weight: var(--mb-font-weight-semibold);
+  color: var(--mb-color-text-muted);
+}
+
+.commerce-landing__hero-metric-value {
+  font-size: 1.5rem;
+  font-weight: var(--mb-font-weight-bold);
+  color: var(--mb-color-text);
+  letter-spacing: var(--mb-letter-spacing-tight);
+}
+
+.commerce-landing__hero-chart {
+  border-radius: var(--mb-radius-md);
+  background: var(--mb-color-surface);
+  border: 1px solid var(--mb-color-border-subtle);
+  padding: 16px;
+  height: 132px;
+
+  svg {
+    width: 100%;
+    height: 100%;
+    display: block;
+  }
+}
+
+.commerce-landing__hero-footer {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.commerce-landing__hero-footer-cell {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 14px 16px;
+  border-radius: var(--mb-radius-md);
+  border: 1px solid var(--mb-color-border-subtle);
+  background: var(--mb-color-surface);
+}
+
+.commerce-landing__hero-footer-value {
+  font-size: 1.25rem;
+  font-weight: var(--mb-font-weight-bold);
+  color: var(--mb-color-text);
+}
+
+.commerce-landing__hero-footer-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: var(--mb-font-size-body);
+  color: var(--mb-color-text);
+}
+
+.commerce-landing__status-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 999px;
+  background: var(--mb-color-success);
+  box-shadow: 0 0 0 3px var(--mb-color-success-soft);
+}
+
+.commerce-landing__trust {
+  background: var(--mb-color-primary-soft);
+  padding: 28px 0;
+  margin: 0 calc(-1 * var(--mb-space-6));
+}
+
+.commerce-landing__trust-inner {
+  display: flex;
+  align-items: center;
+  gap: 40px;
+  max-width: 1120px;
+  margin: 0 auto;
+  padding: 0 var(--mb-space-6);
+  flex-wrap: wrap;
+}
+
+.commerce-landing__trust-label {
+  font-size: var(--mb-font-size-sm);
+  font-weight: var(--mb-font-weight-semibold);
+  color: var(--mb-color-text);
+  line-height: 1.2;
+  flex-shrink: 0;
+}
+
+.commerce-landing__trust-brands {
+  display: flex;
+  align-items: center;
+  gap: 44px;
+  flex-wrap: wrap;
+  flex: 1;
+  justify-content: space-around;
+}
+
+.commerce-landing__trust-brand {
+  font-size: 1.05rem;
+  color: var(--mb-color-text);
+  opacity: 0.9;
+  text-transform: uppercase;
+}
+
+.commerce-landing__narrative {
+  max-width: 720px;
+  margin: 0 auto;
+  text-align: center;
+  font-size: 1.02rem;
+  line-height: 1.6;
+  color: var(--mb-color-text-muted);
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+
+  strong {
+    color: var(--mb-color-text);
+    font-weight: var(--mb-font-weight-bold);
+  }
+
+  p {
+    margin: 0;
+  }
+}
+
+.commerce-landing__capabilities {
+  max-width: 1120px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.commerce-landing__capabilities-head {
+  text-align: center;
+  margin-bottom: 40px;
+}
+
+.commerce-landing__section-title {
+  font-size: clamp(1.8rem, 3vw, 2.4rem);
+  font-weight: var(--mb-font-weight-heavy, 800);
+  letter-spacing: var(--mb-letter-spacing-tighter);
+  margin: 0 0 8px;
+  color: var(--mb-color-text);
+}
+
+.commerce-landing__section-subtitle {
+  margin: 0;
+  color: var(--mb-color-text-muted);
+  font-size: 1rem;
+}
+
+.commerce-landing__capabilities-list {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.commerce-landing__capability-inner {
+  display: grid;
+  grid-template-columns: 1.3fr 1fr;
+  gap: 32px;
+  align-items: center;
+}
+
+.commerce-landing__capability-copy {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.commerce-landing__capability-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border-radius: var(--mb-radius-md);
+  background: var(--mb-color-primary-soft);
+  color: var(--mb-color-primary);
+}
+
+.commerce-landing__capability-title {
+  font-size: 1.25rem;
+  font-weight: var(--mb-font-weight-bold);
+  margin: 0;
+  color: var(--mb-color-text);
+}
+
+.commerce-landing__capability-body {
+  margin: 0;
+  color: var(--mb-color-text-muted);
+  line-height: 1.55;
+  max-width: 520px;
+}
+
+.commerce-landing__capability-visual {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  aspect-ratio: 16 / 10;
+  border-radius: var(--mb-radius-md);
+  background: var(--mb-color-surface-subtle);
+  border: 1px dashed var(--mb-color-border);
+}
+
+.commerce-landing__capability-visual-placeholder {
+  color: var(--mb-color-text-soft);
+}
+
+@media (max-width: 960px) {
+  .commerce-landing__hero-inner {
+    grid-template-columns: 1fr;
+    gap: 32px;
+  }
+
+  .commerce-landing__hero-card {
+    max-width: 100%;
+    margin-left: 0;
+  }
+
+  .commerce-landing__capability-inner {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+}
+
+@media (max-width: 640px) {
+  .commerce-landing {
+    gap: 56px;
+  }
+
+  .commerce-landing__hero-metrics {
+    grid-template-columns: 1fr;
+  }
+
+  .commerce-landing__hero-footer {
+    grid-template-columns: 1fr;
+  }
+}
+</style>

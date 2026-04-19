@@ -1,19 +1,47 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { computed, ref } from 'vue'
 import { useTheme } from 'vuetify'
+import { useRoute, useRouter } from 'vue-router'
+import { useAccountsStore, type Account } from '@/stores/useAccounts'
 
 const copilotOpen = defineModel<boolean>('copilotOpen', { default: false })
 
 const theme = useTheme()
+const router = useRouter()
+const route = useRoute()
+const accountsStore = useAccountsStore()
+
 const notificationCount = ref(18)
 const userName = ref('Deepak Vaidya')
 const userInitials = ref('DV')
 const userEmail = ref('deepak.v@maropost.com')
 const userRole = ref('Super Admin')
-const accountName = ref('MMC-MSC-MCC Scooter Village')
+
+const accounts = computed(() => accountsStore.accounts)
+const activeAccount = computed(() => accountsStore.activeAccount)
+const accountName = computed(() => activeAccount.value.name)
+const accountInitials = computed(() => activeAccount.value.initials)
 
 function toggleTheme() {
   theme.global.name.value = theme.global.current.value.dark ? 'maropostLight' : 'maropostDark'
+}
+
+function selectAccount(account: Account) {
+  if (account.id === accountsStore.activeId) return
+  const previousId = accountsStore.activeId
+  accountsStore.switchTo(account.id)
+
+  const currentAccountIdParam = Array.isArray(route.params.accountId)
+    ? route.params.accountId[0]
+    : route.params.accountId
+  if (currentAccountIdParam && currentAccountIdParam === previousId) {
+    router.push({
+      name: route.name ?? undefined,
+      params: { ...route.params, accountId: account.id },
+      query: route.query,
+      hash: route.hash,
+    })
+  }
 }
 </script>
 
@@ -42,7 +70,7 @@ function toggleTheme() {
             :aria-label="`Switch workspace. Current workspace ${accountName}`"
             class="d-flex align-center gap-2 cursor-pointer py-1 px-2 rounded-lg account-switcher-trigger"
           >
-            <v-avatar color="primary" size="26" class="appbar-avatar-sm account-avatar">{{ userInitials }}</v-avatar>
+            <v-avatar :color="activeAccount.color" size="26" class="appbar-avatar-sm account-avatar">{{ accountInitials }}</v-avatar>
             <div class="d-none d-md-block account-summary">
               <div class="text-caption font-weight-medium text-truncate account-name">{{ accountName }}</div>
               <div class="text-caption text-medium-emphasis account-user">{{ userName }}</div>
@@ -53,7 +81,7 @@ function toggleTheme() {
         <v-card width="320" rounded="xl" flat border class="account-switcher-card">
           <!-- Current account header -->
           <div class="account-menu-header d-flex align-center gap-3">
-            <v-avatar color="primary" size="40" class="appbar-avatar-md">{{ userInitials }}</v-avatar>
+            <v-avatar :color="activeAccount.color" size="40" class="appbar-avatar-md">{{ accountInitials }}</v-avatar>
             <div class="account-min-width">
               <div class="font-weight-semibold text-body-2 text-truncate">{{ accountName }}</div>
               <div class="text-caption text-medium-emphasis">{{ userName }}</div>
@@ -62,20 +90,29 @@ function toggleTheme() {
           <v-divider />
           <v-list density="compact" :border="false" class="pa-3">
             <v-list-subheader class="text-uppercase mb-1 appbar-subheader">Switch Account</v-list-subheader>
-            <v-list-item rounded="lg" class="mb-1 account-list-item" active active-color="primary">
+            <v-list-item
+              v-for="account in accounts"
+              :key="account.id"
+              rounded="lg"
+              class="mb-1 account-list-item"
+              :active="account.id === accountsStore.activeId"
+              active-color="primary"
+              @click="selectAccount(account)"
+            >
               <template v-slot:prepend>
-                <v-avatar size="28" color="primary" variant="tonal" class="mr-3 appbar-avatar-initials">MP</v-avatar>
+                <v-avatar size="28" :color="account.color" variant="tonal" class="mr-3 appbar-avatar-initials">{{ account.initials }}</v-avatar>
               </template>
-              <div class="text-body-2 font-weight-medium account-item-text">MMC-MSC-MCC Scooter Village</div>
+              <div
+                class="text-body-2 account-item-text"
+                :class="{ 'font-weight-medium': account.id === accountsStore.activeId }"
+              >{{ account.name }}</div>
               <template v-slot:append>
-                <v-icon size="16" color="primary">mdi-check-circle</v-icon>
+                <v-icon
+                  v-if="account.id === accountsStore.activeId"
+                  size="16"
+                  color="primary"
+                >mdi-check-circle</v-icon>
               </template>
-            </v-list-item>
-            <v-list-item rounded="lg" class="account-list-item">
-              <template v-slot:prepend>
-                <v-avatar size="28" color="secondary" variant="tonal" class="mr-3 appbar-avatar-initials">MD</v-avatar>
-              </template>
-              <div class="text-body-2 account-item-text">Maropost Demo Store</div>
             </v-list-item>
           </v-list>
         </v-card>

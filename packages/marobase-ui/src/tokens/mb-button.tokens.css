@@ -6,9 +6,9 @@ html[data-theme='light'],
 html.theme-light {
   --mb-btn-font-family: var(--mb-font-family-base);
   --mb-btn-font-weight: var(--mb-font-weight-semibold);
-  --mb-btn-letter-spacing: var(--mb-letter-spacing-wide);
+  --mb-btn-letter-spacing: 0;
 
-  --mb-btn-radius: var(--mb-radius-md);
+  --mb-btn-radius: var(--mb-radius-pill);
 
   --mb-btn-height-lg: var(--mb-control-height-lg);
   --mb-btn-height-md: var(--mb-control-height-md);
@@ -150,9 +150,9 @@ html.theme-dark,
 html.v-theme--dark {
   --mb-btn-font-family: var(--mb-font-family-base);
   --mb-btn-font-weight: var(--mb-font-weight-semibold);
-  --mb-btn-letter-spacing: var(--mb-letter-spacing-wide);
+  --mb-btn-letter-spacing: 0;
 
-  --mb-btn-radius: var(--mb-radius-md);
+  --mb-btn-radius: var(--mb-radius-pill);
   --mb-btn-height-lg: var(--mb-control-height-lg);
   --mb-btn-height-md: var(--mb-control-height-md);
   --mb-btn-height-sm: var(--mb-control-height-sm);
