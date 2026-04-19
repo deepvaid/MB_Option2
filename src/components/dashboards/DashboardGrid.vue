@@ -1,7 +1,13 @@
 <script setup lang="ts">
-import { computed, ref, watch } from 'vue'
-import { GridItem, GridLayout } from 'grid-layout-plus'
+import { computed, defineAsyncComponent, ref, watch } from 'vue'
 import MpEmptyState from '@/components/MpEmptyState.vue'
+
+const GridLayout = defineAsyncComponent(() =>
+  import('grid-layout-plus').then((mod) => mod.GridLayout),
+)
+const GridItem = defineAsyncComponent(() =>
+  import('grid-layout-plus').then((mod) => mod.GridItem),
+)
 import type { DashboardFilterState, DashboardWidget } from '@/stores/dashboards/types'
 import { getDefaultPreset, type WidgetSize } from './widgetSizePresets'
 import DashboardWidgetCard from './DashboardWidgetCard.vue'

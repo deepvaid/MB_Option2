@@ -10,6 +10,19 @@ import './styles/global.scss'
 
 const app = createApp(App)
 
+app.config.errorHandler = (err, _instance, info) => {
+  console.error('[Vue Error]', err, info)
+}
+
+if (typeof window !== 'undefined') {
+  window.addEventListener('error', (event) => {
+    console.error('[Window Error]', event.error ?? event.message)
+  })
+  window.addEventListener('unhandledrejection', (event) => {
+    console.error('[Unhandled Promise Rejection]', event.reason)
+  })
+}
+
 registerPlugins(app)
 app.use(VueApexCharts)
 app.config.globalProperties.$apexcharts = ApexCharts

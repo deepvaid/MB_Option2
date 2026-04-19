@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, ref, watch } from 'vue'
+import { computed, onErrorCaptured, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { MbPageHeader } from '@marobase/ui'
 import DashboardGrid from '@/components/dashboards/DashboardGrid.vue'
@@ -25,6 +25,14 @@ const dashboardsStore = useDashboardsStore()
 const widgetWizardOpen = ref(false)
 const wizardDefaultMode = ref<'choose' | 'manual' | 'davinci'>('choose')
 const editMode = ref(false)
+const renderError = ref<string | null>(null)
+
+onErrorCaptured((err) => {
+  const message = err instanceof Error ? `${err.message}\n${err.stack ?? ''}` : String(err)
+  console.error('[DashboardView Error]', err)
+  renderError.value = message
+  return false
+})
 const createDashboardOpen = ref(false)
 const editDashboardOpen = ref(false)
 const editDashboardTarget = ref<Dashboard | null>(null)
@@ -279,6 +287,18 @@ function performConfirm() {
 
 <template>
   <div class="dashboard-hub">
+    <v-alert
+      v-if="renderError"
+      type="error"
+      variant="tonal"
+      class="mb-4"
+      closable
+      @click:close="renderError = null"
+    >
+      <div class="text-subtitle-2 font-weight-bold mb-1">Dashboard failed to load</div>
+      <pre class="text-caption" style="white-space: pre-wrap; margin: 0;">{{ renderError }}</pre>
+    </v-alert>
+
     <MbPageHeader
       :title="pageTitle"
       :subtitle="pageSubtitle"
