@@ -15,6 +15,7 @@ const routes: RouteRecordRaw[] = [
   { path: '/accounts/:accountId/dashboards', name: 'DashboardsList', component: () => import('@/views/Dashboards/DashboardsList.vue') },
   { path: '/accounts/:accountId/dashboard', name: 'Dashboard', component: () => import('@/views/DashboardView.vue') },
   { path: '/accounts/:accountId/dashboard/:dashboardId', name: 'DashboardDetail', component: () => import('@/views/DashboardView.vue') },
+  { path: '/accounts/:accountId/analytics/live_view', name: 'LiveView', component: () => import('@/views/Analytics/LiveView.vue') },
   
   // 2. Analytics (Reports)
   { path: '/accounts/:accountId/analytics/monthly_totals', name: 'MonthlyTotals', component: () => import('@/views/Analytics/MonthlyTotals.vue') },

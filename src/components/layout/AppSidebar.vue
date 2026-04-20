@@ -36,6 +36,7 @@ function buildNavGroups(accountId: string): NavGroup[] {
       items: [
         { title: 'Active Dashboard', route: `/accounts/${accountId}/dashboard` },
         { title: 'All Dashboards', route: `/accounts/${accountId}/dashboards` },
+        { title: 'Live View', route: `/accounts/${accountId}/analytics/live_view` },
       ],
     },
     {
@@ -235,7 +236,7 @@ function isLocked(group: NavGroup) {
     :rail="localRail"
     permanent
     :mobile-breakpoint="0"
-    width="260"
+    width="230"
     class="mp-sidebar"
   >
     <!-- Logo + collapse toggle -->

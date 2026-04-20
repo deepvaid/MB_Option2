@@ -29,12 +29,14 @@
   },
   "dependencies": {
     "@mdi/font": "^7.4.47",
+    "@types/leaflet": "^1.9.21",
     "apexcharts": "^5.10.6",
     "grid-layout-plus": "^1.1.0",
+    "leaflet": "^1.9.4",
     "pinia": "^3.0.4",
     "vue": "^3.5.25",
-    "vue3-apexcharts": "^1.8.0",
     "vue-router": "^5.0.3",
+    "vue3-apexcharts": "^1.8.0",
     "vuetify": "^3.12.2"
   },
   "devDependencies": {
