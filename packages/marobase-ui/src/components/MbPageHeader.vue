@@ -12,23 +12,6 @@ withDefaults(defineProps<MbPageHeaderProps>(), {
 
 <template>
   <header class="mb-page-header" :data-size="size" :data-align="align">
-    <nav v-if="breadcrumbs && breadcrumbs.length" class="mb-page-header__crumbs" aria-label="Breadcrumb">
-      <template v-for="(crumb, i) in breadcrumbs" :key="i">
-        <a
-          v-if="crumb.href"
-          :href="crumb.href"
-          class="mb-page-header__crumb"
-          :aria-current="i === breadcrumbs.length - 1 ? 'page' : undefined"
-        >
-          {{ crumb.label }}
-        </a>
-        <span v-else class="mb-page-header__crumb mb-page-header__crumb--last" aria-current="page">
-          {{ crumb.label }}
-        </span>
-        <span v-if="i < breadcrumbs.length - 1" class="mb-page-header__crumb-sep" aria-hidden="true">/</span>
-      </template>
-    </nav>
-
     <div class="mb-page-header__row">
       <div class="mb-page-header__text">
         <span v-if="eyebrow" class="mb-page-header__eyebrow">{{ eyebrow }}</span>

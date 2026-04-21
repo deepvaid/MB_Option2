@@ -63,7 +63,10 @@ const routes: RouteRecordRaw[] = [
   { path: '/commerce/:accountId/coupons', name: 'Coupons', component: () => import('@/views/Commerce/Coupons.vue'), meta: commerceGate },
   { path: '/commerce/:accountId/sales_channels', name: 'StoreSetup', component: () => import('@/views/Commerce/StoreSetup.vue'), meta: commerceGate },
 
-  // 5.5 Retail
+  // 5.5 Merchandising
+  { path: '/commerce/:accountId/merchandising', name: 'Merchandising', component: () => import('@/views/Commerce/Merchandising.vue'), meta: commerceGate },
+
+  // 5.6 Retail
   { path: '/commerce/:accountId/retail', name: 'Retail', component: () => import('@/views/Commerce/Retail.vue'), meta: commerceGate },
 
   // 6. Marketing

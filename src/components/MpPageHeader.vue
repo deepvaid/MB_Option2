@@ -8,22 +8,6 @@ defineProps<{
 
 <template>
   <div class="mp-page-header mb-8">
-    <!-- Breadcrumbs -->
-    <nav v-if="breadcrumbs?.length" class="mp-breadcrumbs d-flex align-center gap-1 mb-3">
-      <template v-for="(crumb, i) in breadcrumbs" :key="i">
-        <router-link
-          v-if="crumb.to && !crumb.disabled"
-          :to="crumb.to"
-          class="mp-breadcrumb-link text-caption font-weight-medium text-decoration-none"
-        >{{ crumb.title }}</router-link>
-        <span
-          v-else
-          class="text-caption font-weight-medium text-disabled"
-        >{{ crumb.title }}</span>
-        <v-icon v-if="i < breadcrumbs.length - 1" size="12" color="medium-emphasis" class="mx-1">mdi-chevron-right</v-icon>
-      </template>
-    </nav>
-
     <!-- Header row -->
     <div class="mp-page-header__body d-flex align-start justify-space-between pb-5">
       <div class="mp-page-header__copy">
@@ -63,15 +47,6 @@ defineProps<{
 
 .mp-page-header__actions {
   padding-top: 6px;
-}
-
-.mp-breadcrumb-link {
-  color: rgba(var(--v-theme-on-surface), 0.56);
-  transition: color $mp-transition-fast;
-}
-.mp-breadcrumb-link:hover {
-  color: rgb(var(--v-theme-secondary));
-  text-decoration: underline !important;
 }
 
 .border-b {

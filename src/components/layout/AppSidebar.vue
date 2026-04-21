@@ -25,6 +25,7 @@ interface NavGroup {
   singleRoute?: string
   badge?: string
   requires?: SubscriptionKey
+  dividerAfter?: boolean
   items: (NavItem | NavSubGroup)[]
 }
 
@@ -42,6 +43,7 @@ function buildNavGroups(accountId: string): NavGroup[] {
     {
       title: 'Analytics',
       icon: 'mdi-chart-line',
+      dividerAfter: true,
       items: [
         { title: 'Monthly Totals', route: `/accounts/${accountId}/analytics/monthly_totals` },
         { title: 'Sales by Order', route: `/accounts/${accountId}/analytics/orders` },
@@ -75,21 +77,9 @@ function buildNavGroups(accountId: string): NavGroup[] {
       ],
     },
     {
-      title: 'Products',
-      icon: 'mdi-package-variant',
-      requires: 'commerce',
-      items: [
-        { title: 'Product Recommendations', route: `/commerce/${accountId}/product_recommendations` },
-        { title: 'Products', route: `/commerce/${accountId}/products` },
-        { title: 'Product Tax Category', route: `/commerce/${accountId}/product_tax_category` },
-        { title: 'Collections', route: `/commerce/${accountId}/products/collections` },
-        { title: 'Inventory', route: `/commerce/${accountId}/inventory` },
-        { title: 'Reservations', route: `/commerce/${accountId}/products/reservations` },
-      ],
-    },
-    {
       title: 'Marketing',
       icon: 'mdi-bullhorn-outline',
+      dividerAfter: true,
       items: [
         {
           title: 'Campaigns',
@@ -136,6 +126,19 @@ function buildNavGroups(accountId: string): NavGroup[] {
       ],
     },
     {
+      title: 'Products',
+      icon: 'mdi-package-variant',
+      requires: 'commerce',
+      items: [
+        { title: 'Product Recommendations', route: `/commerce/${accountId}/product_recommendations` },
+        { title: 'Products', route: `/commerce/${accountId}/products` },
+        { title: 'Product Tax Category', route: `/commerce/${accountId}/product_tax_category` },
+        { title: 'Collections', route: `/commerce/${accountId}/products/collections` },
+        { title: 'Inventory', route: `/commerce/${accountId}/inventory` },
+        { title: 'Reservations', route: `/commerce/${accountId}/products/reservations` },
+      ],
+    },
+    {
       title: 'Commerce',
       icon: 'mdi-shopping-outline',
       requires: 'commerce',
@@ -154,8 +157,16 @@ function buildNavGroups(accountId: string): NavGroup[] {
       ],
     },
     {
+      title: 'Merchandising',
+      icon: 'mdi-tag-heart-outline',
+      requires: 'commerce',
+      singleRoute: `/commerce/${accountId}/merchandising`,
+      items: [],
+    },
+    {
       title: 'Retail',
       icon: 'mdi-storefront-outline',
+      dividerAfter: true,
       requires: 'commerce',
       singleRoute: `/commerce/${accountId}/retail`,
       items: [],
@@ -174,6 +185,7 @@ function buildNavGroups(accountId: string): NavGroup[] {
       badge: 'NEW',
       requires: 'davinci',
       singleRoute: `/accounts/${accountId}/da-vinci/dashboard`,
+      dividerAfter: true,
       items: [],
     },
     {
@@ -367,6 +379,7 @@ function isLocked(group: NavGroup) {
           </v-card>
         </v-menu>
 
+        <v-divider v-if="group.dividerAfter" class="sidebar-divider my-1 mx-2" />
       </template>
     </v-list>
 
@@ -474,6 +487,10 @@ function isLocked(group: NavGroup) {
 .sidebar-subheader {
   color: var(--mp-color-sidebar-textMuted);
   font-size: var(--mp-typography-fontSize-xs);
+}
+.sidebar-divider {
+  border-color: rgba(0, 0, 0, 0.18);
+  opacity: 0.9;
 }
 .sidebar-help {
   color: var(--mp-color-sidebar-textFaint);
