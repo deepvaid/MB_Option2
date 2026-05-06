@@ -1,8 +1,19 @@
 export type DashboardKind = 'system' | 'custom'
 export type DashboardWidgetType = 'kpi' | 'timeseries' | 'bar' | 'table'
 export type DashboardDataSource = 'commerce' | 'marketing' | 'analytics' | 'contacts' | 'service'
-export type DashboardDatePreset = '7D' | '30D' | '90D' | 'YTD'
-export type DashboardComparisonMode = 'none' | 'previous_period' | 'previous_year'
+export type DashboardDatePreset =
+  | 'today'
+  | 'yesterday'
+  | 'last_7_days'
+  | 'last_30_days'
+  | 'last_90_days'
+  | 'month_to_date'
+  | 'quarter_to_date'
+  | 'year_to_date'
+  | 'black_friday_cyber_monday'
+  | 'custom'
+export type DashboardDateGrain = 'daily' | 'weekly' | 'monthly'
+export type DashboardComparisonMode = 'none' | 'previous_period' | 'previous_year' | 'custom'
 export type DashboardMetricUnit = 'currency' | 'count' | 'percent'
 
 export type DashboardMetricId =
@@ -81,8 +92,13 @@ export interface DashboardWidget {
 }
 
 export interface DashboardFilterState {
-  preset: DashboardDatePreset
+  rangePreset: DashboardDatePreset
+  startDate?: string
+  endDate?: string
+  grain: DashboardDateGrain
   comparison: DashboardComparisonMode
+  comparisonStartDate?: string
+  comparisonEndDate?: string
 }
 
 export type DashboardAccent =

@@ -3,7 +3,6 @@ import { computed, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { useWidgetData } from '@/composables/useWidgetData'
 import { useElementSize } from '@/composables/useElementSize'
-import { DASHBOARD_SOURCE_META, getMetricDescriptor } from '@/stores/dashboards/metricCatalog'
 import type { DashboardFilterState, DashboardWidget } from '@/stores/dashboards/types'
 import {
   WIDGET_SIZES,
@@ -33,13 +32,70 @@ const emit = defineEmits<{
 
 const router = useRouter()
 const bodyEl = ref<HTMLElement | null>(null)
-const metric = computed(() => getMetricDescriptor(props.widget.metricId))
-const sourceMeta = computed(() => DASHBOARD_SOURCE_META[props.widget.dataSource])
 const { data } = useWidgetData(computed(() => props.widget), computed(() => props.filters))
 const { size: bodySize } = useElementSize(bodyEl)
 
 const currentSize = computed<WidgetSize | null>(() => detectSize(props.widget.type, props.widget.layout.w, props.widget.layout.h))
-const isCompactHeight = computed(() => bodySize.value.height > 0 && bodySize.value.height < 140)
+const isCompactHeight = computed(() => bodySize.value.height > 0 && bodySize.value.height < 128)
+const isKpiWidget = computed(() => data.value.kind === 'kpi')
+const rangeLabels: Record<DashboardFilterState['rangePreset'], string> = {
+  today: 'Today',
+  yesterday: 'Yesterday',
+  last_7_days: 'Last 7 days',
+  last_30_days: 'Last 30 days',
+  last_90_days: 'Last 90 days',
+  month_to_date: 'This month so far',
+  quarter_to_date: 'This quarter so far',
+  year_to_date: 'This year so far',
+  black_friday_cyber_monday: 'Black Friday Cyber Monday',
+  custom: 'Custom range',
+}
+const grainLabels: Record<DashboardFilterState['grain'], string> = {
+  daily: 'Daily',
+  weekly: 'Weekly',
+  monthly: 'Monthly',
+}
+const comparisonLabels: Record<DashboardFilterState['comparison'], string> = {
+  none: 'No comparison',
+  previous_period: 'Compared to previous period',
+  previous_year: 'Compared to previous year',
+  custom: 'Compared to custom range',
+}
+const comparisonContextLabel = computed(() => comparisonLabels[props.filters.comparison])
+const kpiComparisonLabel = computed(() => {
+  if (props.filters.comparison === 'none') return ''
+  if (props.filters.comparison === 'previous_year') return 'vs previous year'
+  if (props.filters.comparison === 'custom') return 'vs custom range'
+
+  const range = props.filters.rangePreset
+  if (range === 'last_7_days') return 'vs prev 7d'
+  if (range === 'last_30_days') return 'vs prev 30d'
+  if (range === 'last_90_days') return 'vs prev 90d'
+  if (range === 'today') return 'vs yesterday'
+  if (range === 'year_to_date') return 'vs prev YTD'
+  return 'vs previous period'
+})
+const widgetSubtitle = computed(() => {
+  if (isKpiWidget.value) {
+    if (props.widget.metricId === 'contacts_total') return 'All time'
+    return rangeLabels[props.filters.rangePreset]
+  }
+
+  if (props.widget.metricId === 'marketing_top_campaigns') {
+    return `${rangeLabels[props.filters.rangePreset]} - by revenue`
+  }
+
+  if (props.filters.comparison === 'none') {
+    return grainLabels[props.filters.grain]
+  }
+
+  return `${grainLabels[props.filters.grain]} - ${comparisonContextLabel.value.toLowerCase()}`
+})
+const isDataEmpty = computed(() => {
+  if (data.value.kind === 'table') return data.value.rows.length === 0
+  if (data.value.kind === 'series') return data.value.labels.length === 0 || data.value.series.every((series) => series.data.length === 0)
+  return false
+})
 
 function openDrilldown() {
   router.push({
@@ -50,6 +106,11 @@ function openDrilldown() {
 
 function chooseSize(size: WidgetSize) {
   emit('resize', { widgetId: props.widget.id, size })
+}
+
+function openSettings() {
+  if (props.preview) return
+  emit('edit', props.widget.id)
 }
 </script>
 
@@ -62,53 +123,34 @@ function chooseSize(size: WidgetSize) {
     :class="{
       'dashboard-widget-card--preview': preview,
       'dashboard-widget-card--editable': editable,
+      'dashboard-widget-card--kpi': isKpiWidget,
     }"
   >
-    <div class="dashboard-widget-card__header d-flex align-start justify-space-between ga-2 px-4 pt-3 pb-2">
-      <div class="dashboard-widget-card__header-copy">
-        <div class="d-flex align-center ga-2 mb-1">
-          <v-chip size="x-small" variant="tonal" :prepend-icon="sourceMeta.icon" class="font-weight-medium">
-            {{ sourceMeta.label }}
-          </v-chip>
-          <v-chip
-            v-if="widget.aiProvenance"
-            size="x-small"
-            color="secondary"
-            variant="tonal"
-            prepend-icon="mdi-creation"
-            class="font-weight-medium"
-          >
-            Da Vinci
-          </v-chip>
-        </div>
-        <div class="text-body-1 font-weight-bold">{{ widget.title }}</div>
-        <div v-if="!isCompactHeight && widget.type !== 'kpi'" class="text-caption text-medium-emphasis mt-1">
-          {{ metric?.description }}
-        </div>
-      </div>
-
-      <div class="d-flex align-center ga-1 flex-shrink-0">
-        <v-menu v-if="editable" location="bottom end">
-          <template #activator="{ props: menuProps }">
-            <v-btn
-              v-bind="menuProps"
-              icon="mdi-dots-vertical"
-              variant="text"
-              size="small"
-              :aria-label="`Actions for ${widget.title}`"
-            />
-          </template>
-          <v-list density="compact" min-width="180">
-            <v-list-item
-              prepend-icon="mdi-pencil-outline"
-              title="Edit"
-              @click="emit('edit', widget.id)"
-            />
-            <v-list-item
-              prepend-icon="mdi-arrow-top-right"
-              title="View report"
-              @click="openDrilldown"
-            />
+    <div v-if="isKpiWidget && !preview" class="dashboard-widget-card__kpi-actions">
+      <v-icon v-if="editable" size="18" class="dashboard-widget-card__drag-handle">mdi-drag-vertical</v-icon>
+      <v-menu location="bottom end">
+        <template #activator="{ props: menuProps }">
+          <v-btn
+            v-bind="menuProps"
+            icon="mdi-dots-vertical"
+            variant="text"
+            size="small"
+            :aria-label="`Actions for ${widget.title}`"
+          />
+        </template>
+        <v-list density="compact" min-width="180">
+          <v-list-item
+            v-if="editable"
+            prepend-icon="mdi-pencil-outline"
+            title="Edit"
+            @click="emit('edit', widget.id)"
+          />
+          <v-list-item
+            prepend-icon="mdi-arrow-top-right"
+            title="View report"
+            @click="openDrilldown"
+          />
+          <template v-if="editable">
             <v-divider class="my-1" />
             <v-list-item
               v-for="size in WIDGET_SIZES"
@@ -125,27 +167,92 @@ function chooseSize(size: WidgetSize) {
               base-color="error"
               @click="emit('remove', widget.id)"
             />
+          </template>
+        </v-list>
+      </v-menu>
+    </div>
+
+    <div v-if="!isKpiWidget" class="dashboard-widget-card__header">
+      <div class="dashboard-widget-card__header-copy">
+        <div class="dashboard-widget-card__title-row">
+          <v-icon v-if="editable" size="18" class="dashboard-widget-card__drag-handle">mdi-drag-vertical</v-icon>
+          <div class="dashboard-widget-card__title">{{ widget.title }}</div>
+        </div>
+        <div class="dashboard-widget-card__subtitle">{{ widgetSubtitle }}</div>
+      </div>
+
+      <div class="dashboard-widget-card__actions">
+        <v-menu v-if="!preview" location="bottom end">
+          <template #activator="{ props: menuProps }">
+            <v-btn
+              v-bind="menuProps"
+              icon="mdi-dots-vertical"
+              variant="text"
+              size="small"
+              :aria-label="`Actions for ${widget.title}`"
+            />
+          </template>
+          <v-list density="compact" min-width="180">
+            <v-list-item
+              v-if="editable"
+              prepend-icon="mdi-pencil-outline"
+              title="Edit"
+              @click="emit('edit', widget.id)"
+            />
+            <v-list-item
+              prepend-icon="mdi-tune-variant"
+              title="Widget settings"
+              @click="openSettings"
+            />
+            <v-list-item
+              prepend-icon="mdi-refresh"
+              title="Refresh widget"
+            />
+            <v-list-item
+              prepend-icon="mdi-arrow-top-right"
+              title="View report"
+              @click="openDrilldown"
+            />
+            <template v-if="editable">
+              <v-divider class="my-1" />
+              <v-list-item
+                v-for="size in WIDGET_SIZES"
+                :key="size"
+                :prepend-icon="currentSize === size ? 'mdi-check' : undefined"
+                :title="`Size ${size}`"
+                :active="currentSize === size"
+                @click="chooseSize(size)"
+              />
+              <v-divider class="my-1" />
+              <v-list-item
+                prepend-icon="mdi-delete-outline"
+                title="Remove"
+                base-color="error"
+                @click="emit('remove', widget.id)"
+              />
+            </template>
           </v-list>
         </v-menu>
-        <v-btn
-          v-if="!editable && !preview"
-          icon="mdi-arrow-top-right"
-          variant="text"
-          size="small"
-          aria-label="Open drill-down report"
-          @click="openDrilldown"
-        />
       </div>
     </div>
 
     <div
       ref="bodyEl"
-      class="dashboard-widget-card__body px-4 pb-3 flex-grow-1"
+      class="dashboard-widget-card__body"
     >
+      <div v-if="isDataEmpty" class="dashboard-widget-card__empty">
+        <v-icon size="42" color="medium-emphasis">mdi-magnify-scan</v-icon>
+        <div class="text-body-2 text-medium-emphasis mt-3">
+          There is no data to show in this time frame. Try changing the date range.
+        </div>
+      </div>
       <DashboardKpiWidget
-        v-if="data.kind === 'kpi'"
+        v-else-if="data.kind === 'kpi'"
         :data="data"
         :compact="isCompactHeight"
+        :title="widget.title"
+        :subtitle="widgetSubtitle"
+        :comparison-label="kpiComparisonLabel"
       />
       <DashboardChartWidget
         v-else-if="data.kind === 'series'"
@@ -163,14 +270,92 @@ function chooseSize(size: WidgetSize) {
 
 <style scoped lang="scss">
 .dashboard-widget-card {
-  border-color: var(--mp-border-subtle);
+  position: relative;
+  border-color: rgba(var(--v-theme-on-surface), 0.10);
+  border-radius: 12px !important;
   background: rgb(var(--v-theme-surface));
   overflow: hidden;
   min-height: 0;
+  box-shadow: 0 1px 2px rgba(var(--v-theme-on-surface), 0.02);
+}
+
+.dashboard-widget-card__header {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: start;
+  gap: 12px;
+  min-height: 66px;
+  padding: 20px 20px 8px;
 }
 
 .dashboard-widget-card__header-copy {
   min-width: 0;
+}
+
+.dashboard-widget-card__title-row {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  min-width: 0;
+}
+
+.dashboard-widget-card__title {
+  min-width: 0;
+  overflow: hidden;
+  color: rgb(var(--v-theme-on-surface));
+  font-size: clamp(1rem, 1.35vw, 1.16rem);
+  font-weight: 780;
+  line-height: 1.2;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.dashboard-widget-card__subtitle {
+  overflow: hidden;
+  margin-top: 5px;
+  color: rgba(var(--v-theme-on-surface), 0.52);
+  font-size: var(--mp-typography-fontSize-sm);
+  font-weight: 650;
+  line-height: 1.25;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.dashboard-widget-card__actions {
+  display: inline-flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 2px;
+  margin-top: -4px;
+}
+
+.dashboard-widget-card__actions :deep(.v-btn),
+.dashboard-widget-card__kpi-actions :deep(.v-btn) {
+  min-width: 28px;
+  width: 28px !important;
+  height: 28px !important;
+  padding: 0;
+  color: rgba(var(--v-theme-on-surface), 0.54);
+}
+
+.dashboard-widget-card__actions :deep(.v-icon),
+.dashboard-widget-card__kpi-actions :deep(.v-icon) {
+  font-size: 18px;
+}
+
+.dashboard-widget-card__kpi-actions {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  z-index: 2;
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+}
+
+.dashboard-widget-card__drag-handle {
+  color: rgba(var(--v-theme-on-surface), 0.48);
+  cursor: grab;
 }
 
 .dashboard-widget-card--preview {
@@ -186,7 +371,24 @@ function chooseSize(size: WidgetSize) {
 .dashboard-widget-card__body {
   display: flex;
   flex-direction: column;
+  flex: 1 1 auto;
   min-height: 0;
   overflow: hidden;
+  padding: 0 20px 20px;
+}
+
+.dashboard-widget-card--kpi .dashboard-widget-card__body {
+  padding: 0;
+}
+
+.dashboard-widget-card__empty {
+  display: flex;
+  flex: 1 1 auto;
+  min-height: 180px;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  text-align: center;
+  padding: 24px;
 }
 </style>

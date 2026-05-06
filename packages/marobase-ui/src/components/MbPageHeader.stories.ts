@@ -13,11 +13,7 @@ const meta: Meta<MbPageHeaderProps> = {
     subtitle: 'Plan, send, and measure every message your brand sends out into the world.',
     size: 'sm',
     align: 'start',
-    breadcrumbs: [
-      { label: 'Home', href: '#' },
-      { label: 'Marketing', href: '#' },
-      { label: 'Campaigns' },
-    ],
+    breadcrumbs: [],
   },
   argTypes: {
     size: { control: 'inline-radio', options: ['sm', 'md', 'lg'] },

@@ -79,7 +79,6 @@ function buildNavGroups(accountId: string): NavGroup[] {
     {
       title: 'Marketing',
       icon: 'mdi-bullhorn-outline',
-      dividerAfter: true,
       items: [
         {
           title: 'Campaigns',
@@ -174,6 +173,7 @@ function buildNavGroups(accountId: string): NavGroup[] {
     {
       title: 'Service',
       icon: 'mdi-headset',
+      dividerAfter: true,
       requires: 'service',
       items: [
         { title: 'Tickets', route: `/accounts/${accountId}/service` },
@@ -189,15 +189,9 @@ function buildNavGroups(accountId: string): NavGroup[] {
       items: [],
     },
     {
-      title: 'App Store',
+      title: 'Apps',
       icon: 'mdi-puzzle-outline',
       singleRoute: `/accounts/${accountId}/app_store`,
-      items: [],
-    },
-    {
-      title: 'Settings',
-      icon: 'mdi-cog-outline',
-      singleRoute: `/accounts/${accountId}/settings`,
       items: [],
     },
   ]
@@ -205,6 +199,7 @@ function buildNavGroups(accountId: string): NavGroup[] {
 
 const localDrawer = ref(props.modelValue)
 const localRail = ref(props.rail)
+const openedGroups = ref<string[]>([])
 const router = useRouter()
 const route = useRoute()
 const resolvedAccountId = computed(() => {
@@ -273,11 +268,9 @@ function isLocked(group: NavGroup) {
 
     <div class="my-1" />
 
-    <!-- Navigation List (Unified Flyout Pattern for both Expanded and Rail) -->
-    <v-list density="compact" nav class="px-2 py-1 sidebar-scroll">
+    <!-- Navigation List -->
+    <v-list v-model:opened="openedGroups" density="compact" nav class="px-2 py-1 sidebar-scroll">
       <template v-for="group in navGroups" :key="group.title">
-        
-        <!-- Group with NO Sub-Items (Direct Link) -->
         <v-list-item
           v-if="group.items.length === 0"
           :to="group.singleRoute"
@@ -299,38 +292,90 @@ function isLocked(group: NavGroup) {
           </template>
         </v-list-item>
 
-        <!-- Group WITH Sub-Items (Flyout Menu) -->
-        <v-menu v-else location="end" open-on-hover offset="8" :close-on-content-click="false">
-          <template v-slot:activator="{ props: menuProps }">
+        <v-list-group
+          v-else-if="!localRail"
+          :value="group.title"
+          class="sidebar-expanded-group"
+        >
+          <template #activator="{ props: groupProps }">
             <v-list-item
-              v-bind="menuProps"
+              v-bind="groupProps"
               :prepend-icon="group.icon"
-              :title="!localRail ? group.title : ''"
-              :value="group.title"
+              :title="group.title"
               rounded="lg"
               class="sidebar-text mb-1"
             >
-              <template v-slot:append v-if="!localRail">
-                <v-tooltip v-if="isLocked(group)" location="end" text="Upgrade to unlock">
-                  <template v-slot:activator="{ props: tipProps }">
+              <template #append v-if="isLocked(group)">
+                <v-tooltip location="end" text="Upgrade to unlock">
+                  <template #activator="{ props: tipProps }">
                     <v-icon v-bind="tipProps" size="14" class="ml-2 sidebar-lock">mdi-lock-outline</v-icon>
                   </template>
                 </v-tooltip>
-                <v-icon v-else size="small" class="sidebar-muted">mdi-chevron-right</v-icon>
               </template>
             </v-list-item>
           </template>
-          
-          <!-- First Level Flyout Content -->
+
+          <template v-for="item in group.items" :key="item.title">
+            <v-list-group
+              v-if="'isSubGroup' in item && item.isSubGroup"
+              :value="`${group.title}-${item.title}`"
+              class="sidebar-expanded-subgroup"
+            >
+              <template #activator="{ props: subgroupProps }">
+                <v-list-item
+                  v-bind="subgroupProps"
+                  :title="item.title"
+                  class="sidebar-text sidebar-subgroup-item"
+                  rounded="lg"
+                  slim
+                />
+              </template>
+
+              <v-list-item
+                v-for="subItem in item.items"
+                :key="subItem.title"
+                :title="subItem.title"
+                :to="subItem.route"
+                @click="goTo(subItem.route)"
+                class="sidebar-text sidebar-child-item"
+                rounded="lg"
+                slim
+                exact
+              />
+            </v-list-group>
+
+            <v-list-item
+              v-else-if="!('isSubGroup' in item)"
+              :title="item.title"
+              :to="item.route"
+              @click="goTo(item.route)"
+              class="sidebar-text sidebar-child-item"
+              rounded="lg"
+              slim
+              exact
+            />
+          </template>
+        </v-list-group>
+
+        <v-menu v-else location="end" open-on-hover offset="8" :close-on-content-click="false">
+          <template #activator="{ props: menuProps }">
+            <v-list-item
+              v-bind="menuProps"
+              :prepend-icon="group.icon"
+              :title="''"
+              :value="group.title"
+              rounded="lg"
+              class="sidebar-text mb-1"
+            />
+          </template>
+
           <v-card min-width="200" flat rounded="lg" class="sidebar-surface rail-popover">
             <v-list density="compact" class="bg-transparent py-1">
               <v-list-subheader class="sidebar-subheader font-weight-bold px-4 pt-2 pb-2">{{ group.title }}</v-list-subheader>
-              
+
               <template v-for="item in group.items" :key="item.title">
-                
-                <!-- Nested Subgroup (Second Level Flyout) -->
                 <v-menu v-if="'isSubGroup' in item && item.isSubGroup" location="end" open-on-hover offset="0">
-                  <template v-slot:activator="{ props: subMenuProps }">
+                  <template #activator="{ props: subMenuProps }">
                     <v-list-item
                       v-bind="subMenuProps"
                       :title="item.title"
@@ -343,8 +388,7 @@ function isLocked(group: NavGroup) {
                       </template>
                     </v-list-item>
                   </template>
-                  
-                  <!-- Second Level Flyout Content -->
+
                   <v-card min-width="200" flat rounded="lg" class="sidebar-surface rail-popover">
                     <v-list density="compact" class="bg-transparent py-1">
                       <v-list-subheader class="sidebar-subheader font-weight-bold px-4 pt-2 pb-2">{{ item.title }}</v-list-subheader>
@@ -363,7 +407,6 @@ function isLocked(group: NavGroup) {
                   </v-card>
                 </v-menu>
 
-                <!-- Normal Flyout Item -->
                 <v-list-item
                   v-else-if="!('isSubGroup' in item)"
                   :title="item.title"
@@ -405,10 +448,10 @@ function isLocked(group: NavGroup) {
   overflow: visible; /* Required for flyouts to overflow if needed, though v-menu manages z-index */
 }
 .sidebar-header {
-  height: var(--mp-layout-appbarHeight);
+  height: 52px;
   display: flex;
   align-items: center;
-  padding-inline: 16px;
+  padding-inline: 12px;
 }
 .sidebar-brand {
   min-width: 0;
@@ -429,7 +472,7 @@ function isLocked(group: NavGroup) {
 }
 .sidebar-scroll {
   overflow-y: auto;
-  padding-top: 8px;
+  padding-top: 4px;
   padding-bottom: 12px;
 }
 .sidebar-muted {
@@ -448,7 +491,7 @@ function isLocked(group: NavGroup) {
   opacity: 1;
 }
 .sidebar-brand-logo {
-  height: 28px;
+  height: 21px;
   width: auto;
   display: block;
 }
@@ -465,6 +508,10 @@ function isLocked(group: NavGroup) {
 }
 .sidebar-child-item {
   padding-left: var(--mp-spacing-7);
+}
+.sidebar-subgroup-item {
+  padding-left: var(--mp-spacing-5);
+  color: var(--mp-color-sidebar-textMuted);
 }
 .sidebar-surface {
   background: var(--mp-color-sidebar-surface);
@@ -490,18 +537,32 @@ function isLocked(group: NavGroup) {
 }
 .sidebar-divider {
   border-color: rgba(0, 0, 0, 0.18);
-  opacity: 0.9;
+  opacity: 0.65;
 }
 .sidebar-help {
   color: var(--mp-color-sidebar-textFaint);
-  font-size: var(--mp-typography-fontSize-body);
+  font-size: var(--mp-typography-fontSize-sm);
 }
 
 :deep(.active-nav-item) {
-  background: rgba(var(--v-theme-primary), 0.28);
-  box-shadow: inset 0 0 0 1px rgba(var(--v-theme-secondary), 0.08);
-  color: rgb(var(--v-theme-secondary));
+  position: relative;
+  background: rgba(var(--v-theme-primary), 0.06) !important;
+  box-shadow: none;
+  color: rgb(var(--v-theme-primary));
   font-weight: 600;
+}
+:deep(.active-nav-item::before) {
+  position: absolute;
+  left: 4px;
+  top: 7px;
+  bottom: 7px;
+  width: 3px;
+  border-radius: 999px;
+  background: rgb(var(--v-theme-primary));
+  content: '';
+}
+:deep(.active-nav-item > .v-list-item__overlay) {
+  opacity: 0 !important;
 }
 :deep(.v-list-item__prepend .v-icon),
 :deep(.v-list-item-title) {
@@ -512,8 +573,19 @@ function isLocked(group: NavGroup) {
 }
 
 :deep(.v-list-item) {
-  min-height: 42px;
-  margin-bottom: 2px;
+  min-height: 36px;
+  margin-bottom: 1px;
+  padding-inline: 10px;
+}
+
+:deep(.v-list-item-title) {
+  font-size: var(--mp-typography-fontSize-sm);
+  font-weight: 560;
+  line-height: 1.2;
+}
+
+:deep(.v-list-item__prepend > .v-icon) {
+  font-size: 21px;
 }
 
 :deep(.v-list-item:hover > .v-list-item__overlay) {
@@ -521,6 +593,6 @@ function isLocked(group: NavGroup) {
 }
 
 :deep(.v-list-item--nav) {
-  border-radius: 16px !important;
+  border-radius: 8px !important;
 }
 </style>

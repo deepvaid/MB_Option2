@@ -14,6 +14,7 @@ app.config.errorHandler = (err, _instance, info) => {
 
 if (typeof window !== 'undefined') {
   window.addEventListener('error', (event) => {
+    if (event.message?.includes('ResizeObserver loop')) return
     console.error('[Window Error]', event.error ?? event.message)
   })
   window.addEventListener('unhandledrejection', (event) => {

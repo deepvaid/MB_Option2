@@ -34,7 +34,7 @@ onMounted(() => {
     return
   }
 
-  deferredRenderHandle = window.setTimeout(revealChart, 0)
+  deferredRenderHandle = globalThis.setTimeout(revealChart, 0)
 })
 
 onBeforeUnmount(() => {
@@ -45,7 +45,7 @@ onBeforeUnmount(() => {
     return
   }
 
-  window.clearTimeout(deferredRenderHandle)
+  globalThis.clearTimeout(deferredRenderHandle)
 })
 
 function formatAxisValue(value: number, unit: DashboardSeriesData['unit']): string {

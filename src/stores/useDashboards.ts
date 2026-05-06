@@ -36,7 +36,12 @@ interface PersistedDashboardStateV2 {
   accounts: Record<string, PersistedAccountDashboards>
 }
 
-type AnyPersistedDashboardState = PersistedDashboardStateV1 | PersistedDashboardStateV2
+interface PersistedDashboardStateV3 {
+  version: 3
+  accounts: Record<string, PersistedAccountDashboards>
+}
+
+type AnyPersistedDashboardState = PersistedDashboardStateV1 | PersistedDashboardStateV2 | PersistedDashboardStateV3
 
 const STORAGE_KEY = 'mp.dashboard-hub.v4'
 const LEGACY_STORAGE_KEY_V1 = 'mp.dashboard-hub.v1'
@@ -61,8 +66,69 @@ function createDashboardId(accountId: string, slug: string): string {
 
 function createDefaultFilters(): Dashboard['filters'] {
   return {
-    preset: '30D',
+    rangePreset: 'last_30_days',
+    grain: 'daily',
     comparison: 'previous_period',
+  }
+}
+
+const LEGACY_PRESET_MAP: Record<string, DashboardDatePreset> = {
+  '7D': 'last_7_days',
+  '30D': 'last_30_days',
+  '90D': 'last_90_days',
+  YTD: 'year_to_date',
+}
+
+const DATE_PRESETS: DashboardDatePreset[] = [
+  'today',
+  'yesterday',
+  'last_7_days',
+  'last_30_days',
+  'last_90_days',
+  'month_to_date',
+  'quarter_to_date',
+  'year_to_date',
+  'black_friday_cyber_monday',
+  'custom',
+]
+
+const COMPARISON_MODES: DashboardComparisonMode[] = ['none', 'previous_period', 'previous_year', 'custom']
+
+function isString(value: unknown): value is string {
+  return typeof value === 'string'
+}
+
+function normalizeDashboardFilters(filters: unknown): Dashboard['filters'] {
+  const fallback = createDefaultFilters()
+  if (!filters || typeof filters !== 'object') return fallback
+
+  const payload = filters as Record<string, unknown>
+  const legacyPreset = isString(payload.preset) ? LEGACY_PRESET_MAP[payload.preset] : undefined
+  const rangePreset = isString(payload.rangePreset) && DATE_PRESETS.includes(payload.rangePreset as DashboardDatePreset)
+    ? payload.rangePreset as DashboardDatePreset
+    : legacyPreset ?? fallback.rangePreset
+  const comparison = isString(payload.comparison) && COMPARISON_MODES.includes(payload.comparison as DashboardComparisonMode)
+    ? payload.comparison as DashboardComparisonMode
+    : fallback.comparison
+  const grain = payload.grain === 'weekly' || payload.grain === 'monthly'
+    ? payload.grain
+    : fallback.grain
+
+  return {
+    rangePreset,
+    startDate: isString(payload.startDate) ? payload.startDate : undefined,
+    endDate: isString(payload.endDate) ? payload.endDate : undefined,
+    grain,
+    comparison,
+    comparisonStartDate: isString(payload.comparisonStartDate) ? payload.comparisonStartDate : undefined,
+    comparisonEndDate: isString(payload.comparisonEndDate) ? payload.comparisonEndDate : undefined,
+  }
+}
+
+function normalizePersistedDashboard(dashboard: Dashboard): Dashboard {
+  return {
+    ...dashboard,
+    filters: normalizeDashboardFilters(dashboard.filters),
   }
 }
 
@@ -102,38 +168,38 @@ function buildHomeWidgets(account: Account): DashboardWidget[] {
 
   if (account.subscriptions.includes('commerce')) {
     widgets.push(
-      makeWidget('Revenue', 'commerce_revenue', 'kpi', createLayout(0, 0, 3, 3)),
-      makeWidget('Orders', 'commerce_orders', 'kpi', createLayout(3, 0, 3, 3)),
-      makeWidget('Open Rate', 'marketing_open_rate', 'kpi', createLayout(6, 0, 3, 3)),
-      makeWidget('Total Contacts', 'contacts_total', 'kpi', createLayout(9, 0, 3, 3)),
-      makeWidget('Revenue Over Time', 'commerce_revenue_over_time', 'timeseries', createLayout(0, 3, 7, 7)),
-      makeWidget('Top Campaigns', 'marketing_top_campaigns', 'table', createLayout(7, 3, 5, 7)),
-      makeWidget('Recent Orders', 'commerce_recent_orders', 'table', createLayout(0, 10, 7, 7)),
-      makeWidget('Revenue by Channel', 'commerce_revenue_by_channel', 'bar', createLayout(7, 10, 5, 7)),
-      makeWidget('Email Volume', 'marketing_email_volume', 'timeseries', createLayout(0, 17, 6, 7)),
-      makeWidget('Email Address by Domain', 'contacts_by_domain', 'bar', createLayout(6, 17, 6, 7)),
+      makeWidget('Revenue', 'commerce_revenue', 'kpi', createLayout(0, 0, 3, 4)),
+      makeWidget('Orders', 'commerce_orders', 'kpi', createLayout(3, 0, 3, 4)),
+      makeWidget('Open Rate', 'marketing_open_rate', 'kpi', createLayout(6, 0, 3, 4)),
+      makeWidget('Total Contacts', 'contacts_total', 'kpi', createLayout(9, 0, 3, 4)),
+      makeWidget('Revenue Over Time', 'commerce_revenue_over_time', 'timeseries', createLayout(0, 4, 7, 7)),
+      makeWidget('Top Campaigns', 'marketing_top_campaigns', 'table', createLayout(7, 4, 5, 7)),
+      makeWidget('Recent Orders', 'commerce_recent_orders', 'table', createLayout(0, 11, 7, 7)),
+      makeWidget('Revenue by Channel', 'commerce_revenue_by_channel', 'bar', createLayout(7, 11, 5, 7)),
+      makeWidget('Email Volume', 'marketing_email_volume', 'timeseries', createLayout(0, 18, 6, 7)),
+      makeWidget('Email Address by Domain', 'contacts_by_domain', 'bar', createLayout(6, 18, 6, 7)),
     )
   } else {
     widgets.push(
-      makeWidget('Total Revenue', 'analytics_total_revenue', 'kpi', createLayout(0, 0, 3, 3)),
-      makeWidget('Open Rate', 'marketing_open_rate', 'kpi', createLayout(3, 0, 3, 3)),
-      makeWidget('Active Subscribers', 'analytics_active_subscribers', 'kpi', createLayout(6, 0, 3, 3)),
-      makeWidget('Total Contacts', 'contacts_total', 'kpi', createLayout(9, 0, 3, 3)),
-      makeWidget('Sends Over Time', 'analytics_sends_over_time', 'timeseries', createLayout(0, 3, 7, 7)),
-      makeWidget('Top Campaigns', 'marketing_top_campaigns', 'table', createLayout(7, 3, 5, 7)),
-      makeWidget('Contact Growth', 'contacts_growth', 'timeseries', createLayout(0, 10, 7, 7)),
-      makeWidget('Campaign Revenue', 'marketing_campaign_revenue', 'bar', createLayout(7, 10, 5, 7)),
-      makeWidget('Email Volume', 'marketing_email_volume', 'timeseries', createLayout(0, 17, 6, 7)),
-      makeWidget('Subscriber Summary', 'contacts_subscriber_summary', 'table', createLayout(6, 17, 6, 7)),
+      makeWidget('Total Revenue', 'analytics_total_revenue', 'kpi', createLayout(0, 0, 3, 4)),
+      makeWidget('Open Rate', 'marketing_open_rate', 'kpi', createLayout(3, 0, 3, 4)),
+      makeWidget('Active Subscribers', 'analytics_active_subscribers', 'kpi', createLayout(6, 0, 3, 4)),
+      makeWidget('Total Contacts', 'contacts_total', 'kpi', createLayout(9, 0, 3, 4)),
+      makeWidget('Sends Over Time', 'analytics_sends_over_time', 'timeseries', createLayout(0, 4, 7, 7)),
+      makeWidget('Top Campaigns', 'marketing_top_campaigns', 'table', createLayout(7, 4, 5, 7)),
+      makeWidget('Contact Growth', 'contacts_growth', 'timeseries', createLayout(0, 11, 7, 7)),
+      makeWidget('Campaign Revenue', 'marketing_campaign_revenue', 'bar', createLayout(7, 11, 5, 7)),
+      makeWidget('Email Volume', 'marketing_email_volume', 'timeseries', createLayout(0, 18, 6, 7)),
+      makeWidget('Subscriber Summary', 'contacts_subscriber_summary', 'table', createLayout(6, 18, 6, 7)),
     )
   }
 
   if (account.subscriptions.includes('service')) {
     widgets.push(
-      makeWidget('Open Tickets', 'service_open_tickets', 'kpi', createLayout(0, 24, 3, 3)),
-      makeWidget('Unresolved Tickets', 'service_unresolved_tickets', 'kpi', createLayout(3, 24, 3, 3)),
-      makeWidget('Ticket Volume', 'service_ticket_volume', 'timeseries', createLayout(6, 24, 6, 7)),
-      makeWidget('Tickets by Channel', 'service_tickets_by_channel', 'bar', createLayout(0, 27, 6, 7)),
+      makeWidget('Open Tickets', 'service_open_tickets', 'kpi', createLayout(0, 25, 3, 4)),
+      makeWidget('Unresolved Tickets', 'service_unresolved_tickets', 'kpi', createLayout(3, 25, 3, 4)),
+      makeWidget('Ticket Volume', 'service_ticket_volume', 'timeseries', createLayout(6, 25, 6, 7)),
+      makeWidget('Tickets by Channel', 'service_tickets_by_channel', 'bar', createLayout(0, 29, 6, 7)),
     )
   }
 
@@ -310,16 +376,17 @@ function buildSeedDashboards(account: Account): Dashboard[] {
   return baseDashboards
 }
 
-function readPersistedState(): PersistedDashboardStateV2 {
+function readPersistedState(): PersistedDashboardStateV3 {
   if (typeof window === 'undefined') {
-    return { version: 2, accounts: {} }
+    return { version: 3, accounts: {} }
   }
 
   try {
     const raw = window.localStorage.getItem(STORAGE_KEY)
     if (raw) {
       const parsed = JSON.parse(raw) as AnyPersistedDashboardState
-      if (parsed?.version === 2) return parsed
+      if (parsed?.version === 3) return normalizePersistedState(parsed)
+      if (parsed?.version === 2) return migrateV2(parsed)
       if (parsed?.version === 1) return migrateV1(parsed)
     }
 
@@ -330,15 +397,27 @@ function readPersistedState(): PersistedDashboardStateV2 {
       if (legacyParsed?.version === 1) return migrateV1(legacyParsed)
     }
 
-    return { version: 2, accounts: {} }
+    return { version: 3, accounts: {} }
   } catch {
-    return { version: 2, accounts: {} }
+    return { version: 3, accounts: {} }
   }
 }
 
-function migrateV1(state: PersistedDashboardStateV1): PersistedDashboardStateV2 {
-  const migrated: PersistedDashboardStateV2 = {
-    version: 2,
+function normalizePersistedState(state: PersistedDashboardStateV3): PersistedDashboardStateV3 {
+  return {
+    version: 3,
+    accounts: Object.fromEntries(
+      Object.entries(state.accounts).map(([accountId, payload]) => [
+        accountId,
+        { dashboards: payload.dashboards.map(normalizePersistedDashboard) },
+      ]),
+    ),
+  }
+}
+
+function migrateV2(state: PersistedDashboardStateV2): PersistedDashboardStateV3 {
+  const migrated: PersistedDashboardStateV3 = {
+    version: 3,
     accounts: {},
   }
 
@@ -346,11 +425,24 @@ function migrateV1(state: PersistedDashboardStateV1): PersistedDashboardStateV2 
     migrated.accounts[accountId] = {
       dashboards: payload.dashboards.map((dashboard) => ({
         ...dashboard,
-        accent: dashboard.accent ?? 'primary',
-        favorite: dashboard.favorite ?? dashboard.isDefault,
-        lastViewedAt: dashboard.lastViewedAt,
+        filters: normalizeDashboardFilters(dashboard.filters),
       })),
     }
+  }
+
+  return migrated
+}
+
+function migrateV1(state: PersistedDashboardStateV1): PersistedDashboardStateV3 {
+  const migrated = migrateV2({ version: 2, accounts: state.accounts })
+
+  for (const payload of Object.values(migrated.accounts)) {
+    payload.dashboards = payload.dashboards.map((dashboard) => ({
+      ...dashboard,
+      accent: dashboard.accent ?? 'primary',
+      favorite: dashboard.favorite ?? dashboard.isDefault,
+      lastViewedAt: dashboard.lastViewedAt,
+    }))
   }
 
   return migrated
@@ -363,12 +455,12 @@ function persistState(accounts: Record<string, Dashboard[]>) {
   if (persistTimer) clearTimeout(persistTimer)
   persistTimer = setTimeout(() => {
     try {
-      const payload: PersistedDashboardStateV2 = {
-        version: 2,
+      const payload: PersistedDashboardStateV3 = {
+        version: 3,
         accounts: Object.fromEntries(
           Object.entries(accounts).map(([accountId, dashboards]) => [
             accountId,
-            { dashboards },
+            { dashboards: dashboards.map(normalizePersistedDashboard) },
           ]),
         ),
       }
@@ -382,7 +474,8 @@ function persistState(accounts: Record<string, Dashboard[]>) {
 function mergeSeededDashboards(seedDashboards: Dashboard[], persistedDashboards: Dashboard[] | undefined): Dashboard[] {
   if (!persistedDashboards?.length) return seedDashboards
 
-  const persistedById = new Map(persistedDashboards.map((dashboard) => [dashboard.id, dashboard]))
+  const normalizedPersisted = persistedDashboards.map(normalizePersistedDashboard)
+  const persistedById = new Map(normalizedPersisted.map((dashboard) => [dashboard.id, dashboard]))
   const merged = seedDashboards.map((dashboard) => {
     const persisted = persistedById.get(dashboard.id)
     if (!persisted) return dashboard
@@ -395,7 +488,7 @@ function mergeSeededDashboards(seedDashboards: Dashboard[], persistedDashboards:
     }
   })
 
-  const customDashboards = persistedDashboards.filter((dashboard) => dashboard.kind === 'custom')
+  const customDashboards = normalizedPersisted.filter((dashboard) => dashboard.kind === 'custom')
   merged.push(...deepClone(customDashboards))
 
   const firstMerged = merged[0]
@@ -643,12 +736,11 @@ export const useDashboardsStore = defineStore('dashboards', () => {
   function updateDashboardFilters(
     accountId: string,
     dashboardId: string,
-    preset: DashboardDatePreset,
-    comparison: DashboardComparisonMode,
+    filters: Dashboard['filters'],
   ) {
     const dashboard = getDashboardById(accountId, dashboardId)
     if (!dashboard) return
-    dashboard.filters = { preset, comparison }
+    dashboard.filters = normalizeDashboardFilters(filters)
     dashboard.updatedAt = nowIso()
     writeState()
   }

@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed, ref, watch } from 'vue'
 import { GridItem, GridLayout } from 'grid-layout-plus'
+import { useDisplay } from 'vuetify'
 import MpEmptyState from '@/components/MpEmptyState.vue'
 import type { DashboardFilterState, DashboardWidget } from '@/stores/dashboards/types'
 import { getDefaultPreset, type WidgetSize } from './widgetSizePresets'
@@ -33,6 +34,7 @@ interface LayoutItem {
 }
 
 const layout = ref<LayoutItem[]>([])
+const { smAndDown } = useDisplay()
 
 function normalizeLayout(items: Array<{ i: string; x: number; y: number; w: number; h: number }>): LayoutItem[] {
   return [...items]
@@ -66,22 +68,34 @@ function layoutsMatch(
   })
 }
 
-const layoutFromWidgets = computed<LayoutItem[]>(() =>
-  props.widgets.map((widget) => {
+const layoutFromWidgets = computed<LayoutItem[]>(() => {
+  const kpiRowsNeedingSpace = [...new Set(
+    props.widgets
+      .filter((widget) => widget.type === 'kpi' && widget.layout.h < 4)
+      .map((widget) => widget.layout.y),
+  )].sort((left, right) => left - right)
+
+  return props.widgets.map((widget) => {
     const fallback = getDefaultPreset(widget.type)
+    const yOffset = kpiRowsNeedingSpace.filter((rowY) => widget.layout.y > rowY).length
+    const h = widget.type === 'kpi' ? Math.max(widget.layout.h, 4) : widget.layout.h
+
     return {
       i: widget.id,
       x: widget.layout.x,
-      y: widget.layout.y,
+      y: widget.layout.y + yOffset,
       w: widget.layout.w,
-      h: widget.layout.h,
+      h,
       minW: widget.layout.minW ?? fallback.minW,
       minH: widget.layout.minH ?? fallback.minH,
     }
-  }),
-)
+  })
+})
 
 const widgetsById = computed(() => new Map(props.widgets.map((widget) => [widget.id, widget])))
+const sortedWidgets = computed(() =>
+  [...props.widgets].sort((left, right) => left.layout.y - right.layout.y || left.layout.x - right.layout.x),
+)
 
 watch(
   layoutFromWidgets,
@@ -112,11 +126,11 @@ function handleLayoutUpdate(nextLayout: Array<{ i: string; x: number; y: number;
     />
 
     <GridLayout
-      v-else
+      v-else-if="!smAndDown"
       v-model:layout="layout"
       :col-num="12"
-      :row-height="40"
-      :margin="[12, 12]"
+      :row-height="44"
+      :margin="[14, 14]"
       :is-draggable="editMode"
       :is-resizable="editMode"
       :vertical-compact="true"
@@ -148,18 +162,58 @@ function handleLayoutUpdate(nextLayout: Array<{ i: string; x: number; y: number;
         />
       </GridItem>
     </GridLayout>
+
+    <div v-else class="dashboard-grid__mobile-list">
+      <div
+        v-for="widget in sortedWidgets"
+        :key="widget.id"
+        class="dashboard-grid__mobile-item"
+        :class="{
+          'dashboard-grid__mobile-item--kpi': widget.type === 'kpi',
+          'dashboard-grid__mobile-item--table': widget.type === 'table',
+        }"
+      >
+        <DashboardWidgetCard
+          :account-id="accountId"
+          :widget="widget"
+          :filters="filters"
+          :editable="editMode"
+          @edit="emit('editWidget', $event)"
+          @remove="emit('removeWidget', $event)"
+          @resize="emit('resizeWidget', $event)"
+        />
+      </div>
+    </div>
   </div>
 </template>
 
 <style scoped lang="scss">
 .dashboard-grid {
-  min-height: 280px;
+  min-height: 260px;
 }
 
 .dashboard-grid__layout {
-  min-height: 320px;
+  min-height: 300px;
   position: relative;
   transition: background 160ms ease;
+}
+
+.dashboard-grid__mobile-list {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 14px;
+}
+
+.dashboard-grid__mobile-item {
+  min-height: 360px;
+}
+
+.dashboard-grid__mobile-item--kpi {
+  min-height: 214px;
+}
+
+.dashboard-grid__mobile-item--table {
+  min-height: 340px;
 }
 
 .dashboard-grid__layout--editing {

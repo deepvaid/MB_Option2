@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue'
 import { useRoute } from 'vue-router'
+import { useDisplay } from 'vuetify'
 import AppSidebar from '@/components/layout/AppSidebar.vue'
 import AppBar from '@/components/layout/AppBar.vue'
 import MpDaVinciBot from '@/components/MpDaVinciBot.vue'
@@ -10,8 +11,10 @@ const drawer = ref(true)
 const rail = ref(false)
 const copilotOpen = ref(false)
 const copilotExpanded = ref(false)
+const { smAndDown } = useDisplay()
 
 const isFullPage = computed(() => !!route.meta?.fullPage)
+const sidebarRail = computed(() => smAndDown.value || rail.value)
 </script>
 
 <template>
@@ -21,7 +24,7 @@ const isFullPage = computed(() => !!route.meta?.fullPage)
     <AppSidebar
       v-if="!isFullPage"
       v-model="drawer"
-      :rail="rail"
+      :rail="sidebarRail"
       @update:rail="rail = $event"
     />
 
@@ -75,12 +78,12 @@ const isFullPage = computed(() => !!route.meta?.fullPage)
 }
 
 .mp-main-shell {
-  padding: 40px !important;
+  padding: 28px 32px !important;
 }
 
 @media (max-width: 1024px) {
   .mp-main-shell {
-    padding: 28px !important;
+    padding: 24px !important;
   }
 }
 

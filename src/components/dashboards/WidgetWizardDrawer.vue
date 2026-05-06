@@ -3,9 +3,8 @@ import { computed, ref, watch } from 'vue'
 import MpFormDrawer from '@/components/MpFormDrawer.vue'
 import { getMetricDescriptor } from '@/stores/dashboards/metricCatalog'
 import type {
-  DashboardComparisonMode,
   DashboardDataSource,
-  DashboardDatePreset,
+  DashboardFilterState,
   DashboardMetricId,
   DashboardWidgetDraft,
   DashboardWidgetType,
@@ -24,7 +23,7 @@ const model = defineModel<boolean>({ default: false })
 const props = defineProps<{
   accountId: string
   dashboardId: string
-  dashboardFilters: { preset: DashboardDatePreset; comparison: DashboardComparisonMode }
+  dashboardFilters: DashboardFilterState
   initialDraft?: DashboardWidgetDraft | null
   defaultMode?: WizardMode
 }>()

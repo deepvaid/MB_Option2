@@ -13,7 +13,8 @@ const props = withDefaults(defineProps<{
   filters?: DashboardFilterState
 }>(), {
   filters: () => ({
-    preset: '30D',
+    rangePreset: 'last_30_days',
+    grain: 'daily',
     comparison: 'previous_period',
   }),
 })

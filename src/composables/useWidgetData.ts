@@ -30,18 +30,110 @@ function formatNumber(value: number, unit: DashboardMetricUnit): string {
   }).format(value)
 }
 
-function getDaysForPreset(preset: DashboardFilterState['preset']): number {
-  switch (preset) {
-    case '7D':
-      return 7
-    case '30D':
-      return 30
-    case '90D':
-      return 90
-    case 'YTD':
-      return 365
+interface DateWindow {
+  currentStart: Date
+  currentEnd: Date
+  previousStart: Date
+  previousEnd: Date
+  days: number
+}
+
+const MS_PER_DAY = 24 * 60 * 60 * 1000
+
+function startOfDay(date: Date): Date {
+  const next = new Date(date)
+  next.setHours(0, 0, 0, 0)
+  return next
+}
+
+function endOfDay(date: Date): Date {
+  const next = new Date(date)
+  next.setHours(23, 59, 59, 999)
+  return next
+}
+
+function addDays(date: Date, days: number): Date {
+  const next = new Date(date)
+  next.setDate(next.getDate() + days)
+  return next
+}
+
+function parseDateInput(value: string | undefined, fallback: Date): Date {
+  if (!value) return fallback
+  const parsed = new Date(`${value}T00:00:00`)
+  return Number.isNaN(parsed.getTime()) ? fallback : parsed
+}
+
+function daysBetween(start: Date, end: Date): number {
+  return Math.max(1, Math.round((startOfDay(end).getTime() - startOfDay(start).getTime()) / MS_PER_DAY) + 1)
+}
+
+function getDateWindow(filters: DashboardFilterState): DateWindow {
+  const today = startOfDay(new Date())
+  let currentStart = addDays(today, -29)
+  let currentEnd = today
+
+  switch (filters.rangePreset) {
+    case 'today':
+      currentStart = today
+      currentEnd = today
+      break
+    case 'yesterday':
+      currentStart = addDays(today, -1)
+      currentEnd = addDays(today, -1)
+      break
+    case 'last_7_days':
+      currentStart = addDays(today, -6)
+      currentEnd = today
+      break
+    case 'last_90_days':
+      currentStart = addDays(today, -89)
+      currentEnd = today
+      break
+    case 'month_to_date':
+      currentStart = new Date(today.getFullYear(), today.getMonth(), 1)
+      currentEnd = today
+      break
+    case 'quarter_to_date': {
+      const quarterStartMonth = Math.floor(today.getMonth() / 3) * 3
+      currentStart = new Date(today.getFullYear(), quarterStartMonth, 1)
+      currentEnd = today
+      break
+    }
+    case 'year_to_date':
+      currentStart = new Date(today.getFullYear(), 0, 1)
+      currentEnd = today
+      break
+    case 'black_friday_cyber_monday': {
+      const targetYear = today.getMonth() >= 10 ? today.getFullYear() : today.getFullYear() - 1
+      currentStart = new Date(targetYear, 10, 28)
+      currentEnd = new Date(targetYear, 11, 1)
+      break
+    }
+    case 'custom':
+      currentStart = parseDateInput(filters.startDate, currentStart)
+      currentEnd = parseDateInput(filters.endDate, currentEnd)
+      break
+    case 'last_30_days':
     default:
-      return 30
+      currentStart = addDays(today, -29)
+      currentEnd = today
+      break
+  }
+
+  if (currentStart > currentEnd) {
+    const previous = currentStart
+    currentStart = currentEnd
+    currentEnd = previous
+  }
+
+  const days = daysBetween(currentStart, currentEnd)
+  return {
+    currentStart: startOfDay(currentStart),
+    currentEnd: endOfDay(currentEnd),
+    previousStart: startOfDay(addDays(currentStart, -days)),
+    previousEnd: endOfDay(addDays(currentStart, -1)),
+    days,
   }
 }
 
@@ -80,21 +172,15 @@ function buildTableData(columns: DashboardTableColumn[], rows: Array<Record<stri
   }
 }
 
-function sliceRecordsByDays<T>(records: T[], dateGetter: (record: T) => Date, days: number): { current: T[]; previous: T[] } {
-  const now = new Date()
-  const currentStart = new Date(now)
-  currentStart.setDate(now.getDate() - days)
-  const previousStart = new Date(currentStart)
-  previousStart.setDate(currentStart.getDate() - days)
-
+function sliceRecordsByWindow<T>(records: T[], dateGetter: (record: T) => Date, window: DateWindow): { current: T[]; previous: T[] } {
   return {
     current: records.filter((record) => {
       const date = dateGetter(record)
-      return date >= currentStart && date <= now
+      return date >= window.currentStart && date <= window.currentEnd
     }),
     previous: records.filter((record) => {
       const date = dateGetter(record)
-      return date >= previousStart && date < currentStart
+      return date >= window.previousStart && date <= window.previousEnd
     }),
   }
 }
@@ -117,21 +203,22 @@ export function useWidgetData(
   const data = computed<DashboardWidgetData>(() => {
     const widget = toValue(widgetRef)
     const filters = toValue(filtersRef)
-    const days = getDaysForPreset(filters.preset)
+    const dateWindow = getDateWindow(filters)
+    const days = dateWindow.days
 
     switch (widget.metricId) {
       case 'commerce_revenue': {
-        const ranges = sliceRecordsByDays(commerce.orders, (order) => new Date(order.date), days)
+        const ranges = sliceRecordsByWindow(commerce.orders, (order) => new Date(order.date ?? ''), dateWindow)
         const currentRevenue = ranges.current.reduce((total, order) => total + parseFloat(order.total), 0)
         const previousRevenue = ranges.previous.reduce((total, order) => total + parseFloat(order.total), 0)
         return buildKpiData(currentRevenue, pickPreviousValue(filters, currentRevenue, previousRevenue), 'currency', 'Gross revenue in the selected period')
       }
       case 'commerce_orders': {
-        const ranges = sliceRecordsByDays(commerce.orders, (order) => new Date(order.date), days)
+        const ranges = sliceRecordsByWindow(commerce.orders, (order) => new Date(order.date ?? ''), dateWindow)
         return buildKpiData(ranges.current.length, pickPreviousValue(filters, ranges.current.length, ranges.previous.length), 'count', 'Orders placed in the selected period')
       }
       case 'commerce_aov': {
-        const ranges = sliceRecordsByDays(commerce.orders, (order) => new Date(order.date), days)
+        const ranges = sliceRecordsByWindow(commerce.orders, (order) => new Date(order.date ?? ''), dateWindow)
         const current = ranges.current.length
           ? ranges.current.reduce((total, order) => total + parseFloat(order.total), 0) / ranges.current.length
           : 0
@@ -141,8 +228,8 @@ export function useWidgetData(
         return buildKpiData(current, pickPreviousValue(filters, current, previous), 'currency', 'Average order value for the current period')
       }
       case 'commerce_revenue_over_time': {
-        const sorted = [...commerce.orders].sort((left, right) => left.date.localeCompare(right.date)).slice(-days)
-        const labels = sorted.map((order) => order.date.slice(5))
+        const sorted = [...commerce.orders].sort((left, right) => (left.date ?? '').localeCompare(right.date ?? '')).slice(-days)
+        const labels = sorted.map((order) => (order.date ?? '').slice(5) || '--')
         const values = sorted.map((order) => parseFloat(order.total))
         return buildSeriesData(labels, values, 'currency', 'Revenue')
       }
@@ -150,20 +237,20 @@ export function useWidgetData(
         const channels = ['Online Store', 'Instagram Shop', 'Marketplace', 'POS']
         const totals = new Map<string, number>(channels.map((channel) => [channel, 0]))
         commerce.orders.forEach((order) => {
-          const channel = channels[order.id % channels.length]
+          const channel = channels[order.id % channels.length] ?? 'Online Store'
           totals.set(channel, (totals.get(channel) ?? 0) + parseFloat(order.total))
         })
         return buildSeriesData(channels, channels.map((channel) => totals.get(channel) ?? 0), 'currency', 'Revenue')
       }
       case 'commerce_recent_orders': {
         const rows = [...commerce.orders]
-          .sort((left, right) => right.date.localeCompare(left.date))
+          .sort((left, right) => (right.date ?? '').localeCompare(left.date ?? ''))
           .slice(0, 6)
           .map((order) => ({
             order: order.orderNumber,
             customer: order.customer.name,
             total: `$${order.total}`,
-            status: order.status,
+            status: order.status ?? 'Unknown',
           }))
         return buildTableData(
           [
@@ -259,10 +346,10 @@ export function useWidgetData(
         return buildKpiData(subscribed, subscribed * 0.93, 'count', 'Subscribed contacts in the audience')
       }
       case 'contacts_growth': {
-        const sorted = [...contacts.contacts].sort((left, right) => left.createdAt.localeCompare(right.createdAt))
+        const sorted = [...contacts.contacts].sort((left, right) => (left.createdAt ?? '').localeCompare(right.createdAt ?? ''))
         const recent = sorted.slice(-7)
         return buildSeriesData(
-          recent.map((contact) => contact.createdAt.slice(5)),
+          recent.map((contact) => (contact.createdAt ?? '').slice(5) || '--'),
           recent.map((_contact, index) => index + 1),
           'count',
           'Contacts',
@@ -298,9 +385,9 @@ export function useWidgetData(
         return buildKpiData(rate, rate - 2.5, 'percent', 'Resolved tickets as a share of total tickets')
       }
       case 'service_ticket_volume': {
-        const sorted = [...tickets.tickets].sort((left, right) => left.createdAt.localeCompare(right.createdAt)).slice(-7)
+        const sorted = [...tickets.tickets].sort((left, right) => (left.createdAt ?? '').localeCompare(right.createdAt ?? '')).slice(-7)
         return buildSeriesData(
-          sorted.map((ticket) => new Date(ticket.createdAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })),
+          sorted.map((ticket) => new Date(ticket.createdAt ?? '').toLocaleDateString('en-US', { month: 'short', day: 'numeric' })),
           sorted.map((_ticket, index) => index + 1),
           'count',
           'Tickets',
@@ -327,7 +414,7 @@ export function useWidgetData(
         )
       }
       case 'service_new_tickets': {
-        const ranges = sliceRecordsByDays(tickets.tickets, (t) => new Date(t.createdAt), days)
+        const ranges = sliceRecordsByWindow(tickets.tickets, (t) => new Date(t.createdAt ?? ''), dateWindow)
         return buildKpiData(ranges.current.length, pickPreviousValue(filters, ranges.current.length, ranges.previous.length), 'count', 'Tickets created in the selected period')
       }
       case 'service_pending_tickets': {
@@ -340,9 +427,9 @@ export function useWidgetData(
       }
       case 'service_tickets_by_channel': {
         const channels = ['Email', 'Inbound call', 'Walk in']
-        const counts = channels.map((ch, i) => {
+        const counts = channels.map((_channel, i) => {
           const base = tickets.tickets.length
-          return Math.round(base * [0.55, 0.3, 0.15][i])
+          return Math.round(base * ([0.55, 0.3, 0.15][i] ?? 0))
         })
         return buildSeriesData(channels, counts, 'count', 'Tickets')
       }

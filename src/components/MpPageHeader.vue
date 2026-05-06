@@ -26,7 +26,7 @@ defineProps<{
 <style scoped lang="scss">
 .mp-page-title {
   font-size: clamp(2.1rem, 3vw, 2.7rem);
-  letter-spacing: -0.045em;
+  letter-spacing: 0;
   line-height: $mp-typography-lineHeight-tight;
 }
 
