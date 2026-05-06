@@ -58,8 +58,10 @@ const sparklinePoints = computed(() => {
           <div v-if="icon" class="dashboard-kpi-widget__icon-chip">
             <v-icon :size="compact ? 13 : 14">{{ icon }}</v-icon>
           </div>
-          <div v-if="title" class="dashboard-kpi-widget__title">{{ title }}</div>
-          <div class="dashboard-kpi-widget__period" v-if="subtitle">{{ subtitle }}</div>
+          <div class="dashboard-kpi-widget__header-text">
+            <div v-if="title" class="dashboard-kpi-widget__title" :title="title">{{ title }}</div>
+            <div class="dashboard-kpi-widget__period" v-if="subtitle">{{ subtitle }}</div>
+          </div>
         </div>
 
         <!-- Big value -->
@@ -81,6 +83,17 @@ const sparklinePoints = computed(() => {
       <!-- Side sparkline -->
       <div class="dashboard-kpi-widget__sparkline-col" aria-hidden="true">
         <svg class="dashboard-kpi-widget__sparkline" viewBox="0 0 100 52" preserveAspectRatio="none">
+          <defs>
+            <linearGradient :id="`sparkFill-${data.id ?? data.label}`" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="currentColor" stop-opacity="0.18" />
+              <stop offset="100%" stop-color="currentColor" stop-opacity="0" />
+            </linearGradient>
+          </defs>
+          <polygon
+            :points="`0,52 ${sparklinePoints} 100,52`"
+            class="dashboard-kpi-widget__sparkline-fill"
+            :fill="`url(#sparkFill-${data.id ?? data.label})`"
+          />
           <polyline :points="sparklinePoints" class="dashboard-kpi-widget__sparkline-line" />
         </svg>
       </div>
@@ -92,6 +105,18 @@ const sparklinePoints = computed(() => {
 .dashboard-kpi-widget {
   justify-content: flex-start;
   padding: 16px 18px;
+  container-type: inline-size;
+}
+
+@container (max-width: 240px) {
+  .dashboard-kpi-widget__icon-chip {
+    display: none;
+  }
+  .dashboard-kpi-widget__sparkline-col {
+    flex: 0 1 32%;
+    max-width: 35%;
+    min-width: 60px;
+  }
 }
 
 .dashboard-kpi-widget__top-row {
@@ -115,8 +140,16 @@ const sparklinePoints = computed(() => {
 .dashboard-kpi-widget__header-row {
   display: flex;
   align-items: center;
-  gap: 7px;
+  gap: 10px;
   min-width: 0;
+}
+
+.dashboard-kpi-widget__header-text {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  min-width: 0;
+  flex: 1 1 auto;
 }
 
 .dashboard-kpi-widget__icon-chip {
@@ -132,21 +165,26 @@ const sparklinePoints = computed(() => {
 }
 
 .dashboard-kpi-widget__title {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
   overflow: hidden;
+  width: 100%;
   color: var(--ink);
   font-size: 13px;
-  font-weight: 500;
-  line-height: 1.3;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  font-weight: 600;
+  line-height: 1.25;
+  overflow-wrap: break-word;
 }
 
 .dashboard-kpi-widget__period {
-  margin-left: auto;
-  flex-shrink: 0;
   color: var(--muted);
-  font-size: 11.5px;
+  font-size: 11px;
   font-weight: 500;
+  line-height: 1.3;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .dashboard-kpi-widget__value {
@@ -205,26 +243,31 @@ const sparklinePoints = computed(() => {
 .dashboard-kpi-widget__sparkline-col {
   display: flex;
   align-items: flex-end;
-  flex: 0 0 40%;
-  max-width: 45%;
-  min-width: 100px;
+  flex: 0 1 38%;
+  max-width: 40%;
+  min-width: 70px;
   align-self: stretch;
-  padding-top: 24px;
+  padding-top: 8px;
+  color: var(--accent);
 }
 
 .dashboard-kpi-widget__sparkline {
   width: 100%;
-  height: 56px;
+  height: 88px;
   overflow: visible;
 }
 
 .dashboard-kpi-widget__sparkline-line {
   fill: none;
-  stroke: var(--accent);
+  stroke: currentColor;
   stroke-linecap: round;
   stroke-linejoin: round;
-  stroke-width: 1.6;
+  stroke-width: 2;
   vector-effect: non-scaling-stroke;
+}
+
+.dashboard-kpi-widget__sparkline-fill {
+  stroke: none;
 }
 
 /* Compact variant */
@@ -233,18 +276,32 @@ const sparklinePoints = computed(() => {
 }
 
 .dashboard-kpi-widget--compact .dashboard-kpi-widget__sparkline-col {
-  flex: 0 0 35%;
-  max-width: 38%;
-  padding-top: 18px;
+  flex: 0 0 32%;
+  max-width: 36%;
+  min-width: 80px;
+  padding-top: 6px;
 }
 
 .dashboard-kpi-widget--compact .dashboard-kpi-widget__sparkline {
-  height: 40px;
+  height: 64px;
 }
 
 .dashboard-kpi-widget--compact .dashboard-kpi-widget__icon-chip {
   width: 22px;
   height: 22px;
   border-radius: 6px;
+}
+
+.dashboard-kpi-widget--compact .dashboard-kpi-widget__header-row {
+  gap: 8px;
+}
+
+.dashboard-kpi-widget--compact .dashboard-kpi-widget__title {
+  font-size: 12px;
+  line-height: 1.2;
+}
+
+.dashboard-kpi-widget--compact .dashboard-kpi-widget__period {
+  font-size: 10.5px;
 }
 </style>

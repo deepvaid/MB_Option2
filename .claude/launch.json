@@ -2,16 +2,22 @@
   "version": "0.0.1",
   "configurations": [
     {
-      "name": "dev",
+      "name": "Main App",
       "runtimeExecutable": "npm",
       "runtimeArgs": ["run", "dev"],
       "port": 5173
     },
     {
-      "name": "storybook",
+      "name": "Storybook",
       "runtimeExecutable": "npm",
       "runtimeArgs": ["run", "storybook"],
       "port": 6006
+    },
+    {
+      "name": "Design Kit",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["run", "design-kit:dev"],
+      "port": 5174
     }
   ]
 }

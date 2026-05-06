@@ -200,6 +200,27 @@ const localDrawer = ref(props.modelValue)
 const localRail = ref(props.rail)
 const openedGroups = ref<string[]>([])
 const railHoveredSubGroup = ref<string | null>(null)
+
+// Enforce single-expand invariant: only one level-2 sub-group open per parent.
+// We watch the opened-array Vuetify maintains and prune siblings whenever a new
+// sub-group joins.
+watch(openedGroups, (next, prev) => {
+  const subKeys = next.filter((k) => k.includes('-'))
+  const byParent: Record<string, string[]> = {}
+  for (const k of subKeys) {
+    const parent = k.split('-')[0]
+    ;(byParent[parent] = byParent[parent] || []).push(k)
+  }
+  let pruned = next
+  let changed = false
+  for (const [, subs] of Object.entries(byParent)) {
+    if (subs.length <= 1) continue
+    const justOpened = subs.find((s) => !prev.includes(s)) ?? subs[subs.length - 1]
+    pruned = pruned.filter((v) => !subs.includes(v) || v === justOpened)
+    changed = true
+  }
+  if (changed) openedGroups.value = pruned
+})
 const router = useRouter()
 const route = useRoute()
 const resolvedAccountId = computed(() => {
@@ -259,13 +280,22 @@ function activeRailSubGroupItems(group: NavGroup) {
   <v-navigation-drawer
     v-model="localDrawer"
     :rail="localRail"
+    :rail-width="64"
     permanent
     :mobile-breakpoint="0"
     width="248"
     class="mp-sidebar"
   >
     <!-- Brand + collapse toggle -->
-    <div class="sidebar-header">
+    <div class="sidebar-header" :class="{ 'sidebar-header--rail': localRail }">
+      <button
+        type="button"
+        class="sidebar-menu-btn"
+        :aria-label="localRail ? 'Expand sidebar' : 'Collapse sidebar'"
+        @click.stop="localRail = !localRail"
+      >
+        <v-icon size="18">menu</v-icon>
+      </button>
       <button
         v-if="!localRail"
         type="button"
@@ -276,24 +306,6 @@ function activeRailSubGroupItems(group: NavGroup) {
         <span class="sidebar-brand__mark">M</span>
         <span class="sidebar-brand__wordmark">Maropost</span>
       </button>
-      <button
-        v-else
-        type="button"
-        class="sidebar-brand sidebar-brand--rail"
-        aria-label="Expand sidebar"
-        @click.stop="localRail = false"
-      >
-        <span class="sidebar-brand__mark">M</span>
-      </button>
-      <v-btn
-        v-if="!localRail"
-        icon="panel-left-close"
-        variant="text"
-        size="x-small"
-        class="sidebar-collapse-btn"
-        :aria-label="'Collapse sidebar'"
-        @click.stop="localRail = !localRail"
-      />
     </div>
 
     <!-- Navigation List -->
@@ -361,7 +373,6 @@ function activeRailSubGroupItems(group: NavGroup) {
                   :title="item.title"
                   class="sidebar-text sidebar-subgroup-item"
                   rounded="lg"
-                  slim
                 />
               </template>
 
@@ -371,9 +382,8 @@ function activeRailSubGroupItems(group: NavGroup) {
                 :title="subItem.title"
                 :to="subItem.route"
                 @click="goTo(subItem.route)"
-                class="sidebar-text sidebar-child-item"
+                class="sidebar-text sidebar-grandchild-item"
                 rounded="lg"
-                slim
                 exact
               />
             </v-list-group>
@@ -404,7 +414,7 @@ function activeRailSubGroupItems(group: NavGroup) {
           </template>
 
           <!-- Single-column layout for groups without sub-groups -->
-          <v-card v-if="!hasSubGroups(group)" min-width="200" flat rounded="lg" class="sidebar-surface rail-popover">
+          <v-card v-if="!hasSubGroups(group)" min-width="200" elevation="3" rounded="lg" class="sidebar-surface rail-popover">
             <v-list density="compact" class="bg-transparent py-1">
               <v-list-subheader class="sidebar-subheader font-weight-bold px-4 pt-2 pb-2">{{ group.title }}</v-list-subheader>
               <v-list-item
@@ -422,7 +432,7 @@ function activeRailSubGroupItems(group: NavGroup) {
           </v-card>
 
           <!-- Two-column cascade layout for groups with sub-groups -->
-          <v-card v-else flat rounded="lg" class="sidebar-surface rail-popover rail-popover--cascade">
+          <v-card v-else elevation="3" rounded="lg" class="sidebar-surface rail-popover rail-popover--cascade">
             <div class="rail-popover__col">
               <v-list density="compact" class="bg-transparent py-1">
                 <v-list-subheader class="sidebar-subheader font-weight-bold px-4 pt-2 pb-2">{{ group.title }}</v-list-subheader>
@@ -504,15 +514,45 @@ function activeRailSubGroupItems(group: NavGroup) {
 .sidebar-header {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  height: 60px;
-  padding: 0 14px;
+  gap: 10px;
+  padding: 14px 14px 14px 14px;
+  margin-bottom: 6px;
+  border-bottom: 1px solid var(--hairline);
+}
+
+.sidebar-header--rail {
+  justify-content: center;
+  padding: 14px 8px;
+}
+
+.sidebar-menu-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border: 0;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--ink);
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: background 120ms ease;
+}
+
+.sidebar-menu-btn:hover {
+  background: var(--surface-2);
+}
+
+.sidebar-menu-btn:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px color-mix(in oklch, var(--accent) 18%, transparent);
 }
 
 .sidebar-brand {
   display: inline-flex;
   align-items: center;
-  gap: 10px;
+  gap: 8px;
   appearance: none;
   border: 0;
   background: transparent;
@@ -547,23 +587,6 @@ function activeRailSubGroupItems(group: NavGroup) {
   letter-spacing: 1.4px;
   text-transform: uppercase;
   color: var(--ink);
-}
-
-.sidebar-brand--rail {
-  justify-content: center;
-  width: 100%;
-}
-
-.sidebar-collapse-btn {
-  width: 24px !important;
-  height: 24px !important;
-  color: var(--muted) !important;
-  opacity: 0;
-  transition: opacity 120ms ease;
-}
-
-.sidebar-header:hover .sidebar-collapse-btn {
-  opacity: 1;
 }
 
 .sidebar-scroll {
@@ -622,9 +645,20 @@ function activeRailSubGroupItems(group: NavGroup) {
 
 :deep(.active-nav-item) {
   position: relative;
-  background: var(--accent-soft) !important;
+  background: color-mix(in oklch, var(--accent) 10%, transparent) !important;
   box-shadow: none;
   color: var(--accent-ink) !important;
+  font-weight: 600;
+}
+
+:deep(.sidebar-child-item.v-list-item--active) {
+  background: rgb(var(--v-theme-primary-container)) !important;
+  color: rgb(var(--v-theme-on-primary-container)) !important;
+  font-weight: 600;
+}
+
+:deep(.sidebar-child-item.v-list-item--active .v-list-item-title) {
+  color: rgb(var(--v-theme-on-primary-container)) !important;
   font-weight: 600;
 }
 
@@ -702,6 +736,35 @@ function activeRailSubGroupItems(group: NavGroup) {
   color: var(--muted);
 }
 
+/* Level-2 subgroup headers — reduce Vuetify's stacked indent via CSS variable */
+:deep(.sidebar-subgroup-item) {
+  --indent-padding: 20px;
+}
+
+/* Level-3 grandchild items — override --indent-padding so calc(16px + var(--indent-padding)) gives ~44px */
+:deep(.sidebar-grandchild-item) {
+  --indent-padding: 28px;
+  min-height: 30px !important;
+  border-radius: 8px !important;
+}
+
+:deep(.sidebar-grandchild-item .v-list-item-title) {
+  font-size: 12.5px;
+  color: rgb(var(--v-theme-on-surface-variant));
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+:deep(.sidebar-grandchild-item.v-list-item--active) {
+  background: rgb(var(--v-theme-primary-container)) !important;
+}
+
+:deep(.sidebar-grandchild-item.v-list-item--active .v-list-item-title) {
+  color: rgb(var(--v-theme-on-primary-container)) !important;
+  font-weight: 600;
+}
+
 .sidebar-surface {
   background: var(--surface-1);
   box-shadow: none;
@@ -709,9 +772,6 @@ function activeRailSubGroupItems(group: NavGroup) {
 
 .rail-popover {
   border: 1px solid var(--hairline) !important;
-  box-shadow:
-    0 8px 24px rgba(15, 23, 42, 0.08),
-    0 2px 6px rgba(15, 23, 42, 0.04) !important;
   overflow: hidden;
 }
 

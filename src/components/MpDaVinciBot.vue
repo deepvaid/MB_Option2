@@ -423,19 +423,13 @@ function newChat() {
 
 <style scoped>
 .davinci-panel {
-  position: fixed;
-  right: 24px;
-  bottom: 24px;
-  width: 440px;
-  max-height: calc(100vh - 120px);
+  position: relative;
+  width: 100%;
+  height: 100%;
   display: flex;
   flex-direction: column;
-  border: 1px solid rgb(var(--v-theme-outline-variant));
-  border-radius: 16px;
   background: rgb(var(--v-theme-surface));
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08), 0 2px 8px rgba(0, 0, 0, 0.04);
   overflow: hidden;
-  z-index: 2000;
 }
 
 .davinci-header {
