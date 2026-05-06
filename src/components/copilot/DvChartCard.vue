@@ -52,7 +52,7 @@ function getMax(bars: number[][]) {
       </div>
 
       <div v-if="labels" class="d-flex justify-space-between px-4 mb-3">
-        <span v-for="l in labels" :key="l" class="text-caption text-medium-emphasis" style="font-size: 9px;">{{ l }}</span>
+        <span v-for="l in labels" :key="l" class="text-caption text-medium-emphasis" style="font-size: 10px;">{{ l }}</span>
       </div>
 
       <div v-if="seriesNames" class="d-flex align-center ga-4 flex-wrap">

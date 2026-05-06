@@ -190,6 +190,7 @@ function handleLayoutUpdate(nextLayout: Array<{ i: string; x: number; y: number;
 <style scoped lang="scss">
 .dashboard-grid {
   min-height: 260px;
+  margin-inline: -14px;
 }
 
 .dashboard-grid__layout {

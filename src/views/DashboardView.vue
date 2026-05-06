@@ -107,7 +107,6 @@ watch(
   { immediate: true },
 )
 
-const account = computed(() => accountsStore.accounts.find((entry) => entry.id === accountId.value))
 const dashboards = computed(() => dashboardsStore.getDashboardsForAccount(accountId.value))
 const activeDashboard = computed(() => dashboardsStore.getDashboardById(accountId.value, dashboardIdParam.value))
 const activeDashboardId = computed(() => activeDashboard.value?.id)
@@ -204,40 +203,6 @@ const selectedPresetOption = computed(() =>
   datePresetOptions.find((option) => option.value === activeFilters.value.rangePreset) ?? datePresetOptions[3],
 )
 const dateRangeLabel = computed(() => selectedPresetOption.value?.title ?? 'Last 30 days')
-const comparisonSummaryLabel = computed(() => {
-  if (activeFilters.value.comparison === 'none') return 'No comparison'
-  return comparisonOptions.find((option) => option.value === activeFilters.value.comparison)?.title ?? 'Compared to previous period'
-})
-const setupActionItems = computed(() => {
-  const items = [
-    {
-      id: 'apps',
-      icon: 'mdi-puzzle-outline',
-      title: 'Connect your commerce and marketing apps',
-      description: 'Make Shopify, Meta, Google, and fulfillment data available in dashboard widgets.',
-      action: 'Review apps',
-      visible: true,
-    },
-    {
-      id: 'payments',
-      icon: 'mdi-credit-card-check-outline',
-      title: 'Finish payments setup',
-      description: 'Complete payment provider configuration before revenue and conversion tasks go live.',
-      action: 'Open payments',
-      visible: account.value?.subscriptions.includes('commerce') ?? false,
-    },
-    {
-      id: 'dns',
-      icon: 'mdi-dns-outline',
-      title: 'Verify sending DNS',
-      description: 'Improve deliverability by validating SPF, DKIM, and branded sending domains.',
-      action: 'Verify DNS',
-      visible: account.value?.subscriptions.includes('marketing') ?? false,
-    },
-  ]
-  return items.filter((item) => item.visible).slice(0, 3)
-})
-
 function todayIso() {
   return new Date().toISOString().slice(0, 10)
 }
@@ -315,6 +280,12 @@ function openEditDashboard() {
 function setActiveAsDefault() {
   if (!activeDashboard.value || activeDashboard.value.isDefault) return
   dashboardsStore.setDefaultDashboard(accountId.value, activeDashboard.value.id)
+}
+
+function setDashboardAsDefault(dashboard: Dashboard) {
+  if (dashboard.isDefault) return
+  dashboardsStore.setDefaultDashboard(accountId.value, dashboard.id)
+  showDashboardNotice(`“${dashboard.name}” is now the default dashboard.`)
 }
 
 function duplicateCurrentDashboard() {
@@ -427,13 +398,32 @@ function performConfirm() {
                     <v-chip v-if="dashboard.isDefault" size="x-small" variant="tonal" color="success">Default</v-chip>
                   </div>
                   <template #append>
-                    <v-btn
-                      icon="mdi-pencil-outline"
-                      variant="text"
-                      size="x-small"
-                      :aria-label="`Edit ${dashboard.name}`"
-                      @click.stop="openEditDashboardFor(dashboard)"
-                    />
+                    <div class="d-flex align-center ga-1">
+                      <v-tooltip
+                        :text="dashboard.isDefault ? 'Currently default' : 'Set as default'"
+                        location="top"
+                      >
+                        <template #activator="{ props: tipProps }">
+                          <v-btn
+                            v-bind="tipProps"
+                            :icon="dashboard.isDefault ? 'mdi-bookmark-check' : 'mdi-bookmark-outline'"
+                            :color="dashboard.isDefault ? 'success' : undefined"
+                            variant="text"
+                            size="x-small"
+                            :disabled="dashboard.isDefault"
+                            :aria-label="dashboard.isDefault ? `${dashboard.name} is the default dashboard` : `Set ${dashboard.name} as default`"
+                            @click.stop="setDashboardAsDefault(dashboard)"
+                          />
+                        </template>
+                      </v-tooltip>
+                      <v-btn
+                        icon="mdi-pencil-outline"
+                        variant="text"
+                        size="x-small"
+                        :aria-label="`Edit ${dashboard.name}`"
+                        @click.stop="openEditDashboardFor(dashboard)"
+                      />
+                    </div>
                   </template>
                 </v-list-item>
                 <div
@@ -458,145 +448,36 @@ function performConfirm() {
             </v-card>
           </v-menu>
 
-          <v-menu v-if="setupActionItems.length" location="bottom start" offset="8">
-            <template #activator="{ props: menuProps }">
-              <button
-                v-bind="menuProps"
-                type="button"
-                class="dashboard-setup-pill"
-                :aria-label="`${setupActionItems.length} setup tasks`"
-              >
-                <span class="dashboard-setup-pill__dot" />
-                <span>{{ setupActionItems.length }} setup tasks</span>
-                <v-icon size="16">mdi-arrow-right</v-icon>
-              </button>
-            </template>
-            <v-card width="390" rounded="lg" flat border class="dashboard-setup-menu">
-              <div class="dashboard-setup-menu__header">
-                <div class="text-subtitle-2 font-weight-bold">Setup tasks</div>
-                <div class="text-caption text-medium-emphasis">Recommended account work for dashboard accuracy.</div>
-              </div>
-              <div class="dashboard-setup-menu__list">
-                <button
-                  v-for="item in setupActionItems"
-                  :key="item.id"
-                  type="button"
-                  class="dashboard-setup-menu__item"
-                  @click="openStubAction(item.action)"
-                >
-                  <v-avatar size="30" variant="tonal" color="primary">
-                    <v-icon size="16">{{ item.icon }}</v-icon>
-                  </v-avatar>
-                  <span>
-                    <strong>{{ item.title }}</strong>
-                    <small>{{ item.description }}</small>
-                  </span>
-                  <v-icon size="16">mdi-arrow-right</v-icon>
-                </button>
-              </div>
-            </v-card>
-          </v-menu>
+          <span class="dashboard-refresh-status" aria-live="polite">
+            <span class="dashboard-refresh-status__label">Updated 2 min ago</span>
+            <v-btn
+              icon="mdi-refresh"
+              variant="text"
+              size="small"
+              aria-label="Refresh dashboard"
+              @click="refreshDashboard"
+            />
+          </span>
         </div>
 
         <div class="dashboard-builder-header__actions">
-          <v-menu location="bottom end">
-            <template #activator="{ props: menuProps }">
-              <v-btn
-                v-bind="menuProps"
-                variant="text"
-                density="compact"
-                prepend-icon="mdi-view-dashboard-outline"
-                append-icon="mdi-chevron-down"
-                class="text-none dashboard-header-action"
-              >
-                Dashboards
-              </v-btn>
-            </template>
-            <v-list density="compact" min-width="240">
-              <v-list-item prepend-icon="mdi-view-list-outline" title="Manage dashboards" @click="openListingPage" />
-              <v-list-item prepend-icon="mdi-plus-box-outline" title="Create dashboard" @click="openCreateDashboard" />
-              <v-list-item
-                prepend-icon="mdi-cursor-move"
-                :title="editMode ? 'Done editing layout' : 'Edit layout'"
-                :active="editMode"
-                @click="editMode = !editMode"
-              />
-            </v-list>
-          </v-menu>
-          <v-menu location="bottom end">
-            <template #activator="{ props: menuProps }">
-              <v-btn
-                v-bind="menuProps"
-                variant="text"
-                density="compact"
-                prepend-icon="mdi-tray-arrow-up"
-                class="text-none dashboard-header-action"
-              >
-                Share
-              </v-btn>
-            </template>
-            <v-list density="compact" min-width="220">
-              <v-list-item prepend-icon="mdi-link-variant" title="Copy dashboard link" @click="openStubAction('Copy dashboard link')" />
-              <v-list-item prepend-icon="mdi-account-plus-outline" title="Invite editors" @click="openStubAction('Invite editors')" />
-            </v-list>
-          </v-menu>
-          <v-menu location="bottom end">
-            <template #activator="{ props: menuProps }">
-              <v-btn
-                v-bind="menuProps"
-                icon="mdi-dots-vertical"
-                variant="text"
-                density="compact"
-                class="dashboard-overflow-button"
-                aria-label="Dashboard actions"
-              />
-            </template>
-            <v-list density="compact" min-width="240">
-              <v-list-item prepend-icon="mdi-pencil-outline" title="Edit dashboard details" :disabled="!activeDashboard" @click="openEditDashboard" />
-              <v-list-item prepend-icon="mdi-content-duplicate" title="Duplicate dashboard" :disabled="!activeDashboard" @click="duplicateCurrentDashboard" />
-              <v-list-item
-                v-if="activeDashboard && !activeDashboard.isDefault"
-                prepend-icon="mdi-bookmark-outline"
-                title="Set as default"
-                @click="setActiveAsDefault"
-              />
-              <v-divider class="my-1" />
-              <v-list-item
-                v-if="activeDashboard?.kind === 'system'"
-                prepend-icon="mdi-backup-restore"
-                title="Reset to defaults"
-                @click="resetCurrentDashboard"
-              />
-              <v-list-item
-                v-if="activeDashboard?.kind === 'custom'"
-                prepend-icon="mdi-delete-outline"
-                title="Delete dashboard"
-                base-color="error"
-                @click="deleteCurrentDashboard"
-              />
-            </v-list>
-          </v-menu>
-          <v-menu location="bottom end">
-            <template #activator="{ props: menuProps }">
-              <v-btn
-                v-bind="menuProps"
-                color="primary"
-                variant="flat"
-                density="compact"
-                prepend-icon="mdi-plus"
-                append-icon="mdi-chevron-down"
-                class="text-none dashboard-add-content"
-                :disabled="!activeDashboard"
-              >
-                Add content
-              </v-btn>
-            </template>
-            <v-list density="compact" min-width="230">
-              <v-list-item prepend-icon="mdi-view-dashboard-plus-outline" title="Add manual widget" @click="openWidgetBuilder('manual')" />
-              <v-list-item prepend-icon="mdi-creation" title="Create with Da Vinci" @click="openWidgetBuilder('davinci')" />
-              <v-list-item prepend-icon="mdi-chart-box-plus-outline" title="Choose content type" @click="openWidgetBuilder()" />
-            </v-list>
-          </v-menu>
+          <v-btn
+            variant="text"
+            density="compact"
+            class="text-none dashboard-header-action"
+            @click="openListingPage"
+          >
+            Manage Dashboards
+          </v-btn>
+          <v-btn
+            variant="text"
+            density="compact"
+            prepend-icon="mdi-plus"
+            class="text-none dashboard-header-action"
+            @click="openCreateDashboard"
+          >
+            Create Dashboard
+          </v-btn>
         </div>
       </div>
 
@@ -606,7 +487,7 @@ function performConfirm() {
             <template #activator="{ props: menuProps }">
               <v-btn
                 v-bind="menuProps"
-                variant="outlined"
+                variant="text"
                 density="compact"
                 prepend-icon="mdi-calendar-range"
                 append-icon="mdi-chevron-down"
@@ -680,12 +561,78 @@ function performConfirm() {
             </v-card>
           </v-menu>
 
-          <span class="dashboard-filter-summary">{{ comparisonSummaryLabel }}</span>
         </div>
 
-        <div class="dashboard-refresh-status">
-          <span>Updated 2 min ago</span>
-          <v-btn icon="mdi-refresh" variant="text" size="small" aria-label="Refresh dashboard" @click="refreshDashboard" />
+        <div class="dashboard-builder-header__control-actions">
+          <v-menu location="bottom end">
+            <template #activator="{ props: menuProps }">
+              <v-btn
+                v-bind="menuProps"
+                variant="text"
+                density="compact"
+                append-icon="mdi-chevron-down"
+                class="text-none dashboard-header-action"
+                :disabled="!activeDashboard"
+              >
+                Actions
+              </v-btn>
+            </template>
+            <v-list density="compact" min-width="240">
+              <v-list-item
+                prepend-icon="mdi-pencil-outline"
+                title="Edit dashboard details"
+                :disabled="!activeDashboard"
+                @click="openEditDashboard"
+              />
+              <v-list-item
+                prepend-icon="mdi-content-duplicate"
+                title="Duplicate dashboard"
+                :disabled="!activeDashboard"
+                @click="duplicateCurrentDashboard"
+              />
+              <v-list-item
+                v-if="activeDashboard && !activeDashboard.isDefault"
+                prepend-icon="mdi-bookmark-outline"
+                title="Set as default"
+                @click="setActiveAsDefault"
+              />
+              <v-divider class="my-1" />
+              <v-list-item
+                prepend-icon="mdi-cursor-move"
+                :title="editMode ? 'Done editing layout' : 'Edit layout'"
+                :active="editMode"
+                @click="editMode = !editMode"
+              />
+              <v-divider class="my-1" />
+              <v-list-item prepend-icon="mdi-link-variant" title="Copy dashboard link" @click="openStubAction('Copy dashboard link')" />
+              <v-list-item prepend-icon="mdi-account-plus-outline" title="Invite editors" @click="openStubAction('Invite editors')" />
+              <v-divider v-if="activeDashboard?.kind === 'system' || activeDashboard?.kind === 'custom'" class="my-1" />
+              <v-list-item
+                v-if="activeDashboard?.kind === 'system'"
+                prepend-icon="mdi-backup-restore"
+                title="Reset to defaults"
+                @click="resetCurrentDashboard"
+              />
+              <v-list-item
+                v-if="activeDashboard?.kind === 'custom'"
+                prepend-icon="mdi-delete-outline"
+                title="Delete dashboard"
+                base-color="error"
+                @click="deleteCurrentDashboard"
+              />
+            </v-list>
+          </v-menu>
+          <v-btn
+            color="primary"
+            variant="flat"
+            density="compact"
+            prepend-icon="mdi-plus"
+            class="text-none dashboard-add-content"
+            :disabled="!activeDashboard"
+            @click="openWidgetBuilder()"
+          >
+            Add Widget
+          </v-btn>
         </div>
       </div>
     </section>
@@ -708,7 +655,6 @@ function performConfirm() {
       :widgets="activeDashboard.widgets"
       :filters="activeDashboard.filters"
       :edit-mode="editMode"
-      class="mt-2"
       @edit-widget="handleEditWidget"
       @remove-widget="handleRemoveWidget"
       @resize-widget="handleResizeWidget"
@@ -766,13 +712,14 @@ function performConfirm() {
 .dashboard-hub {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 24px;
 }
 
 .dashboard-builder-header {
   display: flex;
   flex-direction: column;
-  gap: 14px;
+  gap: 10px;
+  padding-block: 0;
   background: transparent;
 }
 
@@ -781,7 +728,7 @@ function performConfirm() {
   grid-template-columns: minmax(0, 1fr) auto;
   align-items: center;
   justify-content: space-between;
-  gap: 18px;
+  gap: 12px;
   padding: 0;
 }
 
@@ -790,16 +737,6 @@ function performConfirm() {
   align-items: center;
   gap: 9px;
   min-width: 0;
-}
-
-.dashboard-builder-header__title :deep(.v-btn--icon) {
-  width: 28px;
-  height: 28px;
-  color: rgb(var(--v-theme-warning));
-}
-
-.dashboard-builder-header__title :deep(.v-btn--icon .v-icon) {
-  font-size: 25px;
 }
 
 .dashboard-title-switcher {
@@ -822,8 +759,6 @@ function performConfirm() {
 }
 
 .dashboard-title-switcher:focus-visible,
-.dashboard-setup-pill:focus-visible,
-.dashboard-setup-menu__item:focus-visible,
 .dashboard-date-menu__preset:focus-visible {
   outline: none;
   box-shadow: 0 0 0 3px rgba(var(--v-theme-primary), 0.18);
@@ -834,39 +769,10 @@ function performConfirm() {
   font-size: clamp(1.45rem, 2vw, 1.85rem);
   line-height: 1.2;
   letter-spacing: 0;
-  font-weight: 820;
+  font-weight: 700;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-}
-
-.dashboard-setup-pill {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  min-height: 32px;
-  padding: 0 12px;
-  border: 1px solid rgba(var(--v-theme-on-surface), 0.12);
-  border-radius: 999px;
-  background: rgb(var(--v-theme-surface));
-  color: rgba(var(--v-theme-on-surface), 0.76);
-  cursor: pointer;
-  font: inherit;
-  font-size: var(--mp-typography-fontSize-sm);
-  font-weight: 650;
-  box-shadow: 0 1px 2px rgba(var(--v-theme-on-surface), 0.04);
-}
-
-.dashboard-setup-pill:hover {
-  border-color: rgba(var(--v-theme-primary), 0.24);
-  color: rgb(var(--v-theme-on-surface));
-}
-
-.dashboard-setup-pill__dot {
-  width: 8px;
-  height: 8px;
-  border-radius: 999px;
-  background: rgb(var(--v-theme-warning));
 }
 
 .dashboard-builder-header__actions {
@@ -879,13 +785,13 @@ function performConfirm() {
 }
 
 .dashboard-builder-header__actions :deep(.v-btn) {
-  min-height: 34px;
-  height: 34px;
+  min-height: 32px;
+  height: 32px;
   padding-inline: 10px;
   border-radius: 8px;
   color: rgba(var(--v-theme-on-surface), 0.76);
   font-size: var(--mp-typography-fontSize-sm);
-  font-weight: 700;
+  font-weight: 600;
 }
 
 .dashboard-builder-header__actions :deep(.v-btn__append) {
@@ -896,47 +802,37 @@ function performConfirm() {
   font-size: 18px;
 }
 
-.dashboard-header-action:hover,
-.dashboard-overflow-button:hover {
+.dashboard-header-action:hover {
   background: rgba(var(--v-theme-surface-variant), 0.52);
-}
-
-.dashboard-add-content {
-  min-height: 40px !important;
-  height: 40px !important;
-  padding-inline: 16px !important;
-  color: rgb(var(--v-theme-on-primary)) !important;
-  font-size: var(--mp-typography-fontSize-sm) !important;
 }
 
 .dashboard-builder-header__control-row {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 16px;
+  gap: 12px;
   flex-wrap: wrap;
-  min-height: 40px;
-  padding: 0 0 4px;
-  border: 0;
-  border-radius: 0;
-  background: transparent;
+  min-height: 48px;
+  padding: 6px 6px 6px 12px;
+  border: 1px solid var(--mp-border-subtle);
+  border-radius: var(--mp-borderRadius-full);
+  background: rgb(var(--v-theme-surface));
 }
 
 .dashboard-control-group {
   display: flex;
   align-items: center;
-  gap: 16px;
+  gap: 8px;
   flex-wrap: wrap;
 }
 
 .dashboard-control-group :deep(.v-btn) {
   min-height: 36px;
   height: 36px;
-  padding-inline: 12px;
-  border-radius: 8px;
-  color: rgba(var(--v-theme-on-surface), 0.72);
+  padding-inline: 10px;
+  color: rgba(var(--v-theme-on-surface), 0.78);
   font-size: var(--mp-typography-fontSize-sm);
-  font-weight: 700;
+  font-weight: 600;
 }
 
 .dashboard-control-group :deep(.v-icon) {
@@ -944,43 +840,50 @@ function performConfirm() {
 }
 
 .dashboard-date-trigger {
-  border-radius: 8px;
-  min-width: 142px;
-  border-color: rgba(var(--v-theme-on-surface), 0.14);
-  background: rgb(var(--v-theme-surface));
-  color: rgba(var(--v-theme-on-surface), 0.82) !important;
   justify-content: flex-start;
-}
-
-.dashboard-filter-button {
-  padding-inline: 8px !important;
-  color: rgba(var(--v-theme-on-surface), 0.72) !important;
-}
-
-.dashboard-filter-summary {
-  color: rgba(var(--v-theme-on-surface), 0.54);
-  font-size: var(--mp-typography-fontSize-sm);
-  font-weight: 600;
-  white-space: nowrap;
 }
 
 .dashboard-refresh-status {
   display: inline-flex;
   align-items: center;
-  gap: 8px;
+  gap: 4px;
+  margin-inline-start: 6px;
   color: rgba(var(--v-theme-on-surface), 0.52);
   font-size: var(--mp-typography-fontSize-sm);
-  font-weight: 650;
+  font-weight: 500;
+}
+
+.dashboard-refresh-status__label {
+  white-space: nowrap;
 }
 
 .dashboard-refresh-status :deep(.v-btn) {
-  width: 28px;
-  height: 28px;
-  color: rgba(var(--v-theme-on-surface), 0.54);
+  width: 26px;
+  height: 26px;
+  color: rgba(var(--v-theme-on-surface), 0.48);
 }
 
 .dashboard-refresh-status :deep(.v-icon) {
-  font-size: 18px;
+  font-size: 16px;
+}
+
+.dashboard-builder-header__control-actions {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.dashboard-builder-header__control-actions :deep(.v-btn:not(.dashboard-add-content)) {
+  min-height: 36px;
+  height: 36px;
+  padding-inline: 10px;
+  color: rgba(var(--v-theme-on-surface), 0.78);
+  font-size: var(--mp-typography-fontSize-sm);
+  font-weight: 600;
+}
+
+.dashboard-builder-header__control-actions :deep(.v-icon) {
+  font-size: 17px;
 }
 
 .dashboard-date-menu {
@@ -1047,76 +950,18 @@ function performConfirm() {
   border-bottom: 1px solid var(--mp-border-subtle);
 }
 
-.dashboard-setup-menu {
-  overflow: hidden;
-}
-
-.dashboard-setup-menu__header {
-  padding: 14px 16px 10px;
-  border-bottom: 1px solid var(--mp-border-subtle);
-}
-
-.dashboard-setup-menu__list {
-  display: grid;
-  gap: 2px;
-  padding: 8px;
-}
-
-.dashboard-setup-menu__item {
-  display: grid;
-  grid-template-columns: auto minmax(0, 1fr) auto;
-  align-items: center;
-  gap: 10px;
-  width: 100%;
-  padding: 10px;
-  border: 0;
-  border-radius: 8px;
-  background: transparent;
-  color: inherit;
-  cursor: pointer;
-  font: inherit;
-  text-align: left;
-}
-
-.dashboard-setup-menu__item:hover {
-  background: rgba(var(--v-theme-surface-variant), 0.52);
-}
-
-.dashboard-setup-menu__item strong,
-.dashboard-setup-menu__item small {
-  display: block;
-}
-
-.dashboard-setup-menu__item strong {
-  overflow: hidden;
-  font-size: var(--mp-typography-fontSize-sm);
-  line-height: 1.25;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.dashboard-setup-menu__item small {
-  overflow: hidden;
-  margin-top: 2px;
-  color: rgba(var(--v-theme-on-surface), 0.58);
-  font-size: var(--mp-typography-fontSize-xs);
-  line-height: 1.3;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
 @media (max-width: 960px) {
   .dashboard-builder-header__title-row {
     grid-template-columns: 1fr;
   }
 
   .dashboard-builder-header__title,
-  .dashboard-control-group,
-  .dashboard-refresh-status {
+  .dashboard-control-group {
     width: 100%;
   }
 
-  .dashboard-builder-header__actions {
+  .dashboard-builder-header__actions,
+  .dashboard-builder-header__control-actions {
     justify-content: flex-start;
     width: 100%;
     overflow-x: auto;

@@ -1,14 +1,13 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue'
 import { useTheme } from 'vuetify'
-import { useRoute, useRouter } from 'vue-router'
-import { useAccountsStore, type Account } from '@/stores/useAccounts'
+import { useRouter } from 'vue-router'
+import { useAccountsStore } from '@/stores/useAccounts'
 
 const copilotOpen = defineModel<boolean>('copilotOpen', { default: false })
 
 const theme = useTheme()
 const router = useRouter()
-const route = useRoute()
 const accountsStore = useAccountsStore()
 
 const notificationCount = ref(18)
@@ -21,17 +20,8 @@ const searchQuery = ref('')
 const appbarNotice = ref('')
 const appbarNoticeVisible = ref(false)
 
-const accounts = computed(() => accountsStore.accounts)
-const fallbackAccount: Account = {
-  id: '2000290',
-  name: 'MMC-MSC-MCC Scooter Village',
-  initials: 'MP',
-  color: 'primary',
-  subscriptions: ['commerce', 'marketing', 'analytics', 'service', 'davinci'],
-}
-const activeAccount = computed<Account>(() => accountsStore.activeAccount ?? accounts.value[0] ?? fallbackAccount)
-const accountName = computed(() => activeAccount.value.name)
-const accountInitials = computed(() => activeAccount.value.initials)
+const isDark = computed(() => theme.global.current.value.dark)
+
 const currentAccountId = computed(() => accountsStore.activeId)
 const settingsRoute = computed(() => ({ name: 'Settings' as const, params: { accountId: currentAccountId.value } }))
 const appsRoute = computed(() => ({ name: 'AppStore' as const, params: { accountId: currentAccountId.value } }))
@@ -88,23 +78,6 @@ function openStub(label: string) {
   showAppbarNotice(`${label} is represented as a prototype action.`)
 }
 
-function selectAccount(account: Account) {
-  if (account.id === accountsStore.activeId) return
-  const previousId = accountsStore.activeId
-  accountsStore.switchTo(account.id)
-
-  const currentAccountIdParam = Array.isArray(route.params.accountId)
-    ? route.params.accountId[0]
-    : route.params.accountId
-  if (currentAccountIdParam && currentAccountIdParam === previousId) {
-    router.push({
-      name: route.name ?? undefined,
-      params: { ...route.params, accountId: account.id },
-      query: route.query,
-      hash: route.hash,
-    })
-  }
-}
 </script>
 
 <template>
@@ -205,9 +178,9 @@ function selectAccount(account: Account) {
           </template>
         </v-tooltip>
 
-        <v-tooltip text="Galaxy" location="bottom">
+        <v-tooltip text="Galaxy Help portal" location="bottom">
           <template #activator="{ props }">
-            <v-btn v-bind="props" icon="mdi-orbit" variant="text" size="small" aria-label="Galaxy" @click="openStub('Galaxy')" />
+            <v-btn v-bind="props" icon="mdi-book-open-page-variant-outline" variant="text" size="small" aria-label="Galaxy Help portal" @click="openStub('Galaxy Help portal')" />
           </template>
         </v-tooltip>
 
@@ -220,12 +193,6 @@ function selectAccount(account: Account) {
         <v-tooltip text="Settings" location="bottom">
           <template #activator="{ props }">
             <v-btn v-bind="props" icon="mdi-cog-outline" variant="text" size="small" aria-label="Settings" :to="settingsRoute" />
-          </template>
-        </v-tooltip>
-
-        <v-tooltip text="LINE" location="bottom">
-          <template #activator="{ props }">
-            <v-btn v-bind="props" icon="mdi-message-text-outline" variant="text" size="small" aria-label="LINE" @click="openStub('LINE')" />
           </template>
         </v-tooltip>
       </div>
@@ -243,9 +210,9 @@ function selectAccount(account: Account) {
             <v-icon size="16" color="medium-emphasis">mdi-chevron-down</v-icon>
           </button>
         </template>
-        <v-card width="340" rounded="lg" elevation="0" class="user-menu-card">
+          <v-card width="280" rounded="lg" elevation="0" class="user-menu-card">
           <div class="user-menu-header d-flex align-center gap-3">
-            <v-avatar color="primary" size="44" class="appbar-avatar-lg">{{ userInitials }}</v-avatar>
+            <v-avatar color="primary" size="36" class="appbar-avatar-lg">{{ userInitials }}</v-avatar>
             <div>
               <div class="font-weight-bold text-body-2">{{ userName }}</div>
               <div class="text-caption text-medium-emphasis">{{ userEmail }}</div>
@@ -255,70 +222,51 @@ function selectAccount(account: Account) {
 
           <v-divider class="mx-4" />
 
-          <v-list density="compact" :border="false" class="px-3 pt-3 pb-1">
+          <v-list density="compact" :border="false" class="px-2 pt-2 pb-1">
             <v-list-subheader class="text-uppercase font-weight-bold appbar-subheader">Personal</v-list-subheader>
-            <v-list-item prepend-icon="mdi-account-outline" title="My Profile" subtitle="View and edit your info" :to="settingsRoute" rounded="lg" class="mb-1" />
-            <v-list-item prepend-icon="mdi-theme-light-dark" title="Theme" subtitle="Toggle light or dark mode" rounded="lg" class="mb-1" @click="toggleTheme" />
-          </v-list>
-
-          <v-divider class="mx-4" />
-
-          <v-list density="compact" :border="false" class="px-3 pt-3 pb-1">
-            <v-list-subheader class="text-uppercase font-weight-bold appbar-subheader">Account</v-list-subheader>
-            <v-list-item prepend-icon="mdi-cog-outline" title="Account Settings" subtitle="Company, users, permissions" :to="settingsRoute" rounded="lg" class="mb-1" />
-            <v-list-item prepend-icon="mdi-credit-card-outline" title="Billing" subtitle="Plan, usage, invoices" :to="settingsRoute" rounded="lg" class="mb-1" />
-            <v-list-item prepend-icon="mdi-orbit" title="Galaxy" subtitle="Cross-product workspace" rounded="lg" class="mb-1" @click="openStub('Galaxy')" />
-            <v-list-item prepend-icon="mdi-map-clock-outline" title="Roadmap" subtitle="Planned product work" rounded="lg" class="mb-1" @click="openStub('Roadmap')" />
-            <v-list-item prepend-icon="mdi-shield-check-outline" title="System Status" subtitle="Trust and availability" rounded="lg" class="mb-1" @click="openStub('System Status')" />
-          </v-list>
-
-          <template v-if="accounts.length > 1">
-            <v-divider class="mx-4" />
-            <v-list density="compact" :border="false" class="px-3 pt-3 pb-1">
-              <v-list-subheader class="text-uppercase font-weight-bold appbar-subheader">Switch Account</v-list-subheader>
-              <v-list-item
-                v-for="account in accounts"
-                :key="account.id"
-                rounded="lg"
-                class="mb-1 account-list-item"
-                :active="account.id === accountsStore.activeId"
-                active-color="primary"
-                @click="selectAccount(account)"
-              >
-                <template #prepend>
-                  <v-avatar size="28" :color="account.color" variant="tonal" class="mr-3 appbar-avatar-initials">{{ account.initials }}</v-avatar>
-                </template>
-                <div
-                  class="text-body-2 account-item-text"
-                  :class="{ 'font-weight-medium': account.id === accountsStore.activeId }"
-                >{{ account.name }}</div>
-                <template #append>
-                  <v-icon
-                    v-if="account.id === accountsStore.activeId"
-                    size="16"
-                    color="primary"
-                  >mdi-check-circle</v-icon>
-                </template>
-              </v-list-item>
-            </v-list>
-          </template>
-
-          <v-divider class="mx-4" />
-
-          <v-list density="compact" :border="false" class="px-3 pt-3 pb-1">
-            <v-list-subheader class="text-uppercase font-weight-bold appbar-subheader">Current Workspace</v-list-subheader>
-            <v-list-item rounded="lg" class="mb-1">
-              <template #prepend>
-                <v-avatar size="28" :color="activeAccount.color" variant="tonal" class="mr-3 appbar-avatar-initials">{{ accountInitials }}</v-avatar>
+            <v-list-item prepend-icon="mdi-account-outline" title="My Profile" :to="settingsRoute" rounded="lg" class="mb-0 menu-item" />
+            <v-list-item
+              :prepend-icon="isDark ? 'mdi-weather-night' : 'mdi-weather-sunny'"
+              title="Theme"
+              rounded="lg"
+              class="mb-0 menu-item theme-toggle-item"
+              @click="toggleTheme"
+            >
+              <template #append>
+                <v-switch
+                  :model-value="isDark"
+                  density="compact"
+                  hide-details
+                  inset
+                  color="primary"
+                  readonly
+                  tabindex="-1"
+                  class="theme-switch"
+                />
               </template>
-              <div class="text-body-2 font-weight-medium account-item-text">{{ accountName }}</div>
             </v-list-item>
           </v-list>
 
           <v-divider class="mx-4" />
 
-          <v-list density="compact" :border="false" class="px-3 py-2">
-            <v-list-item prepend-icon="mdi-logout" title="Sign Out" rounded="lg" class="sign-out-item" color="error" />
+          <v-list density="compact" :border="false" class="px-2 pt-2 pb-1">
+            <v-list-subheader class="text-uppercase font-weight-bold appbar-subheader">Account</v-list-subheader>
+            <v-list-item prepend-icon="mdi-cog-outline" title="Account Settings" :to="settingsRoute" rounded="lg" class="mb-0 menu-item" />
+            <v-list-item prepend-icon="mdi-credit-card-outline" title="Billing" :to="settingsRoute" rounded="lg" class="mb-0 menu-item" />
+            <v-list-item prepend-icon="mdi-map-clock-outline" title="Roadmap" rounded="lg" class="mb-0 menu-item" @click="openStub('Roadmap')" />
+            <v-list-item prepend-icon="mdi-shield-check-outline" title="System Status" rounded="lg" class="mb-0 menu-item" @click="openStub('System Status')" />
+          </v-list>
+
+          <v-divider class="mx-4" />
+
+          <v-list density="compact" :border="false" class="px-2 py-1">
+            <v-list-item
+              prepend-icon="mdi-logout"
+              title="Sign Out"
+              rounded="lg"
+              class="menu-item sign-out-item"
+              base-color="error"
+            />
           </v-list>
         </v-card>
       </v-menu>
@@ -348,14 +296,23 @@ function selectAccount(account: Account) {
 .appbar-utilities {
   display: flex;
   align-items: center;
-  gap: 1px;
+  gap: 2px;
   padding-inline: 4px;
 }
 
 .appbar-utilities :deep(.v-btn) {
   width: 34px;
   height: 34px;
+  border-radius: 8px;
   color: rgba(var(--v-theme-on-surface), 0.72);
+  transition:
+    background-color $mp-transition-fast,
+    color $mp-transition-fast;
+}
+
+.appbar-utilities :deep(.v-btn:hover) {
+  background: rgba(var(--v-theme-on-surface), 0.06);
+  color: rgb(var(--v-theme-on-surface));
 }
 
 .appbar-utilities :deep(.v-icon) {
@@ -383,18 +340,69 @@ function selectAccount(account: Account) {
   box-shadow: inset 0 0 0 1px rgba(var(--v-theme-secondary), 0.12);
 }
 .user-menu-card {
-  box-shadow: none;
   border-color: var(--mp-border-subtle);
 }
 .user-menu-header {
   background: rgba(var(--v-theme-surface-variant), 0.66);
-  padding: $mp-space-6;
+  padding: $mp-space-3 $mp-space-4;
+}
+
+.user-menu-card :deep(.v-list-item.menu-item) {
+  min-height: 32px;
+  padding-inline: 10px;
+}
+.user-menu-card :deep(.menu-item .v-list-item-title) {
+  font-size: var(--mp-typography-fontSize-sm);
+  font-weight: 560;
+  line-height: 1.2;
+}
+.user-menu-card :deep(.menu-item .v-list-item__prepend > .v-icon) {
+  font-size: 18px;
+  margin-inline-end: 12px;
+  opacity: 0.85;
+}
+.user-menu-card :deep(.v-list-subheader) {
+  min-height: 24px;
+  padding-inline-start: 10px;
+}
+
+.theme-switch {
+  flex: 0 0 auto;
+  margin: 0;
+  pointer-events: none;
+  transform: scale(0.8);
+  transform-origin: center right;
+}
+.theme-switch :deep(.v-selection-control) {
+  min-height: 0;
+}
+.theme-switch :deep(.v-switch__track) {
+  background: rgba(var(--v-theme-on-surface), 0.32);
+  opacity: 1;
+}
+.theme-switch :deep(.v-selection-control--dirty .v-switch__track) {
+  background: rgb(var(--v-theme-primary));
+}
+.theme-switch :deep(.v-switch__thumb) {
+  background: rgb(var(--v-theme-surface));
+  box-shadow: var(--mp-shadow-sm, 0 1px 2px rgba(15, 23, 42, 0.18));
+}
+.theme-toggle-item :deep(.v-list-item__append) {
+  align-self: center;
 }
 .sign-out-item {
   transition: background $mp-transition-fast;
+  color: rgb(var(--v-theme-error));
 }
 .sign-out-item:hover {
   background: rgba(var(--v-theme-error), 0.06);
+}
+.sign-out-item :deep(.v-list-item__prepend .v-icon),
+.sign-out-item :deep(.v-list-item-title) {
+  color: rgb(var(--v-theme-error));
+}
+.sign-out-item :deep(.v-list-item-title) {
+  font-weight: var(--mp-typography-fontWeight-medium);
 }
 .account-switcher-trigger {
   transition: background $mp-transition-fast, border-color $mp-transition-fast;
@@ -423,38 +431,40 @@ function selectAccount(account: Account) {
   background: rgba(var(--v-theme-surface-variant), 0.66);
 }
 .copilot-trigger {
-  transition: background-color $mp-transition-base, color $mp-transition-base, border-color $mp-transition-base, box-shadow $mp-transition-base, transform $mp-transition-base;
-  border: 1px solid rgba(var(--v-theme-primary), 0.18);
-  border-radius: 8px !important;
-  background: rgba(var(--v-theme-primary), 0.06);
-  color: rgb(var(--v-theme-primary));
-  box-shadow: none;
   width: 34px !important;
   height: 34px !important;
-}
-.copilot-trigger:hover {
+  border-radius: 8px !important;
+  border: 1px solid rgba(var(--v-theme-primary), 0.16);
+  background: rgba(var(--v-theme-primary), 0.06);
   color: rgb(var(--v-theme-primary));
-  border-color: rgba(var(--v-theme-primary), 0.34);
-  box-shadow: none;
+  transition:
+    background-color $mp-transition-fast,
+    color $mp-transition-fast,
+    border-color $mp-transition-fast;
+}
+
+.copilot-trigger:hover {
+  background: rgba(var(--v-theme-primary), 0.10);
+  border-color: rgba(var(--v-theme-primary), 0.30);
 }
 
 .copilot-trigger--active {
-  background: rgb(var(--v-theme-primary)) !important;
-  color: rgb(var(--v-theme-on-primary)) !important;
+  background: rgb(var(--v-theme-primary));
+  color: rgb(var(--v-theme-on-primary));
   border-color: transparent;
-  box-shadow: none;
 }
 
 .copilot-trigger--active:hover {
-  filter: brightness(1.03);
+  background: rgb(var(--v-theme-primary));
+  filter: brightness(1.04);
 }
 
 :deep(.copilot-trigger .v-btn__overlay) {
-  opacity: 0 !important;
+  opacity: 0;
 }
 
 :deep(.copilot-trigger .v-icon) {
-  color: inherit !important;
+  color: inherit;
 }
 
 .appbar-search {
@@ -465,26 +475,37 @@ function selectAccount(account: Account) {
 
 :deep(.appbar-search .v-field) {
   border-radius: 999px;
-  background: rgb(var(--v-theme-surface));
+  background: rgba(var(--v-theme-on-surface), 0.03);
 }
 
 :deep(.appbar-search .v-field__outline) {
-  color: rgba(var(--v-theme-border), 1);
+  --v-field-border-opacity: 0;
 }
 
 :deep(.appbar-search .v-field--focused .v-field__outline) {
-  color: rgba(var(--v-theme-secondary), 0.18);
+  --v-field-border-opacity: 1;
+  color: rgba(var(--v-theme-primary), 0.42);
 }
 
-.account-avatar {
-  color: rgb(var(--v-theme-secondary));
+:deep(.appbar-search .v-field--focused) {
+  background: rgb(var(--v-theme-surface));
+  box-shadow: 0 0 0 3px rgba(var(--v-theme-primary), 0.10);
 }
 
 :deep(.appbar-search .v-field__input) {
   font-size: 0.9rem;
-  min-height: 34px;
+  min-height: 36px;
   padding-top: 6px;
   padding-bottom: 6px;
+}
+
+:deep(.appbar-search input::placeholder) {
+  color: rgba(var(--v-theme-on-surface), 0.48);
+  font-weight: 500;
+}
+
+.account-avatar {
+  color: rgb(var(--v-theme-secondary));
 }
 
 .appbar-search-menu {
@@ -600,14 +621,23 @@ function selectAccount(account: Account) {
 .appbar-subheader {
   font-size: var(--mp-typography-fontSize-xs);
   letter-spacing: 0.05em;
+  color: rgba(var(--v-theme-on-surface), 0.55);
 }
 .appbar-avatar-initials {
   font-size: var(--mp-typography-fontSize-xs);
   font-weight: var(--mp-typography-fontWeight-bold);
 }
+.account-avatar-initial {
+  font-size: 10px;
+  margin-inline-end: 12px;
+}
 .account-item-text {
-  white-space: normal;
-  line-height: 1.3;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: var(--mp-typography-fontSize-sm);
+  font-weight: 560;
+  line-height: 1.2;
 }
 .account-min-width {
   min-width: 0;

@@ -271,12 +271,17 @@ function openSettings() {
 <style scoped lang="scss">
 .dashboard-widget-card {
   position: relative;
-  border-color: rgba(var(--v-theme-on-surface), 0.10);
+  border-color: var(--mp-border-subtle);
   border-radius: 12px !important;
   background: rgb(var(--v-theme-surface));
   overflow: hidden;
   min-height: 0;
-  box-shadow: 0 1px 2px rgba(var(--v-theme-on-surface), 0.02);
+  box-shadow: 0 1px 2px rgba(var(--v-theme-on-surface), 0.025);
+  transition: border-color $mp-transition-fast, box-shadow $mp-transition-fast;
+}
+
+.dashboard-widget-card:hover {
+  border-color: rgba(var(--v-theme-on-surface), 0.14);
 }
 
 .dashboard-widget-card__header {
@@ -284,8 +289,8 @@ function openSettings() {
   grid-template-columns: minmax(0, 1fr) auto;
   align-items: start;
   gap: 12px;
-  min-height: 66px;
-  padding: 20px 20px 8px;
+  min-height: 60px;
+  padding: 18px 20px 12px;
 }
 
 .dashboard-widget-card__header-copy {
@@ -303,20 +308,20 @@ function openSettings() {
   min-width: 0;
   overflow: hidden;
   color: rgb(var(--v-theme-on-surface));
-  font-size: clamp(1rem, 1.35vw, 1.16rem);
-  font-weight: 780;
-  line-height: 1.2;
+  font-size: clamp(1rem, 1.35vw, 1.12rem);
+  font-weight: 700;
+  line-height: 1.25;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 
 .dashboard-widget-card__subtitle {
   overflow: hidden;
-  margin-top: 5px;
-  color: rgba(var(--v-theme-on-surface), 0.52);
+  margin-top: 4px;
+  color: rgba(var(--v-theme-on-surface), 0.56);
   font-size: var(--mp-typography-fontSize-sm);
-  font-weight: 650;
-  line-height: 1.25;
+  font-weight: 500;
+  line-height: 1.3;
   text-overflow: ellipsis;
   white-space: nowrap;
 }

@@ -201,6 +201,11 @@ function isSelected(id: string): boolean {
 
 .dashboard-list-table :deep(td) {
   border-bottom: 1px solid var(--mp-border-subtle) !important;
+  padding-block: 14px !important;
+}
+
+.dashboard-list-table :deep(tbody tr) {
+  height: auto !important;
 }
 
 .dashboard-list-table__row {

@@ -73,9 +73,9 @@ const chartOptions = computed<ApexOptions>(() => ({
   },
   colors: ['rgb(var(--v-theme-primary))'],
   grid: {
-    borderColor: 'rgba(var(--v-theme-on-surface), 0.08)',
+    borderColor: 'rgba(var(--v-theme-on-surface), 0.10)',
     strokeDashArray: 4,
-    padding: { top: 4, right: 8, bottom: 0, left: 8 },
+    padding: { top: 8, right: 12, bottom: 4, left: 12 },
   },
   stroke: {
     curve: 'smooth',
@@ -104,17 +104,20 @@ const chartOptions = computed<ApexOptions>(() => ({
     axisTicks: { show: false },
     labels: {
       style: {
-        colors: 'rgba(var(--v-theme-on-surface), 0.54)',
-        fontSize: '11px',
+        colors: 'rgba(var(--v-theme-on-surface), 0.62)',
+        fontSize: '12px',
+        fontWeight: 500,
       },
+      offsetY: 2,
     },
   },
   yaxis: {
     labels: {
       formatter: (value: number) => formatAxisValue(value, props.data.unit),
       style: {
-        colors: 'rgba(var(--v-theme-on-surface), 0.54)',
-        fontSize: '11px',
+        colors: 'rgba(var(--v-theme-on-surface), 0.62)',
+        fontSize: '12px',
+        fontWeight: 500,
       },
     },
   },

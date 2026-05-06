@@ -35,15 +35,17 @@ const campaignRows = computed(() => {
 <template>
   <div class="dashboard-table-widget">
     <div v-if="isCampaignRevenueTable" class="dashboard-campaign-list">
-      <div v-for="row in campaignRows" :key="row.campaign" class="dashboard-campaign-list__row">
-        <div class="dashboard-campaign-list__topline">
-          <span class="dashboard-campaign-list__name">{{ row.campaign }}</span>
-          <strong>{{ row.revenue }}</strong>
+      <div class="dashboard-campaign-list__rows">
+        <div v-for="row in campaignRows" :key="row.campaign" class="dashboard-campaign-list__row">
+          <div class="dashboard-campaign-list__topline">
+            <span class="dashboard-campaign-list__name">{{ row.campaign }}</span>
+            <strong>{{ row.revenue }}</strong>
+          </div>
+          <div class="dashboard-campaign-list__meter">
+            <span :style="{ width: `${row.percent}%` }" />
+          </div>
+          <div class="dashboard-campaign-list__meta">{{ row.openRate }}</div>
         </div>
-        <div class="dashboard-campaign-list__meter">
-          <span :style="{ width: `${row.percent}%` }" />
-        </div>
-        <div class="dashboard-campaign-list__meta">{{ row.openRate }}</div>
       </div>
       <button type="button" class="dashboard-campaign-list__link">
         View all campaigns
@@ -90,10 +92,18 @@ const campaignRows = computed(() => {
 .dashboard-campaign-list {
   display: flex;
   flex-direction: column;
-  gap: 14px;
   height: 100%;
   min-height: 0;
-  padding-top: 6px;
+}
+
+.dashboard-campaign-list__rows {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  flex: 1 1 auto;
+  min-height: 0;
+  padding: 4px 2px 8px 0;
+  overflow-y: auto;
 }
 
 .dashboard-campaign-list__row {
@@ -113,21 +123,22 @@ const campaignRows = computed(() => {
 
 .dashboard-campaign-list__name {
   overflow: hidden;
-  font-weight: 700;
+  font-weight: 600;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 
 .dashboard-campaign-list__topline strong {
-  font-weight: 800;
+  font-weight: 700;
   white-space: nowrap;
+  font-variant-numeric: tabular-nums;
 }
 
 .dashboard-campaign-list__meter {
-  height: 7px;
+  height: 6px;
   overflow: hidden;
   border-radius: 999px;
-  background: rgba(var(--v-theme-surface-variant), 0.65);
+  background: rgba(var(--v-theme-on-surface), 0.06);
 }
 
 .dashboard-campaign-list__meter span {
@@ -135,30 +146,38 @@ const campaignRows = computed(() => {
   height: 100%;
   border-radius: inherit;
   background: rgb(var(--v-theme-primary));
+  transition: width 240ms cubic-bezier(0.2, 0.8, 0.2, 1);
 }
 
 .dashboard-campaign-list__meta {
   justify-self: end;
-  margin-top: -4px;
-  color: rgba(var(--v-theme-on-surface), 0.54);
+  margin-top: -2px;
+  color: rgba(var(--v-theme-on-surface), 0.56);
   font-size: var(--mp-typography-fontSize-xs);
-  font-weight: 650;
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
 }
 
 .dashboard-campaign-list__link {
   display: inline-flex;
   align-items: center;
-  gap: 4px;
-  align-self: flex-start;
-  margin-top: auto;
-  padding: 4px 0;
+  gap: 6px;
+  flex-shrink: 0;
+  padding: 10px 0 2px;
   border: 0;
-  background: transparent;
-  color: rgb(var(--v-theme-primary));
+  border-top: 1px solid var(--mp-border-subtle);
+  background: rgb(var(--v-theme-surface));
+  color: rgb(var(--v-theme-on-surface));
   cursor: pointer;
   font: inherit;
   font-size: var(--mp-typography-fontSize-sm);
-  font-weight: 800;
+  font-weight: 600;
+  text-align: left;
+  transition: color 120ms ease;
+}
+
+.dashboard-campaign-list__link:hover {
+  color: rgb(var(--v-theme-primary));
 }
 
 .dashboard-campaign-list__link:focus-visible {

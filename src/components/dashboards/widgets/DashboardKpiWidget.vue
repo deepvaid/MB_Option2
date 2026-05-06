@@ -89,20 +89,20 @@ const sparklineAreaPoints = computed(() => `0,52 ${sparklinePoints.value} 100,52
 .dashboard-kpi-widget__title {
   overflow: hidden;
   color: rgb(var(--v-theme-on-surface));
-  font-size: clamp(1rem, 1.35vw, 1.12rem);
-  font-weight: 800;
-  line-height: 1.18;
+  font-size: clamp(0.95rem, 1.3vw, 1.05rem);
+  font-weight: 700;
+  line-height: 1.2;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 
 .dashboard-kpi-widget__subtitle {
   overflow: hidden;
-  margin-top: 5px;
-  color: rgba(var(--v-theme-on-surface), 0.52);
+  margin-top: 4px;
+  color: rgba(var(--v-theme-on-surface), 0.56);
   font-size: var(--mp-typography-fontSize-sm);
-  font-weight: 650;
-  line-height: 1.2;
+  font-weight: 500;
+  line-height: 1.3;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
@@ -111,10 +111,10 @@ const sparklineAreaPoints = computed(() => `0,52 ${sparklinePoints.value} 100,52
   overflow: visible;
   margin-top: 10px;
   padding-bottom: 3px;
-  font-size: clamp(1.65rem, 2.25vw, 2.15rem);
-  line-height: 1.24;
-  letter-spacing: 0;
-  font-weight: 850;
+  font-size: clamp(1.6rem, 2.2vw, 2.05rem);
+  line-height: 1.2;
+  letter-spacing: -0.01em;
+  font-weight: 750;
   color: rgb(var(--v-theme-on-surface));
   white-space: nowrap;
 }
@@ -136,11 +136,11 @@ const sparklineAreaPoints = computed(() => `0,52 ${sparklinePoints.value} 100,52
   display: inline-flex;
   align-items: center;
   gap: 2px;
-  height: 24px;
+  height: 22px;
   padding: 0 10px 0 7px;
   border-radius: 999px;
   font-size: var(--mp-typography-fontSize-xs);
-  font-weight: 800;
+  font-weight: 700;
   white-space: nowrap;
 }
 
@@ -156,9 +156,9 @@ const sparklineAreaPoints = computed(() => `0,52 ${sparklinePoints.value} 100,52
 
 .dashboard-kpi-widget__comparison {
   overflow: hidden;
-  color: rgba(var(--v-theme-on-surface), 0.52);
+  color: rgba(var(--v-theme-on-surface), 0.54);
   font-size: var(--mp-typography-fontSize-sm);
-  font-weight: 650;
+  font-weight: 500;
   line-height: 1.2;
   text-overflow: ellipsis;
   white-space: nowrap;

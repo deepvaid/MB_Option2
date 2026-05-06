@@ -119,10 +119,6 @@ a {
   --mp-aurora-shadow: 0 16px 40px rgba(67, 105, 214, 0.18);
 }
 
-.v-app-bar {
-  border-bottom: 1px solid var(--mp-border-subtle);
-}
-
 /* Token-driven card radius that responds to rendered card size */
 .v-card.mp-card {
   border-radius: 20px !important;
@@ -401,6 +397,20 @@ tr:focus-within .action-btns {
 
 .v-theme--maropostDark .v-overlay__content .v-divider {
   border-top-color: var(--mp-color-dark-borderDividerMuted);
+}
+
+/* ─── Popover surfaces (menus + select/autocomplete dropdowns) ─ */
+/* Vuetify renders all v-menu content (including inside v-select,
+   v-autocomplete, v-combobox) inside `.v-menu > .v-overlay__content`.
+   One rule, one consistent shadcn-style soft surface. */
+.v-menu > .v-overlay__content > .v-card,
+.v-menu > .v-overlay__content > .v-list,
+.v-menu > .v-overlay__content > .v-sheet {
+  background: rgb(var(--v-theme-surface));
+  border: 1px solid var(--mp-border-subtle) !important;
+  border-radius: var(--mp-borderRadius-md) !important;
+  box-shadow: var(--mp-shadow-lg), var(--mp-shadow-md) !important;
+  overflow: hidden;
 }
 
 /* ─── Scrollbar Styling ─────────────────────────────────────── */

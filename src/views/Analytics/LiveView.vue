@@ -830,7 +830,7 @@ const recentActivity = computed(() => [
 
 // Leaflet controls & popup styling to match the UI
 :deep(.leaflet-control-attribution) {
-  font-size: 9px;
+  font-size: 10px;
   opacity: 0.7;
   background: rgba(var(--v-theme-surface), 0.8) !important;
 }

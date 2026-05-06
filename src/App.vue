@@ -49,7 +49,6 @@ const sidebarRail = computed(() => smAndDown.value || rail.value)
       location="right"
       :width="copilotExpanded ? 800 : 430"
       class="copilot-drawer"
-      style="transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1); border-left: 1px solid rgba(0,0,0,0.08);"
     >
       <MpDaVinciBot
         @close="copilotOpen = false"
@@ -91,6 +90,11 @@ const sidebarRail = computed(() => smAndDown.value || rail.value)
   .mp-main-shell {
     padding: 20px !important;
   }
+}
+
+.copilot-drawer {
+  border-left: 1px solid var(--mp-border-subtle);
+  transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .copilot-drawer .v-navigation-drawer__content {

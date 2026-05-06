@@ -283,7 +283,13 @@ function isLocked(group: NavGroup) {
           class="mb-1 sidebar-text"
         >
           <template v-slot:append v-if="(!localRail && group.badge) || (isLocked(group) && !group.badge)">
-            <v-chip v-if="!localRail && group.badge" size="x-small" color="purple-lighten-4" class="text-purple-darken-3 font-weight-bold ml-2">{{ group.badge }}</v-chip>
+            <v-chip
+              v-if="!localRail && group.badge"
+              size="x-small"
+              variant="tonal"
+              color="secondary"
+              class="font-weight-bold ml-2 sidebar-badge"
+            >{{ group.badge }}</v-chip>
             <v-tooltip v-if="isLocked(group) && !group.badge" location="end" text="Upgrade to unlock">
               <template v-slot:activator="{ props: tipProps }">
                 <v-icon v-bind="tipProps" size="14" class="ml-2 sidebar-lock">mdi-lock-outline</v-icon>
@@ -496,10 +502,11 @@ function isLocked(group: NavGroup) {
   display: block;
 }
 .sidebar-chip {
-  font-size: 9px;
+  font-size: 10px;
   height: 16px;
-  padding: 0 5px;
+  padding: 0 6px;
   border-radius: 999px;
+  letter-spacing: 0.04em;
 }
 .sidebar-subgroup {
   font-size: var(--mp-typography-fontSize-xs);
@@ -536,8 +543,15 @@ function isLocked(group: NavGroup) {
   font-size: var(--mp-typography-fontSize-xs);
 }
 .sidebar-divider {
-  border-color: rgba(0, 0, 0, 0.18);
-  opacity: 0.65;
+  border-color: var(--mp-color-sidebar-border);
+  opacity: 0.7;
+}
+
+.sidebar-badge {
+  height: 18px !important;
+  padding-inline: 6px;
+  font-size: 10px !important;
+  letter-spacing: 0.04em;
 }
 .sidebar-help {
   color: var(--mp-color-sidebar-textFaint);
@@ -546,7 +560,7 @@ function isLocked(group: NavGroup) {
 
 :deep(.active-nav-item) {
   position: relative;
-  background: rgba(var(--v-theme-primary), 0.06) !important;
+  background: rgba(var(--v-theme-primary), 0.08) !important;
   box-shadow: none;
   color: rgb(var(--v-theme-primary));
   font-weight: 600;
@@ -563,6 +577,10 @@ function isLocked(group: NavGroup) {
 }
 :deep(.active-nav-item > .v-list-item__overlay) {
   opacity: 0 !important;
+}
+:deep(.active-nav-item .v-list-item__prepend > .v-icon),
+:deep(.active-nav-item .v-list-item-title) {
+  color: rgb(var(--v-theme-primary));
 }
 :deep(.v-list-item__prepend .v-icon),
 :deep(.v-list-item-title) {
