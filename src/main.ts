@@ -5,6 +5,8 @@ import './design-tokens/generated/variables.css'
 import './styles/mp-theme-aliases.css'
 import '../packages/marobase-ui/src/tokens/mb-foundation.tokens.css'
 import './styles/global.scss'
+import './styles/accent-presets.css'
+import { initAppTheme } from './composables/useAppTheme'
 
 const app = createApp(App)
 
@@ -24,4 +26,5 @@ if (typeof window !== 'undefined') {
 
 registerPlugins(app)
 
+initAppTheme()
 app.mount('#app')

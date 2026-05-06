@@ -30,6 +30,10 @@
   --accent-ink: var(--mp-color-light-primaryDarken);
   --accent-soft: color-mix(in oklch, var(--accent) 12%, transparent);
 
+  /* Containers */
+  --primary-container: var(--mp-color-light-primaryContainer);
+  --on-primary-container: var(--mp-color-light-onPrimaryContainer);
+
   /* Semantic colors */
   --pos: oklch(0.5 0.15 155);
   --pos-soft: color-mix(in oklch, oklch(0.7 0.15 155) 14%, transparent);
@@ -70,4 +74,7 @@
   --accent-fg: var(--mp-color-dark-onPrimary);
   --accent-ink: var(--mp-color-dark-primaryDarken);
   --accent-soft: color-mix(in oklch, var(--accent) 12%, transparent);
+
+  --primary-container: var(--mp-color-dark-primaryContainer);
+  --on-primary-container: var(--mp-color-dark-onPrimaryContainer);
 }

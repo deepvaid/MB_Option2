@@ -199,6 +199,7 @@ function buildNavGroups(accountId: string): NavGroup[] {
 const localDrawer = ref(props.modelValue)
 const localRail = ref(props.rail)
 const openedGroups = ref<string[]>([])
+const railHoveredSubGroup = ref<string | null>(null)
 const router = useRouter()
 const route = useRoute()
 const resolvedAccountId = computed(() => {
@@ -234,6 +235,24 @@ function goTo(route: string) {
 function isLocked(group: NavGroup) {
   return !!group.requires && !accountsStore.hasSubscription(group.requires)
 }
+
+function hasSubGroups(group: NavGroup) {
+  return group.items.some((item) => 'isSubGroup' in item && item.isSubGroup)
+}
+
+function railSubGroups(group: NavGroup) {
+  return group.items.filter((item): item is NavSubGroup => 'isSubGroup' in item && item.isSubGroup)
+}
+
+function railFlatItems(group: NavGroup) {
+  return group.items.filter((item): item is NavItem => !('isSubGroup' in item))
+}
+
+function activeRailSubGroupItems(group: NavGroup) {
+  if (!railHoveredSubGroup.value) return []
+  const sub = railSubGroups(group).find((s) => s.title === railHoveredSubGroup.value)
+  return sub?.items ?? []
+}
 </script>
 
 <template>
@@ -255,7 +274,7 @@ function isLocked(group: NavGroup) {
         @click="$router.push(`/accounts/${resolvedAccountId}/dashboard`)"
       >
         <span class="sidebar-brand__mark">M</span>
-        <span class="sidebar-brand__wordmark">MAROPOST</span>
+        <span class="sidebar-brand__wordmark">Maropost</span>
       </button>
       <button
         v-else
@@ -372,7 +391,7 @@ function isLocked(group: NavGroup) {
           </template>
         </v-list-group>
 
-        <v-menu v-else location="end" open-on-hover offset="8" :close-on-content-click="false">
+        <v-menu v-else location="end" open-on-hover offset="8" :close-on-content-click="false" @update:model-value="(v: boolean) => { if (!v) railHoveredSubGroup = null }">
           <template #activator="{ props: menuProps }">
             <v-list-item
               v-bind="menuProps"
@@ -384,56 +403,75 @@ function isLocked(group: NavGroup) {
             />
           </template>
 
-          <v-card min-width="200" flat rounded="lg" class="sidebar-surface rail-popover">
+          <!-- Single-column layout for groups without sub-groups -->
+          <v-card v-if="!hasSubGroups(group)" min-width="200" flat rounded="lg" class="sidebar-surface rail-popover">
             <v-list density="compact" class="bg-transparent py-1">
               <v-list-subheader class="sidebar-subheader font-weight-bold px-4 pt-2 pb-2">{{ group.title }}</v-list-subheader>
+              <v-list-item
+                v-for="item in group.items"
+                :key="item.title"
+                :title="('route' in item) ? item.title : ''"
+                :to="('route' in item) ? item.route : undefined"
+                @click="('route' in item) && goTo(item.route)"
+                class="sidebar-text rail-popover-item"
+                rounded="lg"
+                slim
+                exact
+              />
+            </v-list>
+          </v-card>
 
-              <template v-for="item in group.items" :key="item.title">
-                <v-menu v-if="'isSubGroup' in item && item.isSubGroup" location="end" open-on-hover offset="0">
-                  <template #activator="{ props: subMenuProps }">
-                    <v-list-item
-                      v-bind="subMenuProps"
-                      :title="item.title"
-                      class="sidebar-text rail-popover-item"
-                      rounded="lg"
-                      slim
-                    >
-                      <template v-slot:append>
-                        <v-icon size="small" class="sidebar-muted">chevron-right</v-icon>
-                      </template>
-                    </v-list-item>
-                  </template>
-
-                  <v-card min-width="200" flat rounded="lg" class="sidebar-surface rail-popover">
-                    <v-list density="compact" class="bg-transparent py-1">
-                      <v-list-subheader class="sidebar-subheader font-weight-bold px-4 pt-2 pb-2">{{ item.title }}</v-list-subheader>
-                      <v-list-item
-                        v-for="subItem in item.items"
-                        :key="subItem.title"
-                        :title="subItem.title"
-                        :to="subItem.route"
-                        @click="goTo(subItem.route)"
-                        class="sidebar-text rail-popover-item"
-                        rounded="lg"
-                        slim
-                        exact
-                      />
-                    </v-list>
-                  </v-card>
-                </v-menu>
+          <!-- Two-column cascade layout for groups with sub-groups -->
+          <v-card v-else flat rounded="lg" class="sidebar-surface rail-popover rail-popover--cascade">
+            <div class="rail-popover__col">
+              <v-list density="compact" class="bg-transparent py-1">
+                <v-list-subheader class="sidebar-subheader font-weight-bold px-4 pt-2 pb-2">{{ group.title }}</v-list-subheader>
 
                 <v-list-item
-                  v-else-if="!('isSubGroup' in item)"
-                  :title="item.title"
-                  :to="item.route"
-                  @click="goTo(item.route)"
+                  v-for="flat in railFlatItems(group)"
+                  :key="flat.title"
+                  :title="flat.title"
+                  :to="flat.route"
+                  @click="goTo(flat.route)"
                   class="sidebar-text rail-popover-item"
                   rounded="lg"
                   slim
                   exact
                 />
-              </template>
-            </v-list>
+
+                <v-list-item
+                  v-for="sub in railSubGroups(group)"
+                  :key="sub.title"
+                  :title="sub.title"
+                  :active="railHoveredSubGroup === sub.title"
+                  class="sidebar-text rail-popover-item"
+                  rounded="lg"
+                  slim
+                  @mouseenter="railHoveredSubGroup = sub.title"
+                >
+                  <template v-slot:append>
+                    <v-icon size="small" class="sidebar-muted">chevron-right</v-icon>
+                  </template>
+                </v-list-item>
+              </v-list>
+            </div>
+
+            <div v-if="railHoveredSubGroup && activeRailSubGroupItems(group).length" class="rail-popover__col">
+              <v-list density="compact" class="bg-transparent py-1">
+                <v-list-subheader class="sidebar-subheader font-weight-bold px-4 pt-2 pb-2">{{ railHoveredSubGroup }}</v-list-subheader>
+                <v-list-item
+                  v-for="child in activeRailSubGroupItems(group)"
+                  :key="child.title"
+                  :title="child.title"
+                  :to="child.route"
+                  @click="goTo(child.route)"
+                  class="sidebar-text rail-popover-item"
+                  rounded="lg"
+                  slim
+                  exact
+                />
+              </v-list>
+            </div>
           </v-card>
         </v-menu>
 
@@ -675,6 +713,21 @@ function isLocked(group: NavGroup) {
     0 8px 24px rgba(15, 23, 42, 0.08),
     0 2px 6px rgba(15, 23, 42, 0.04) !important;
   overflow: hidden;
+}
+
+.rail-popover--cascade {
+  display: grid;
+  grid-template-columns: 200px 200px;
+  min-width: 400px;
+}
+
+.rail-popover__col {
+  padding: 8px;
+  min-height: 100px;
+}
+
+.rail-popover__col + .rail-popover__col {
+  border-left: 1px solid rgb(var(--v-theme-outline-variant));
 }
 
 .rail-popover-item {

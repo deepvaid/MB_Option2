@@ -610,17 +610,43 @@ function performConfirm() {
           </v-list>
         </v-menu>
 
-        <v-btn
-          color="primary"
-          variant="flat"
-          size="small"
-          prepend-icon="plus"
-          class="text-none"
-          :disabled="!activeDashboard"
-          @click="openWidgetBuilder()"
-        >
-          Add widget
-        </v-btn>
+        <v-menu location="bottom end" offset="8">
+          <template #activator="{ props: menuProps }">
+            <v-btn
+              v-bind="menuProps"
+              color="primary"
+              variant="flat"
+              size="small"
+              prepend-icon="plus"
+              append-icon="chevron-down"
+              class="text-none"
+              :disabled="!activeDashboard"
+            >
+              Add content
+            </v-btn>
+          </template>
+          <v-list density="compact" min-width="280">
+            <v-list-item
+              prepend-icon="plus"
+              title="Add manual widget"
+              @click="openWidgetBuilder('manual')"
+            />
+            <v-list-item
+              prepend-icon="sparkles"
+              @click="openWidgetBuilder('davinci')"
+            >
+              <v-list-item-title>Create with Da Vinci</v-list-item-title>
+              <v-list-item-subtitle>Generate a widget from a prompt</v-list-item-subtitle>
+            </v-list-item>
+            <v-list-item
+              prepend-icon="layout-grid"
+              @click="openWidgetBuilder('choose')"
+            >
+              <v-list-item-title>Choose content type</v-list-item-title>
+              <v-list-item-subtitle>KPI, chart, table, or activity</v-list-item-subtitle>
+            </v-list-item>
+          </v-list>
+        </v-menu>
       </div>
     </section>
 
@@ -827,14 +853,14 @@ function performConfirm() {
 
 .dashboard-date-menu {
   display: grid;
-  grid-template-columns: 210px minmax(0, 1fr);
+  grid-template-columns: 220px 1fr;
   overflow: hidden;
 }
 
 .dashboard-date-menu__presets {
   padding: 10px;
-  border-right: 1px solid var(--hairline);
-  background: var(--surface-2);
+  border-right: 1px solid rgb(var(--v-theme-outline-variant));
+  background: rgb(var(--v-theme-surface-variant));
 }
 
 .dashboard-date-menu__group {

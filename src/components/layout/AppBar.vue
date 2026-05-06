@@ -24,7 +24,16 @@ const isDark = computed(() => theme.global.current.value.dark)
 
 const currentAccountId = computed(() => accountsStore.activeId)
 const settingsRoute = computed(() => ({ name: 'Settings' as const, params: { accountId: currentAccountId.value } }))
+const profileRoute = computed(() => `/accounts/${currentAccountId.value}/settings/profile`)
 const appsRoute = computed(() => ({ name: 'AppStore' as const, params: { accountId: currentAccountId.value } }))
+
+const accounts = computed(() => accountsStore.accounts)
+const activeAccountId = computed(() => accountsStore.activeId)
+const themeToggleValue = ref('light')
+
+function switchAccount(id: string) {
+  accountsStore.switchTo(id)
+}
 
 const searchSources = computed(() => [
   { group: 'Dashboards', icon: 'layout-dashboard', title: 'Marketing Dashboard', subtitle: 'Performance, revenue, and audience widgets', route: { name: 'Dashboard' as const, params: { accountId: currentAccountId.value } } },
@@ -150,14 +159,21 @@ function openStub(label: string) {
       <v-spacer />
 
       <div class="appbar-utilities">
+        <v-tooltip text="Da Vinci AI" location="bottom">
+          <template #activator="{ props }">
+            <v-btn v-bind="props" icon variant="text" class="appbar-action-btn" aria-label="Da Vinci AI" @click="copilotOpen = !copilotOpen">
+              <v-icon>sparkles</v-icon>
+            </v-btn>
+          </template>
+        </v-tooltip>
+
         <v-tooltip text="Notifications" location="bottom">
           <template #activator="{ props }">
             <v-btn
               v-bind="props"
               variant="text"
-              size="small"
               icon
-              class="position-relative"
+              class="appbar-action-btn position-relative"
               :aria-label="notificationCount > 0 ? `Notifications, ${notificationCount} unread` : 'Notifications'"
             >
               <v-icon>bell</v-icon>
@@ -168,13 +184,17 @@ function openStub(label: string) {
 
         <v-tooltip text="Galaxy Help portal" location="bottom">
           <template #activator="{ props }">
-            <v-btn v-bind="props" icon="book-open" variant="text" size="small" aria-label="Galaxy Help portal" @click="openStub('Galaxy Help portal')" />
+            <v-btn v-bind="props" icon variant="text" class="appbar-action-btn" aria-label="Galaxy Help portal" @click="openStub('Galaxy Help portal')">
+              <v-icon>book-open</v-icon>
+            </v-btn>
           </template>
         </v-tooltip>
 
         <v-tooltip text="Settings" location="bottom">
           <template #activator="{ props }">
-            <v-btn v-bind="props" icon="settings" variant="text" size="small" aria-label="Settings" :to="settingsRoute" />
+            <v-btn v-bind="props" icon variant="text" class="appbar-action-btn" aria-label="Settings" :to="settingsRoute">
+              <v-icon>settings</v-icon>
+            </v-btn>
           </template>
         </v-tooltip>
       </div>
@@ -194,65 +214,90 @@ function openStub(label: string) {
             <v-icon size="14" class="user-pill__chevron">chevron-down</v-icon>
           </button>
         </template>
-          <v-card width="280" rounded="lg" elevation="0" class="user-menu-card">
-          <div class="user-menu-header d-flex align-center gap-3">
-            <v-avatar color="primary" size="36" class="appbar-avatar-lg">{{ userInitials }}</v-avatar>
-            <div>
-              <div class="font-weight-bold text-body-2">{{ userName }}</div>
-              <div class="text-caption text-medium-emphasis">{{ userEmail }}</div>
-              <v-chip size="x-small" variant="tonal" color="primary" class="mt-1">{{ userRole }}</v-chip>
+          <v-card width="320" rounded="lg" elevation="0" class="user-menu-card">
+            <!-- Header block -->
+            <div class="user-menu-header d-flex align-center gap-3">
+              <v-avatar color="primary" variant="tonal" size="48">{{ userInitials }}</v-avatar>
+              <div>
+                <div class="text-body-2 font-weight-bold">{{ userName }}</div>
+                <div class="text-caption text-medium-emphasis">deepak.v@maropost.com</div>
+                <v-chip size="x-small" variant="tonal" color="primary" class="mt-1">Super Admin</v-chip>
+              </div>
             </div>
-          </div>
 
-          <v-divider class="mx-4" />
+            <v-divider />
 
-          <v-list density="compact" :border="false" class="px-2 pt-2 pb-1">
-            <v-list-subheader class="text-uppercase font-weight-bold appbar-subheader">Personal</v-list-subheader>
-            <v-list-item prepend-icon="user" title="My Profile" :to="settingsRoute" rounded="lg" class="mb-0 menu-item" />
-            <v-list-item
-              :prepend-icon="isDark ? 'moon' : 'sun'"
-              title="Theme"
-              rounded="lg"
-              class="mb-0 menu-item theme-toggle-item"
-              @click="toggleTheme"
-            >
-              <template #append>
-                <v-switch
-                  :model-value="isDark"
-                  density="compact"
-                  hide-details
-                  inset
-                  color="primary"
-                  readonly
-                  tabindex="-1"
-                  class="theme-switch"
-                />
-              </template>
-            </v-list-item>
-          </v-list>
+            <!-- PERSONAL -->
+            <div class="px-3 pt-3 pb-1">
+              <div class="appbar-subheader">PERSONAL</div>
+            </div>
+            <v-list density="compact" class="py-0 bg-transparent">
+              <v-list-item prepend-icon="user" title="My Profile" class="menu-item" :to="profileRoute" />
+              <v-list-item class="menu-item theme-toggle-item">
+                <template #prepend><v-icon>sun-moon</v-icon></template>
+                <v-list-item-title>Theme</v-list-item-title>
+                <template #append>
+                  <v-btn-toggle v-model="themeToggleValue" density="compact" mandatory class="theme-segment">
+                    <v-btn size="x-small" value="light" icon="sun" variant="text" />
+                    <v-btn size="x-small" value="dark" icon="moon" variant="text" />
+                    <v-btn size="x-small" value="auto" icon="monitor" variant="text" />
+                  </v-btn-toggle>
+                </template>
+              </v-list-item>
+            </v-list>
 
-          <v-divider class="mx-4" />
+            <v-divider class="mx-3" />
 
-          <v-list density="compact" :border="false" class="px-2 pt-2 pb-1">
-            <v-list-subheader class="text-uppercase font-weight-bold appbar-subheader">Account</v-list-subheader>
-            <v-list-item prepend-icon="settings" title="Account Settings" :to="settingsRoute" rounded="lg" class="mb-0 menu-item" />
-            <v-list-item prepend-icon="credit-card" title="Billing" :to="settingsRoute" rounded="lg" class="mb-0 menu-item" />
-            <v-list-item prepend-icon="map-pin" title="Roadmap" rounded="lg" class="mb-0 menu-item" @click="openStub('Roadmap')" />
-            <v-list-item prepend-icon="shield-check" title="System Status" rounded="lg" class="mb-0 menu-item" @click="openStub('System Status')" />
-          </v-list>
+            <!-- ACCOUNT -->
+            <div class="px-3 pt-3 pb-1">
+              <div class="appbar-subheader">ACCOUNT</div>
+            </div>
+            <v-list density="compact" class="py-0 bg-transparent">
+              <v-list-item prepend-icon="settings" title="Account Settings" class="menu-item" :to="settingsRoute" />
+              <v-list-item prepend-icon="credit-card" title="Billing" class="menu-item" @click="openStub('Billing')" />
+              <v-list-item prepend-icon="target" title="Galaxy" class="menu-item" @click="openStub('Galaxy')" />
+              <v-list-item prepend-icon="route" title="Roadmap" class="menu-item" @click="openStub('Roadmap')" />
+              <v-list-item prepend-icon="shield-check" title="System Status" class="menu-item" @click="openStub('System Status')" />
+            </v-list>
 
-          <v-divider class="mx-4" />
+            <v-divider class="mx-3" />
 
-          <v-list density="compact" :border="false" class="px-2 py-1">
-            <v-list-item
-              prepend-icon="log-out"
-              title="Sign Out"
-              rounded="lg"
-              class="menu-item sign-out-item"
-              base-color="error"
-            />
-          </v-list>
-        </v-card>
+            <!-- SWITCH ACCOUNT -->
+            <div class="px-3 pt-3 pb-1">
+              <div class="appbar-subheader">SWITCH ACCOUNT</div>
+            </div>
+            <v-list density="compact" class="py-0 bg-transparent" max-height="160">
+              <v-list-item
+                v-for="account in accounts"
+                :key="account.id"
+                class="menu-item"
+                :active="account.id === activeAccountId"
+                @click="switchAccount(account.id)"
+              >
+                <template #prepend>
+                  <v-avatar size="28" variant="tonal" :color="account.id === activeAccountId ? 'primary' : undefined">
+                    {{ account.name.slice(0, 2).toUpperCase() }}
+                  </v-avatar>
+                </template>
+                <v-list-item-title>{{ account.name }}</v-list-item-title>
+                <template #append>
+                  <v-icon v-if="account.id === activeAccountId" size="16" color="primary">check-circle-2</v-icon>
+                </template>
+              </v-list-item>
+            </v-list>
+
+            <v-divider class="mx-3" />
+
+            <!-- Sign out -->
+            <v-list density="compact" class="py-1 bg-transparent">
+              <v-list-item
+                prepend-icon="log-out"
+                title="Sign Out"
+                class="menu-item sign-out-item"
+                @click="openStub('Sign out')"
+              />
+            </v-list>
+          </v-card>
       </v-menu>
     </div>
 
@@ -281,25 +326,25 @@ function openStub(label: string) {
 .appbar-utilities {
   display: flex;
   align-items: center;
-  gap: 2px;
+  gap: 6px;
 }
 
-.appbar-utilities :deep(.v-btn) {
-  width: 32px;
-  height: 32px;
+.appbar-utilities :deep(.appbar-action-btn) {
+  width: 36px;
+  height: 36px;
   border-radius: var(--r-pill);
   color: var(--ink);
-  opacity: 0.72;
+  opacity: 0.82;
   transition: background 120ms ease, opacity 120ms ease;
 }
 
-.appbar-utilities :deep(.v-btn:hover) {
+.appbar-utilities :deep(.appbar-action-btn:hover) {
   background: var(--surface-2);
   opacity: 1;
 }
 
-.appbar-utilities :deep(.v-icon) {
-  font-size: 17px;
+.appbar-utilities :deep(.appbar-action-btn .v-icon) {
+  font-size: 20px;
 }
 
 .appbar-divider {
@@ -383,25 +428,21 @@ function openStub(label: string) {
   padding-inline-start: 10px;
 }
 
-.theme-switch {
-  flex: 0 0 auto;
-  margin: 0;
-  pointer-events: none;
-  transform: scale(0.8);
-  transform-origin: center right;
+.theme-segment {
+  height: 26px !important;
+  border: 1px solid var(--hairline);
+  border-radius: var(--r-pill);
+  background: var(--surface-2);
 }
-.theme-switch :deep(.v-selection-control) {
-  min-height: 0;
+.theme-segment :deep(.v-btn) {
+  width: 26px !important;
+  height: 24px !important;
+  min-width: 26px !important;
+  border-radius: var(--r-pill) !important;
 }
-.theme-switch :deep(.v-switch__track) {
-  background: rgba(var(--v-theme-on-surface), 0.32);
-  opacity: 1;
-}
-.theme-switch :deep(.v-selection-control--dirty .v-switch__track) {
-  background: var(--accent);
-}
-.theme-switch :deep(.v-switch__thumb) {
+.theme-segment :deep(.v-btn--active) {
   background: var(--surface-1);
+  box-shadow: 0 1px 3px rgba(0,0,0,0.08);
 }
 .theme-toggle-item :deep(.v-list-item__append) {
   align-self: center;

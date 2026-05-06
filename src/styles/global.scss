@@ -123,49 +123,8 @@ a {
 .v-application {
   font-family: var(--mp-typography-fontFamily-base);
   color: rgb(var(--v-theme-on-background));
-  --mp-aurora-start: #22c7ff;
-  --mp-aurora-mid: #4f6dff;
-  --mp-aurora-end: #52d89b;
-  --mp-aurora-ink: #f6fbff;
-  --mp-aurora-border: rgba(90, 129, 255, 0.24);
-  --mp-aurora-gradient: linear-gradient(
-    135deg,
-    var(--mp-aurora-start) 0%,
-    var(--mp-aurora-mid) 48%,
-    var(--mp-aurora-end) 100%
-  );
-  --mp-aurora-soft-gradient: linear-gradient(
-    135deg,
-    rgba(34, 199, 255, 0.12) 0%,
-    rgba(79, 109, 255, 0.1) 50%,
-    rgba(82, 216, 155, 0.12) 100%
-  );
-  --mp-aurora-glow: radial-gradient(circle at 14% 18%, rgba(34, 199, 255, 0.18), transparent 34%),
-    radial-gradient(circle at 84% 12%, rgba(79, 109, 255, 0.16), transparent 28%),
-    radial-gradient(circle at 72% 82%, rgba(82, 216, 155, 0.18), transparent 30%);
-  --mp-aurora-shadow: 0 16px 40px rgba(67, 105, 214, 0.18);
 }
 
-/* Token-driven card radius that responds to rendered card size */
-.v-card.mp-card {
-  border-radius: 20px !important;
-  background: rgb(var(--v-theme-surface));
-  box-shadow: none;
-  border-color: var(--mp-color-neutral-hairline, rgba(11, 53, 88, 0.08)) !important;
-}
-
-
-.v-card.mp-card--hover {
-  transition:
-    transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1),
-    box-shadow 0.3s cubic-bezier(0.2, 0.8, 0.2, 1),
-    border-color $mp-transition-fast;
-}
-
-.v-card.mp-card--hover:hover {
-  transform: translateY(-2px);
-  box-shadow: var(--mp-shadow-md);
-}
 
 .v-btn {
   transition:
@@ -399,9 +358,9 @@ tr:focus-within .action-btns {
 .v-table .v-table__wrapper > table > thead > tr > th {
   border-bottom-color: var(--mp-border-table-header);
   color: rgb(var(--v-theme-on-surface-variant));
-  font-size: var(--mp-typography-fontSize-sm);
+  font-size: 11px;
   font-weight: var(--mp-typography-fontWeight-semibold);
-  letter-spacing: 0.02em;
+  letter-spacing: 1px;
   text-transform: uppercase;
 }
 
@@ -427,6 +386,18 @@ tr:focus-within .action-btns {
   border-radius: var(--mp-borderRadius-md) !important;
   box-shadow: var(--mp-shadow-lg), var(--mp-shadow-md) !important;
   overflow: hidden;
+}
+
+/* ─── Chip tonal variants (design kit) ──────────────────────── */
+.v-chip.v-chip--tonal-primary { background: rgb(var(--v-theme-primary-container)) !important; color: rgb(var(--v-theme-on-primary-container)) !important; }
+.v-chip.v-chip--tonal-success { background: rgb(var(--v-theme-success-container)) !important; color: rgb(var(--v-theme-on-success-container)) !important; }
+.v-chip.v-chip--tonal-warning { background: rgb(var(--v-theme-warning-container)) !important; color: rgb(var(--v-theme-on-warning-container)) !important; }
+.v-chip.v-chip--tonal-error   { background: rgb(var(--v-theme-error-container)) !important; color: rgb(var(--v-theme-on-error-container)) !important; }
+.v-chip.v-chip--outlined-kit  { background: transparent !important; border: 1px solid rgb(var(--v-theme-outline-variant)) !important; color: rgb(var(--v-theme-on-surface)) !important; }
+
+/* ─── Alert tonal styling (design kit) ──────────────────────── */
+.v-alert.v-alert--variant-tonal {
+  border: none;
 }
 
 /* ─── Scrollbar Styling ─────────────────────────────────────── */

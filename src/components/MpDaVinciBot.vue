@@ -262,198 +262,120 @@ function newChat() {
 </script>
 
 <template>
-  <div class="da-vinci-bot d-flex flex-column">
+  <div class="davinci-panel">
     <!-- ═══ HEADER ═══ -->
-    <div class="da-vinci-header d-flex align-center ga-3 px-4 py-3">
-      <div class="da-vinci-avatar">
-        <v-icon color="white" size="22">sparkles</v-icon>
+    <div class="davinci-header">
+      <div class="davinci-header__top">
+        <div class="davinci-avatar">
+          <v-icon color="white" size="20">sparkles</v-icon>
+        </div>
+        <div style="flex: 1" />
+        <v-btn icon size="28" variant="text" aria-label="Start a new chat" @click="newChat">
+          <v-icon size="16">plus</v-icon>
+          <v-tooltip activator="parent" location="bottom">New chat</v-tooltip>
+        </v-btn>
+        <v-btn icon size="28" variant="text" :aria-label="isExpanded ? 'Collapse Da Vinci drawer' : 'Expand Da Vinci drawer'" @click="onExpand">
+          <v-icon size="16">{{ isExpanded ? 'minimize-2' : 'maximize-2' }}</v-icon>
+          <v-tooltip activator="parent" location="bottom">{{ isExpanded ? 'Collapse' : 'Expand' }}</v-tooltip>
+        </v-btn>
+        <v-btn icon size="28" variant="text" aria-label="Close Da Vinci drawer" @click="emit('close')">
+          <v-icon size="16">x</v-icon>
+          <v-tooltip activator="parent" location="bottom">Close</v-tooltip>
+        </v-btn>
       </div>
-      <div class="flex-grow-1">
-        <div class="text-subtitle-2 font-weight-bold da-vinci-title">Da Vinci Bot</div>
-        <div class="text-caption text-medium-emphasis da-vinci-subtitle">Intelligent AI assistant</div>
-      </div>
-      <v-btn icon size="32" variant="flat" class="da-vinci-accent-btn" aria-label="Start a new chat" @click="newChat">
-        <v-icon size="18">plus</v-icon>
-        <v-tooltip activator="parent" location="bottom">New chat</v-tooltip>
-      </v-btn>
-      <v-btn icon size="32" variant="text" :aria-label="isExpanded ? 'Collapse Da Vinci drawer' : 'Expand Da Vinci drawer'" @click="onExpand">
-        <v-icon size="18">{{ isExpanded ? 'minimize-2' : 'maximize-2' }}</v-icon>
-        <v-tooltip activator="parent" location="bottom">{{ isExpanded ? 'Collapse' : 'Expand' }}</v-tooltip>
-      </v-btn>
-      <v-btn icon size="32" variant="text" aria-label="Close Da Vinci drawer" @click="emit('close')">
-        <v-icon size="18">x</v-icon>
-        <v-tooltip activator="parent" location="bottom">Close</v-tooltip>
-      </v-btn>
+
+      <template v-if="!chatMode">
+        <div class="davinci-hero">{{ emptyStateGreeting }}</div>
+        <div class="davinci-subhero">{{ emptyStateDescription }}</div>
+        <div class="davinci-callout">
+          <strong>{{ heroInsight.headline }}</strong> — {{ heroInsight.description }}
+        </div>
+      </template>
+      <template v-else>
+        <div class="davinci-hero" style="font-size: 18px;">Da Vinci Bot</div>
+      </template>
     </div>
 
     <!-- ═══ BODY ═══ -->
-    <div ref="chatContainer" class="flex-grow-1 da-vinci-chat-scroll">
-      <!-- ─── EMPTY STATE ─── -->
-      <div v-if="!chatMode" class="da-vinci-empty pa-5">
-        <div class="mb-6 mt-2">
-          <h3 class="text-h5 font-weight-bold mb-1">{{ emptyStateGreeting }}</h3>
-          <p class="text-body-2 text-medium-emphasis">{{ emptyStateDescription }}</p>
+    <div ref="chatContainer" class="davinci-body">
+      <!-- ─── EMPTY STATE (suggestions) ─── -->
+      <template v-if="!chatMode">
+        <div v-if="isDashboardRoute" class="davinci-suggestions">
+          <button
+            v-for="suggestion in dashboardSuggestions"
+            :key="suggestion"
+            class="davinci-pill"
+            :aria-label="`Run suggestion: ${suggestion}`"
+            @click="sendSuggestion(suggestion)"
+            @keydown="onSuggestionKeydown($event, suggestion)"
+          >
+            {{ suggestion }}
+          </button>
         </div>
 
-        <!-- Proactive Insight -->
-        <DvInsightCard
-          :headline="heroInsight.headline"
-          :description="heroInsight.description"
-          :severity="heroInsight.severity"
-          :action-label="heroInsight.actionLabel"
-          class="mb-6"
-        />
-
-        <div v-if="isDashboardRoute" class="mb-6">
-          <div class="d-flex align-center ga-2 mb-3">
-            <v-icon size="16" color="primary">layout-dashboard</v-icon>
-            <span class="text-caption font-weight-bold text-uppercase mp-label-caps">Dashboard Widgets</span>
-          </div>
-          <div class="d-flex flex-column ga-2">
-            <v-card
-              v-for="suggestion in dashboardSuggestions"
-              :key="suggestion"
-              variant="outlined"
-              rounded="lg"
-              class="suggestion-card"
-              role="button"
-              tabindex="0"
-              :aria-label="`Run suggestion: ${suggestion}`"
-              @click="sendSuggestion(suggestion)"
-              @keydown="onSuggestionKeydown($event, suggestion)"
-            >
-              <v-card-text class="py-2 px-3 text-body-2 font-weight-medium">{{ suggestion }}</v-card-text>
-            </v-card>
-          </div>
+        <div class="davinci-suggestions">
+          <button
+            class="davinci-pill"
+            aria-label="Run suggestion: Top 10 products by revenue"
+            @click="sendSuggestion('Top 10 products by revenue')"
+            @keydown="onSuggestionKeydown($event, 'Top 10 products by revenue')"
+          >
+            Top 10 products by revenue
+          </button>
+          <button
+            class="davinci-pill"
+            aria-label="Run suggestion: Compare this month vs last month"
+            @click="sendSuggestion('Compare this month vs last month')"
+            @keydown="onSuggestionKeydown($event, 'Compare this month vs last month')"
+          >
+            Compare this month vs last month
+          </button>
+          <button
+            class="davinci-pill"
+            aria-label="Run suggestion: Create a flash sale campaign"
+            @click="sendSuggestion('Create a flash sale campaign')"
+            @keydown="onSuggestionKeydown($event, 'Create a flash sale campaign')"
+          >
+            Create a flash sale campaign
+          </button>
+          <button
+            class="davinci-pill"
+            aria-label="Run suggestion: Write an email for our spring sale"
+            @click="sendSuggestion('Write an email for our spring sale')"
+            @keydown="onSuggestionKeydown($event, 'Write an email for our spring sale')"
+          >
+            Write an email for our spring sale
+          </button>
+          <button
+            class="davinci-pill"
+            aria-label="Run suggestion: Set up abandoned cart recovery"
+            @click="sendSuggestion('Set up abandoned cart recovery')"
+            @keydown="onSuggestionKeydown($event, 'Set up abandoned cart recovery')"
+          >
+            Set up abandoned cart recovery
+          </button>
+          <button
+            class="davinci-pill"
+            aria-label="Run suggestion: Find high-value customers who have not ordered in 90 days"
+            @click="sendSuggestion('Find high-value customers who haven\'t ordered in 90 days')"
+            @keydown="onSuggestionKeydown($event, 'Find high-value customers who haven\'t ordered in 90 days')"
+          >
+            Find lapsed high-value customers
+          </button>
         </div>
-
-        <!-- Categorized Suggestions -->
-        <div class="suggestions-grid">
-          <!-- Commerce -->
-          <div>
-            <div class="d-flex align-center ga-2 mb-3">
-              <v-icon size="16" color="primary">shopping-cart</v-icon>
-              <span class="text-caption font-weight-bold text-uppercase mp-label-caps">Commerce</span>
-            </div>
-            <div class="d-flex flex-column ga-2">
-              <v-card
-                variant="outlined"
-                rounded="lg"
-                class="suggestion-card"
-                role="button"
-                tabindex="0"
-                aria-label="Run suggestion: Top 10 products by revenue"
-                @click="sendSuggestion('Top 10 products by revenue')"
-                @keydown="onSuggestionKeydown($event, 'Top 10 products by revenue')"
-              >
-                <v-card-text class="py-2 px-3 text-body-2 font-weight-medium">Top 10 products by revenue</v-card-text>
-              </v-card>
-              <v-card
-                variant="outlined"
-                rounded="lg"
-                class="suggestion-card"
-                role="button"
-                tabindex="0"
-                aria-label="Run suggestion: Compare this month vs last month"
-                @click="sendSuggestion('Compare this month vs last month')"
-                @keydown="onSuggestionKeydown($event, 'Compare this month vs last month')"
-              >
-                <v-card-text class="py-2 px-3 text-body-2 font-weight-medium">Compare this month vs last month</v-card-text>
-              </v-card>
-            </div>
-          </div>
-
-          <!-- Marketing -->
-          <div class="mt-5">
-            <div class="d-flex align-center ga-2 mb-3">
-              <v-icon size="16" color="primary">megaphone</v-icon>
-              <span class="text-caption font-weight-bold text-uppercase mp-label-caps">Marketing</span>
-            </div>
-            <div class="d-flex flex-column ga-2">
-              <v-card
-                variant="outlined"
-                rounded="lg"
-                class="suggestion-card"
-                role="button"
-                tabindex="0"
-                aria-label="Run suggestion: Create a flash sale campaign"
-                @click="sendSuggestion('Create a flash sale campaign')"
-                @keydown="onSuggestionKeydown($event, 'Create a flash sale campaign')"
-              >
-                <v-card-text class="py-2 px-3 text-body-2 font-weight-medium">Create a flash sale campaign</v-card-text>
-              </v-card>
-              <v-card
-                variant="outlined"
-                rounded="lg"
-                class="suggestion-card"
-                role="button"
-                tabindex="0"
-                aria-label="Run suggestion: Write an email for our spring sale"
-                @click="sendSuggestion('Write an email for our spring sale')"
-                @keydown="onSuggestionKeydown($event, 'Write an email for our spring sale')"
-              >
-                <v-card-text class="py-2 px-3 text-body-2 font-weight-medium">Write an email for our spring sale</v-card-text>
-              </v-card>
-            </div>
-          </div>
-
-          <!-- Automation -->
-          <div class="mt-5">
-            <div class="d-flex align-center ga-2 mb-3">
-              <v-icon size="16" color="primary">bot</v-icon>
-              <span class="text-caption font-weight-bold text-uppercase mp-label-caps">Automation & Customers</span>
-            </div>
-            <div class="d-flex flex-column ga-2">
-              <v-card
-                variant="outlined"
-                rounded="lg"
-                class="suggestion-card"
-                role="button"
-                tabindex="0"
-                aria-label="Run suggestion: Set up abandoned cart recovery"
-                @click="sendSuggestion('Set up abandoned cart recovery')"
-                @keydown="onSuggestionKeydown($event, 'Set up abandoned cart recovery')"
-              >
-                <v-card-text class="py-2 px-3 text-body-2 font-weight-medium">Set up abandoned cart recovery</v-card-text>
-              </v-card>
-              <v-card
-                variant="outlined"
-                rounded="lg"
-                class="suggestion-card"
-                role="button"
-                tabindex="0"
-                aria-label="Run suggestion: Find high-value customers who have not ordered in 90 days"
-                @click="sendSuggestion('Find high-value customers who haven\'t ordered in 90 days')"
-                @keydown="onSuggestionKeydown($event, 'Find high-value customers who haven\'t ordered in 90 days')"
-              >
-                <v-card-text class="py-2 px-3 text-body-2 font-weight-medium">Find lapsed high-value customers</v-card-text>
-              </v-card>
-            </div>
-          </div>
-        </div>
-      </div>
+      </template>
 
       <!-- ─── CHAT STATE ─── -->
-      <div v-else class="pa-4 pt-6">
+      <div v-else class="davinci-messages">
         <template v-for="msg in messages" :key="msg.id">
-          <!-- User bubble -->
-          <div v-if="msg.role === 'user'" class="d-flex justify-end mb-6">
-            <div class="user-bubble px-4 py-2">
-              <span class="text-body-2 text-on-primary user-bubble-text">{{ msg.text }}</span>
-            </div>
+          <div v-if="msg.role === 'user'" class="davinci-msg--user">
+            {{ msg.text }}
           </div>
 
-          <!-- Assistant response -->
-          <div v-else class="mb-8">
-            <div class="d-flex align-start ga-3 mb-2">
-              <v-avatar size="24" class="mt-1 da-vinci-avatar da-vinci-avatar--assistant">
-                <v-icon size="14" color="white">sparkles</v-icon>
-              </v-avatar>
-              <div class="text-body-2 pt-1 da-vinci-assistant-text">{{ msg.text }}</div>
-            </div>
+          <div v-else class="davinci-msg--bot-wrapper">
+            <div class="davinci-msg--bot">{{ msg.text }}</div>
 
-            <!-- Rich Components -->
-            <div v-if="msg.componentData" class="pl-10 d-flex flex-column ga-3 mt-3">
+            <div v-if="msg.componentData" class="davinci-widgets">
               <template v-for="(comp, ci) in msg.componentData" :key="ci">
                 <DvChartCard v-if="comp.type === 'chart'" v-bind="comp.props" />
                 <DvKpiRow v-else-if="comp.type === 'kpi'" v-bind="comp.props" />
@@ -471,219 +393,238 @@ function newChat() {
         </template>
 
         <!-- Typing Indicator -->
-        <div v-if="isTyping" class="mb-4 d-flex align-start ga-3">
-           <v-avatar size="24" class="mt-1 da-vinci-avatar da-vinci-avatar--assistant">
-              <v-icon size="14" color="white">sparkles</v-icon>
-           </v-avatar>
-           <div class="typing-indicator pa-3 rounded-lg bg-surface-variant d-flex align-center ga-1">
-             <span class="dot"></span><span class="dot"></span><span class="dot"></span>
-           </div>
+        <div v-if="isTyping" class="davinci-msg--bot">
+          <span class="typing-indicator">
+            <span class="dot"></span><span class="dot"></span><span class="dot"></span>
+          </span>
         </div>
       </div>
     </div>
 
-    <!-- ═══ INPUT FOOTER ═══ -->
-    <div class="da-vinci-input px-4 pt-3 pb-5">
-      <v-card variant="outlined" rounded="xl" class="pa-2 da-vinci-input-card" flat border>
-        <v-textarea
-          v-model="inputText"
-          placeholder="Ask Da Vinci..."
-          aria-label="Ask Da Vinci"
-          variant="plain"
-          density="compact"
-          hide-details
-          rows="1"
-          auto-grow
-          max-rows="5"
-          class="mb-1 px-1 da-vinci-textarea"
-          @keydown.enter.exact.prevent="sendQuery"
-        />
-        <div class="d-flex align-center justify-space-between mt-1">
-          <div class="d-flex align-center ga-1">
-            <v-btn icon size="32" variant="text" color="medium-emphasis" aria-label="Attach a file">
-              <v-icon size="20">paperclip</v-icon>
-            </v-btn>
-          </div>
-          <div class="d-flex align-center ga-1">
-            <v-btn icon size="32" variant="text" color="medium-emphasis" aria-label="Start voice input">
-              <v-icon size="20">mic</v-icon>
-            </v-btn>
-            <v-btn
-              icon
-              size="32"
-              :variant="inputText.trim() ? 'flat' : 'flat'"
-              :class="['da-vinci-send-btn', { 'da-vinci-send-btn--active': inputText.trim() }]"
-              :aria-label="inputText.trim() ? 'Send message' : 'Type a message to enable send'"
-              @click="sendQuery"
-            >
-              <v-icon size="18" :color="inputText.trim() ? 'white' : 'medium-emphasis'">arrow-up</v-icon>
-            </v-btn>
-          </div>
-        </div>
-      </v-card>
+    <!-- ═══ COMPOSER ═══ -->
+    <div class="davinci-composer">
+      <input
+        v-model="inputText"
+        class="davinci-composer__input"
+        placeholder="Ask Da Vinci..."
+        aria-label="Ask Da Vinci"
+        @keydown.enter.exact.prevent="sendQuery"
+      />
+      <button
+        class="davinci-composer__send"
+        :aria-label="inputText.trim() ? 'Send message' : 'Type a message to enable send'"
+        @click="sendQuery"
+      >
+        <v-icon size="16">arrow-up</v-icon>
+      </button>
     </div>
   </div>
 </template>
 
-<style scoped lang="scss">
-.da-vinci-bot {
-  background:
-    radial-gradient(circle at top right, rgba(34, 199, 255, 0.08), transparent 26%),
-    radial-gradient(circle at left 24%, rgba(82, 216, 155, 0.08), transparent 22%),
-    rgb(var(--v-theme-background));
-  height: 100%;
-  overflow: hidden;
-}
-
-.da-vinci-title {
-  line-height: var(--mp-typography-lineHeight-tight);
-}
-.da-vinci-subtitle {
-  font-size: var(--mp-typography-fontSize-xs);
-}
-.da-vinci-chat-scroll {
-  overflow-y: auto;
-  background:
-    radial-gradient(circle at top right, rgba(79, 109, 255, 0.05), transparent 18%),
-    radial-gradient(circle at left 18%, rgba(34, 199, 255, 0.05), transparent 14%),
-    rgb(var(--v-theme-surface));
-}
-.mp-label-caps {
-  letter-spacing: 0.05em;
-}
-.user-bubble-text {
-  white-space: pre-wrap;
-  color: rgb(var(--v-theme-on-primary));
-}
-.da-vinci-assistant-text {
-  line-height: var(--mp-typography-lineHeight-loose);
-}
-.da-vinci-input-card {
+<style scoped>
+.davinci-panel {
+  position: fixed;
+  right: 24px;
+  bottom: 24px;
+  width: 440px;
+  max-height: calc(100vh - 120px);
+  display: flex;
+  flex-direction: column;
+  border: 1px solid rgb(var(--v-theme-outline-variant));
+  border-radius: 16px;
   background: rgb(var(--v-theme-surface));
-  border-color: rgba(79, 109, 255, 0.14) !important;
-  box-shadow: 0 10px 28px rgba(83, 107, 180, 0.06);
-}
-.da-vinci-textarea {
-  font-size: var(--mp-typography-fontSize-body);
-}
-
-.da-vinci-header {
-  position: relative;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08), 0 2px 8px rgba(0, 0, 0, 0.04);
   overflow: hidden;
-  background: rgb(var(--v-theme-surface));
-  border-bottom: 1px solid rgba(var(--v-border-color), var(--v-border-opacity));
-  z-index: 2;
+  z-index: 2000;
 }
 
-.da-vinci-header::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: var(--mp-aurora-glow);
-  opacity: 0.85;
-  pointer-events: none;
+.davinci-header {
+  background: linear-gradient(120deg, #eef0ff 0%, #f3eafc 60%, #fde8ef 100%);
+  padding: 20px 24px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
 }
 
-.da-vinci-header > * {
-  position: relative;
-  z-index: 1;
+.davinci-header__top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
 }
 
-.da-vinci-avatar {
-  width: 36px;
-  height: 36px;
+.davinci-avatar {
+  width: 40px;
+  height: 40px;
   border-radius: 50%;
-  background: var(--mp-aurora-gradient);
+  background: linear-gradient(135deg, #5b8def 0%, #2dd4bf 100%);
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: var(--mp-aurora-shadow);
-  border: 1px solid rgba(255, 255, 255, 0.14);
+  color: #fff;
 }
 
-.da-vinci-avatar--assistant {
-  width: 24px;
-  height: 24px;
-  box-shadow: 0 8px 20px rgba(67, 105, 214, 0.14);
+.davinci-hero {
+  font-size: 26px;
+  font-weight: 700;
+  line-height: 1.15;
+  color: rgb(var(--v-theme-on-surface));
 }
 
-.da-vinci-accent-btn {
-  background: var(--mp-aurora-gradient) !important;
-  color: var(--mp-aurora-ink) !important;
-  box-shadow: var(--mp-aurora-shadow);
+.davinci-subhero {
+  font-size: 14px;
+  color: rgb(var(--v-theme-on-surface-variant));
+  margin-top: -8px;
 }
 
-.da-vinci-accent-btn:hover {
-  filter: brightness(1.03);
+.davinci-callout {
+  background: rgb(var(--v-theme-primary-container));
+  color: rgb(var(--v-theme-on-primary-container));
+  border-radius: 12px;
+  padding: 12px 16px;
+  font-size: 13px;
+  line-height: 1.5;
 }
 
-:deep(.da-vinci-accent-btn .v-btn__overlay) {
-  opacity: 0 !important;
+.davinci-body {
+  flex: 1;
+  overflow-y: auto;
+  padding: 16px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
 }
 
-:deep(.da-vinci-accent-btn .v-icon) {
-  color: inherit !important;
+.davinci-suggestions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
 }
 
-.suggestion-card {
-  transition: all $mp-transition-base;
-  border-color: rgba(var(--v-border-color), var(--v-border-opacity));
-  background: rgb(var(--v-theme-surface));
+.davinci-pill {
+  border: 1px solid rgb(var(--v-theme-outline-variant));
+  border-radius: 999px;
+  padding: 8px 16px;
+  font-size: 14px;
+  font-weight: 500;
+  background: rgb(var(--v-theme-surface-bright, var(--v-theme-surface)));
+  color: rgb(var(--v-theme-on-surface));
   cursor: pointer;
-}
-.suggestion-card:hover {
-  border-color: rgba(79, 109, 255, 0.3);
-  box-shadow: var(--mp-aurora-shadow);
-  background: rgb(var(--v-theme-surface-variant));
+  transition: background 0.15s, border-color 0.15s;
 }
 
-.suggestion-card:focus-visible {
+.davinci-pill:hover {
+  background: rgb(var(--v-theme-surface-variant));
+  border-color: rgb(var(--v-theme-outline));
+}
+
+.davinci-pill:focus-visible {
+  outline: 2px solid rgb(var(--v-theme-primary));
+  outline-offset: 2px;
+}
+
+.davinci-composer {
+  border-top: 1px solid rgb(var(--v-theme-outline-variant));
+  padding: 12px 16px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: rgb(var(--v-theme-surface));
+}
+
+.davinci-composer__input {
+  flex: 1;
+  border: 1px solid rgb(var(--v-theme-outline-variant));
+  border-radius: 999px;
+  padding: 8px 16px;
+  font-size: 14px;
+  background: rgb(var(--v-theme-surface));
+  color: rgb(var(--v-theme-on-surface));
   outline: none;
-  box-shadow: 0 0 0 3px rgba(var(--v-theme-primary), 0.18);
+}
+
+.davinci-composer__input:focus {
   border-color: rgb(var(--v-theme-primary));
 }
 
-.user-bubble {
-  background: linear-gradient(135deg, rgb(var(--v-theme-primary)) 0%, rgba(var(--v-theme-primary), 0.8) 100%);
-  border-radius: 18px 18px $mp-radius-sm 18px;
+.davinci-composer__send {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgb(var(--v-theme-surface-variant));
+  color: rgb(var(--v-theme-on-surface));
+  border: none;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.davinci-composer__send:hover {
+  background: rgb(var(--v-theme-primary));
+  color: rgb(var(--v-theme-on-primary));
+}
+
+.davinci-messages {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.davinci-msg--user {
+  align-self: flex-end;
+  background: rgb(var(--v-theme-primary));
+  color: rgb(var(--v-theme-on-primary));
+  border-radius: 16px 16px 4px 16px;
+  padding: 10px 16px;
+  font-size: 14px;
   max-width: 85%;
-  display: inline-flex;
+  white-space: pre-wrap;
 }
 
-.da-vinci-input {
-  background: transparent;
+.davinci-msg--bot-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  align-self: flex-start;
+  max-width: 100%;
 }
 
-.da-vinci-send-btn {
-  background: rgb(var(--v-theme-surface-variant)) !important;
-  color: rgb(var(--v-theme-on-surface)) !important;
-  transition: background-color $mp-transition-base, box-shadow $mp-transition-base, filter $mp-transition-base;
+.davinci-msg--bot {
+  align-self: flex-start;
+  background: rgb(var(--v-theme-surface-variant));
+  color: rgb(var(--v-theme-on-surface));
+  border-radius: 16px 16px 16px 4px;
+  padding: 10px 16px;
+  font-size: 14px;
+  max-width: 85%;
 }
 
-.da-vinci-send-btn--active {
-  background: var(--mp-aurora-gradient) !important;
-  color: var(--mp-aurora-ink) !important;
-  box-shadow: var(--mp-aurora-shadow);
-}
-
-.da-vinci-send-btn--active:hover {
-  filter: brightness(1.03);
-}
-
-:deep(.da-vinci-send-btn .v-btn__overlay) {
-  opacity: 0 !important;
+.davinci-widgets {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding-left: 8px;
 }
 
 /* Typing indicator */
+.typing-indicator {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
 .typing-indicator .dot {
   width: 6px;
   height: 6px;
   background: rgba(var(--v-theme-on-surface), 0.4);
-  border-radius: $mp-radius-full;
+  border-radius: 50%;
   animation: typing 1.4s infinite ease-in-out both;
 }
+
 .typing-indicator .dot:nth-child(1) { animation-delay: -0.32s; }
 .typing-indicator .dot:nth-child(2) { animation-delay: -0.16s; }
+
 @keyframes typing {
   0%, 80%, 100% { transform: scale(0); opacity: 0.4; }
   40% { transform: scale(1); opacity: 1; }

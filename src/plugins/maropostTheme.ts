@@ -19,6 +19,17 @@ import {
   mp_color_light_onSuccess,
   mp_color_light_onError,
   mp_color_light_onWarning,
+  mp_color_light_primaryContainer,
+  mp_color_light_onPrimaryContainer,
+  mp_color_light_successContainer,
+  mp_color_light_onSuccessContainer,
+  mp_color_light_warningContainer,
+  mp_color_light_onWarningContainer,
+  mp_color_light_errorContainer,
+  mp_color_light_onErrorContainer,
+  mp_color_light_surfaceBright,
+  mp_color_light_outline,
+  mp_color_light_outlineVariant,
   mp_color_light_border,
   mp_color_light_textPrimary,
   mp_color_dark_background,
@@ -34,6 +45,17 @@ import {
   mp_color_dark_error,
   mp_color_dark_info,
   mp_color_dark_onPrimary,
+  mp_color_dark_primaryContainer,
+  mp_color_dark_onPrimaryContainer,
+  mp_color_dark_successContainer,
+  mp_color_dark_onSuccessContainer,
+  mp_color_dark_warningContainer,
+  mp_color_dark_onWarningContainer,
+  mp_color_dark_errorContainer,
+  mp_color_dark_onErrorContainer,
+  mp_color_dark_surfaceBright,
+  mp_color_dark_outline,
+  mp_color_dark_outlineVariant,
   mp_color_dark_border,
   mp_color_dark_textPrimary,
   mp_typography_fontFamily_base,
@@ -79,6 +101,17 @@ export const maropostLight = {
     'blue-200': '#A8DAFB',
     'blue-700': '#0A7AB5',
     'blue-900': '#0B3558',
+    'primary-container': mp_color_light_primaryContainer,
+    'on-primary-container': mp_color_light_onPrimaryContainer,
+    'success-container': mp_color_light_successContainer,
+    'on-success-container': mp_color_light_onSuccessContainer,
+    'warning-container': mp_color_light_warningContainer,
+    'on-warning-container': mp_color_light_onWarningContainer,
+    'error-container': mp_color_light_errorContainer,
+    'on-error-container': mp_color_light_onErrorContainer,
+    'surface-bright': mp_color_light_surfaceBright,
+    outline: mp_color_light_outline,
+    'outline-variant': mp_color_light_outlineVariant,
     'neutral-100': '#F5F2ED',
     'neutral-200': '#EDE8DF',
   },
@@ -103,11 +136,23 @@ export const maropostDark = {
     'on-primary': mp_color_dark_onPrimary,
     'on-surface': mp_color_dark_textPrimary,
     'on-background': mp_color_dark_textPrimary,
+    'primary-container': mp_color_dark_primaryContainer,
+    'on-primary-container': mp_color_dark_onPrimaryContainer,
+    'success-container': mp_color_dark_successContainer,
+    'on-success-container': mp_color_dark_onSuccessContainer,
+    'warning-container': mp_color_dark_warningContainer,
+    'on-warning-container': mp_color_dark_onWarningContainer,
+    'error-container': mp_color_dark_errorContainer,
+    'on-error-container': mp_color_dark_onErrorContainer,
+    'surface-bright': mp_color_dark_surfaceBright,
+    outline: mp_color_dark_outline,
+    'outline-variant': mp_color_dark_outlineVariant,
   },
 }
 
 export const maropostDefaults = {
   VBtn: {
+    variant: 'flat',
     style: `
       letter-spacing: ${mp_component_button_typography_letterSpacing};
       font-weight: ${mp_component_button_typography_fontWeight};
@@ -115,22 +160,20 @@ export const maropostDefaults = {
       font-family: ${mp_typography_fontFamily_base};
       font-size: ${mp_component_button_typography_fontSize};
       border-radius: ${mp_component_button_radius_default};
-      min-height: 36px;
+      min-height: 40px;
       padding-inline: 14px;
     `,
   },
   VCard: {
-    variant: 'flat',
-    border: true,
+    variant: 'outlined',
     rounded: 'lg',
-    class: 'mp-card',
   },
   VTextField: {
     variant: 'outlined',
     density: 'comfortable',
     hideDetails: 'auto',
     color: 'primary',
-    baseColor: 'border',
+    baseColor: 'outline-variant',
     style: `border-radius: ${mp_component_input_radius_default};`,
   },
   VSelect: {
@@ -138,7 +181,7 @@ export const maropostDefaults = {
     density: 'comfortable',
     hideDetails: 'auto',
     color: 'primary',
-    baseColor: 'border',
+    baseColor: 'outline-variant',
     style: `border-radius: ${mp_component_input_radius_default};`,
   },
   VAutocomplete: {
@@ -146,7 +189,7 @@ export const maropostDefaults = {
     density: 'comfortable',
     hideDetails: 'auto',
     color: 'primary',
-    baseColor: 'border',
+    baseColor: 'outline-variant',
     style: `border-radius: ${mp_component_input_radius_default};`,
   },
   VCombobox: {
@@ -154,7 +197,7 @@ export const maropostDefaults = {
     density: 'comfortable',
     hideDetails: 'auto',
     color: 'primary',
-    baseColor: 'border',
+    baseColor: 'outline-variant',
     style: `border-radius: ${mp_component_input_radius_default};`,
   },
   VTextarea: {
@@ -162,11 +205,16 @@ export const maropostDefaults = {
     density: 'comfortable',
     hideDetails: 'auto',
     color: 'primary',
-    baseColor: 'border',
+    baseColor: 'outline-variant',
     style: `border-radius: ${mp_component_input_radius_default};`,
   },
-  VChip: {
+  VAlert: {
+    variant: 'tonal',
     rounded: 'md',
+  },
+  VChip: {
+    rounded: 'pill',
+    size: 'small',
   },
   VDataTable: {
     fixedHeader: true,
