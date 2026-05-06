@@ -170,25 +170,25 @@ export const OnIconButtons: Story = {
       <div class="pa-6 d-flex gap-4">
         <v-tooltip text="Settings" location="top">
           <template #activator="{ props }">
-            <v-btn v-bind="props" icon="mdi-cog" variant="text" />
+            <v-btn v-bind="props" icon="settings" variant="text" />
           </template>
         </v-tooltip>
 
         <v-tooltip text="Delete" location="top">
           <template #activator="{ props }">
-            <v-btn v-bind="props" icon="mdi-delete" variant="text" color="error" />
+            <v-btn v-bind="props" icon="trash-2" variant="text" color="error" />
           </template>
         </v-tooltip>
 
         <v-tooltip text="Download" location="top">
           <template #activator="{ props }">
-            <v-btn v-bind="props" icon="mdi-download" variant="text" />
+            <v-btn v-bind="props" icon="download" variant="text" />
           </template>
         </v-tooltip>
 
         <v-tooltip text="Share" location="top">
           <template #activator="{ props }">
-            <v-btn v-bind="props" icon="mdi-share" variant="text" />
+            <v-btn v-bind="props" icon="share-2" variant="text" />
           </template>
         </v-tooltip>
       </div>

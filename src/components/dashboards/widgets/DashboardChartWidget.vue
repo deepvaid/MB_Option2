@@ -2,6 +2,7 @@
 import { computed, defineAsyncComponent, onBeforeUnmount, onMounted, ref } from 'vue'
 import type { ApexOptions } from 'apexcharts'
 import type { DashboardSeriesData, DashboardWidgetType } from '@/stores/dashboards/types'
+import { applyChartTheme, chartPalette } from '@/plugins/chartPalette'
 
 const props = withDefaults(defineProps<{
   data: DashboardSeriesData
@@ -63,19 +64,23 @@ const chartHeight = computed(() => {
   return Math.max(120, props.height - 4)
 })
 
+const base = applyChartTheme()
+
+// For single-series bar charts (e.g. "Revenue by Channel"), distribute palette
+// colors across categories so each bar reads as a distinct color instead of
+// every bar using `colors[0]`.
+const isDistributedBar = computed(
+  () => props.widgetType === 'bar' && props.data.series.length <= 1,
+)
+
 const chartOptions = computed<ApexOptions>(() => ({
+  ...base,
+  colors: chartPalette,
   chart: {
-    toolbar: { show: false },
+    ...base.chart,
     sparkline: { enabled: false },
     zoom: { enabled: false },
-    fontFamily: 'Inter, system-ui, sans-serif',
     redrawOnParentResize: true,
-  },
-  colors: ['rgb(var(--v-theme-primary))'],
-  grid: {
-    borderColor: 'rgba(var(--v-theme-on-surface), 0.10)',
-    strokeDashArray: 4,
-    padding: { top: 8, right: 12, bottom: 4, left: 12 },
   },
   stroke: {
     curve: 'smooth',
@@ -85,6 +90,7 @@ const chartOptions = computed<ApexOptions>(() => ({
     bar: {
       borderRadius: 8,
       columnWidth: '46%',
+      distributed: isDistributedBar.value,
     },
   },
   fill: {
@@ -99,15 +105,10 @@ const chartOptions = computed<ApexOptions>(() => ({
   dataLabels: { enabled: false },
   legend: { show: false },
   xaxis: {
+    ...base.xaxis,
     categories: props.data.labels,
-    axisBorder: { show: false },
-    axisTicks: { show: false },
     labels: {
-      style: {
-        colors: 'rgba(var(--v-theme-on-surface), 0.62)',
-        fontSize: '12px',
-        fontWeight: 500,
-      },
+      ...base.xaxis?.labels,
       offsetY: 2,
     },
   },
@@ -115,14 +116,14 @@ const chartOptions = computed<ApexOptions>(() => ({
     labels: {
       formatter: (value: number) => formatAxisValue(value, props.data.unit),
       style: {
-        colors: 'rgba(var(--v-theme-on-surface), 0.62)',
+        colors: 'rgba(var(--v-theme-on-surface), 0.55)',
         fontSize: '12px',
         fontWeight: 500,
       },
     },
   },
   tooltip: {
-    theme: 'light',
+    ...base.tooltip,
     y: {
       formatter: (value: number) => formatAxisValue(value, props.data.unit),
     },

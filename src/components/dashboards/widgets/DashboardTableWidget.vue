@@ -49,7 +49,7 @@ const campaignRows = computed(() => {
       </div>
       <button type="button" class="dashboard-campaign-list__link">
         View all campaigns
-        <v-icon size="16">mdi-arrow-right</v-icon>
+        <v-icon size="16">arrow-right</v-icon>
       </button>
     </div>
 

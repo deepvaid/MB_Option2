@@ -60,7 +60,7 @@ function finish() { saveSnack.value = true; setTimeout(() => router.push('/marke
       <div class="d-flex align-center gap-3">
         <v-tooltip text="Back to Forms" location="bottom">
           <template v-slot:activator="{ props }">
-            <v-btn v-bind="props" icon="mdi-arrow-left" variant="text" size="small" @click="router.push('/marketing/acquisition_forms')"></v-btn>
+            <v-btn v-bind="props" icon="arrow-left" variant="text" size="small" @click="router.push('/marketing/acquisition_forms')"></v-btn>
           </template>
         </v-tooltip>
         <div>
@@ -70,9 +70,9 @@ function finish() { saveSnack.value = true; setTimeout(() => router.push('/marke
       </div>
       <div class="d-flex align-center gap-2">
         <v-btn variant="text" class="text-none text-medium-emphasis" size="small" @click="saveSnack=true">Save Draft</v-btn>
-        <v-btn v-if="step < totalSteps" color="primary" variant="elevated" size="small" class="text-none" append-icon="mdi-arrow-right"
+        <v-btn v-if="step < totalSteps" color="primary" variant="elevated" size="small" class="text-none" append-icon="arrow-right"
           :disabled="step===1 && !step1Valid" @click="step++">Continue</v-btn>
-        <v-btn v-else color="success" variant="elevated" size="small" class="text-none" prepend-icon="mdi-check" @click="finish()">Publish Form</v-btn>
+        <v-btn v-else color="success" variant="elevated" size="small" class="text-none" prepend-icon="check" @click="finish()">Publish Form</v-btn>
       </div>
     </div>
 
@@ -101,7 +101,7 @@ function finish() { saveSnack.value = true; setTimeout(() => router.push('/marke
             <v-col cols="6">
               <v-card :variant="formType==='popup'?'elevated':'flat'" :elevation="formType==='popup'?4:0" border rounded="xl"
                 class="pa-4 text-center cursor-pointer" :class="{'type-selected':formType==='popup'}" @click="formType='popup'">
-                <v-icon size="32" :color="formType==='popup'?'primary':undefined" class="mb-2">mdi-cellphone-text</v-icon>
+                <v-icon size="32" :color="formType==='popup'?'primary':undefined" class="mb-2">smartphone</v-icon>
                 <div class="text-body-2 font-weight-bold">Popup</div>
                 <div class="text-caption text-medium-emphasis">Triggered overlay on top of page content</div>
               </v-card>
@@ -109,14 +109,14 @@ function finish() { saveSnack.value = true; setTimeout(() => router.push('/marke
             <v-col cols="6">
               <v-card :variant="formType==='embedded'?'elevated':'flat'" :elevation="formType==='embedded'?4:0" border rounded="xl"
                 class="pa-4 text-center cursor-pointer" :class="{'type-selected':formType==='embedded'}" @click="formType='embedded'">
-                <v-icon size="32" :color="formType==='embedded'?'primary':undefined" class="mb-2">mdi-web</v-icon>
+                <v-icon size="32" :color="formType==='embedded'?'primary':undefined" class="mb-2">globe</v-icon>
                 <div class="text-body-2 font-weight-bold">Embedded</div>
                 <div class="text-caption text-medium-emphasis">Inline form inside your page layout</div>
               </v-card>
             </v-col>
           </v-row>
           <div class="d-flex justify-end mt-6">
-            <v-btn color="primary" variant="elevated" class="text-none" append-icon="mdi-arrow-right" :disabled="!step1Valid" @click="step=2">Continue to Display Rules</v-btn>
+            <v-btn color="primary" variant="elevated" class="text-none" append-icon="arrow-right" :disabled="!step1Valid" @click="step=2">Continue to Display Rules</v-btn>
           </div>
         </v-card>
       </div>
@@ -160,8 +160,8 @@ function finish() { saveSnack.value = true; setTimeout(() => router.push('/marke
             class="mp-toggle-group mp-toggle-group--segmented mb-4"
           >
             <v-btn value="all" class="text-none" size="small">All</v-btn>
-            <v-btn value="desktop" class="text-none" size="small" prepend-icon="mdi-monitor">Desktop</v-btn>
-            <v-btn value="mobile" class="text-none" size="small" prepend-icon="mdi-cellphone">Mobile</v-btn>
+            <v-btn value="desktop" class="text-none" size="small" prepend-icon="monitor">Desktop</v-btn>
+            <v-btn value="mobile" class="text-none" size="small" prepend-icon="smartphone">Mobile</v-btn>
           </v-btn-toggle>
           <v-divider class="my-4"></v-divider>
           <div class="text-caption text-medium-emphasis font-weight-bold text-uppercase mb-3">Show Frequency</div>
@@ -173,7 +173,7 @@ function finish() { saveSnack.value = true; setTimeout(() => router.push('/marke
           ]" item-title="title" item-value="value" variant="outlined" density="compact"></v-select>
           <div class="d-flex justify-space-between mt-6">
             <v-btn variant="outlined" class="text-none" @click="step=1">Back</v-btn>
-            <v-btn color="primary" variant="elevated" class="text-none" append-icon="mdi-arrow-right" @click="step=3">Continue to Design</v-btn>
+            <v-btn color="primary" variant="elevated" class="text-none" append-icon="arrow-right" @click="step=3">Continue to Design</v-btn>
           </div>
         </v-card>
       </div>
@@ -262,8 +262,8 @@ function finish() { saveSnack.value = true; setTimeout(() => router.push('/marke
               rounded="lg"
               class="mp-toggle-group mp-toggle-group--segmented"
             >
-              <v-btn value="desktop" class="text-none" size="small" prepend-icon="mdi-monitor">Desktop</v-btn>
-              <v-btn value="mobile" class="text-none" size="small" prepend-icon="mdi-cellphone">Mobile</v-btn>
+              <v-btn value="desktop" class="text-none" size="small" prepend-icon="monitor">Desktop</v-btn>
+              <v-btn value="mobile" class="text-none" size="small" prepend-icon="smartphone">Mobile</v-btn>
             </v-btn-toggle>
           </div>
 
@@ -328,15 +328,15 @@ function finish() { saveSnack.value = true; setTimeout(() => router.push('/marke
           <v-card variant="flat" border rounded="xl" class="pa-8">
             <div class="text-h6 font-weight-bold mb-4">Form Summary</div>
             <v-list density="compact" class="pa-0">
-              <v-list-item class="px-0"><template v-slot:prepend><v-icon size="18" color="primary">mdi-form-select</v-icon></template><v-list-item-title class="text-body-2"><strong>Name:</strong> {{ formName }}</v-list-item-title></v-list-item>
-              <v-list-item class="px-0"><template v-slot:prepend><v-icon size="18" color="primary">mdi-format-list-bulleted</v-icon></template><v-list-item-title class="text-body-2"><strong>List:</strong> {{ selectedList }}</v-list-item-title></v-list-item>
-              <v-list-item class="px-0"><template v-slot:prepend><v-icon size="18" color="primary">mdi-cellphone-text</v-icon></template><v-list-item-title class="text-body-2"><strong>Type:</strong> {{ formType === 'popup' ? 'Popup Overlay' : 'Embedded Form' }}</v-list-item-title></v-list-item>
-              <v-list-item class="px-0"><template v-slot:prepend><v-icon size="18" color="primary">mdi-eye</v-icon></template><v-list-item-title class="text-body-2"><strong>Trigger:</strong> {{ {time:'Time on page', exit:'Exit intent', scroll:'Scroll depth', immediate:'Immediate'}[displayTrigger] }}</v-list-item-title></v-list-item>
+              <v-list-item class="px-0"><template v-slot:prepend><v-icon size="18" color="primary">list-checks</v-icon></template><v-list-item-title class="text-body-2"><strong>Name:</strong> {{ formName }}</v-list-item-title></v-list-item>
+              <v-list-item class="px-0"><template v-slot:prepend><v-icon size="18" color="primary">list</v-icon></template><v-list-item-title class="text-body-2"><strong>List:</strong> {{ selectedList }}</v-list-item-title></v-list-item>
+              <v-list-item class="px-0"><template v-slot:prepend><v-icon size="18" color="primary">smartphone</v-icon></template><v-list-item-title class="text-body-2"><strong>Type:</strong> {{ formType === 'popup' ? 'Popup Overlay' : 'Embedded Form' }}</v-list-item-title></v-list-item>
+              <v-list-item class="px-0"><template v-slot:prepend><v-icon size="18" color="primary">eye</v-icon></template><v-list-item-title class="text-body-2"><strong>Trigger:</strong> {{ {time:'Time on page', exit:'Exit intent', scroll:'Scroll depth', immediate:'Immediate'}[displayTrigger] }}</v-list-item-title></v-list-item>
             </v-list>
             <v-divider class="my-4"></v-divider>
             <div class="d-flex gap-3 justify-end">
               <v-btn variant="outlined" class="text-none" @click="step=3">Back to Design</v-btn>
-              <v-btn color="success" variant="elevated" class="text-none" prepend-icon="mdi-check" @click="finish()">Publish Form</v-btn>
+              <v-btn color="success" variant="elevated" class="text-none" prepend-icon="check" @click="finish()">Publish Form</v-btn>
             </div>
           </v-card>
         </div>
@@ -344,7 +344,7 @@ function finish() { saveSnack.value = true; setTimeout(() => router.push('/marke
     </div>
 
     <v-snackbar v-model="saveSnack" :timeout="2500" color="success" rounded="pill" location="bottom center">
-      <div class="d-flex align-center gap-2"><v-icon>mdi-check-circle</v-icon> Form published!</div>
+      <div class="d-flex align-center gap-2"><v-icon>circle-check</v-icon> Form published!</div>
     </v-snackbar>
   </div>
 </template>

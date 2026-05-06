@@ -106,7 +106,7 @@ function handleEdit() {
   <div class="wizard-davinci d-flex flex-column ga-5">
     <div>
       <div class="d-flex align-center ga-2 mb-2">
-        <v-icon size="20" color="secondary">mdi-creation</v-icon>
+        <v-icon size="20" color="secondary">sparkles</v-icon>
         <div class="text-subtitle-2 font-weight-bold">Describe the widget you want</div>
       </div>
       <div class="text-body-2 text-medium-emphasis mb-3">
@@ -119,7 +119,7 @@ function handleEdit() {
         placeholder="e.g. Show revenue by channel for the last 30 days"
         density="comfortable"
         variant="outlined"
-        prepend-inner-icon="mdi-creation"
+        prepend-inner-icon="sparkles"
         hide-details
       />
 
@@ -140,7 +140,7 @@ function handleEdit() {
       <v-btn
         color="secondary"
         variant="flat"
-        prepend-icon="mdi-creation"
+        prepend-icon="sparkles"
         class="text-none mt-4"
         :disabled="!prompt.trim() || status === 'loading'"
         :loading="status === 'loading'"
@@ -153,7 +153,7 @@ function handleEdit() {
     <v-divider />
 
     <div v-if="status === 'idle'" class="wizard-davinci__placeholder">
-      <v-icon size="36" color="medium-emphasis" class="mb-2">mdi-creation</v-icon>
+      <v-icon size="36" color="medium-emphasis" class="mb-2">sparkles</v-icon>
       <div class="text-body-2 text-medium-emphasis">
         Your generated widget preview will appear here.
       </div>
@@ -165,7 +165,7 @@ function handleEdit() {
     </div>
 
     <div v-else-if="status === 'no-match'" class="d-flex flex-column align-center text-center pa-6">
-      <v-icon size="36" color="warning" class="mb-2">mdi-magnify-remove-outline</v-icon>
+      <v-icon size="36" color="warning" class="mb-2">search-x</v-icon>
       <div class="text-subtitle-2 font-weight-bold mb-1">Da Vinci couldn’t map that prompt</div>
       <div class="text-body-2 text-medium-emphasis mb-3">
         Try one of the suggestions or describe a metric available for this account.
@@ -187,7 +187,7 @@ function handleEdit() {
 
     <div v-else-if="status === 'ready' && draft && previewWidget" class="d-flex flex-column ga-3">
       <div class="d-flex align-center ga-2">
-        <v-chip size="small" color="secondary" variant="tonal" prepend-icon="mdi-creation">Da Vinci draft</v-chip>
+        <v-chip size="small" color="secondary" variant="tonal" prepend-icon="sparkles">Da Vinci draft</v-chip>
         <span class="text-body-2 text-medium-emphasis">
           {{ draft.aiProvenance?.summary }}
         </span>
@@ -201,7 +201,7 @@ function handleEdit() {
       />
 
       <div class="d-flex align-center justify-space-between flex-wrap ga-2 mt-2">
-        <v-btn variant="text" prepend-icon="mdi-refresh" class="text-none" @click="tryAnother">
+        <v-btn variant="text" prepend-icon="refresh-cw" class="text-none" @click="tryAnother">
           Try another prompt
         </v-btn>
         <div class="d-flex align-center ga-2">

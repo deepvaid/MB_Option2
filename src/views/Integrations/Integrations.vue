@@ -49,10 +49,10 @@ const filteredApps = computed(() => {
           <v-card-text class="d-flex flex-column h-100 pa-6">
              <div class="d-flex align-center justify-space-between mb-6">
                  <v-avatar size="56" :color="app.connected ? 'primary-lighten-1' : 'grey-lighten-4'" class="mr-4 text-primary">
-                   <v-icon size="32">{{ app.category === 'Commerce' ? 'mdi-shopping-outline' : app.category === 'CRM' ? 'mdi-cloud-outline' : 'mdi-api' }}</v-icon>
+                   <v-icon size="32">{{ app.category === 'Commerce' ? 'shopping-cart' : app.category === 'CRM' ? 'cloud' : 'code-2' }}</v-icon>
                  </v-avatar>
                  <v-chip size="small" :color="app.connected ? 'success' : 'grey'" variant="flat" class="font-weight-bold px-3 py-1 text-uppercase text-caption">
-                   <v-icon start size="14" v-if="app.connected">mdi-check-circle</v-icon>
+                   <v-icon start size="14" v-if="app.connected">circle-check</v-icon>
                    {{ app.connected ? 'Active' : 'Unconfigured' }}
                  </v-chip>
              </div>

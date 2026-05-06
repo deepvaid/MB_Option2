@@ -24,7 +24,7 @@ const emit = defineEmits<{
     <v-card-text class="pa-4">
       <div class="d-flex align-start ga-3">
         <v-avatar :color="color || 'primary'" variant="tonal" size="36">
-          <v-icon size="20">{{ icon || 'mdi-lightning-bolt' }}</v-icon>
+          <v-icon size="20">{{ icon || 'zap' }}</v-icon>
         </v-avatar>
         <div class="flex-grow-1">
           <div class="text-subtitle-2 font-weight-bold mb-1">{{ title }}</div>

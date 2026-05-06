@@ -112,10 +112,10 @@ export const Playground: Story = {
     setup() {
       const menuOpen = ref(false)
       const items = [
-        { icon: 'mdi-pencil', title: 'Edit' },
-        { icon: 'mdi-content-copy', title: 'Duplicate' },
-        { icon: 'mdi-archive', title: 'Archive' },
-        { icon: 'mdi-delete', title: 'Delete', color: 'error' },
+        { icon: 'pencil', title: 'Edit' },
+        { icon: 'copy', title: 'Duplicate' },
+        { icon: 'archive', title: 'Archive' },
+        { icon: 'trash-2', title: 'Delete', color: 'error' },
       ]
       return { args, menuOpen, items }
     },
@@ -130,7 +130,7 @@ export const Playground: Story = {
           :offset="args.offset || undefined"
         >
           <template #activator="{ props }">
-            <v-btn v-bind="props" icon="mdi-dots-vertical" variant="text" />
+            <v-btn v-bind="props" icon="more-vertical" variant="text" />
           </template>
 
           <v-list min-width="200px">
@@ -159,15 +159,15 @@ export const ContextMenu: Story = {
       <div class="pa-6">
         <v-menu v-model="menuOpen" location="bottom start">
           <template #activator="{ props }">
-            <v-btn v-bind="props" icon="mdi-dots-horizontal" variant="text" />
+            <v-btn v-bind="props" icon="more-horizontal" variant="text" />
           </template>
 
           <v-list min-width="200px">
-            <v-list-item prepend-icon="mdi-pencil" title="Edit" />
-            <v-list-item prepend-icon="mdi-content-copy" title="Duplicate" />
+            <v-list-item prepend-icon="pencil" title="Edit" />
+            <v-list-item prepend-icon="copy" title="Duplicate" />
             <v-divider />
-            <v-list-item prepend-icon="mdi-archive" title="Archive" />
-            <v-list-item prepend-icon="mdi-delete" title="Delete" color="error" />
+            <v-list-item prepend-icon="archive" title="Archive" />
+            <v-list-item prepend-icon="trash-2" title="Delete" color="error" />
           </v-list>
         </v-menu>
       </div>
@@ -186,15 +186,15 @@ export const DropdownActions: Story = {
       <div class="pa-6">
         <v-menu v-model="menuOpen">
           <template #activator="{ props }">
-            <v-btn v-bind="props" text="Actions" append-icon="mdi-chevron-down" />
+            <v-btn v-bind="props" text="Actions" append-icon="chevron-down" />
           </template>
 
           <v-list min-width="200px">
-            <v-list-item prepend-icon="mdi-download" title="Export" />
-            <v-list-item prepend-icon="mdi-upload" title="Import" />
+            <v-list-item prepend-icon="download" title="Export" />
+            <v-list-item prepend-icon="upload" title="Import" />
             <v-divider />
-            <v-list-item prepend-icon="mdi-refresh" title="Refresh" />
-            <v-list-item prepend-icon="mdi-printer" title="Print" />
+            <v-list-item prepend-icon="refresh-cw" title="Refresh" />
+            <v-list-item prepend-icon="printer" title="Print" />
           </v-list>
         </v-menu>
       </div>

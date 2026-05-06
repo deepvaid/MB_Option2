@@ -67,7 +67,7 @@ const invoices = [
         title="Invoice History"
       >
         <template #actions>
-          <v-btn variant="outlined" prepend-icon="mdi-download" size="small" class="text-none">Download All</v-btn>
+          <v-btn variant="outlined" prepend-icon="download" size="small" class="text-none">Download All</v-btn>
         </template>
       </MpDataTableToolbar>
       <v-data-table :headers="headers" :items="invoices" :search="search" hover density="comfortable" :items-per-page="10" fixed-header class="flex-grow-1">

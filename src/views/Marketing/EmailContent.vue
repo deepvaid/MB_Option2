@@ -20,7 +20,7 @@ const items = [
       ]"
     >
       <template #actions>
-        <v-btn color="primary" variant="flat" prepend-icon="mdi-plus" class="text-none">Create Content</v-btn>
+        <v-btn color="primary" variant="flat" prepend-icon="plus" class="text-none">Create Content</v-btn>
       </template>
     </MpPageHeader>
 
@@ -28,7 +28,7 @@ const items = [
       <v-col cols="12" md="4" v-for="item in items" :key="item.name">
         <v-card variant="flat" border rounded="xl" class="h-100 d-flex flex-column">
           <div class="bg-surface-variant d-flex justify-center align-center rounded-t-xl" style="height: 150px;">
-            <v-icon size="48" color="medium-emphasis">mdi-email-outline</v-icon>
+            <v-icon size="48" color="medium-emphasis">mail</v-icon>
           </div>
           <v-card-text class="pa-4 flex-grow-1">
             <div class="text-subtitle-1 font-weight-bold mb-1">{{ item.name }}</div>

@@ -59,7 +59,7 @@ function clearAllFilters() {
       ]"
     >
       <template #actions>
-        <v-btn color="primary" variant="flat" prepend-icon="mdi-plus" class="text-none">Create Survey</v-btn>
+        <v-btn color="primary" variant="flat" prepend-icon="plus" class="text-none">Create Survey</v-btn>
       </template>
     </MpPageHeader>
 
@@ -103,12 +103,12 @@ function clearAllFilters() {
         <template v-slot:item.actions>
           <v-menu>
             <template v-slot:activator="{ props }">
-              <v-btn v-bind="props" icon="mdi-dots-horizontal" variant="text" size="small" />
+              <v-btn v-bind="props" icon="more-horizontal" variant="text" size="small" />
             </template>
             <v-list density="compact" rounded="xl" nav min-width="160" elevation="8">
-              <v-list-item prepend-icon="mdi-pencil-outline">Edit</v-list-item>
-              <v-list-item prepend-icon="mdi-chart-bar">View Results</v-list-item>
-              <v-list-item prepend-icon="mdi-delete-outline" class="text-error">Delete</v-list-item>
+              <v-list-item prepend-icon="pencil">Edit</v-list-item>
+              <v-list-item prepend-icon="bar-chart-2">View Results</v-list-item>
+              <v-list-item prepend-icon="trash-2" class="text-error">Delete</v-list-item>
             </v-list>
           </v-menu>
         </template>

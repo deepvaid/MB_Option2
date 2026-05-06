@@ -60,7 +60,7 @@ function open() {
           @click="open"
         >
           <v-avatar size="44" variant="tonal" :color="accentColor">
-            <v-icon size="22">{{ dashboard.icon ?? 'mdi-view-dashboard-outline' }}</v-icon>
+            <v-icon size="22">{{ dashboard.icon ?? 'layout-dashboard' }}</v-icon>
           </v-avatar>
           <div class="flex-grow-1 min-width-0 text-left">
             <div class="d-flex align-center ga-2 flex-wrap mb-1">
@@ -89,7 +89,7 @@ function open() {
             <template #activator="{ props: tipProps }">
               <v-btn
                 v-bind="tipProps"
-                :icon="dashboard.isDefault ? 'mdi-bookmark-check' : 'mdi-bookmark-outline'"
+                :icon="dashboard.isDefault ? 'bookmark-check' : 'bookmark'"
                 :color="dashboard.isDefault ? 'success' : undefined"
                 variant="text"
                 size="small"
@@ -100,7 +100,7 @@ function open() {
             </template>
           </v-tooltip>
           <v-btn
-            :icon="dashboard.favorite ? 'mdi-star' : 'mdi-star-outline'"
+            :icon="dashboard.favorite ? 'star' : 'star'"
             :color="dashboard.favorite ? 'warning' : undefined"
             variant="text"
             size="small"
@@ -111,7 +111,7 @@ function open() {
             <template #activator="{ props: menuProps }">
               <v-btn
                 v-bind="menuProps"
-                icon="mdi-dots-vertical"
+                icon="more-vertical"
                 variant="text"
                 size="small"
                 :aria-label="`More actions for ${dashboard.name}`"
@@ -119,33 +119,33 @@ function open() {
               />
             </template>
             <v-list density="compact" min-width="200">
-              <v-list-item prepend-icon="mdi-arrow-top-right" title="Open" @click="open" />
+              <v-list-item prepend-icon="arrow-up-right" title="Open" @click="open" />
               <v-list-item
-                prepend-icon="mdi-pencil-outline"
+                prepend-icon="pencil"
                 title="Edit"
                 @click="emit('edit', dashboard.id)"
               />
               <v-list-item
-                prepend-icon="mdi-content-copy"
+                prepend-icon="copy"
                 title="Duplicate"
                 @click="emit('duplicate', dashboard.id)"
               />
               <v-list-item
                 v-if="!dashboard.isDefault"
-                prepend-icon="mdi-bookmark-check-outline"
+                prepend-icon="bookmark-check"
                 title="Set as default"
                 @click="emit('setDefault', dashboard.id)"
               />
               <v-list-item
                 v-if="isSystem"
-                prepend-icon="mdi-backup-restore"
+                prepend-icon="rotate-ccw"
                 title="Reset to defaults"
                 @click="emit('reset', dashboard.id)"
               />
               <v-divider v-if="!isSystem" class="my-1" />
               <v-list-item
                 v-if="!isSystem"
-                prepend-icon="mdi-delete-outline"
+                prepend-icon="trash-2"
                 title="Delete"
                 base-color="error"
                 @click="emit('delete', dashboard.id)"
@@ -157,15 +157,15 @@ function open() {
 
       <div class="dashboard-list-card__meta">
         <div class="dashboard-list-card__meta-item">
-          <v-icon size="14">mdi-view-grid-outline</v-icon>
+          <v-icon size="14">grid-2x2</v-icon>
           <span>{{ dashboard.widgets.length }} widget{{ dashboard.widgets.length === 1 ? '' : 's' }}</span>
         </div>
         <div class="dashboard-list-card__meta-item">
-          <v-icon size="14">mdi-clock-outline</v-icon>
+          <v-icon size="14">clock</v-icon>
           <span>Updated {{ updatedRelative }}</span>
         </div>
         <div v-if="dashboard.lastViewedAt" class="dashboard-list-card__meta-item">
-          <v-icon size="14">mdi-eye-outline</v-icon>
+          <v-icon size="14">eye</v-icon>
           <span>Visited {{ relativeTime(dashboard.lastViewedAt) }}</span>
         </div>
       </div>

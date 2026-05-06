@@ -81,13 +81,13 @@ const meta = {
     prependIcon: {
       control: 'text',
       description:
-        'MDI icon class to prepend (left side), e.g. `mdi-plus`. Leave empty for no icon.',
+        'Lucide icon to prepend (left side), e.g. `plus`. Leave empty for no icon.',
       table: { category: 'Icons', defaultValue: { summary: '—' } },
     },
     appendIcon: {
       control: 'text',
       description:
-        'MDI icon class to append (right side), e.g. `mdi-chevron-down`. Typically used for dropdowns.',
+        'Lucide icon to append (right side), e.g. `chevron-down`. Typically used for dropdowns.',
       table: { category: 'Icons', defaultValue: { summary: '—' } },
     },
 
@@ -234,12 +234,12 @@ export const WithIcons: Story = {
   render: () => ({
     template: `
       <div class="d-flex align-center flex-wrap ga-3">
-        <v-btn color="primary" variant="flat" prepend-icon="mdi-plus" class="text-none">Add Item</v-btn>
-        <v-btn color="primary" variant="outlined" append-icon="mdi-chevron-down" class="text-none">Options</v-btn>
-        <v-btn color="primary" variant="tonal" prepend-icon="mdi-download" class="text-none">Export</v-btn>
-        <v-btn variant="outlined" prepend-icon="mdi-upload" class="text-none">Import</v-btn>
-        <v-btn icon="mdi-dots-horizontal" variant="text" color="medium-emphasis" />
-        <v-btn icon="mdi-pencil-outline" variant="tonal" color="primary" size="small" />
+        <v-btn color="primary" variant="flat" prepend-icon="plus" class="text-none">Add Item</v-btn>
+        <v-btn color="primary" variant="outlined" append-icon="chevron-down" class="text-none">Options</v-btn>
+        <v-btn color="primary" variant="tonal" prepend-icon="download" class="text-none">Export</v-btn>
+        <v-btn variant="outlined" prepend-icon="upload" class="text-none">Import</v-btn>
+        <v-btn icon="more-horizontal" variant="text" color="medium-emphasis" />
+        <v-btn icon="pencil" variant="tonal" color="primary" size="small" />
       </div>
     `,
   }),
@@ -284,9 +284,9 @@ export const ButtonGroup: Story = {
     template: `
       <div class="d-flex align-center ga-3">
         <v-btn-group variant="outlined" divided rounded="lg">
-          <v-btn class="text-none" prepend-icon="mdi-format-list-bulleted">List</v-btn>
-          <v-btn class="text-none" prepend-icon="mdi-view-grid">Grid</v-btn>
-          <v-btn class="text-none" prepend-icon="mdi-chart-bar">Chart</v-btn>
+          <v-btn class="text-none" prepend-icon="list">List</v-btn>
+          <v-btn class="text-none" prepend-icon="grid-2x2">Grid</v-btn>
+          <v-btn class="text-none" prepend-icon="bar-chart-2">Chart</v-btn>
         </v-btn-group>
       </div>
     `,
@@ -329,12 +329,12 @@ export const Showcase: Story = {
         <div>
           <div class="text-overline text-medium-emphasis mb-3">With Icons</div>
           <div class="d-flex align-center flex-wrap ga-3">
-            <v-btn color="primary" variant="flat" prepend-icon="mdi-plus" class="text-none">Add Item</v-btn>
-            <v-btn color="primary" variant="outlined" append-icon="mdi-chevron-down" class="text-none">Options</v-btn>
-            <v-btn color="primary" variant="tonal" prepend-icon="mdi-download" class="text-none">Export</v-btn>
-            <v-btn variant="outlined" prepend-icon="mdi-upload" class="text-none">Import</v-btn>
-            <v-btn icon="mdi-dots-horizontal" variant="text" color="medium-emphasis" />
-            <v-btn icon="mdi-pencil-outline" variant="tonal" color="primary" size="small" />
+            <v-btn color="primary" variant="flat" prepend-icon="plus" class="text-none">Add Item</v-btn>
+            <v-btn color="primary" variant="outlined" append-icon="chevron-down" class="text-none">Options</v-btn>
+            <v-btn color="primary" variant="tonal" prepend-icon="download" class="text-none">Export</v-btn>
+            <v-btn variant="outlined" prepend-icon="upload" class="text-none">Import</v-btn>
+            <v-btn icon="more-horizontal" variant="text" color="medium-emphasis" />
+            <v-btn icon="pencil" variant="tonal" color="primary" size="small" />
           </div>
         </div>
 
@@ -387,9 +387,9 @@ export const Showcase: Story = {
           <div class="text-overline text-medium-emphasis mb-3">Button Group</div>
           <div class="d-flex align-center ga-3">
             <v-btn-group variant="outlined" divided rounded="lg">
-              <v-btn class="text-none" prepend-icon="mdi-format-list-bulleted">List</v-btn>
-              <v-btn class="text-none" prepend-icon="mdi-view-grid">Grid</v-btn>
-              <v-btn class="text-none" prepend-icon="mdi-chart-bar">Chart</v-btn>
+              <v-btn class="text-none" prepend-icon="list">List</v-btn>
+              <v-btn class="text-none" prepend-icon="grid-2x2">Grid</v-btn>
+              <v-btn class="text-none" prepend-icon="bar-chart-2">Chart</v-btn>
             </v-btn-group>
           </div>
         </div>

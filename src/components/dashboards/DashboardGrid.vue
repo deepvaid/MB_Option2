@@ -117,11 +117,11 @@ function handleLayoutUpdate(nextLayout: Array<{ i: string; x: number; y: number;
   <div class="dashboard-grid">
     <MpEmptyState
       v-if="widgets.length === 0"
-      icon="mdi-view-grid-plus-outline"
+      icon="grid-2x2-plus"
       title="This dashboard is empty"
       description="Add a manual widget or ask Da Vinci to create one from your account data."
       action-label="Add widget"
-      action-icon="mdi-plus"
+      action-icon="plus"
       @action="emit('addWidget')"
     />
 

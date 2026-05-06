@@ -245,9 +245,9 @@ export const WithIcons: Story = {
     template: `
       <div class="pa-6">
         <v-tabs v-model="tab">
-          <v-tab value="home" prepend-icon="mdi-home">Home</v-tab>
-          <v-tab value="chart" prepend-icon="mdi-chart-box">Analytics</v-tab>
-          <v-tab value="settings" prepend-icon="mdi-cog">Settings</v-tab>
+          <v-tab value="home" prepend-icon="home">Home</v-tab>
+          <v-tab value="chart" prepend-icon="bar-chart-2">Analytics</v-tab>
+          <v-tab value="settings" prepend-icon="settings">Settings</v-tab>
         </v-tabs>
 
         <v-tabs-window v-model="tab" class="mt-4">

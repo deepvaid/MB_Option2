@@ -268,13 +268,13 @@ export const Showcase: Story = {
         <h3 class="text-h6 mb-4">With Icons & Helpers</h3>
         <v-row class="mb-6">
           <v-col cols="12" sm="6">
-            <v-text-field label="Search" variant="outlined" prepend-inner-icon="mdi-magnify" />
+            <v-text-field label="Search" variant="outlined" prepend-inner-icon="search" />
           </v-col>
           <v-col cols="12" sm="6">
-            <v-text-field label="Email" variant="outlined" prepend-inner-icon="mdi-email" />
+            <v-text-field label="Email" variant="outlined" prepend-inner-icon="mail" />
           </v-col>
           <v-col cols="12" sm="6">
-            <v-text-field label="Password" type="password" variant="outlined" prepend-inner-icon="mdi-lock" append-inner-icon="mdi-eye-off" />
+            <v-text-field label="Password" type="password" variant="outlined" prepend-inner-icon="lock" append-inner-icon="eye-off" />
           </v-col>
           <v-col cols="12" sm="6">
             <v-text-field label="With hint" variant="outlined" hint="This is a helpful hint" />
@@ -359,10 +359,10 @@ export const WithIcons: Story = {
   render: () => ({
     template: `
       <div class="pa-6">
-        <v-text-field label="Search" prepend-inner-icon="mdi-magnify" variant="outlined" placeholder="Search..." class="mb-4" />
-        <v-text-field label="Email" prepend-inner-icon="mdi-email" variant="outlined" placeholder="your@email.com" class="mb-4" />
-        <v-text-field label="Password" type="password" prepend-inner-icon="mdi-lock" append-inner-icon="mdi-eye-off" variant="outlined" class="mb-4" />
-        <v-text-field label="Website" prepend-inner-icon="mdi-globe" append-inner-icon="mdi-open-in-new" variant="outlined" />
+        <v-text-field label="Search" prepend-inner-icon="search" variant="outlined" placeholder="Search..." class="mb-4" />
+        <v-text-field label="Email" prepend-inner-icon="mail" variant="outlined" placeholder="your@email.com" class="mb-4" />
+        <v-text-field label="Password" type="password" prepend-inner-icon="lock" append-inner-icon="eye-off" variant="outlined" class="mb-4" />
+        <v-text-field label="Website" prepend-inner-icon="globe" append-inner-icon="external-link" variant="outlined" />
       </div>
     `,
   }),

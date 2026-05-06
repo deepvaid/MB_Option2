@@ -27,14 +27,14 @@ const settingsRoute = computed(() => ({ name: 'Settings' as const, params: { acc
 const appsRoute = computed(() => ({ name: 'AppStore' as const, params: { accountId: currentAccountId.value } }))
 
 const searchSources = computed(() => [
-  { group: 'Dashboards', icon: 'mdi-view-dashboard-outline', title: 'Marketing Dashboard', subtitle: 'Performance, revenue, and audience widgets', route: { name: 'Dashboard' as const, params: { accountId: currentAccountId.value } } },
-  { group: 'Dashboards', icon: 'mdi-view-list-outline', title: 'Manage dashboards', subtitle: 'Create, edit, and assign dashboards', route: { name: 'DashboardsList' as const, params: { accountId: currentAccountId.value } } },
-  { group: 'Commerce', icon: 'mdi-shopping-outline', title: 'Sales orders', subtitle: 'Find orders, payments, and fulfillment status', route: { name: 'SalesOrders' as const, params: { accountId: currentAccountId.value } } },
-  { group: 'Marketing', icon: 'mdi-email-outline', title: 'Email campaigns', subtitle: 'Search campaigns, tags, folders, and sends', route: { name: 'EmailCampaigns' as const, params: { accountId: currentAccountId.value } } },
-  { group: 'Contacts', icon: 'mdi-account-group-outline', title: 'Contacts', subtitle: 'Profiles, lists, segments, and fields', route: { name: 'AllContacts' as const, params: { accountId: currentAccountId.value } } },
-  { group: 'AI', icon: 'mdi-creation', title: 'Da Vinci insights', subtitle: 'Ask for automations, insights, and widget ideas', route: { name: 'DaVinciDashboard' as const, params: { accountId: currentAccountId.value } } },
-  { group: 'Apps', icon: 'mdi-puzzle-outline', title: 'Installed apps', subtitle: 'Connectors available for this customer', route: appsRoute.value },
-  { group: 'Admin', icon: 'mdi-cog-outline', title: 'Settings', subtitle: 'Company, billing, users, and permissions', route: settingsRoute.value },
+  { group: 'Dashboards', icon: 'layout-dashboard', title: 'Marketing Dashboard', subtitle: 'Performance, revenue, and audience widgets', route: { name: 'Dashboard' as const, params: { accountId: currentAccountId.value } } },
+  { group: 'Dashboards', icon: 'layout-list', title: 'Manage dashboards', subtitle: 'Create, edit, and assign dashboards', route: { name: 'DashboardsList' as const, params: { accountId: currentAccountId.value } } },
+  { group: 'Commerce', icon: 'shopping-cart', title: 'Sales orders', subtitle: 'Find orders, payments, and fulfillment status', route: { name: 'SalesOrders' as const, params: { accountId: currentAccountId.value } } },
+  { group: 'Marketing', icon: 'mail', title: 'Email campaigns', subtitle: 'Search campaigns, tags, folders, and sends', route: { name: 'EmailCampaigns' as const, params: { accountId: currentAccountId.value } } },
+  { group: 'Contacts', icon: 'users', title: 'Contacts', subtitle: 'Profiles, lists, segments, and fields', route: { name: 'AllContacts' as const, params: { accountId: currentAccountId.value } } },
+  { group: 'AI', icon: 'sparkles', title: 'Da Vinci insights', subtitle: 'Ask for automations, insights, and widget ideas', route: { name: 'DaVinciDashboard' as const, params: { accountId: currentAccountId.value } } },
+  { group: 'Apps', icon: 'puzzle', title: 'Installed apps', subtitle: 'Connectors available for this customer', route: appsRoute.value },
+  { group: 'Admin', icon: 'settings', title: 'Settings', subtitle: 'Company, billing, users, and permissions', route: settingsRoute.value },
 ])
 
 const filteredSearchGroups = computed(() => {
@@ -91,7 +91,7 @@ function openStub(label: string) {
             density="compact"
             variant="outlined"
             hide-details
-            prepend-inner-icon="mdi-magnify"
+            prepend-inner-icon="search"
             placeholder="Search or ask Da Vinci anything..."
             aria-label="Universal AI search"
             rounded="lg"
@@ -104,7 +104,7 @@ function openStub(label: string) {
         </template>
         <v-card width="620" rounded="lg" flat border class="appbar-search-menu">
           <div class="appbar-search-menu__hero">
-            <v-icon size="20" color="secondary">mdi-creation</v-icon>
+            <v-icon size="20" color="secondary">sparkles</v-icon>
             <div class="min-width-0">
               <div class="text-subtitle-2 font-weight-bold">Ask Da Vinci</div>
               <div class="text-body-2 text-medium-emphasis text-truncate">
@@ -133,7 +133,7 @@ function openStub(label: string) {
                   <strong>{{ item.title }}</strong>
                   <small>{{ item.subtitle }}</small>
                 </span>
-                <v-icon size="16">mdi-arrow-right</v-icon>
+                <v-icon size="16">arrow-right</v-icon>
               </button>
             </div>
           </div>
@@ -157,7 +157,7 @@ function openStub(label: string) {
               @click="copilotOpen = !copilotOpen"
               :class="['copilot-trigger', { 'copilot-trigger--active': copilotOpen }]"
             >
-              <v-icon>mdi-creation</v-icon>
+              <v-icon>sparkles</v-icon>
             </v-btn>
           </template>
         </v-tooltip>
@@ -172,7 +172,7 @@ function openStub(label: string) {
               class="position-relative"
               :aria-label="notificationCount > 0 ? `Notifications, ${notificationCount} unread` : 'Notifications'"
             >
-              <v-icon>mdi-bell-outline</v-icon>
+              <v-icon>bell</v-icon>
               <v-badge v-if="notificationCount > 0" :content="notificationCount" color="error" floating class="notification-badge" />
             </v-btn>
           </template>
@@ -180,19 +180,19 @@ function openStub(label: string) {
 
         <v-tooltip text="Galaxy Help portal" location="bottom">
           <template #activator="{ props }">
-            <v-btn v-bind="props" icon="mdi-book-open-page-variant-outline" variant="text" size="small" aria-label="Galaxy Help portal" @click="openStub('Galaxy Help portal')" />
+            <v-btn v-bind="props" icon="book-open" variant="text" size="small" aria-label="Galaxy Help portal" @click="openStub('Galaxy Help portal')" />
           </template>
         </v-tooltip>
 
         <v-tooltip text="Apps" location="bottom">
           <template #activator="{ props }">
-            <v-btn v-bind="props" icon="mdi-puzzle-outline" variant="text" size="small" aria-label="Apps" :to="appsRoute" />
+            <v-btn v-bind="props" icon="puzzle" variant="text" size="small" aria-label="Apps" :to="appsRoute" />
           </template>
         </v-tooltip>
 
         <v-tooltip text="Settings" location="bottom">
           <template #activator="{ props }">
-            <v-btn v-bind="props" icon="mdi-cog-outline" variant="text" size="small" aria-label="Settings" :to="settingsRoute" />
+            <v-btn v-bind="props" icon="settings" variant="text" size="small" aria-label="Settings" :to="settingsRoute" />
           </template>
         </v-tooltip>
       </div>
@@ -207,7 +207,7 @@ function openStub(label: string) {
           >
             <v-avatar color="primary" size="30" class="user-avatar-ring appbar-avatar-sm">{{ userInitials }}</v-avatar>
             <span class="appbar-user-name d-none d-md-block">{{ userName }}</span>
-            <v-icon size="16" color="medium-emphasis">mdi-chevron-down</v-icon>
+            <v-icon size="16" color="medium-emphasis">chevron-down</v-icon>
           </button>
         </template>
           <v-card width="280" rounded="lg" elevation="0" class="user-menu-card">
@@ -224,9 +224,9 @@ function openStub(label: string) {
 
           <v-list density="compact" :border="false" class="px-2 pt-2 pb-1">
             <v-list-subheader class="text-uppercase font-weight-bold appbar-subheader">Personal</v-list-subheader>
-            <v-list-item prepend-icon="mdi-account-outline" title="My Profile" :to="settingsRoute" rounded="lg" class="mb-0 menu-item" />
+            <v-list-item prepend-icon="user" title="My Profile" :to="settingsRoute" rounded="lg" class="mb-0 menu-item" />
             <v-list-item
-              :prepend-icon="isDark ? 'mdi-weather-night' : 'mdi-weather-sunny'"
+              :prepend-icon="isDark ? 'moon' : 'sun'"
               title="Theme"
               rounded="lg"
               class="mb-0 menu-item theme-toggle-item"
@@ -251,17 +251,17 @@ function openStub(label: string) {
 
           <v-list density="compact" :border="false" class="px-2 pt-2 pb-1">
             <v-list-subheader class="text-uppercase font-weight-bold appbar-subheader">Account</v-list-subheader>
-            <v-list-item prepend-icon="mdi-cog-outline" title="Account Settings" :to="settingsRoute" rounded="lg" class="mb-0 menu-item" />
-            <v-list-item prepend-icon="mdi-credit-card-outline" title="Billing" :to="settingsRoute" rounded="lg" class="mb-0 menu-item" />
-            <v-list-item prepend-icon="mdi-map-clock-outline" title="Roadmap" rounded="lg" class="mb-0 menu-item" @click="openStub('Roadmap')" />
-            <v-list-item prepend-icon="mdi-shield-check-outline" title="System Status" rounded="lg" class="mb-0 menu-item" @click="openStub('System Status')" />
+            <v-list-item prepend-icon="settings" title="Account Settings" :to="settingsRoute" rounded="lg" class="mb-0 menu-item" />
+            <v-list-item prepend-icon="credit-card" title="Billing" :to="settingsRoute" rounded="lg" class="mb-0 menu-item" />
+            <v-list-item prepend-icon="map-pin" title="Roadmap" rounded="lg" class="mb-0 menu-item" @click="openStub('Roadmap')" />
+            <v-list-item prepend-icon="shield-check" title="System Status" rounded="lg" class="mb-0 menu-item" @click="openStub('System Status')" />
           </v-list>
 
           <v-divider class="mx-4" />
 
           <v-list density="compact" :border="false" class="px-2 py-1">
             <v-list-item
-              prepend-icon="mdi-logout"
+              prepend-icon="log-out"
               title="Sign Out"
               rounded="lg"
               class="menu-item sign-out-item"

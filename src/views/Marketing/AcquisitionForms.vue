@@ -15,23 +15,23 @@ const forms = ref([
 ])
 
 const statusColor = (s: string) => ({ Active: 'success', Draft: 'grey', Paused: 'warning' })[s as string] ?? 'default'
-const statusIcon = (s: string) => ({ Active: 'mdi-check-circle', Draft: 'mdi-pencil-circle', Paused: 'mdi-pause-circle' })[s as string] ?? 'mdi-help'
+const statusIcon = (s: string) => ({ Active: 'circle-check', Draft: 'pencil', Paused: 'circle-pause' })[s as string] ?? 'help-circle'
 
 const chooseDialog = ref(false)
 const selectedTemplate = ref<number | null>(null)
 const templateSearch = ref('')
 
 const templates = [
-  { id: 0, name: 'Blank Canvas', type: 'Modal', desc: 'Start from scratch with full creative control', icon: 'mdi-vector-square', color: 'grey', popular: false },
-  { id: 1, name: 'Newsletter Sign-up', type: 'Modal', desc: 'Simple email capture with high conversion rate', icon: 'mdi-email-newsletter', color: 'primary', popular: true },
-  { id: 2, name: 'Exit Intent', type: 'Modal', desc: 'Appear just as visitors are about to leave', icon: 'mdi-exit-to-app', color: 'warning', popular: true },
-  { id: 3, name: 'Discount Offer', type: 'Modal', desc: 'Offer a coupon code in exchange for email', icon: 'mdi-ticket-percent', color: 'success', popular: true },
-  { id: 4, name: 'VIP Club Invite', type: 'Modal', desc: 'Exclusive membership feel for top customers', icon: 'mdi-crown', color: 'warning', popular: false },
-  { id: 5, name: 'Product Announcement', type: 'Modal', desc: 'Announce new products with email capture', icon: 'mdi-new-box', color: 'secondary', popular: false },
-  { id: 6, name: 'Sidebar Newsletter', type: 'Embedded', desc: 'Non-intrusive embedded form for blog/content pages', icon: 'mdi-view-split-vertical', color: 'primary', popular: true },
-  { id: 7, name: 'Footer Subscribe', type: 'Embedded', desc: 'Footer-anchored form following GDPR best practices', icon: 'mdi-page-layout-footer', color: 'info', popular: false },
-  { id: 8, name: 'Two-Step Lead Capture', type: 'Modal', desc: 'Button click reveals form to improve qualified leads', icon: 'mdi-numeric-2-circle', color: 'purple', popular: false },
-  { id: 9, name: 'Countdown Urgency', type: 'Modal', desc: 'Timer-driven popup for limited-time offers', icon: 'mdi-timer-outline', color: 'error', popular: false },
+  { id: 0, name: 'Blank Canvas', type: 'Modal', desc: 'Start from scratch with full creative control', icon: 'square-dashed', color: 'grey', popular: false },
+  { id: 1, name: 'Newsletter Sign-up', type: 'Modal', desc: 'Simple email capture with high conversion rate', icon: 'newspaper', color: 'primary', popular: true },
+  { id: 2, name: 'Exit Intent', type: 'Modal', desc: 'Appear just as visitors are about to leave', icon: 'log-out', color: 'warning', popular: true },
+  { id: 3, name: 'Discount Offer', type: 'Modal', desc: 'Offer a coupon code in exchange for email', icon: 'percent', color: 'success', popular: true },
+  { id: 4, name: 'VIP Club Invite', type: 'Modal', desc: 'Exclusive membership feel for top customers', icon: 'crown', color: 'warning', popular: false },
+  { id: 5, name: 'Product Announcement', type: 'Modal', desc: 'Announce new products with email capture', icon: 'badge', color: 'secondary', popular: false },
+  { id: 6, name: 'Sidebar Newsletter', type: 'Embedded', desc: 'Non-intrusive embedded form for blog/content pages', icon: 'columns-2', color: 'primary', popular: true },
+  { id: 7, name: 'Footer Subscribe', type: 'Embedded', desc: 'Footer-anchored form following GDPR best practices', icon: 'panel-bottom', color: 'info', popular: false },
+  { id: 8, name: 'Two-Step Lead Capture', type: 'Modal', desc: 'Button click reveals form to improve qualified leads', icon: 'circle', color: 'purple', popular: false },
+  { id: 9, name: 'Countdown Urgency', type: 'Modal', desc: 'Timer-driven popup for limited-time offers', icon: 'timer', color: 'error', popular: false },
 ]
 
 const filterType = ref('All')
@@ -86,17 +86,17 @@ function clearAllFilters() {
       ]"
     >
       <template #actions>
-        <v-btn color="primary" variant="flat" prepend-icon="mdi-plus" class="text-none" @click="chooseDialog = true">Create Form</v-btn>
+        <v-btn color="primary" variant="flat" prepend-icon="plus" class="text-none" @click="chooseDialog = true">Create Form</v-btn>
       </template>
     </MpPageHeader>
 
     <div class="kpi-row d-flex gap-4">
       <v-col
         v-for="s in [
-          { label: 'Total Views', value: forms.reduce((a, f) => a + f.views, 0).toLocaleString(), color: 'primary', icon: 'mdi-eye-outline' },
-          { label: 'Total Conversions', value: forms.reduce((a, f) => a + f.conversions, 0).toLocaleString(), color: 'success', icon: 'mdi-account-plus' },
-          { label: 'Avg. Conv. Rate', value: ((forms.reduce((a, f) => a + f.rate, 0) / forms.length)).toFixed(1) + '%', color: 'warning', icon: 'mdi-percent' },
-          { label: 'Active Forms', value: forms.filter((f) => f.status === 'Active').length, color: 'secondary', icon: 'mdi-check-circle-outline' },
+          { label: 'Total Views', value: forms.reduce((a, f) => a + f.views, 0).toLocaleString(), color: 'primary', icon: 'eye' },
+          { label: 'Total Conversions', value: forms.reduce((a, f) => a + f.conversions, 0).toLocaleString(), color: 'success', icon: 'user-plus' },
+          { label: 'Avg. Conv. Rate', value: ((forms.reduce((a, f) => a + f.rate, 0) / forms.length)).toFixed(1) + '%', color: 'warning', icon: 'percent' },
+          { label: 'Active Forms', value: forms.filter((f) => f.status === 'Active').length, color: 'secondary', icon: 'circle-check' },
         ]"
         :key="s.label"
         cols="12"
@@ -123,7 +123,7 @@ function clearAllFilters() {
         selected-class="bg-primary text-white"
       >
         <v-btn
-          v-for="v in [{ val: 'grid', icon: 'grid', label: 'Grid' }, { val: 'list', icon: 'format-list-bulleted', label: 'List' }]"
+          v-for="v in [{ val: 'grid', icon: 'grid-2x2', label: 'Grid' }, { val: 'list', icon: 'list', label: 'List' }]"
           :key="v.val"
           :value="v.val"
           rounded="pill"
@@ -132,7 +132,7 @@ function clearAllFilters() {
           class="view-toggle-btn text-none px-4 mr-2"
           :class="viewMode === v.val ? '' : 'bg-grey-lighten-4 text-medium-emphasis'"
         >
-          <v-icon size="small" class="mr-1">mdi-{{ v.icon }}</v-icon> {{ v.label }}
+          <v-icon size="small" class="mr-1">{{ v.icon }}</v-icon> {{ v.label }}
         </v-btn>
       </v-btn-toggle>
     </div>
@@ -148,7 +148,7 @@ function clearAllFilters() {
         <v-card variant="flat" border rounded="xl" class="form-card overflow-hidden">
           <div class="form-preview d-flex align-center justify-center pa-4">
             <v-icon size="48" color="primary" class="form-preview-icon">
-              {{ form.type === 'Modal' ? 'mdi-dock-window' : 'mdi-view-split-vertical' }}
+              {{ form.type === 'Modal' ? 'panel-right' : 'columns-2' }}
             </v-icon>
           </div>
           <div class="pa-5">
@@ -162,13 +162,13 @@ function clearAllFilters() {
               </div>
               <v-menu>
                 <template v-slot:activator="{ props }">
-                  <v-btn v-bind="props" icon="mdi-dots-vertical" variant="text" size="small"></v-btn>
+                  <v-btn v-bind="props" icon="more-vertical" variant="text" size="small"></v-btn>
                 </template>
                 <v-list density="compact" rounded="xl" nav min-width="160" class="pa-2">
-                  <v-list-item prepend-icon="mdi-pencil-outline" rounded="lg" @click="router.push('/acquisition/forms/create')">Edit in Builder</v-list-item>
-                  <v-list-item prepend-icon="mdi-content-copy" rounded="lg">Duplicate</v-list-item>
-                  <v-list-item prepend-icon="mdi-code-tags" rounded="lg">Get Embed Code</v-list-item>
-                  <v-list-item prepend-icon="mdi-delete-outline" rounded="lg" class="text-error mt-1">Delete</v-list-item>
+                  <v-list-item prepend-icon="pencil" rounded="lg" @click="router.push('/acquisition/forms/create')">Edit in Builder</v-list-item>
+                  <v-list-item prepend-icon="copy" rounded="lg">Duplicate</v-list-item>
+                  <v-list-item prepend-icon="code-2" rounded="lg">Get Embed Code</v-list-item>
+                  <v-list-item prepend-icon="trash-2" rounded="lg" class="text-error mt-1">Delete</v-list-item>
                 </v-list>
               </v-menu>
             </div>
@@ -188,14 +188,14 @@ function clearAllFilters() {
             </div>
           </div>
           <div class="px-5 pb-5">
-            <v-btn block variant="tonal" color="primary" size="small" class="text-none" prepend-icon="mdi-pencil-outline" @click="router.push('/acquisition/forms/create')">Edit in Builder</v-btn>
+            <v-btn block variant="tonal" color="primary" size="small" class="text-none" prepend-icon="pencil" @click="router.push('/acquisition/forms/create')">Edit in Builder</v-btn>
           </div>
         </v-card>
       </v-col>
 
       <v-col cols="12" sm="6" md="4">
         <v-card variant="flat" border rounded="xl" class="pa-6 d-flex flex-column align-center justify-center text-center cursor-pointer add-card" style="min-height:280px;" @click="chooseDialog = true">
-          <v-icon size="40" color="primary" class="mb-3">mdi-plus-circle-outline</v-icon>
+          <v-icon size="40" color="primary" class="mb-3">circle-plus</v-icon>
           <div class="text-body-1 font-weight-bold mb-1">Create New Form</div>
           <div class="text-caption text-medium-emphasis">Choose a template and launch the form builder</div>
         </v-card>
@@ -255,9 +255,9 @@ function clearAllFilters() {
         <template v-slot:item.status="{ item }"><v-chip :color="statusColor(item.status)" size="x-small" variant="flat" rounded="lg">{{ item.status }}</v-chip></template>
         <template v-slot:item.actions>
           <div class="ActionButtons d-flex justify-end gap-1">
-            <v-tooltip text="Edit in Builder" location="top"><template v-slot:activator="{props}"><v-btn v-bind="props" icon="mdi-pencil-outline" variant="text" size="small" color="primary" @click="router.push('/acquisition/forms/create')"></v-btn></template></v-tooltip>
-            <v-tooltip text="Duplicate" location="top"><template v-slot:activator="{props}"><v-btn v-bind="props" icon="mdi-content-copy" variant="text" size="small"></v-btn></template></v-tooltip>
-            <v-tooltip text="Delete" location="top"><template v-slot:activator="{props}"><v-btn v-bind="props" icon="mdi-delete-outline" variant="text" size="small" color="error"></v-btn></template></v-tooltip>
+            <v-tooltip text="Edit in Builder" location="top"><template v-slot:activator="{props}"><v-btn v-bind="props" icon="pencil" variant="text" size="small" color="primary" @click="router.push('/acquisition/forms/create')"></v-btn></template></v-tooltip>
+            <v-tooltip text="Duplicate" location="top"><template v-slot:activator="{props}"><v-btn v-bind="props" icon="copy" variant="text" size="small"></v-btn></template></v-tooltip>
+            <v-tooltip text="Delete" location="top"><template v-slot:activator="{props}"><v-btn v-bind="props" icon="trash-2" variant="text" size="small" color="error"></v-btn></template></v-tooltip>
           </div>
         </template>
       </v-data-table>
@@ -270,7 +270,7 @@ function clearAllFilters() {
             <div class="text-h6 font-weight-bold">Choose a Template</div>
             <div class="text-caption text-medium-emphasis">Pick a starting point or begin from scratch</div>
           </div>
-          <v-btn icon="mdi-close" variant="text" size="small" @click="chooseDialog = false"></v-btn>
+          <v-btn icon="x" variant="text" size="small" @click="chooseDialog = false"></v-btn>
         </div>
 
         <div class="pa-5">
@@ -288,7 +288,7 @@ function clearAllFilters() {
             </v-btn-toggle>
             <v-text-field
               v-model="templateSearch"
-              prepend-inner-icon="mdi-magnify"
+              prepend-inner-icon="search"
               placeholder="Search templates…"
               variant="outlined"
               density="compact"
@@ -319,7 +319,7 @@ function clearAllFilters() {
                 </div>
                 <div class="text-body-2 font-weight-bold mb-1">{{ tmpl.name }}</div>
                 <div class="text-caption text-medium-emphasis">{{ tmpl.desc }}</div>
-                <v-icon v-if="selectedTemplate === tmpl.id" color="primary" class="selected-check" size="20">mdi-check-circle</v-icon>
+                <v-icon v-if="selectedTemplate === tmpl.id" color="primary" class="selected-check" size="20">circle-check</v-icon>
               </v-card>
             </v-col>
           </v-row>
@@ -327,7 +327,7 @@ function clearAllFilters() {
 
         <div class="pa-5 pt-3 d-flex justify-space-between align-center">
           <v-btn variant="text" class="text-none" @click="chooseDialog = false">Cancel</v-btn>
-          <v-btn color="primary" variant="flat" class="text-none" :disabled="selectedTemplate === null" prepend-icon="mdi-pencil-ruler" @click="openBuilder">Open Builder</v-btn>
+          <v-btn color="primary" variant="flat" class="text-none" :disabled="selectedTemplate === null" prepend-icon="ruler" @click="openBuilder">Open Builder</v-btn>
         </div>
       </v-card>
     </v-dialog>

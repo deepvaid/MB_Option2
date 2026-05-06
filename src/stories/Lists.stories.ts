@@ -110,11 +110,11 @@ export const Playground: Story = {
   render: (args) => ({
     setup() {
       const items = [
-        { icon: 'mdi-home', title: 'Dashboard' },
-        { icon: 'mdi-chart-box', title: 'Analytics' },
-        { icon: 'mdi-shopping-cart', title: 'Orders' },
-        { icon: 'mdi-email', title: 'Campaigns' },
-        { icon: 'mdi-cog', title: 'Settings' },
+        { icon: 'home', title: 'Dashboard' },
+        { icon: 'bar-chart-2', title: 'Analytics' },
+        { icon: 'shopping-cart', title: 'Orders' },
+        { icon: 'mail', title: 'Campaigns' },
+        { icon: 'settings', title: 'Settings' },
       ]
       return { args, items }
     },
@@ -145,10 +145,10 @@ export const SingleLine: Story = {
     template: `
       <div class="pa-6">
         <v-list lines="one">
-          <v-list-item prepend-icon="mdi-home" title="Dashboard" />
-          <v-list-item prepend-icon="mdi-chart-box" title="Analytics" />
-          <v-list-item prepend-icon="mdi-shopping-cart" title="Orders" />
-          <v-list-item prepend-icon="mdi-email" title="Campaigns" />
+          <v-list-item prepend-icon="home" title="Dashboard" />
+          <v-list-item prepend-icon="bar-chart-2" title="Analytics" />
+          <v-list-item prepend-icon="shopping-cart" title="Orders" />
+          <v-list-item prepend-icon="mail" title="Campaigns" />
         </v-list>
       </div>
     `,
@@ -161,9 +161,9 @@ export const TwoLine: Story = {
     template: `
       <div class="pa-6">
         <v-list lines="two">
-          <v-list-item prepend-icon="mdi-account" title="John Doe" subtitle="john@example.com" />
-          <v-list-item prepend-icon="mdi-account" title="Jane Smith" subtitle="jane@example.com" />
-          <v-list-item prepend-icon="mdi-account" title="Bob Johnson" subtitle="bob@example.com" />
+          <v-list-item prepend-icon="user" title="John Doe" subtitle="john@example.com" />
+          <v-list-item prepend-icon="user" title="Jane Smith" subtitle="jane@example.com" />
+          <v-list-item prepend-icon="user" title="Bob Johnson" subtitle="bob@example.com" />
         </v-list>
       </div>
     `,
@@ -178,17 +178,17 @@ export const ActionList: Story = {
         <v-list>
           <v-list-item title="Item 1">
             <template #append>
-              <v-icon icon="mdi-chevron-right" />
+              <v-icon icon="chevron-right" />
             </template>
           </v-list-item>
           <v-list-item title="Item 2">
             <template #append>
-              <v-icon icon="mdi-chevron-right" />
+              <v-icon icon="chevron-right" />
             </template>
           </v-list-item>
           <v-list-item title="Item 3">
             <template #append>
-              <v-icon icon="mdi-chevron-right" />
+              <v-icon icon="chevron-right" />
             </template>
           </v-list-item>
         </v-list>
@@ -204,20 +204,20 @@ export const NestedGroups: Story = {
       <div class="pa-6">
         <v-list>
           <v-list-subheader title="Navigation" />
-          <v-list-item prepend-icon="mdi-home" title="Dashboard" />
-          <v-list-item prepend-icon="mdi-chart-box" title="Analytics" />
+          <v-list-item prepend-icon="home" title="Dashboard" />
+          <v-list-item prepend-icon="bar-chart-2" title="Analytics" />
           
           <v-divider class="my-2" />
           
           <v-list-subheader title="Management" />
-          <v-list-item prepend-icon="mdi-shopping-cart" title="Orders" />
-          <v-list-item prepend-icon="mdi-package" title="Products" />
+          <v-list-item prepend-icon="shopping-cart" title="Orders" />
+          <v-list-item prepend-icon="package" title="Products" />
           
           <v-divider class="my-2" />
           
           <v-list-subheader title="Settings" />
-          <v-list-item prepend-icon="mdi-cog" title="Account" />
-          <v-list-item prepend-icon="mdi-shield-key" title="Security" />
+          <v-list-item prepend-icon="settings" title="Account" />
+          <v-list-item prepend-icon="shield" title="Security" />
         </v-list>
       </div>
     `,

@@ -24,12 +24,12 @@ const setup = ref({
 // Step 2: Template
 const selectedTemplate = ref<number | null>(null)
 const templates = [
-  { id: 1, name: 'Promotional Sale', icon: 'mdi-tag-heart', color: 'error', desc: 'Highlight discounts and flash deals' },
-  { id: 2, name: 'Newsletter', icon: 'mdi-newspaper-variant', color: 'primary', desc: 'Curated content updates' },
-  { id: 3, name: 'Product Launch', icon: 'mdi-rocket-launch', color: 'secondary', desc: 'Announce a new product arrival' },
-  { id: 4, name: 'Win-Back', icon: 'mdi-account-heart', color: 'warning', desc: 'Re-engage lapsed customers' },
-  { id: 5, name: 'Seasonal', icon: 'mdi-snowflake', color: 'info', desc: 'Holiday & seasonal campaigns' },
-  { id: 6, name: 'Blank', icon: 'mdi-file-plus-outline', color: 'grey', desc: 'Start from scratch' },
+  { id: 1, name: 'Promotional Sale', icon: 'heart-handshake', color: 'error', desc: 'Highlight discounts and flash deals' },
+  { id: 2, name: 'Newsletter', icon: 'newspaper', color: 'primary', desc: 'Curated content updates' },
+  { id: 3, name: 'Product Launch', icon: 'rocket', color: 'secondary', desc: 'Announce a new product arrival' },
+  { id: 4, name: 'Win-Back', icon: 'heart', color: 'warning', desc: 'Re-engage lapsed customers' },
+  { id: 5, name: 'Seasonal', icon: 'snowflake', color: 'info', desc: 'Holiday & seasonal campaigns' },
+  { id: 6, name: 'Blank', icon: 'file-plus', color: 'grey', desc: 'Start from scratch' },
 ]
 
 // Step 3: Audience
@@ -54,12 +54,12 @@ const timezone = ref('America/New_York')
 
 // Step 5: Review — computed summary
 const reviewItems = computed(() => [
-  { label: 'Campaign Name', value: setup.value.name || '—', icon: 'mdi-pencil' },
-  { label: 'Subject Line', value: setup.value.subject || '—', icon: 'mdi-email-outline' },
-  { label: 'Sender', value: `${setup.value.senderName} <${setup.value.senderEmail}>`, icon: 'mdi-account-outline' },
-  { label: 'Template', value: templates.find(t => t.id === selectedTemplate.value)?.name || '—', icon: 'mdi-palette-outline' },
-  { label: 'Audience', value: `${selectedList.value} (${estimatedAudience.value} contacts)`, icon: 'mdi-account-group' },
-  { label: 'Send Time', value: scheduleType.value === 'now' ? 'Immediately after launch' : `${scheduleDate.value} at ${scheduleTime.value} ${timezone.value}`, icon: 'mdi-clock-outline' },
+  { label: 'Campaign Name', value: setup.value.name || '—', icon: 'pencil' },
+  { label: 'Subject Line', value: setup.value.subject || '—', icon: 'mail' },
+  { label: 'Sender', value: `${setup.value.senderName} <${setup.value.senderEmail}>`, icon: 'user' },
+  { label: 'Template', value: templates.find(t => t.id === selectedTemplate.value)?.name || '—', icon: 'palette' },
+  { label: 'Audience', value: `${selectedList.value} (${estimatedAudience.value} contacts)`, icon: 'users' },
+  { label: 'Send Time', value: scheduleType.value === 'now' ? 'Immediately after launch' : `${scheduleDate.value} at ${scheduleTime.value} ${timezone.value}`, icon: 'clock' },
 ])
 
 const stepValid = computed(() => {
@@ -97,7 +97,7 @@ const stepTitles = ['Setup', 'Template', 'Audience', 'Schedule', 'Review & Launc
       <div class="d-flex align-center gap-4">
         <v-tooltip text="Back to Campaigns" location="bottom">
           <template v-slot:activator="{ props }">
-            <v-btn v-bind="props" icon="mdi-arrow-left" variant="text" size="small" @click="cancel"></v-btn>
+            <v-btn v-bind="props" icon="arrow-left" variant="text" size="small" @click="cancel"></v-btn>
           </template>
         </v-tooltip>
         <div>
@@ -200,11 +200,11 @@ const stepTitles = ['Setup', 'Template', 'Audience', 'Schedule', 'Review & Launc
                   <div class="font-weight-bold mb-1" :class="selectedTemplate === tmpl.id ? 'text-white' : ''">{{ tmpl.name }}</div>
                   <div class="text-caption" :class="selectedTemplate === tmpl.id ? 'text-white' : 'text-medium-emphasis'">{{ tmpl.desc }}</div>
                 </div>
-                <v-icon v-if="selectedTemplate === tmpl.id" color="white" class="position-absolute top-0 right-0 ma-3" size="18">mdi-check-circle</v-icon>
+                <v-icon v-if="selectedTemplate === tmpl.id" color="white" class="position-absolute top-0 right-0 ma-3" size="18">circle-check</v-icon>
               </v-card>
             </v-col>
           </v-row>
-          <v-alert type="info" variant="tonal" density="compact" class="mt-6 text-body-2" rounded="lg" icon="mdi-palette">
+          <v-alert type="info" variant="tonal" density="compact" class="mt-6 text-body-2" rounded="lg" icon="palette">
             You'll be taken to the visual email editor after completing the wizard setup.
           </v-alert>
         </v-card>
@@ -224,17 +224,17 @@ const stepTitles = ['Setup', 'Template', 'Audience', 'Schedule', 'Review & Launc
                 class="pa-4 cursor-pointer d-flex align-center gap-3"
                 @click="selectedList = list"
               >
-                <v-icon :color="selectedList === list ? 'primary' : 'medium-emphasis'" size="20">mdi-account-group</v-icon>
+                <v-icon :color="selectedList === list ? 'primary' : 'medium-emphasis'" size="20">users</v-icon>
                 <div>
                   <div class="text-body-2 font-weight-medium">{{ list }}</div>
                 </div>
                 <v-spacer></v-spacer>
-                <v-icon v-if="selectedList === list" color="primary" size="18">mdi-check-circle</v-icon>
+                <v-icon v-if="selectedList === list" color="primary" size="18">circle-check</v-icon>
               </v-card>
             </v-col>
           </v-row>
           <v-card variant="tonal" color="success" rounded="xl" class="pa-4 d-flex align-center gap-4">
-            <v-icon color="success" size="32">mdi-account-multiple-check</v-icon>
+            <v-icon color="success" size="32">user-check</v-icon>
             <div>
               <div class="text-h6 font-weight-bold text-success">{{ estimatedAudience }}</div>
               <div class="text-body-2 text-medium-emphasis">estimated recipients</div>
@@ -304,7 +304,7 @@ const stepTitles = ['Setup', 'Template', 'Audience', 'Schedule', 'Review & Launc
                 <template v-slot:append>
                   <v-tooltip :text="`Edit ${item.label}`" location="top">
                     <template v-slot:activator="{ props }">
-                      <v-btn v-bind="props" icon="mdi-pencil-outline" variant="text" size="small" color="primary" @click="step = Math.ceil(idx / 2) + 1"></v-btn>
+                      <v-btn v-bind="props" icon="pencil" variant="text" size="small" color="primary" @click="step = Math.ceil(idx / 2) + 1"></v-btn>
                     </template>
                   </v-tooltip>
                 </template>
@@ -315,7 +315,7 @@ const stepTitles = ['Setup', 'Template', 'Audience', 'Schedule', 'Review & Launc
           <v-alert type="success" variant="tonal" density="compact" rounded="xl" class="mb-6">
             <strong>Everything looks good!</strong> Your campaign is ready to go. Click Launch to send to {{ estimatedAudience }} recipients.
           </v-alert>
-          <v-btn color="success" size="large" block rounded="xl" prepend-icon="mdi-rocket-launch" class="text-none font-weight-bold" @click="launch">Launch Campaign</v-btn>
+          <v-btn color="success" size="large" block rounded="xl" prepend-icon="rocket" class="text-none font-weight-bold" @click="launch">Launch Campaign</v-btn>
         </v-card>
 
       </div>
@@ -323,11 +323,11 @@ const stepTitles = ['Setup', 'Template', 'Audience', 'Schedule', 'Review & Launc
 
     <!-- Bottom Navigation Bar -->
     <div class="pa-4 border-t bg-surface d-flex justify-space-between align-center">
-      <v-btn v-if="step > 1" variant="outlined" class="text-none" prepend-icon="mdi-arrow-left" @click="prevStep">Back</v-btn>
+      <v-btn v-if="step > 1" variant="outlined" class="text-none" prepend-icon="arrow-left" @click="prevStep">Back</v-btn>
       <div v-else></div>
       <div class="d-flex align-center gap-2">
         <span class="text-caption text-medium-emphasis">{{ step }} / {{ totalSteps }}</span>
-        <v-btn v-if="step < totalSteps" color="primary" variant="elevated" class="text-none" append-icon="mdi-arrow-right" :disabled="!stepValid" @click="nextStep">
+        <v-btn v-if="step < totalSteps" color="primary" variant="elevated" class="text-none" append-icon="arrow-right" :disabled="!stepValid" @click="nextStep">
           Continue
         </v-btn>
       </div>

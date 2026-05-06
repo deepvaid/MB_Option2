@@ -32,7 +32,7 @@ defineProps<{
           :color="kpi.trendUp ? 'success' : 'error'"
           variant="tonal"
           class="mt-1"
-          :prepend-icon="kpi.trendUp ? 'mdi-trending-up' : 'mdi-trending-down'"
+          :prepend-icon="kpi.trendUp ? 'trending-up' : 'trending-down'"
           style="font-size: 10px;"
         >
           {{ kpi.trend }}

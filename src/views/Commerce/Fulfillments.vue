@@ -70,8 +70,8 @@ function selectAll() {
       ]"
     >
       <template #actions>
-        <v-btn class="text-none mp-btn-dark" variant="flat" prepend-icon="mdi-printer">Print Packing Slips</v-btn>
-        <v-btn color="primary" variant="flat" prepend-icon="mdi-truck-fast" class="text-none" :disabled="selected.length === 0">Mark Shipped{{ selected.length > 0 ? ` (${selected.length})` : '' }}</v-btn>
+        <v-btn class="text-none mp-btn-dark" variant="flat" prepend-icon="printer">Print Packing Slips</v-btn>
+        <v-btn color="primary" variant="flat" prepend-icon="truck" class="text-none" :disabled="selected.length === 0">Mark Shipped{{ selected.length > 0 ? ` (${selected.length})` : '' }}</v-btn>
       </template>
     </MpPageHeader>
 
@@ -112,8 +112,8 @@ function selectAll() {
           </div>
         </template>
         <template #bulk-actions>
-          <v-btn size="small" variant="outlined" color="success" class="text-none" prepend-icon="mdi-truck-fast" rounded="lg">Mark Shipped</v-btn>
-          <v-btn size="small" variant="outlined" color="secondary" class="text-none" prepend-icon="mdi-printer" rounded="lg">Print Labels</v-btn>
+          <v-btn size="small" variant="outlined" color="success" class="text-none" prepend-icon="truck" rounded="lg">Mark Shipped</v-btn>
+          <v-btn size="small" variant="outlined" color="secondary" class="text-none" prepend-icon="printer" rounded="lg">Print Labels</v-btn>
         </template>
       </MpDataTableToolbar>
 
@@ -152,8 +152,8 @@ function selectAll() {
 
         <template v-slot:item.actions>
           <div class="ActionButtons d-flex justify-end gap-1">
-            <v-btn icon="mdi-eye-outline" variant="text" size="small" color="primary"></v-btn>
-            <v-btn icon="mdi-truck-fast-outline" variant="text" size="small" color="success"></v-btn>
+            <v-btn icon="eye" variant="text" size="small" color="primary"></v-btn>
+            <v-btn icon="truck" variant="text" size="small" color="success"></v-btn>
           </div>
         </template>
       </v-data-table>

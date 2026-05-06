@@ -75,7 +75,7 @@ function isSelected(id: string): boolean {
           <td>
             <div class="d-flex align-center ga-3 min-width-0">
               <v-avatar size="32" variant="tonal" :color="accentToVuetifyColor(dashboard.accent)">
-                <v-icon size="18">{{ dashboard.icon ?? 'mdi-view-dashboard-outline' }}</v-icon>
+                <v-icon size="18">{{ dashboard.icon ?? 'layout-dashboard' }}</v-icon>
               </v-avatar>
               <div class="min-width-0">
                 <div class="d-flex align-center ga-2">
@@ -85,7 +85,7 @@ function isSelected(id: string): boolean {
                     size="14"
                     color="warning"
                     aria-label="Favorite"
-                  >mdi-star</v-icon>
+                  >star</v-icon>
                   <v-chip v-if="dashboard.isDefault" size="x-small" variant="tonal" color="success">Default</v-chip>
                 </div>
                 <div class="text-caption text-medium-emphasis dashboard-list-table__description">
@@ -115,7 +115,7 @@ function isSelected(id: string): boolean {
                 <template #activator="{ props: tipProps }">
                   <v-btn
                     v-bind="tipProps"
-                    :icon="dashboard.isDefault ? 'mdi-bookmark-check' : 'mdi-bookmark-outline'"
+                    :icon="dashboard.isDefault ? 'bookmark-check' : 'bookmark'"
                     :color="dashboard.isDefault ? 'success' : undefined"
                     variant="text"
                     size="small"
@@ -127,7 +127,7 @@ function isSelected(id: string): boolean {
                 </template>
               </v-tooltip>
               <v-btn
-                :icon="dashboard.favorite ? 'mdi-star' : 'mdi-star-outline'"
+                :icon="dashboard.favorite ? 'star' : 'star'"
                 :color="dashboard.favorite ? 'warning' : undefined"
                 variant="text"
                 size="small"
@@ -139,7 +139,7 @@ function isSelected(id: string): boolean {
                 <template #activator="{ props: menuProps }">
                   <v-btn
                     v-bind="menuProps"
-                    icon="mdi-dots-vertical"
+                    icon="more-vertical"
                     variant="text"
                     size="small"
                     density="comfortable"
@@ -147,25 +147,25 @@ function isSelected(id: string): boolean {
                   />
                 </template>
                 <v-list density="compact" min-width="200">
-                  <v-list-item prepend-icon="mdi-arrow-top-right" title="Open" @click="emit('open', dashboard.id)" />
-                  <v-list-item prepend-icon="mdi-pencil-outline" title="Edit" @click="emit('edit', dashboard.id)" />
-                  <v-list-item prepend-icon="mdi-content-copy" title="Duplicate" @click="emit('duplicate', dashboard.id)" />
+                  <v-list-item prepend-icon="arrow-up-right" title="Open" @click="emit('open', dashboard.id)" />
+                  <v-list-item prepend-icon="pencil" title="Edit" @click="emit('edit', dashboard.id)" />
+                  <v-list-item prepend-icon="copy" title="Duplicate" @click="emit('duplicate', dashboard.id)" />
                   <v-list-item
                     v-if="!dashboard.isDefault"
-                    prepend-icon="mdi-bookmark-check-outline"
+                    prepend-icon="bookmark-check"
                     title="Set as default"
                     @click="emit('setDefault', dashboard.id)"
                   />
                   <v-list-item
                     v-if="dashboard.kind === 'system'"
-                    prepend-icon="mdi-backup-restore"
+                    prepend-icon="rotate-ccw"
                     title="Reset to defaults"
                     @click="emit('reset', dashboard.id)"
                   />
                   <v-divider v-if="dashboard.kind === 'custom'" class="my-1" />
                   <v-list-item
                     v-if="dashboard.kind === 'custom'"
-                    prepend-icon="mdi-delete-outline"
+                    prepend-icon="trash-2"
                     title="Delete"
                     base-color="error"
                     @click="emit('delete', dashboard.id)"

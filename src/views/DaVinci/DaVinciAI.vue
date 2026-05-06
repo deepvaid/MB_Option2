@@ -14,7 +14,7 @@ import MpPageHeader from '@/components/MpPageHeader.vue'
       ]"
     >
       <template #actions>
-        <v-btn color="primary" variant="flat" class="text-none" prepend-icon="mdi-content-save-outline">Save AI Preferences</v-btn>
+        <v-btn color="primary" variant="flat" class="text-none" prepend-icon="save">Save AI Preferences</v-btn>
       </template>
     </MpPageHeader>
 

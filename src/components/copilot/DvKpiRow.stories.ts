@@ -54,28 +54,28 @@ export const RevenueKpis: Story = {
         value: '$287,450',
         trend: '+18% vs Last Month',
         trendUp: true,
-        icon: 'mdi-cash-multiple'
+        icon: 'banknote'
       },
       {
         label: 'Average Order Value',
         value: '$127.50',
         trend: '+5.2% vs Last Month',
         trendUp: true,
-        icon: 'mdi-shopping-cart'
+        icon: 'shopping-cart'
       },
       {
         label: 'Conversion Rate',
         value: '4.23%',
         trend: '-0.5% vs Last Month',
         trendUp: false,
-        icon: 'mdi-percent'
+        icon: 'percent'
       },
       {
         label: 'Customer Count',
         value: '2,254',
         trend: '+342 New Customers',
         trendUp: true,
-        icon: 'mdi-account-multiple'
+        icon: 'users'
       }
     ]
   }
@@ -89,28 +89,28 @@ export const MarketingKpis: Story = {
         value: '28.4%',
         trend: '+4.2% vs Last Campaign',
         trendUp: true,
-        icon: 'mdi-email-open'
+        icon: 'mail-open'
       },
       {
         label: 'Click-Through Rate',
         value: '6.8%',
         trend: '+1.1% vs Last Campaign',
         trendUp: true,
-        icon: 'mdi-cursor-default-click'
+        icon: 'mouse-pointer-click'
       },
       {
         label: 'Campaign Reach',
         value: '145.2K',
         trend: '+23K Contacts',
         trendUp: true,
-        icon: 'mdi-bullhorn'
+        icon: 'megaphone'
       },
       {
         label: 'Subscriber Growth',
         value: '8,342',
         trend: '+356 this month',
         trendUp: true,
-        icon: 'mdi-account-plus'
+        icon: 'user-plus'
       }
     ]
   }

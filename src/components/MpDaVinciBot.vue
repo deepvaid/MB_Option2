@@ -266,22 +266,22 @@ function newChat() {
     <!-- ═══ HEADER ═══ -->
     <div class="da-vinci-header d-flex align-center ga-3 px-4 py-3">
       <div class="da-vinci-avatar">
-        <v-icon color="white" size="22">mdi-creation</v-icon>
+        <v-icon color="white" size="22">sparkles</v-icon>
       </div>
       <div class="flex-grow-1">
         <div class="text-subtitle-2 font-weight-bold da-vinci-title">Da Vinci Bot</div>
         <div class="text-caption text-medium-emphasis da-vinci-subtitle">Intelligent AI assistant</div>
       </div>
       <v-btn icon size="32" variant="flat" class="da-vinci-accent-btn" aria-label="Start a new chat" @click="newChat">
-        <v-icon size="18">mdi-plus</v-icon>
+        <v-icon size="18">plus</v-icon>
         <v-tooltip activator="parent" location="bottom">New chat</v-tooltip>
       </v-btn>
       <v-btn icon size="32" variant="text" :aria-label="isExpanded ? 'Collapse Da Vinci drawer' : 'Expand Da Vinci drawer'" @click="onExpand">
-        <v-icon size="18">{{ isExpanded ? 'mdi-arrow-collapse' : 'mdi-arrow-expand' }}</v-icon>
+        <v-icon size="18">{{ isExpanded ? 'minimize-2' : 'maximize-2' }}</v-icon>
         <v-tooltip activator="parent" location="bottom">{{ isExpanded ? 'Collapse' : 'Expand' }}</v-tooltip>
       </v-btn>
       <v-btn icon size="32" variant="text" aria-label="Close Da Vinci drawer" @click="emit('close')">
-        <v-icon size="18">mdi-close</v-icon>
+        <v-icon size="18">x</v-icon>
         <v-tooltip activator="parent" location="bottom">Close</v-tooltip>
       </v-btn>
     </div>
@@ -306,7 +306,7 @@ function newChat() {
 
         <div v-if="isDashboardRoute" class="mb-6">
           <div class="d-flex align-center ga-2 mb-3">
-            <v-icon size="16" color="primary">mdi-view-dashboard-edit-outline</v-icon>
+            <v-icon size="16" color="primary">layout-dashboard</v-icon>
             <span class="text-caption font-weight-bold text-uppercase mp-label-caps">Dashboard Widgets</span>
           </div>
           <div class="d-flex flex-column ga-2">
@@ -332,7 +332,7 @@ function newChat() {
           <!-- Commerce -->
           <div>
             <div class="d-flex align-center ga-2 mb-3">
-              <v-icon size="16" color="primary">mdi-cart-outline</v-icon>
+              <v-icon size="16" color="primary">shopping-cart</v-icon>
               <span class="text-caption font-weight-bold text-uppercase mp-label-caps">Commerce</span>
             </div>
             <div class="d-flex flex-column ga-2">
@@ -366,7 +366,7 @@ function newChat() {
           <!-- Marketing -->
           <div class="mt-5">
             <div class="d-flex align-center ga-2 mb-3">
-              <v-icon size="16" color="primary">mdi-bullhorn-outline</v-icon>
+              <v-icon size="16" color="primary">megaphone</v-icon>
               <span class="text-caption font-weight-bold text-uppercase mp-label-caps">Marketing</span>
             </div>
             <div class="d-flex flex-column ga-2">
@@ -400,7 +400,7 @@ function newChat() {
           <!-- Automation -->
           <div class="mt-5">
             <div class="d-flex align-center ga-2 mb-3">
-              <v-icon size="16" color="primary">mdi-robot-outline</v-icon>
+              <v-icon size="16" color="primary">bot</v-icon>
               <span class="text-caption font-weight-bold text-uppercase mp-label-caps">Automation & Customers</span>
             </div>
             <div class="d-flex flex-column ga-2">
@@ -447,7 +447,7 @@ function newChat() {
           <div v-else class="mb-8">
             <div class="d-flex align-start ga-3 mb-2">
               <v-avatar size="24" class="mt-1 da-vinci-avatar da-vinci-avatar--assistant">
-                <v-icon size="14" color="white">mdi-creation</v-icon>
+                <v-icon size="14" color="white">sparkles</v-icon>
               </v-avatar>
               <div class="text-body-2 pt-1 da-vinci-assistant-text">{{ msg.text }}</div>
             </div>
@@ -473,7 +473,7 @@ function newChat() {
         <!-- Typing Indicator -->
         <div v-if="isTyping" class="mb-4 d-flex align-start ga-3">
            <v-avatar size="24" class="mt-1 da-vinci-avatar da-vinci-avatar--assistant">
-              <v-icon size="14" color="white">mdi-creation</v-icon>
+              <v-icon size="14" color="white">sparkles</v-icon>
            </v-avatar>
            <div class="typing-indicator pa-3 rounded-lg bg-surface-variant d-flex align-center ga-1">
              <span class="dot"></span><span class="dot"></span><span class="dot"></span>
@@ -501,12 +501,12 @@ function newChat() {
         <div class="d-flex align-center justify-space-between mt-1">
           <div class="d-flex align-center ga-1">
             <v-btn icon size="32" variant="text" color="medium-emphasis" aria-label="Attach a file">
-              <v-icon size="20">mdi-paperclip</v-icon>
+              <v-icon size="20">paperclip</v-icon>
             </v-btn>
           </div>
           <div class="d-flex align-center ga-1">
             <v-btn icon size="32" variant="text" color="medium-emphasis" aria-label="Start voice input">
-              <v-icon size="20">mdi-microphone-outline</v-icon>
+              <v-icon size="20">mic</v-icon>
             </v-btn>
             <v-btn
               icon
@@ -516,7 +516,7 @@ function newChat() {
               :aria-label="inputText.trim() ? 'Send message' : 'Type a message to enable send'"
               @click="sendQuery"
             >
-              <v-icon size="18" :color="inputText.trim() ? 'white' : 'medium-emphasis'">mdi-arrow-up</v-icon>
+              <v-icon size="18" :color="inputText.trim() ? 'white' : 'medium-emphasis'">arrow-up</v-icon>
             </v-btn>
           </div>
         </div>

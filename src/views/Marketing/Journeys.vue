@@ -59,7 +59,7 @@ function toggleStatus(journey: typeof store.journeys[0]) {
       ]"
     >
       <template #actions>
-        <v-btn color="primary" variant="flat" prepend-icon="mdi-plus" class="text-none">New Journey</v-btn>
+        <v-btn color="primary" variant="flat" prepend-icon="plus" class="text-none">New Journey</v-btn>
       </template>
     </MpPageHeader>
 
@@ -161,7 +161,7 @@ function toggleStatus(journey: typeof store.journeys[0]) {
               <template v-slot:activator="{ props }">
                 <v-btn
                   v-bind="props"
-                  icon="mdi-pencil-outline"
+                  icon="pencil"
                   variant="text"
                   size="x-small"
                   color="medium-emphasis"
@@ -171,19 +171,19 @@ function toggleStatus(journey: typeof store.journeys[0]) {
             </v-tooltip>
             <v-menu>
               <template v-slot:activator="{ props }">
-                <v-btn v-bind="props" icon="mdi-dots-vertical" variant="text" size="x-small" color="medium-emphasis"></v-btn>
+                <v-btn v-bind="props" icon="more-vertical" variant="text" size="x-small" color="medium-emphasis"></v-btn>
               </template>
               <v-list density="compact" min-width="180">
-                <v-list-item prepend-icon="mdi-chart-bar" title="View analytics" value="analytics"></v-list-item>
-                <v-list-item prepend-icon="mdi-content-copy" title="Duplicate" value="duplicate"></v-list-item>
+                <v-list-item prepend-icon="bar-chart-2" title="View analytics" value="analytics"></v-list-item>
+                <v-list-item prepend-icon="copy" title="Duplicate" value="duplicate"></v-list-item>
                 <v-list-item
-                  :prepend-icon="item.status === 'Active' ? 'mdi-pause-circle-outline' : 'mdi-play-circle-outline'"
+                  :prepend-icon="item.status === 'Active' ? 'circle-pause' : 'circle-play'"
                   :title="item.status === 'Active' ? 'Pause journey' : 'Activate journey'"
                   value="toggle"
                   @click="toggleStatus(item)"
                 ></v-list-item>
                 <v-divider></v-divider>
-                <v-list-item prepend-icon="mdi-delete-outline" title="Delete" value="delete" class="text-error"></v-list-item>
+                <v-list-item prepend-icon="trash-2" title="Delete" value="delete" class="text-error"></v-list-item>
               </v-list>
             </v-menu>
           </div>
@@ -192,12 +192,12 @@ function toggleStatus(journey: typeof store.journeys[0]) {
         <!-- Empty state -->
         <template v-slot:no-data>
           <div class="d-flex flex-column align-center py-12">
-            <v-icon size="56" color="medium-emphasis" class="mb-4">mdi-routes</v-icon>
+            <v-icon size="56" color="medium-emphasis" class="mb-4">route</v-icon>
             <div class="text-h6 font-weight-medium mb-1">No journeys found</div>
             <div class="text-body-2 text-medium-emphasis mb-6">
               {{ search ? 'Try adjusting your search terms.' : 'Create your first automation journey to get started.' }}
             </div>
-            <v-btn v-if="!search" color="primary" variant="elevated" prepend-icon="mdi-plus" class="text-none">
+            <v-btn v-if="!search" color="primary" variant="elevated" prepend-icon="plus" class="text-none">
               New Journey
             </v-btn>
           </div>

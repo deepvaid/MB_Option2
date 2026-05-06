@@ -285,7 +285,7 @@ function handleDavinciEdit(draft: DashboardWidgetDraft) {
           v-if="mode !== 'choose'"
           variant="text"
           class="text-none"
-          prepend-icon="mdi-arrow-left"
+          prepend-icon="arrow-left"
           @click="goBack"
         >
           Back

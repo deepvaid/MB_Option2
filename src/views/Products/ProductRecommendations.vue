@@ -51,7 +51,7 @@ const filteredRules = computed(() => {
       ]"
     >
       <template #actions>
-        <v-btn color="primary" variant="flat" prepend-icon="mdi-plus" class="text-none">Configure Rules</v-btn>
+        <v-btn color="primary" variant="flat" prepend-icon="plus" class="text-none">Configure Rules</v-btn>
       </template>
     </MpPageHeader>
 
@@ -111,11 +111,11 @@ const filteredRules = computed(() => {
         <template v-slot:item.actions>
           <v-menu location="bottom end">
             <template v-slot:activator="{ props }">
-              <v-btn v-bind="props" icon="mdi-dots-horizontal" variant="text" size="small" density="comfortable" color="medium-emphasis" />
+              <v-btn v-bind="props" icon="more-horizontal" variant="text" size="small" density="comfortable" color="medium-emphasis" />
             </template>
             <v-list density="compact" rounded="lg" min-width="160" elevation="3" class="py-1">
-              <v-list-item prepend-icon="mdi-pencil-outline" title="Edit Rule" />
-              <v-list-item prepend-icon="mdi-toggle-switch-off" title="Disable" />
+              <v-list-item prepend-icon="pencil" title="Edit Rule" />
+              <v-list-item prepend-icon="toggle-left" title="Disable" />
             </v-list>
           </v-menu>
         </template>

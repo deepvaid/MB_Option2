@@ -27,7 +27,7 @@ defineProps<{
         variant="tonal"
         rounded="lg"
         class="font-weight-bold"
-        :prepend-icon="trendPositive ? 'mdi-trending-up' : 'mdi-trending-down'"
+        :prepend-icon="trendPositive ? 'trending-up' : 'trending-down'"
       >{{ trend }}</v-chip>
       <span v-if="subStat" class="text-caption text-medium-emphasis">{{ subStat }}</span>
     </div>

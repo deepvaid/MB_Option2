@@ -105,8 +105,8 @@ function selectAll() {
       ]"
     >
       <template #actions>
-        <v-btn class="text-none mp-btn-dark" variant="flat" prepend-icon="mdi-download">Export</v-btn>
-        <v-btn color="primary" variant="flat" prepend-icon="mdi-plus" class="text-none">Create Draft Order</v-btn>
+        <v-btn class="text-none mp-btn-dark" variant="flat" prepend-icon="download">Export</v-btn>
+        <v-btn color="primary" variant="flat" prepend-icon="plus" class="text-none">Create Draft Order</v-btn>
       </template>
       <template #tabs>
         <MpFilterTabs v-model="activeTab" :tabs="tabs" />
@@ -144,9 +144,9 @@ function selectAll() {
           </div>
         </template>
         <template #bulk-actions>
-          <v-btn size="small" variant="outlined" color="success" prepend-icon="mdi-package-check" class="text-none" rounded="lg">Mark Fulfilled</v-btn>
-          <v-btn size="small" variant="outlined" color="secondary" prepend-icon="mdi-printer" class="text-none" rounded="lg">Print Labels</v-btn>
-          <v-btn size="small" variant="outlined" color="error" prepend-icon="mdi-cancel" class="text-none" rounded="lg">Cancel Orders</v-btn>
+          <v-btn size="small" variant="outlined" color="success" prepend-icon="package-check" class="text-none" rounded="lg">Mark Fulfilled</v-btn>
+          <v-btn size="small" variant="outlined" color="secondary" prepend-icon="printer" class="text-none" rounded="lg">Print Labels</v-btn>
+          <v-btn size="small" variant="outlined" color="error" prepend-icon="ban" class="text-none" rounded="lg">Cancel Orders</v-btn>
         </template>
       </MpDataTableToolbar>
 
@@ -218,19 +218,19 @@ function selectAll() {
           <div class="action-btns d-flex">
             <v-tooltip text="View order" location="top">
               <template v-slot:activator="{ props }">
-                <v-btn v-bind="props" icon="mdi-eye-outline" variant="text" size="x-small" color="medium-emphasis"></v-btn>
+                <v-btn v-bind="props" icon="eye" variant="text" size="x-small" color="medium-emphasis"></v-btn>
               </template>
             </v-tooltip>
             <v-menu>
               <template v-slot:activator="{ props }">
-                <v-btn v-bind="props" icon="mdi-dots-vertical" variant="text" size="x-small" color="medium-emphasis"></v-btn>
+                <v-btn v-bind="props" icon="more-vertical" variant="text" size="x-small" color="medium-emphasis"></v-btn>
               </template>
               <v-list density="compact" min-width="180">
-                <v-list-item prepend-icon="mdi-pencil-outline" title="Edit order" value="edit"></v-list-item>
-                <v-list-item prepend-icon="mdi-package-check" title="Mark fulfilled" value="fulfill"></v-list-item>
-                <v-list-item prepend-icon="mdi-printer" title="Print invoice" value="print"></v-list-item>
-                <v-list-item prepend-icon="mdi-cash-refund" title="Refund" value="refund" class="text-error mt-1"></v-list-item>
-                <v-list-item prepend-icon="mdi-cancel" title="Cancel order" value="cancel" class="text-error"></v-list-item>
+                <v-list-item prepend-icon="pencil" title="Edit order" value="edit"></v-list-item>
+                <v-list-item prepend-icon="package-check" title="Mark fulfilled" value="fulfill"></v-list-item>
+                <v-list-item prepend-icon="printer" title="Print invoice" value="print"></v-list-item>
+                <v-list-item prepend-icon="banknote" title="Refund" value="refund" class="text-error mt-1"></v-list-item>
+                <v-list-item prepend-icon="ban" title="Cancel order" value="cancel" class="text-error"></v-list-item>
               </v-list>
             </v-menu>
           </div>
@@ -250,7 +250,7 @@ function selectAll() {
                   </div>
                   <v-divider vertical class="mx-1" style="height: 28px; opacity: 0.15;" />
                   <div class="d-flex align-center gap-2">
-                    <v-icon size="14" color="medium-emphasis">mdi-credit-card-outline</v-icon>
+                    <v-icon size="14" color="medium-emphasis">credit-card</v-icon>
                     <span class="text-caption">{{ item.paymentMethod }}</span>
                     <MpStatusChip :status="item.paymentStatus ?? ''" type="payment" size="x-small" />
                   </div>
@@ -261,8 +261,8 @@ function selectAll() {
                   </div>
                   <v-spacer />
                   <div class="d-flex gap-1">
-                    <v-btn variant="flat" color="primary" size="x-small" class="text-none" prepend-icon="mdi-package-check">Mark Fulfilled</v-btn>
-                    <v-btn variant="tonal" size="x-small" class="text-none" prepend-icon="mdi-printer">Print Invoice</v-btn>
+                    <v-btn variant="flat" color="primary" size="x-small" class="text-none" prepend-icon="package-check">Mark Fulfilled</v-btn>
+                    <v-btn variant="tonal" size="x-small" class="text-none" prepend-icon="printer">Print Invoice</v-btn>
                   </div>
                 </div>
 
@@ -304,7 +304,7 @@ function selectAll() {
                     </tfoot>
                   </v-table>
                   <div v-if="item.notes" class="mt-2 pa-2 rounded-lg d-flex align-center gap-2 text-caption text-medium-emphasis" style="background: rgba(var(--v-theme-warning), 0.06);">
-                    <v-icon size="14" color="warning">mdi-note-text</v-icon>
+                    <v-icon size="14" color="warning">file-text</v-icon>
                     {{ item.notes }}
                   </div>
                 </div>

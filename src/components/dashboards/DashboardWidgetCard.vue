@@ -127,12 +127,12 @@ function openSettings() {
     }"
   >
     <div v-if="isKpiWidget && !preview" class="dashboard-widget-card__kpi-actions">
-      <v-icon v-if="editable" size="18" class="dashboard-widget-card__drag-handle">mdi-drag-vertical</v-icon>
+      <v-icon v-if="editable" size="18" class="dashboard-widget-card__drag-handle">grip-vertical</v-icon>
       <v-menu location="bottom end">
         <template #activator="{ props: menuProps }">
           <v-btn
             v-bind="menuProps"
-            icon="mdi-dots-vertical"
+            icon="more-vertical"
             variant="text"
             size="small"
             :aria-label="`Actions for ${widget.title}`"
@@ -141,12 +141,12 @@ function openSettings() {
         <v-list density="compact" min-width="180">
           <v-list-item
             v-if="editable"
-            prepend-icon="mdi-pencil-outline"
+            prepend-icon="pencil"
             title="Edit"
             @click="emit('edit', widget.id)"
           />
           <v-list-item
-            prepend-icon="mdi-arrow-top-right"
+            prepend-icon="arrow-up-right"
             title="View report"
             @click="openDrilldown"
           />
@@ -155,14 +155,14 @@ function openSettings() {
             <v-list-item
               v-for="size in WIDGET_SIZES"
               :key="size"
-              :prepend-icon="currentSize === size ? 'mdi-check' : undefined"
+              :prepend-icon="currentSize === size ? 'check' : undefined"
               :title="`Size ${size}`"
               :active="currentSize === size"
               @click="chooseSize(size)"
             />
             <v-divider class="my-1" />
             <v-list-item
-              prepend-icon="mdi-delete-outline"
+              prepend-icon="trash-2"
               title="Remove"
               base-color="error"
               @click="emit('remove', widget.id)"
@@ -175,7 +175,7 @@ function openSettings() {
     <div v-if="!isKpiWidget" class="dashboard-widget-card__header">
       <div class="dashboard-widget-card__header-copy">
         <div class="dashboard-widget-card__title-row">
-          <v-icon v-if="editable" size="18" class="dashboard-widget-card__drag-handle">mdi-drag-vertical</v-icon>
+          <v-icon v-if="editable" size="18" class="dashboard-widget-card__drag-handle">grip-vertical</v-icon>
           <div class="dashboard-widget-card__title">{{ widget.title }}</div>
         </div>
         <div class="dashboard-widget-card__subtitle">{{ widgetSubtitle }}</div>
@@ -186,7 +186,7 @@ function openSettings() {
           <template #activator="{ props: menuProps }">
             <v-btn
               v-bind="menuProps"
-              icon="mdi-dots-vertical"
+              icon="more-vertical"
               variant="text"
               size="small"
               :aria-label="`Actions for ${widget.title}`"
@@ -195,21 +195,21 @@ function openSettings() {
           <v-list density="compact" min-width="180">
             <v-list-item
               v-if="editable"
-              prepend-icon="mdi-pencil-outline"
+              prepend-icon="pencil"
               title="Edit"
               @click="emit('edit', widget.id)"
             />
             <v-list-item
-              prepend-icon="mdi-tune-variant"
+              prepend-icon="sliders"
               title="Widget settings"
               @click="openSettings"
             />
             <v-list-item
-              prepend-icon="mdi-refresh"
+              prepend-icon="refresh-cw"
               title="Refresh widget"
             />
             <v-list-item
-              prepend-icon="mdi-arrow-top-right"
+              prepend-icon="arrow-up-right"
               title="View report"
               @click="openDrilldown"
             />
@@ -218,14 +218,14 @@ function openSettings() {
               <v-list-item
                 v-for="size in WIDGET_SIZES"
                 :key="size"
-                :prepend-icon="currentSize === size ? 'mdi-check' : undefined"
+                :prepend-icon="currentSize === size ? 'check' : undefined"
                 :title="`Size ${size}`"
                 :active="currentSize === size"
                 @click="chooseSize(size)"
               />
               <v-divider class="my-1" />
               <v-list-item
-                prepend-icon="mdi-delete-outline"
+                prepend-icon="trash-2"
                 title="Remove"
                 base-color="error"
                 @click="emit('remove', widget.id)"
@@ -241,7 +241,7 @@ function openSettings() {
       class="dashboard-widget-card__body"
     >
       <div v-if="isDataEmpty" class="dashboard-widget-card__empty">
-        <v-icon size="42" color="medium-emphasis">mdi-magnify-scan</v-icon>
+        <v-icon size="42" color="medium-emphasis">scan-search</v-icon>
         <div class="text-body-2 text-medium-emphasis mt-3">
           There is no data to show in this time frame. Try changing the date range.
         </div>

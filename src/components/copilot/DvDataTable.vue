@@ -12,8 +12,8 @@ defineProps<{
       <div v-if="title" class="d-flex align-center justify-space-between px-4 pt-3 pb-2">
         <span class="text-subtitle-2 font-weight-bold">{{ title }}</span>
         <div class="d-flex ga-1">
-          <v-btn icon size="28" variant="text"><v-icon size="16">mdi-download-outline</v-icon></v-btn>
-          <v-btn icon size="28" variant="text"><v-icon size="16">mdi-arrow-expand</v-icon></v-btn>
+          <v-btn icon size="28" variant="text"><v-icon size="16">download</v-icon></v-btn>
+          <v-btn icon size="28" variant="text"><v-icon size="16">maximize-2</v-icon></v-btn>
         </div>
       </div>
       <v-table density="compact" class="text-caption">

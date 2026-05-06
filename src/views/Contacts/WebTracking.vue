@@ -14,7 +14,7 @@ import MpPageHeader from '@/components/MpPageHeader.vue'
       ]"
     >
       <template #actions>
-        <v-btn variant="outlined" prepend-icon="mdi-content-copy" class="text-none">Copy Script</v-btn>
+        <v-btn variant="outlined" prepend-icon="copy" class="text-none">Copy Script</v-btn>
       </template>
     </MpPageHeader>
 

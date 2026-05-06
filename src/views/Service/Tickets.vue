@@ -85,7 +85,7 @@ function sendReply() {
       ]"
     >
       <template #actions>
-        <v-btn color="primary" variant="flat" prepend-icon="mdi-plus" class="text-none" @click="newTicketDrawer=true">New Ticket</v-btn>
+        <v-btn color="primary" variant="flat" prepend-icon="plus" class="text-none" @click="newTicketDrawer=true">New Ticket</v-btn>
       </template>
     </MpPageHeader>
 
@@ -110,7 +110,7 @@ function sendReply() {
     <div class="d-flex align-center ga-3 tickets-toolbar">
       <v-text-field
         v-model="search"
-        prepend-inner-icon="mdi-magnify"
+        prepend-inner-icon="search"
         placeholder="Search tickets by ID, subject, or customer…"
         aria-label="Search tickets"
         variant="outlined"
@@ -128,10 +128,10 @@ function sendReply() {
         class="tickets-view-toggle"
       >
         <v-btn value="list" size="small" variant="text" class="text-none">
-          <v-icon size="16" class="mr-1">mdi-format-list-bulleted</v-icon> List
+          <v-icon size="16" class="mr-1">list</v-icon> List
         </v-btn>
         <v-btn value="kanban" size="small" variant="text" class="text-none">
-          <v-icon size="16" class="mr-1">mdi-view-column</v-icon> Kanban
+          <v-icon size="16" class="mr-1">columns-3</v-icon> Kanban
         </v-btn>
       </v-btn-toggle>
     </div>
@@ -185,17 +185,17 @@ function sendReply() {
           <div class="d-flex gap-2 align-center">
             <v-tooltip text="Assign ticket" location="top">
               <template v-slot:activator="{ props }">
-                <v-btn v-bind="props" icon="mdi-account-arrow-right" variant="text" size="small" color="medium-emphasis"></v-btn>
+                <v-btn v-bind="props" icon="log-in" variant="text" size="small" color="medium-emphasis"></v-btn>
               </template>
             </v-tooltip>
             <v-tooltip text="Mark Resolved" location="top">
               <template v-slot:activator="{ props }">
-                <v-btn v-bind="props" icon="mdi-check-circle-outline" variant="text" size="small" color="success"></v-btn>
+                <v-btn v-bind="props" icon="circle-check" variant="text" size="small" color="success"></v-btn>
               </template>
             </v-tooltip>
             <v-tooltip text="More options" location="top">
               <template v-slot:activator="{ props }">
-                <v-btn v-bind="props" icon="mdi-dots-vertical" variant="text" size="small" color="medium-emphasis"></v-btn>
+                <v-btn v-bind="props" icon="more-vertical" variant="text" size="small" color="medium-emphasis"></v-btn>
               </template>
             </v-tooltip>
           </div>
@@ -254,19 +254,19 @@ function sendReply() {
             <div class="d-flex gap-2">
               <v-tooltip text="Attach file" location="top">
                 <template v-slot:activator="{ props }">
-                  <v-btn v-bind="props" icon="mdi-paperclip" variant="text" size="small" color="medium-emphasis"></v-btn>
+                  <v-btn v-bind="props" icon="paperclip" variant="text" size="small" color="medium-emphasis"></v-btn>
                 </template>
               </v-tooltip>
               <v-tooltip text="Add emoji" location="top">
                 <template v-slot:activator="{ props }">
-                  <v-btn v-bind="props" icon="mdi-emoticon-outline" variant="text" size="small" color="medium-emphasis"></v-btn>
+                  <v-btn v-bind="props" icon="smile" variant="text" size="small" color="medium-emphasis"></v-btn>
                 </template>
               </v-tooltip>
               <v-menu v-model="cannedMenu" location="top start">
                 <template v-slot:activator="{ props }">
                   <v-tooltip text="Insert canned response" location="top">
                     <template v-slot:activator="{ props: tip }">
-                      <v-btn v-bind="{...props,...tip}" icon="mdi-text-box-multiple-outline" variant="text" size="small" color="medium-emphasis"></v-btn>
+                      <v-btn v-bind="{...props,...tip}" icon="files" variant="text" size="small" color="medium-emphasis"></v-btn>
                     </template>
                   </v-tooltip>
                 </template>
@@ -278,14 +278,14 @@ function sendReply() {
             </div>
             <div class="d-flex ga-2 align-center">
               <v-btn variant="text" class="text-none text-medium-emphasis" size="small">Close Ticket</v-btn>
-              <v-btn color="secondary" variant="flat" class="text-none" prepend-icon="mdi-send" :disabled="!replyBody.trim()" @click="sendReply">Send Reply</v-btn>
+              <v-btn color="secondary" variant="flat" class="text-none" prepend-icon="send" :disabled="!replyBody.trim()" @click="sendReply">Send Reply</v-btn>
             </div>
           </div>
         </div>
       </v-card>
       <v-card v-else variant="flat" border rounded="xl" class="flex-grow-1 d-flex align-center justify-center">
         <div class="text-center pa-8">
-          <v-icon size="64" color="medium-emphasis" class="mb-4">mdi-headset</v-icon>
+          <v-icon size="64" color="medium-emphasis" class="mb-4">headset</v-icon>
           <div class="text-h6 font-weight-medium mb-2">Select a ticket</div>
           <div class="text-body-2 text-medium-emphasis">Choose a support ticket from the list to view its details and reply.</div>
         </div>
@@ -302,7 +302,7 @@ function sendReply() {
           </div>
           <v-tooltip :text="`Add to ${col.status}`" location="top">
             <template v-slot:activator="{ props }">
-              <v-btn v-bind="props" icon="mdi-plus" variant="text" size="x-small" color="medium-emphasis"></v-btn>
+              <v-btn v-bind="props" icon="plus" variant="text" size="x-small" color="medium-emphasis"></v-btn>
             </template>
           </v-tooltip>
         </div>
@@ -336,12 +336,12 @@ function sendReply() {
     <div class="d-flex flex-column h-100">
       <div class="pa-5 border-b d-flex align-center justify-space-between">
         <div><div class="text-h6 font-weight-bold">Create New Ticket</div><div class="text-caption text-medium-emphasis">Log a support request on behalf of a customer</div></div>
-        <v-btn icon="mdi-close" variant="text" size="small" @click="newTicketDrawer=false"></v-btn>
+        <v-btn icon="x" variant="text" size="small" @click="newTicketDrawer=false"></v-btn>
       </div>
       <div class="pa-5 flex-grow-1 overflow-y-auto">
         <div class="text-subtitle-2 font-weight-bold mb-3 text-uppercase text-medium-emphasis">Customer</div>
-        <v-text-field v-model="newTicket.customer" label="Customer Name *" variant="outlined" density="comfortable" class="mb-3" prepend-inner-icon="mdi-account-outline"></v-text-field>
-        <v-text-field v-model="newTicket.email" label="Customer Email *" type="email" variant="outlined" density="comfortable" class="mb-5" prepend-inner-icon="mdi-email-outline"></v-text-field>
+        <v-text-field v-model="newTicket.customer" label="Customer Name *" variant="outlined" density="comfortable" class="mb-3" prepend-inner-icon="user"></v-text-field>
+        <v-text-field v-model="newTicket.email" label="Customer Email *" type="email" variant="outlined" density="comfortable" class="mb-5" prepend-inner-icon="mail"></v-text-field>
 
         <v-divider class="mb-5"></v-divider>
         <div class="text-subtitle-2 font-weight-bold mb-3 text-uppercase text-medium-emphasis">Ticket Details</div>
@@ -361,25 +361,25 @@ function sendReply() {
           </v-col>
         </v-row>
         <v-textarea v-model="newTicket.description" label="Description" variant="outlined" density="comfortable" rows="4" class="mb-3" placeholder="Describe the customer's issue in detail…"></v-textarea>
-        <v-select v-model="newTicket.assignee" label="Assign To" :items="['Auto-assign','Sarah Connor (Admin)','Mike Zhang (Agent)','Priya Sharma (Agent)']" variant="outlined" density="comfortable" class="mb-3" prepend-inner-icon="mdi-account-arrow-right"></v-select>
+        <v-select v-model="newTicket.assignee" label="Assign To" :items="['Auto-assign','Sarah Connor (Admin)','Mike Zhang (Agent)','Priya Sharma (Agent)']" variant="outlined" density="comfortable" class="mb-3" prepend-inner-icon="log-in"></v-select>
 
         <v-card variant="outlined" rounded="xl" class="pa-3" style="border-style:dashed;">
           <div class="d-flex align-center gap-2 text-body-2 text-medium-emphasis cursor-pointer">
-            <v-icon size="18">mdi-paperclip</v-icon>
+            <v-icon size="18">paperclip</v-icon>
             <span>Attach files or screenshots (optional)</span>
           </div>
         </v-card>
       </div>
       <div class="pa-5 border-t d-flex justify-space-between">
         <v-btn variant="text" class="text-none" @click="newTicketDrawer=false">Cancel</v-btn>
-        <v-btn color="primary" variant="elevated" class="text-none" prepend-icon="mdi-plus" :disabled="!newTicket.customer||!newTicket.email||!newTicket.subject" @click="submitTicket">Create Ticket</v-btn>
+        <v-btn color="primary" variant="elevated" class="text-none" prepend-icon="plus" :disabled="!newTicket.customer||!newTicket.email||!newTicket.subject" @click="submitTicket">Create Ticket</v-btn>
       </div>
     </div>
   </v-navigation-drawer>
 
   <!-- Snackbar -->
   <v-snackbar v-model="saveSnack" :timeout="2500" color="success" rounded="pill" location="bottom center">
-    <div class="d-flex align-center gap-2"><v-icon>mdi-check-circle</v-icon> Ticket created and assigned</div>
+    <div class="d-flex align-center gap-2"><v-icon>circle-check</v-icon> Ticket created and assigned</div>
   </v-snackbar>
 </template>
 

@@ -81,8 +81,8 @@ const statusColor = (s: string) => s === 'In Stock' ? 'success' : s === 'Low Sto
       ]"
     >
       <template #actions>
-        <v-btn variant="outlined" prepend-icon="mdi-upload" class="text-none">Import</v-btn>
-        <v-btn color="primary" variant="flat" prepend-icon="mdi-plus" class="text-none">Add Product</v-btn>
+        <v-btn variant="outlined" prepend-icon="upload" class="text-none">Import</v-btn>
+        <v-btn color="primary" variant="flat" prepend-icon="plus" class="text-none">Add Product</v-btn>
       </template>
     </MpPageHeader>
 
@@ -144,8 +144,8 @@ const statusColor = (s: string) => s === 'In Stock' ? 'success' : s === 'Low Sto
         </template>
 
         <template #bulk-actions>
-          <v-btn variant="text" size="small" prepend-icon="mdi-export-variant" class="text-none">Export</v-btn>
-          <v-btn variant="text" size="small" prepend-icon="mdi-delete-outline" class="text-none text-error">Delete</v-btn>
+          <v-btn variant="text" size="small" prepend-icon="share" class="text-none">Export</v-btn>
+          <v-btn variant="text" size="small" prepend-icon="trash-2" class="text-none text-error">Delete</v-btn>
         </template>
       </MpDataTableToolbar>
 
@@ -175,7 +175,7 @@ const statusColor = (s: string) => s === 'In Stock' ? 'success' : s === 'Low Sto
             >
               <template #error>
                 <div class="w-100 h-100 d-flex align-center justify-center bg-surface-variant rounded-md">
-                  <v-icon size="16" color="medium-emphasis">mdi-image-outline</v-icon>
+                  <v-icon size="16" color="medium-emphasis">image</v-icon>
                 </div>
               </template>
             </v-img>
@@ -204,13 +204,13 @@ const statusColor = (s: string) => s === 'In Stock' ? 'success' : s === 'Low Sto
         <template v-slot:item.actions>
           <v-menu location="bottom end">
             <template v-slot:activator="{ props }">
-              <v-btn v-bind="props" icon="mdi-dots-horizontal" variant="text" size="small" density="comfortable" color="medium-emphasis" />
+              <v-btn v-bind="props" icon="more-horizontal" variant="text" size="small" density="comfortable" color="medium-emphasis" />
             </template>
             <v-list density="compact" rounded="lg" min-width="160" elevation="3" class="py-1">
-              <v-list-item prepend-icon="mdi-pencil-outline" title="Edit" />
-              <v-list-item prepend-icon="mdi-content-copy" title="Duplicate" />
+              <v-list-item prepend-icon="pencil" title="Edit" />
+              <v-list-item prepend-icon="copy" title="Duplicate" />
               <v-divider class="my-1" style="opacity: 0.4" />
-              <v-list-item prepend-icon="mdi-delete-outline" title="Delete" class="text-error" />
+              <v-list-item prepend-icon="trash-2" title="Delete" class="text-error" />
             </v-list>
           </v-menu>
         </template>

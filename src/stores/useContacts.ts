@@ -248,12 +248,12 @@ export const useContactsStore = defineStore('contacts', () => {
 
     // Timeline
     const timelineTypes = [
-      { type: 'email_sent', icon: 'mdi-email-outline', color: 'primary' },
-      { type: 'email_opened', icon: 'mdi-email-open-outline', color: 'success' },
-      { type: 'order_placed', icon: 'mdi-cart-outline', color: 'warning' },
-      { type: 'sms_sent', icon: 'mdi-cellphone-message', color: 'info' },
-      { type: 'ticket_created', icon: 'mdi-headset', color: 'error' },
-      { type: 'tag_added', icon: 'mdi-tag-outline', color: 'secondary' },
+      { type: 'email_sent', icon: 'mail', color: 'primary' },
+      { type: 'email_opened', icon: 'mail-open', color: 'success' },
+      { type: 'order_placed', icon: 'shopping-cart', color: 'warning' },
+      { type: 'sms_sent', icon: 'message-circle', color: 'info' },
+      { type: 'ticket_created', icon: 'headset', color: 'error' },
+      { type: 'tag_added', icon: 'tag', color: 'secondary' },
     ]
     const timelineCount = Math.floor(rng() * 12) + 8
     const timeline = Array.from({ length: timelineCount }, (_, i) => {

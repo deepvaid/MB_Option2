@@ -30,7 +30,7 @@ const headers = [
       ]"
     >
       <template #actions>
-        <v-btn color="primary" variant="flat" prepend-icon="mdi-plus" class="text-none">New Secure List</v-btn>
+        <v-btn color="primary" variant="flat" prepend-icon="plus" class="text-none">New Secure List</v-btn>
       </template>
     </MpPageHeader>
 
@@ -53,12 +53,12 @@ const headers = [
         <template v-slot:item.actions>
           <v-menu location="bottom end">
             <template v-slot:activator="{ props }">
-              <v-btn v-bind="props" icon="mdi-dots-horizontal" variant="text" size="small" density="comfortable" color="medium-emphasis" />
+              <v-btn v-bind="props" icon="more-horizontal" variant="text" size="small" density="comfortable" color="medium-emphasis" />
             </template>
             <v-list density="compact" rounded="lg" min-width="160" elevation="3" class="py-1">
-              <v-list-item prepend-icon="mdi-pencil-outline" title="Edit" />
+              <v-list-item prepend-icon="pencil" title="Edit" />
               <v-divider class="my-1" style="opacity: 0.4" />
-              <v-list-item prepend-icon="mdi-delete-outline" title="Delete" class="text-error" />
+              <v-list-item prepend-icon="trash-2" title="Delete" class="text-error" />
             </v-list>
           </v-menu>
         </template>

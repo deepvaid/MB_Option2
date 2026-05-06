@@ -15,7 +15,7 @@ The \`MpEmptyState\` component is used when a container (like a table, list, or 
 ### 🟢 Do's
 - **Do** provide a helpful, action-oriented description explaining *why* it's empty and *what* to do next.
 - **Do** include a primary action button (\`action-label\` and \`@action\`) if the user has permission to create the missing item.
-- **Do** select an appropriate Material Design icon (\`icon\` prop) that semantically relates to the missing content (e.g., \`mdi-account-group-outline\` for missing contacts).
+- **Do** select an appropriate Material Design icon (\`icon\` prop) that semantically relates to the missing content (e.g., \`users\` for missing contacts).
 
 ### 🔴 Don'ts
 - **Don't** leave users dead-ended. Always provide a path forward, even if it's just "Clear filters" or a link to documentation.
@@ -43,27 +43,27 @@ type Story = StoryObj<typeof meta>
 
 export const Default: Story = {
   args: {
-    icon: 'mdi-package-variant-closed',
+    icon: 'package',
     title: 'No orders yet',
     description: 'Once customers start placing orders, they will appear here.',
     actionLabel: 'Create Draft Order',
-    actionIcon: 'mdi-plus',
+    actionIcon: 'plus',
   },
 }
 
 export const Campaigns: Story = {
   args: {
-    icon: 'mdi-email-outline',
+    icon: 'mail',
     title: 'No campaigns yet',
     description: 'Create your first email campaign to engage your audience.',
     actionLabel: 'New Campaign',
-    actionIcon: 'mdi-plus',
+    actionIcon: 'plus',
   },
 }
 
 export const SearchNoResults: Story = {
   args: {
-    icon: 'mdi-magnify',
+    icon: 'search',
     title: 'No results found',
     description: 'Try adjusting your search or filter criteria.',
   },
@@ -71,10 +71,10 @@ export const SearchNoResults: Story = {
 
 export const Contacts: Story = {
   args: {
-    icon: 'mdi-account-group-outline',
+    icon: 'users',
     title: 'No contacts yet',
     description: 'Import contacts or add them manually to start building your audience.',
     actionLabel: 'Import Contacts',
-    actionIcon: 'mdi-upload',
+    actionIcon: 'upload',
   },
 }

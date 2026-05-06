@@ -41,7 +41,7 @@ Vue 3.5 + Vuetify 3.12 + TypeScript 5.9 + Vite 7 + Pinia 3
 - Don't use `!important` (except in rare utility overrides)
 - Don't create unnamed slots
 - Don't use inline styles in templates
-- Don't mix icon libraries (MDI only via `mdi-*`)
+- Don't mix icon libraries (Lucide only via kebab-case names e.g. `plus`, `settings`, `chevron-down`)
 
 ## Page View Pattern
 
@@ -50,7 +50,7 @@ Every data page follows this layout:
 <template>
   <MpPageHeader title="..." subtitle="..." :breadcrumbs="[...]">
     <template #actions>
-      <v-btn color="primary" prepend-icon="mdi-plus">Create</v-btn>
+      <v-btn color="primary" prepend-icon="plus">Create</v-btn>
     </template>
   </MpPageHeader>
   <MpFilterTabs v-model="activeTab" :tabs="[...]" />

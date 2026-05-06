@@ -83,8 +83,8 @@ const submitCampaign = () => {
       ]"
     >
       <template #actions>
-        <v-btn class="text-none mp-btn-dark" variant="flat" prepend-icon="mdi-folder-outline">Manage Folders</v-btn>
-        <v-btn color="primary" variant="flat" prepend-icon="mdi-plus" class="text-none" @click="router.push('/campaigns/new')">New Campaign</v-btn>
+        <v-btn class="text-none mp-btn-dark" variant="flat" prepend-icon="folder">Manage Folders</v-btn>
+        <v-btn color="primary" variant="flat" prepend-icon="plus" class="text-none" @click="router.push('/campaigns/new')">New Campaign</v-btn>
       </template>
     </MpPageHeader>
 
@@ -129,7 +129,7 @@ const submitCampaign = () => {
           </div>
         </template>
         <template #bulk-actions>
-          <v-btn variant="text" prepend-icon="mdi-refresh" class="text-none text-medium-emphasis" size="small">Refresh</v-btn>
+          <v-btn variant="text" prepend-icon="refresh-cw" class="text-none text-medium-emphasis" size="small">Refresh</v-btn>
         </template>
       </MpDataTableToolbar>
 
@@ -147,7 +147,7 @@ const submitCampaign = () => {
         <template v-slot:item.name="{ item }">
           <div class="d-flex align-center py-2 gap-3">
             <v-icon :color="item.status === 'Sent' ? 'success' : item.status === 'Sending' ? 'warning' : 'medium-emphasis'" size="20">
-              {{ item.status === 'Sent' ? 'mdi-email-check' : 'mdi-email-edit-outline' }}
+              {{ item.status === 'Sent' ? 'mail-check' : 'mail' }}
             </v-icon>
             <div>
               <div class="font-weight-medium text-body-2 cursor-pointer text-primary">{{ item.name }}</div>
@@ -193,9 +193,9 @@ const submitCampaign = () => {
 
         <template v-slot:item.actions>
           <div class="action-btns d-flex justify-end pr-2 gap-1">
-            <v-btn icon="mdi-chart-bar" variant="text" size="small" color="primary"></v-btn>
-            <v-btn icon="mdi-content-copy" variant="text" size="small" color="medium-emphasis"></v-btn>
-            <v-btn icon="mdi-dots-vertical" variant="text" size="small" color="medium-emphasis"></v-btn>
+            <v-btn icon="bar-chart-2" variant="text" size="small" color="primary"></v-btn>
+            <v-btn icon="copy" variant="text" size="small" color="medium-emphasis"></v-btn>
+            <v-btn icon="more-vertical" variant="text" size="small" color="medium-emphasis"></v-btn>
           </div>
         </template>
       </v-data-table>
@@ -215,7 +215,7 @@ const submitCampaign = () => {
 
         <v-stepper-item title="Design Email" value="2" color="primary">
           <v-card variant="flat" class="mt-2 mb-6 text-center pa-6 bg-surface-variant border-dashed rounded-xl cursor-pointer">
-            <v-icon size="48" color="primary" class="mb-2">mdi-palette-swatch-outline</v-icon>
+            <v-icon size="48" color="primary" class="mb-2">palette</v-icon>
             <div class="font-weight-bold mb-1">Open Visual Editor</div>
             <div class="text-caption text-medium-emphasis">Use the drag-and-drop email builder</div>
           </v-card>
@@ -226,7 +226,7 @@ const submitCampaign = () => {
           <v-alert type="info" variant="tonal" class="mb-4 text-body-2" rounded="lg">
             Estimated audience size: <strong>~18,432 contacts.</strong> Scheduled for immediate delivery.
           </v-alert>
-          <v-btn color="success" size="large" block class="text-none" prepend-icon="mdi-rocket-launch" @click="submitCampaign">Launch Campaign</v-btn>
+          <v-btn color="success" size="large" block class="text-none" prepend-icon="rocket" @click="submitCampaign">Launch Campaign</v-btn>
         </v-stepper-item>
       </v-stepper>
     </MpFormDrawer>

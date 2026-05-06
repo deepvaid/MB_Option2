@@ -33,7 +33,7 @@ function buildNavGroups(accountId: string): NavGroup[] {
   return [
     {
       title: 'Dashboards',
-      icon: 'mdi-view-dashboard-outline',
+      icon: 'layout-dashboard',
       items: [
         { title: 'Active Dashboard', route: `/accounts/${accountId}/dashboard` },
         { title: 'All Dashboards', route: `/accounts/${accountId}/dashboards` },
@@ -42,7 +42,7 @@ function buildNavGroups(accountId: string): NavGroup[] {
     },
     {
       title: 'Analytics',
-      icon: 'mdi-chart-line',
+      icon: 'line-chart',
       dividerAfter: true,
       items: [
         { title: 'Monthly Totals', route: `/accounts/${accountId}/analytics/monthly_totals` },
@@ -63,7 +63,7 @@ function buildNavGroups(accountId: string): NavGroup[] {
     },
     {
       title: 'CDP',
-      icon: 'mdi-account-group-outline',
+      icon: 'users',
       items: [
         { title: 'All Contacts', route: `/accounts/${accountId}/contacts` },
         { title: 'Contact Lists', route: `/accounts/${accountId}/lists` },
@@ -78,7 +78,7 @@ function buildNavGroups(accountId: string): NavGroup[] {
     },
     {
       title: 'Marketing',
-      icon: 'mdi-bullhorn-outline',
+      icon: 'megaphone',
       items: [
         {
           title: 'Campaigns',
@@ -126,7 +126,7 @@ function buildNavGroups(accountId: string): NavGroup[] {
     },
     {
       title: 'Products',
-      icon: 'mdi-package-variant',
+      icon: 'package',
       requires: 'commerce',
       items: [
         { title: 'Product Recommendations', route: `/commerce/${accountId}/product_recommendations` },
@@ -139,7 +139,7 @@ function buildNavGroups(accountId: string): NavGroup[] {
     },
     {
       title: 'Commerce',
-      icon: 'mdi-shopping-outline',
+      icon: 'shopping-cart',
       requires: 'commerce',
       items: [
         {
@@ -157,14 +157,14 @@ function buildNavGroups(accountId: string): NavGroup[] {
     },
     {
       title: 'Merchandising',
-      icon: 'mdi-tag-heart-outline',
+      icon: 'tag',
       requires: 'commerce',
       singleRoute: `/commerce/${accountId}/merchandising`,
       items: [],
     },
     {
       title: 'Retail',
-      icon: 'mdi-storefront-outline',
+      icon: 'store',
       dividerAfter: true,
       requires: 'commerce',
       singleRoute: `/commerce/${accountId}/retail`,
@@ -172,7 +172,7 @@ function buildNavGroups(accountId: string): NavGroup[] {
     },
     {
       title: 'Service',
-      icon: 'mdi-headset',
+      icon: 'headset',
       dividerAfter: true,
       requires: 'service',
       items: [
@@ -181,7 +181,7 @@ function buildNavGroups(accountId: string): NavGroup[] {
     },
     {
       title: 'Da Vinci AI',
-      icon: 'mdi-robot-outline',
+      icon: 'bot',
       badge: 'NEW',
       requires: 'davinci',
       singleRoute: `/accounts/${accountId}/da-vinci/dashboard`,
@@ -190,7 +190,7 @@ function buildNavGroups(accountId: string): NavGroup[] {
     },
     {
       title: 'Apps',
-      icon: 'mdi-puzzle-outline',
+      icon: 'puzzle',
       singleRoute: `/accounts/${accountId}/app_store`,
       items: [],
     },
@@ -249,7 +249,7 @@ function isLocked(group: NavGroup) {
     <!-- Logo + collapse toggle -->
     <div class="sidebar-header px-3 py-3">
       <v-btn
-        icon="mdi-menu"
+        icon="menu"
         variant="text"
         size="small"
         :aria-label="localRail ? 'Expand navigation sidebar' : 'Collapse navigation sidebar'"
@@ -292,7 +292,7 @@ function isLocked(group: NavGroup) {
             >{{ group.badge }}</v-chip>
             <v-tooltip v-if="isLocked(group) && !group.badge" location="end" text="Upgrade to unlock">
               <template v-slot:activator="{ props: tipProps }">
-                <v-icon v-bind="tipProps" size="14" class="ml-2 sidebar-lock">mdi-lock-outline</v-icon>
+                <v-icon v-bind="tipProps" size="14" class="ml-2 sidebar-lock">lock</v-icon>
               </template>
             </v-tooltip>
           </template>
@@ -314,7 +314,7 @@ function isLocked(group: NavGroup) {
               <template #append v-if="isLocked(group)">
                 <v-tooltip location="end" text="Upgrade to unlock">
                   <template #activator="{ props: tipProps }">
-                    <v-icon v-bind="tipProps" size="14" class="ml-2 sidebar-lock">mdi-lock-outline</v-icon>
+                    <v-icon v-bind="tipProps" size="14" class="ml-2 sidebar-lock">lock</v-icon>
                   </template>
                 </v-tooltip>
               </template>
@@ -390,7 +390,7 @@ function isLocked(group: NavGroup) {
                       slim
                     >
                       <template v-slot:append>
-                        <v-icon size="small" class="sidebar-muted">mdi-chevron-right</v-icon>
+                        <v-icon size="small" class="sidebar-muted">chevron-right</v-icon>
                       </template>
                     </v-list-item>
                   </template>
@@ -436,12 +436,12 @@ function isLocked(group: NavGroup) {
     <template v-slot:append>
       <div class="my-1" />
       <div class="pa-2" v-if="!localRail">
-        <v-btn block variant="text" prepend-icon="mdi-help-circle-outline" class="text-none justify-start sidebar-help" aria-label="Open help and documentation">
+        <v-btn block variant="text" prepend-icon="help-circle" class="text-none justify-start sidebar-help" aria-label="Open help and documentation">
           Help & Documentation
         </v-btn>
       </div>
       <div class="d-flex justify-center pa-2" v-else>
-        <v-btn icon="mdi-help-circle-outline" variant="text" size="small" class="sidebar-muted" aria-label="Open help and documentation" />
+        <v-btn icon="help-circle" variant="text" size="small" class="sidebar-muted" aria-label="Open help and documentation" />
       </div>
     </template>
   </v-navigation-drawer>

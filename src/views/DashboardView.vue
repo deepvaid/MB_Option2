@@ -362,7 +362,7 @@ function performConfirm() {
                 :aria-label="`Switch dashboard. Current dashboard ${pageTitle}`"
               >
                 <h1>{{ pageTitle }}</h1>
-                <v-icon size="20">mdi-chevron-down</v-icon>
+                <v-icon size="20">chevron-down</v-icon>
               </button>
             </template>
 
@@ -370,7 +370,7 @@ function performConfirm() {
               <div class="pa-3 dashboard-switcher-card__search">
                 <v-text-field
                   v-model="switcherSearch"
-                  prepend-inner-icon="mdi-magnify"
+                  prepend-inner-icon="search"
                   placeholder="Search dashboards"
                   density="compact"
                   variant="outlined"
@@ -389,12 +389,12 @@ function performConfirm() {
                 >
                   <template #prepend>
                     <v-avatar size="32" variant="tonal" :color="accentToVuetifyColor(dashboard.accent)">
-                      <v-icon size="18">{{ dashboard.icon ?? 'mdi-view-dashboard-outline' }}</v-icon>
+                      <v-icon size="18">{{ dashboard.icon ?? 'layout-dashboard' }}</v-icon>
                     </v-avatar>
                   </template>
                   <div class="d-flex align-center ga-2 flex-wrap">
                     <span class="text-body-2 font-weight-bold">{{ dashboard.name }}</span>
-                    <v-icon v-if="dashboard.favorite" size="14" color="warning">mdi-star</v-icon>
+                    <v-icon v-if="dashboard.favorite" size="14" color="warning">star</v-icon>
                     <v-chip v-if="dashboard.isDefault" size="x-small" variant="tonal" color="success">Default</v-chip>
                   </div>
                   <template #append>
@@ -406,7 +406,7 @@ function performConfirm() {
                         <template #activator="{ props: tipProps }">
                           <v-btn
                             v-bind="tipProps"
-                            :icon="dashboard.isDefault ? 'mdi-bookmark-check' : 'mdi-bookmark-outline'"
+                            :icon="dashboard.isDefault ? 'bookmark-check' : 'bookmark'"
                             :color="dashboard.isDefault ? 'success' : undefined"
                             variant="text"
                             size="x-small"
@@ -417,7 +417,7 @@ function performConfirm() {
                         </template>
                       </v-tooltip>
                       <v-btn
-                        icon="mdi-pencil-outline"
+                        icon="pencil"
                         variant="text"
                         size="x-small"
                         :aria-label="`Edit ${dashboard.name}`"
@@ -438,7 +438,7 @@ function performConfirm() {
                 <v-btn
                   block
                   variant="text"
-                  prepend-icon="mdi-view-list-outline"
+                  prepend-icon="layout-list"
                   class="text-none justify-start"
                   @click="openListingPage"
                 >
@@ -451,7 +451,7 @@ function performConfirm() {
           <span class="dashboard-refresh-status" aria-live="polite">
             <span class="dashboard-refresh-status__label">Updated 2 min ago</span>
             <v-btn
-              icon="mdi-refresh"
+              icon="refresh-cw"
               variant="text"
               size="small"
               aria-label="Refresh dashboard"
@@ -472,7 +472,7 @@ function performConfirm() {
           <v-btn
             variant="text"
             density="compact"
-            prepend-icon="mdi-plus"
+            prepend-icon="plus"
             class="text-none dashboard-header-action"
             @click="openCreateDashboard"
           >
@@ -489,8 +489,8 @@ function performConfirm() {
                 v-bind="menuProps"
                 variant="text"
                 density="compact"
-                prepend-icon="mdi-calendar-range"
-                append-icon="mdi-chevron-down"
+                prepend-icon="calendar-range"
+                append-icon="chevron-down"
                 class="text-none dashboard-date-trigger"
                 @click.stop="openDateMenu"
               >
@@ -519,7 +519,7 @@ function performConfirm() {
               <div class="dashboard-date-menu__body">
                 <div class="dashboard-date-menu__fields">
                   <v-text-field v-model="dateDraft.startDate" label="Start date" type="date" density="comfortable" variant="outlined" hide-details />
-                  <v-icon size="18">mdi-arrow-right</v-icon>
+                  <v-icon size="18">arrow-right</v-icon>
                   <v-text-field v-model="dateDraft.endDate" label="End date" type="date" density="comfortable" variant="outlined" hide-details />
                 </div>
                 <div class="dashboard-date-menu__fields mt-3">
@@ -543,7 +543,7 @@ function performConfirm() {
                 v-bind="menuProps"
                 variant="text"
                 density="compact"
-                prepend-icon="mdi-filter-variant"
+                prepend-icon="list-filter"
                 class="text-none dashboard-filter-button"
               >
                 Filters
@@ -570,7 +570,7 @@ function performConfirm() {
                 v-bind="menuProps"
                 variant="text"
                 density="compact"
-                append-icon="mdi-chevron-down"
+                append-icon="chevron-down"
                 class="text-none dashboard-header-action"
                 :disabled="!activeDashboard"
               >
@@ -579,43 +579,43 @@ function performConfirm() {
             </template>
             <v-list density="compact" min-width="240">
               <v-list-item
-                prepend-icon="mdi-pencil-outline"
+                prepend-icon="pencil"
                 title="Edit dashboard details"
                 :disabled="!activeDashboard"
                 @click="openEditDashboard"
               />
               <v-list-item
-                prepend-icon="mdi-content-duplicate"
+                prepend-icon="copy-plus"
                 title="Duplicate dashboard"
                 :disabled="!activeDashboard"
                 @click="duplicateCurrentDashboard"
               />
               <v-list-item
                 v-if="activeDashboard && !activeDashboard.isDefault"
-                prepend-icon="mdi-bookmark-outline"
+                prepend-icon="bookmark"
                 title="Set as default"
                 @click="setActiveAsDefault"
               />
               <v-divider class="my-1" />
               <v-list-item
-                prepend-icon="mdi-cursor-move"
+                prepend-icon="move"
                 :title="editMode ? 'Done editing layout' : 'Edit layout'"
                 :active="editMode"
                 @click="editMode = !editMode"
               />
               <v-divider class="my-1" />
-              <v-list-item prepend-icon="mdi-link-variant" title="Copy dashboard link" @click="openStubAction('Copy dashboard link')" />
-              <v-list-item prepend-icon="mdi-account-plus-outline" title="Invite editors" @click="openStubAction('Invite editors')" />
+              <v-list-item prepend-icon="link" title="Copy dashboard link" @click="openStubAction('Copy dashboard link')" />
+              <v-list-item prepend-icon="user-plus" title="Invite editors" @click="openStubAction('Invite editors')" />
               <v-divider v-if="activeDashboard?.kind === 'system' || activeDashboard?.kind === 'custom'" class="my-1" />
               <v-list-item
                 v-if="activeDashboard?.kind === 'system'"
-                prepend-icon="mdi-backup-restore"
+                prepend-icon="rotate-ccw"
                 title="Reset to defaults"
                 @click="resetCurrentDashboard"
               />
               <v-list-item
                 v-if="activeDashboard?.kind === 'custom'"
-                prepend-icon="mdi-delete-outline"
+                prepend-icon="trash-2"
                 title="Delete dashboard"
                 base-color="error"
                 @click="deleteCurrentDashboard"
@@ -626,7 +626,7 @@ function performConfirm() {
             color="primary"
             variant="flat"
             density="compact"
-            prepend-icon="mdi-plus"
+            prepend-icon="plus"
             class="text-none dashboard-add-content"
             :disabled="!activeDashboard"
             @click="openWidgetBuilder()"
@@ -643,7 +643,7 @@ function performConfirm() {
       variant="tonal"
       rounded="xl"
       class="mt-4"
-      icon="mdi-cursor-move"
+      icon="move"
     >
       Drag, resize, or pick a size preset (S/M/L/XL). Layout changes save automatically for this account and dashboard.
     </v-alert>
@@ -718,7 +718,7 @@ function performConfirm() {
 .dashboard-builder-header {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 6px;
   padding-block: 0;
   background: transparent;
 }
@@ -766,10 +766,10 @@ function performConfirm() {
 
 .dashboard-title-switcher h1 {
   margin: 0;
-  font-size: clamp(1.45rem, 2vw, 1.85rem);
-  line-height: 1.2;
+  font-size: clamp(1rem, 1.3vw, 1.125rem);
+  line-height: 1.3;
   letter-spacing: 0;
-  font-weight: 700;
+  font-weight: 600;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -785,9 +785,9 @@ function performConfirm() {
 }
 
 .dashboard-builder-header__actions :deep(.v-btn) {
-  min-height: 32px;
-  height: 32px;
-  padding-inline: 10px;
+  min-height: 28px;
+  height: 28px;
+  padding-inline: 8px;
   border-radius: 8px;
   color: rgba(var(--v-theme-on-surface), 0.76);
   font-size: var(--mp-typography-fontSize-sm);
@@ -799,7 +799,7 @@ function performConfirm() {
 }
 
 .dashboard-builder-header__actions :deep(.v-icon) {
-  font-size: 18px;
+  font-size: 15px;
 }
 
 .dashboard-header-action:hover {
@@ -810,13 +810,10 @@ function performConfirm() {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 12px;
+  gap: 8px;
   flex-wrap: wrap;
-  min-height: 48px;
-  padding: 6px 6px 6px 12px;
-  border: 1px solid var(--mp-border-subtle);
-  border-radius: var(--mp-borderRadius-full);
-  background: rgb(var(--v-theme-surface));
+  min-height: 36px;
+  padding: 0;
 }
 
 .dashboard-control-group {
@@ -827,16 +824,19 @@ function performConfirm() {
 }
 
 .dashboard-control-group :deep(.v-btn) {
-  min-height: 36px;
-  height: 36px;
+  min-height: 30px;
+  height: 30px;
   padding-inline: 10px;
+  border: 1px solid var(--mp-border-subtle);
+  border-radius: 999px;
+  background: rgb(var(--v-theme-surface));
   color: rgba(var(--v-theme-on-surface), 0.78);
   font-size: var(--mp-typography-fontSize-sm);
   font-weight: 600;
 }
 
 .dashboard-control-group :deep(.v-icon) {
-  font-size: 17px;
+  font-size: 15px;
 }
 
 .dashboard-date-trigger {
@@ -855,16 +855,18 @@ function performConfirm() {
 
 .dashboard-refresh-status__label {
   white-space: nowrap;
+  font-size: 12px;
+  color: rgba(var(--v-theme-on-surface), 0.55);
 }
 
 .dashboard-refresh-status :deep(.v-btn) {
-  width: 26px;
-  height: 26px;
+  width: 22px;
+  height: 22px;
   color: rgba(var(--v-theme-on-surface), 0.48);
 }
 
 .dashboard-refresh-status :deep(.v-icon) {
-  font-size: 16px;
+  font-size: 14px;
 }
 
 .dashboard-builder-header__control-actions {
@@ -874,16 +876,24 @@ function performConfirm() {
 }
 
 .dashboard-builder-header__control-actions :deep(.v-btn:not(.dashboard-add-content)) {
-  min-height: 36px;
-  height: 36px;
+  min-height: 30px;
+  height: 30px;
   padding-inline: 10px;
+  border: 1px solid var(--mp-border-subtle);
+  border-radius: 999px;
+  background: rgb(var(--v-theme-surface));
   color: rgba(var(--v-theme-on-surface), 0.78);
   font-size: var(--mp-typography-fontSize-sm);
   font-weight: 600;
 }
 
 .dashboard-builder-header__control-actions :deep(.v-icon) {
-  font-size: 17px;
+  font-size: 15px;
+}
+
+.dashboard-add-content {
+  min-height: 30px !important;
+  height: 30px !important;
 }
 
 .dashboard-date-menu {

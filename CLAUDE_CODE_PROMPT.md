@@ -401,10 +401,10 @@ Real sections from live app:
 Every list/table must have an empty state:
 ```vue
 <div class="d-flex flex-column align-center pa-12 text-center">
-  <v-icon size="64" color="grey-lighten-2" class="mb-4">mdi-[relevant-icon]</v-icon>
+  <v-icon size="64" color="grey-lighten-2" class="mb-4">inbox</v-icon>
   <p class="text-h6 text-medium-emphasis mb-2">No [items] yet</p>
   <p class="text-body-2 text-medium-emphasis mb-6">Create your first [item] to get started.</p>
-  <v-btn color="primary" prepend-icon="mdi-plus">Create [Item]</v-btn>
+  <v-btn color="primary" prepend-icon="plus">Create [Item]</v-btn>
 </div>
 ```
 
@@ -415,7 +415,7 @@ Every list/table must have an empty state:
     <h1 class="text-h5 font-weight-bold">Page Title</h1>
     <p class="text-body-2 text-medium-emphasis mt-1">Short description of what this section does</p>
   </div>
-  <v-btn color="primary" prepend-icon="mdi-plus">Primary Action</v-btn>
+  <v-btn color="primary" prepend-icon="plus">Primary Action</v-btn>
 </div>
 ```
 
@@ -454,7 +454,7 @@ Every list/table must have an empty state:
 6. **Tables always support sorting** — pass `sortable: true` on every column header
 7. **Mobile-responsive** — sidebar collapses on `smAndDown`, tables become card lists on mobile
 8. **Keyboard accessible** — all interactive elements reachable via Tab, proper ARIA labels
-9. **Consistent icon set** — use only MDI icons (`@mdi/font`), no mixing icon libraries
+9. **Consistent icon set** — use only Lucide icons (`lucide-vue-next`) via kebab-case names (e.g. `plus`, `settings`, `chevron-down`). No mixing icon libraries.
 10. **Never use default Vuetify blue** — always use the custom theme defined above
 
 ---

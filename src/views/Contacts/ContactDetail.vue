@@ -103,17 +103,17 @@ const cartHeaders = [
     <!-- ── Page Header ────────────────────────────────────────────────────── -->
     <MpPageHeader :title="fullName" :breadcrumbs="breadcrumbs">
       <template #actions>
-        <v-btn variant="outlined" prepend-icon="mdi-pencil-outline" @click="openEditDrawer">Edit Contact</v-btn>
+        <v-btn variant="outlined" prepend-icon="pencil" @click="openEditDrawer">Edit Contact</v-btn>
         <v-menu>
           <template v-slot:activator="{ props }">
-            <v-btn v-bind="props" icon="mdi-dots-vertical" variant="text" />
+            <v-btn v-bind="props" icon="more-vertical" variant="text" />
           </template>
           <v-list density="compact" rounded="lg" min-width="160" elevation="3" class="py-1">
-            <v-list-item prepend-icon="mdi-export-variant" title="Export" />
-            <v-list-item prepend-icon="mdi-content-copy" title="Duplicate" />
-            <v-list-item prepend-icon="mdi-merge" title="Merge" />
+            <v-list-item prepend-icon="share" title="Export" />
+            <v-list-item prepend-icon="copy" title="Duplicate" />
+            <v-list-item prepend-icon="merge" title="Merge" />
             <v-divider class="my-1" />
-            <v-list-item prepend-icon="mdi-trash-can-outline" title="Delete" class="text-error" />
+            <v-list-item prepend-icon="trash-2" title="Delete" class="text-error" />
           </v-list>
         </v-menu>
       </template>
@@ -180,14 +180,14 @@ const cartHeaders = [
             <v-chip v-for="tag in contact.tags" :key="tag" size="small" variant="tonal" color="secondary">{{ tag }}</v-chip>
           </div>
           <div v-else class="text-body-2 text-medium-emphasis mb-4">No contact tags to show.</div>
-          <v-btn variant="outlined" size="small" prepend-icon="mdi-plus">Add Contact Tags</v-btn>
+          <v-btn variant="outlined" size="small" prepend-icon="plus">Add Contact Tags</v-btn>
         </v-card>
 
         <!-- Card 3: Lists & Subscriptions -->
         <v-card flat border rounded="xl" class="pa-5">
           <MpSectionHeader title="Contact Lists">
             <template #actions>
-              <v-btn icon="mdi-pencil-outline" variant="text" size="small" density="comfortable" />
+              <v-btn icon="pencil" variant="text" size="small" density="comfortable" />
             </template>
           </MpSectionHeader>
 
@@ -215,8 +215,8 @@ const cartHeaders = [
           </div>
 
           <div class="d-flex align-center gap-4">
-            <div class="d-flex align-center gap-1"><v-icon size="10" color="primary">mdi-circle</v-icon><span class="text-caption">Subscribed</span></div>
-            <div class="d-flex align-center gap-1"><v-icon size="10" color="error">mdi-circle</v-icon><span class="text-caption">Unsubscribed</span></div>
+            <div class="d-flex align-center gap-1"><v-icon size="10" color="primary">circle</v-icon><span class="text-caption">Subscribed</span></div>
+            <div class="d-flex align-center gap-1"><v-icon size="10" color="error">circle</v-icon><span class="text-caption">Unsubscribed</span></div>
           </div>
         </v-card>
 
@@ -281,34 +281,34 @@ const cartHeaders = [
               <!-- KPI Row 1: Response & Revenue -->
               <v-row dense>
                 <v-col cols="3">
-                  <MpKpiCard label="Response Rate" :value="detail.responseRate.email" icon="mdi-email-outline" color="error">
+                  <MpKpiCard label="Response Rate" :value="detail.responseRate.email" icon="mail" color="error">
                     <div class="text-body-2 text-medium-emphasis mt-1">{{ detail.responseRate.sms }} SMS</div>
                   </MpKpiCard>
                 </v-col>
                 <v-col cols="3">
-                  <MpKpiCard label="Ideal Response Time" :value="detail.idealResponseTime" icon="mdi-clock-outline" color="info" />
+                  <MpKpiCard label="Ideal Response Time" :value="detail.idealResponseTime" icon="clock" color="info" />
                 </v-col>
                 <v-col cols="3">
-                  <MpKpiCard label="Lifetime Value" :value="`$${detail.lifetimeValue.toLocaleString()}`" icon="mdi-cash-multiple" color="success" sub-stat="vs. average $310.0M" />
+                  <MpKpiCard label="Lifetime Value" :value="`$${detail.lifetimeValue.toLocaleString()}`" icon="banknote" color="success" sub-stat="vs. average $310.0M" />
                 </v-col>
                 <v-col cols="3">
-                  <MpKpiCard label="Number of Orders" :value="contact.orders" icon="mdi-cart-outline" color="warning" :sub-stat="`vs. average ${detail.avgOrders} Orders`" />
+                  <MpKpiCard label="Number of Orders" :value="contact.orders" icon="shopping-cart" color="warning" :sub-stat="`vs. average ${detail.avgOrders} Orders`" />
                 </v-col>
               </v-row>
 
               <!-- KPI Row 2: Tickets -->
               <v-row dense>
                 <v-col cols="3">
-                  <MpKpiCard label="Total Tickets" :value="detail.engagement.tickets.total" icon="mdi-ticket-outline" color="primary" />
+                  <MpKpiCard label="Total Tickets" :value="detail.engagement.tickets.total" icon="ticket" color="primary" />
                 </v-col>
                 <v-col cols="3">
-                  <MpKpiCard label="Open Tickets" :value="detail.engagement.tickets.open" icon="mdi-ticket-confirmation-outline" color="info" />
+                  <MpKpiCard label="Open Tickets" :value="detail.engagement.tickets.open" icon="ticket-check" color="info" />
                 </v-col>
                 <v-col cols="3">
-                  <MpKpiCard label="Solved Tickets" :value="detail.engagement.tickets.solved" icon="mdi-check-circle-outline" color="success" />
+                  <MpKpiCard label="Solved Tickets" :value="detail.engagement.tickets.solved" icon="circle-check" color="success" />
                 </v-col>
                 <v-col cols="3">
-                  <MpKpiCard label="On-hold Tickets" :value="detail.engagement.tickets.onHold" icon="mdi-pause-circle-outline" color="error" />
+                  <MpKpiCard label="On-hold Tickets" :value="detail.engagement.tickets.onHold" icon="circle-pause" color="error" />
                 </v-col>
               </v-row>
 
@@ -316,7 +316,7 @@ const cartHeaders = [
               <v-card flat border rounded="xl" class="pa-5">
                 <MpSectionHeader title="Customer Engagement (Last 7 days)">
                   <template #actions>
-                    <v-btn variant="text" prepend-icon="mdi-filter-variant" size="small">Filters</v-btn>
+                    <v-btn variant="text" prepend-icon="list-filter" size="small">Filters</v-btn>
                   </template>
                 </MpSectionHeader>
 
@@ -331,28 +331,28 @@ const cartHeaders = [
                 <v-row v-if="engagementSubTab === 'emails'" dense class="mb-5">
                   <v-col cols="3">
                     <v-card flat border rounded="lg" class="pa-4 text-center">
-                      <v-icon color="primary" size="24" class="mb-2">mdi-email-send-outline</v-icon>
+                      <v-icon color="primary" size="24" class="mb-2">send</v-icon>
                       <div class="text-h5 font-weight-bold">{{ detail.engagement.email.sends }}</div>
                       <div class="text-caption text-medium-emphasis">Sends</div>
                     </v-card>
                   </v-col>
                   <v-col cols="3">
                     <v-card flat border rounded="lg" class="pa-4 text-center">
-                      <v-icon color="success" size="24" class="mb-2">mdi-email-open-outline</v-icon>
+                      <v-icon color="success" size="24" class="mb-2">mail-open</v-icon>
                       <div class="text-h5 font-weight-bold">{{ detail.engagement.email.opens }}</div>
                       <div class="text-caption text-medium-emphasis">Opens · {{ detail.engagement.email.openRate }}</div>
                     </v-card>
                   </v-col>
                   <v-col cols="3">
                     <v-card flat border rounded="lg" class="pa-4 text-center">
-                      <v-icon color="info" size="24" class="mb-2">mdi-cursor-default-click-outline</v-icon>
+                      <v-icon color="info" size="24" class="mb-2">mouse-pointer-click</v-icon>
                       <div class="text-h5 font-weight-bold">{{ detail.engagement.email.clicks }}</div>
                       <div class="text-caption text-medium-emphasis">Clicks · {{ detail.engagement.email.clickRate }}</div>
                     </v-card>
                   </v-col>
                   <v-col cols="3">
                     <v-card flat border rounded="lg" class="pa-4 text-center">
-                      <v-icon color="error" size="24" class="mb-2">mdi-email-remove-outline</v-icon>
+                      <v-icon color="error" size="24" class="mb-2">mail-x</v-icon>
                       <div class="text-h5 font-weight-bold">{{ detail.engagement.email.bounceRate }}</div>
                       <div class="text-caption text-medium-emphasis">Bounces</div>
                     </v-card>
@@ -428,7 +428,7 @@ const cartHeaders = [
               <div v-if="campaignSubTab === 'email' && emailCampaigns.length" class="d-flex flex-column">
                 <div v-for="c in emailCampaigns" :key="c.id" class="campaign-row d-flex align-center gap-3 py-3 px-2">
                   <v-avatar color="primary" size="36" variant="tonal">
-                    <v-icon size="18">mdi-email-outline</v-icon>
+                    <v-icon size="18">mail</v-icon>
                   </v-avatar>
                   <div class="flex-grow-1">
                     <div class="text-body-2 font-weight-medium">{{ c.name }}</div>
@@ -445,7 +445,7 @@ const cartHeaders = [
               <div v-else-if="campaignSubTab === 'sms' && smsCampaigns.length" class="d-flex flex-column">
                 <div v-for="c in smsCampaigns" :key="c.id" class="campaign-row d-flex align-center gap-3 py-3 px-2">
                   <v-avatar color="info" size="36" variant="tonal">
-                    <v-icon size="18">mdi-cellphone-message</v-icon>
+                    <v-icon size="18">message-circle</v-icon>
                   </v-avatar>
                   <div class="flex-grow-1">
                     <div class="text-body-2 font-weight-medium">{{ c.name }}</div>
@@ -461,7 +461,7 @@ const cartHeaders = [
 
               <MpEmptyState
                 v-else
-                icon="mdi-email-off-outline"
+                icon="mail-x"
                 title="No campaigns found"
                 description="No campaigns have been sent to this contact yet."
               />
@@ -487,7 +487,7 @@ const cartHeaders = [
               </v-data-table>
               <MpEmptyState
                 v-else
-                icon="mdi-headset"
+                icon="headset"
                 title="No tickets"
                 description="This contact has no support tickets."
               />
@@ -520,7 +520,7 @@ const cartHeaders = [
               </v-data-table>
               <MpEmptyState
                 v-else
-                icon="mdi-cart-off"
+                icon="shopping-cart"
                 title="No orders"
                 description="This contact has not placed any orders yet."
               />
@@ -551,7 +551,7 @@ const cartHeaders = [
               </v-data-table>
               <MpEmptyState
                 v-else
-                icon="mdi-cart-remove"
+                icon="shopping-cart"
                 title="No abandoned carts"
                 description="This contact has no abandoned carts."
               />

@@ -109,7 +109,7 @@ function editBeforeAdding() {
           size="small"
           color="secondary"
           variant="tonal"
-          prepend-icon="mdi-creation"
+          prepend-icon="sparkles"
           class="font-weight-medium"
         >
           {{ draft.type }}

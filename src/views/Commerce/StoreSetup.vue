@@ -9,7 +9,7 @@ const channels = [
 ]
 
 const statusColor = (s: string) => s === 'Connected' ? 'success' : s.includes('Pending') ? 'warning' : 'error'
-const channelIcon = (type: string) => type === 'Retail' ? 'mdi-storefront' : type === 'Marketplace' ? 'mdi-cart-variant' : 'mdi-web'
+const channelIcon = (type: string) => type === 'Retail' ? 'store' : type === 'Marketplace' ? 'shopping-cart' : 'globe'
 </script>
 
 <template>
@@ -24,7 +24,7 @@ const channelIcon = (type: string) => type === 'Retail' ? 'mdi-storefront' : typ
       ]"
     >
       <template #actions>
-        <v-btn color="primary" variant="flat" prepend-icon="mdi-plus" class="text-none">Add Channel</v-btn>
+        <v-btn color="primary" variant="flat" prepend-icon="plus" class="text-none">Add Channel</v-btn>
       </template>
     </MpPageHeader>
 

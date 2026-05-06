@@ -7,7 +7,7 @@ import MpPageHeader from '@/components/MpPageHeader.vue'
     <MpPageHeader title="Merchandising" subtitle="Curate storefront experiences, product placements, and promotional merchandising." />
 
     <v-card flat border rounded="lg" class="coming-soon-card pa-12 d-flex flex-column align-center text-center">
-      <v-icon size="64" color="secondary" class="mb-4">mdi-tag-heart-outline</v-icon>
+      <v-icon size="64" color="secondary" class="mb-4">tag</v-icon>
       <h2 class="text-h5 font-weight-bold mb-2">Coming Soon</h2>
       <p class="text-body-2 text-medium-emphasis" style="max-width: 480px;">
         We're building powerful merchandising tools to help you showcase products, run promotions,

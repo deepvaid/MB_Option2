@@ -19,7 +19,7 @@ const { accountMetrics } = storeToRefs(store)
       ]"
     >
       <template #actions>
-        <v-btn variant="outlined" prepend-icon="mdi-download" class="text-none">Export Report</v-btn>
+        <v-btn variant="outlined" prepend-icon="download" class="text-none">Export Report</v-btn>
       </template>
     </MpPageHeader>
 

@@ -14,7 +14,7 @@ import MpPageHeader from '@/components/MpPageHeader.vue'
     />
     <v-card flat border rounded="lg" class="pa-6 mt-4">
       <div class="d-flex flex-column align-center justify-center" style="min-height: 300px;">
-        <v-icon size="64" color="warning" class="mb-4">mdi-storefront-outline</v-icon>
+        <v-icon size="64" color="warning" class="mb-4">store</v-icon>
         <h3 class="text-h6 text-medium-emphasis mb-2">Retail</h3>
         <p class="text-body-2 text-medium-emphasis">Premium feature — retail and POS management will appear here.</p>
       </div>

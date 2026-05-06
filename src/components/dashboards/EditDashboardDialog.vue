@@ -23,7 +23,7 @@ const dashboardsStore = useDashboardsStore()
 
 const name = ref('')
 const description = ref('')
-const icon = ref<string>('mdi-view-dashboard-outline')
+const icon = ref<string>('layout-dashboard')
 const accent = ref<DashboardAccent>('primary')
 
 watch(
@@ -32,7 +32,7 @@ watch(
     if (!isOpen || !dashboard) return
     name.value = dashboard.name
     description.value = dashboard.description ?? ''
-    icon.value = dashboard.icon ?? 'mdi-view-dashboard-outline'
+    icon.value = dashboard.icon ?? 'layout-dashboard'
     accent.value = dashboard.accent ?? 'primary'
   },
   { immediate: true },
@@ -77,7 +77,7 @@ function save() {
           <div class="text-overline text-medium-emphasis">Edit dashboard</div>
           <div class="text-h6 font-weight-bold">{{ trimmedName || 'Untitled dashboard' }}</div>
         </div>
-        <v-btn icon="mdi-close" variant="text" size="small" aria-label="Close" @click="close" />
+        <v-btn icon="x" variant="text" size="small" aria-label="Close" @click="close" />
       </v-card-title>
 
       <v-divider />
@@ -117,7 +117,7 @@ function save() {
               @click="accent = option.value"
             >
               <v-avatar size="32" variant="tonal" :color="option.vuetifyColor">
-                <v-icon size="18">mdi-palette-outline</v-icon>
+                <v-icon size="18">palette</v-icon>
               </v-avatar>
               <span class="text-caption">{{ option.label }}</span>
             </button>

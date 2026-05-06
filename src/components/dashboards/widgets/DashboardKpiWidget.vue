@@ -16,7 +16,7 @@ const props = withDefaults(defineProps<{
 })
 
 const trendPositive = computed(() => props.data.delta == null || props.data.delta >= 0)
-const trendIcon = computed(() => (trendPositive.value ? 'mdi-menu-up' : 'mdi-menu-down'))
+const trendIcon = computed(() => (trendPositive.value ? 'chevron-up' : 'chevron-down'))
 const displayDeltaLabel = computed(() => {
   if (props.data.delta == null) return props.data.deltaLabel
   if (props.data.unit === 'percent') {

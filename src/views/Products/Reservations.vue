@@ -93,7 +93,7 @@ const filteredItems = computed(() =>
             >
               <template #error>
                 <div class="w-100 h-100 d-flex align-center justify-center bg-surface-variant rounded-md">
-                  <v-icon size="16" color="medium-emphasis">mdi-image-outline</v-icon>
+                  <v-icon size="16" color="medium-emphasis">image</v-icon>
                 </div>
               </template>
             </v-img>
@@ -108,10 +108,10 @@ const filteredItems = computed(() =>
         <template v-slot:item.actions>
           <v-menu location="bottom end">
             <template v-slot:activator="{ props }">
-              <v-btn v-bind="props" icon="mdi-dots-horizontal" variant="text" size="small" density="comfortable" color="medium-emphasis" />
+              <v-btn v-bind="props" icon="more-horizontal" variant="text" size="small" density="comfortable" color="medium-emphasis" />
             </template>
             <v-list density="compact" rounded="lg" min-width="160" elevation="3" class="py-1">
-              <v-list-item prepend-icon="mdi-close-circle-outline" title="Release Hold" />
+              <v-list-item prepend-icon="circle-x" title="Release Hold" />
             </v-list>
           </v-menu>
         </template>

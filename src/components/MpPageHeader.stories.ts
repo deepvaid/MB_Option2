@@ -53,7 +53,7 @@ export const WithActions: Story = {
       <MpPageHeader v-bind="args">
         <template #actions>
           <v-btn variant="outlined" class="mr-2">Import</v-btn>
-          <v-btn color="primary" prepend-icon="mdi-plus">New Campaign</v-btn>
+          <v-btn color="primary" prepend-icon="plus">New Campaign</v-btn>
         </template>
       </MpPageHeader>
     `,

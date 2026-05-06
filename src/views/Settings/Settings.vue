@@ -15,44 +15,44 @@ const selectedSetting = ref<string | null>(null)
 
 // ── Top-level horizontal tabs matching the real Maropost app ──────────────────
 const topTabs = [
-  { key: 'connections',  label: 'Connections',   icon: 'mdi-connection' },
-  { key: 'dns',          label: 'DNS Setup',      icon: 'mdi-dns-outline' },
-  { key: 'contacts',     label: 'Contacts',       icon: 'mdi-account-filter-outline' },
-  { key: 'campaigns',    label: 'Campaigns',      icon: 'mdi-bullhorn-outline' },
-  { key: 'store',        label: 'Store Setup',    icon: 'mdi-store-outline' },
-  { key: 'service',      label: 'Service',        icon: 'mdi-headset' },
-  { key: 'account',      label: 'Account',        icon: 'mdi-office-building-outline' },
+  { key: 'connections',  label: 'Connections',   icon: 'plug' },
+  { key: 'dns',          label: 'DNS Setup',      icon: 'server' },
+  { key: 'contacts',     label: 'Contacts',       icon: 'user-search' },
+  { key: 'campaigns',    label: 'Campaigns',      icon: 'megaphone' },
+  { key: 'store',        label: 'Store Setup',    icon: 'store' },
+  { key: 'service',      label: 'Service',        icon: 'headset' },
+  { key: 'account',      label: 'Account',        icon: 'building-2' },
 ]
 
 // ── Icon cards per tab ────────────────────────────────────────────────────────
 const settingCards: Record<string, { key: string; icon: string; color: string; label: string; desc: string }[]> = {
   connections: [
-    { key: 'apikeys',      icon: 'mdi-key-variant',         color: 'warning',   label: 'API Keys',        desc: 'REST API credentials for integrations' },
-    { key: 'webhooks',     icon: 'mdi-webhook',             color: 'secondary', label: 'HTTP Post URLs',  desc: 'Receive real-time event webhooks' },
-    { key: 'integrations', icon: 'mdi-puzzle-outline',      color: 'primary',   label: 'Integrations',   desc: 'Shopify, Stripe, Zapier and more' },
+    { key: 'apikeys',      icon: 'key-round',         color: 'warning',   label: 'API Keys',        desc: 'REST API credentials for integrations' },
+    { key: 'webhooks',     icon: 'globehook',             color: 'secondary', label: 'HTTP Post URLs',  desc: 'Receive real-time event webhooks' },
+    { key: 'integrations', icon: 'puzzle',      color: 'primary',   label: 'Integrations',   desc: 'Shopify, Stripe, Zapier and more' },
   ],
   dns: [
-    { key: 'domains',      icon: 'mdi-email-check-outline', color: 'success',   label: 'Sending Domains', desc: 'DKIM, SPF and DMARC verification' },
-    { key: 'tracking',     icon: 'mdi-link-variant',        color: 'info',      label: 'Tracking Domains',desc: 'Click and open tracking domains' },
+    { key: 'domains',      icon: 'mail-check', color: 'success',   label: 'Sending Domains', desc: 'DKIM, SPF and DMARC verification' },
+    { key: 'tracking',     icon: 'link',        color: 'info',      label: 'Tracking Domains',desc: 'Click and open tracking domains' },
   ],
   contacts: [
-    { key: 'contactsettings', icon: 'mdi-account-cog-outline',   color: 'primary',   label: 'Contact Settings',  desc: 'Suppression, deduplication, cleansing' },
-    { key: 'notifications',   icon: 'mdi-bell-cog-outline',       color: 'warning',   label: 'Notifications',     desc: 'Email digests and alert preferences' },
+    { key: 'contactsettings', icon: 'user-cog',   color: 'primary',   label: 'Contact Settings',  desc: 'Suppression, deduplication, cleansing' },
+    { key: 'notifications',   icon: 'bell-ring',       color: 'warning',   label: 'Notifications',     desc: 'Email digests and alert preferences' },
   ],
   campaigns: [
-    { key: 'campaignsettings', icon: 'mdi-email-cog-outline',    color: 'primary',   label: 'Campaign Defaults', desc: 'Sender, subject prefix, tracking' },
+    { key: 'campaignsettings', icon: 'mail',    color: 'primary',   label: 'Campaign Defaults', desc: 'Sender, subject prefix, tracking' },
   ],
   store: [
-    { key: 'billing',      icon: 'mdi-credit-card-outline', color: 'success',   label: 'Billing & Plan',  desc: 'Subscription, usage, invoices' },
+    { key: 'billing',      icon: 'credit-card', color: 'success',   label: 'Billing & Plan',  desc: 'Subscription, usage, invoices' },
   ],
   service: [
-    { key: 'servicesettings', icon: 'mdi-headset',          color: 'primary',   label: 'Service Settings',desc: 'Helpdesk, SLA, reply templates' },
+    { key: 'servicesettings', icon: 'headset',          color: 'primary',   label: 'Service Settings',desc: 'Helpdesk, SLA, reply templates' },
   ],
   account: [
-    { key: 'accountdetails', icon: 'mdi-office-building-outline', color: 'primary',  label: 'Account & Company', desc: 'Name, locale, industry, address' },
-    { key: 'billing',        icon: 'mdi-credit-card-outline',     color: 'success',  label: 'Billing & Plan',    desc: 'Plan, usage, payment method' },
-    { key: 'users',          icon: 'mdi-account-multiple-outline',color: 'secondary',label: 'Users & Permissions',desc: 'Team members and module access' },
-    { key: 'profile',        icon: 'mdi-account-circle-outline',  color: 'info',     label: 'My Profile',        desc: 'Personal info, password, timezone' },
+    { key: 'accountdetails', icon: 'building-2', color: 'primary',  label: 'Account & Company', desc: 'Name, locale, industry, address' },
+    { key: 'billing',        icon: 'credit-card',     color: 'success',  label: 'Billing & Plan',    desc: 'Plan, usage, payment method' },
+    { key: 'users',          icon: 'users',color: 'secondary',label: 'Users & Permissions',desc: 'Team members and module access' },
+    { key: 'profile',        icon: 'circle-user',  color: 'info',     label: 'My Profile',        desc: 'Personal info, password, timezone' },
   ],
 }
 
@@ -106,15 +106,15 @@ const webhooks = ref([
 ])
 
 const integrations = [
-  { name:'Shopify',          icon:'mdi-shopping',       color:'success',   connected:true,  desc:'Sync orders, products & customers' },
-  { name:'WooCommerce',      icon:'mdi-wordpress',      color:'purple',    connected:false, desc:'Connect your WooCommerce store' },
-  { name:'Stripe',           icon:'mdi-credit-card',    color:'primary',   connected:true,  desc:'Payment and subscription data sync' },
-  { name:'Zapier',           icon:'mdi-lightning-bolt', color:'warning',   connected:false, desc:'5000+ app integrations' },
-  { name:'Google Analytics', icon:'mdi-google',         color:'error',     connected:true,  desc:'Campaign performance tracking' },
-  { name:'Facebook Pixel',   icon:'mdi-facebook',       color:'info',      connected:false, desc:'Ad retargeting audience sync' },
-  { name:'HubSpot CRM',      icon:'mdi-hub',            color:'error',     connected:false, desc:'Two-way CRM sync' },
-  { name:'Salesforce',       icon:'mdi-cloud',          color:'primary',   connected:false, desc:'Enterprise CRM integration' },
-  { name:'Neto',             icon:'mdi-store',          color:'success',   connected:false, desc:'Neto e-commerce platform sync' },
+  { name:'Shopify',          icon:'shopping-bag',       color:'success',   connected:true,  desc:'Sync orders, products & customers' },
+  { name:'WooCommerce',      icon:'code-2',      color:'purple',    connected:false, desc:'Connect your WooCommerce store' },
+  { name:'Stripe',           icon:'credit-card',    color:'primary',   connected:true,  desc:'Payment and subscription data sync' },
+  { name:'Zapier',           icon:'zap', color:'warning',   connected:false, desc:'5000+ app integrations' },
+  { name:'Google Analytics', icon:'globe',         color:'error',     connected:true,  desc:'Campaign performance tracking' },
+  { name:'Facebook Pixel',   icon:'share-2',       color:'info',      connected:false, desc:'Ad retargeting audience sync' },
+  { name:'HubSpot CRM',      icon:'git-merge',            color:'error',     connected:false, desc:'Two-way CRM sync' },
+  { name:'Salesforce',       icon:'cloud',          color:'primary',   connected:false, desc:'Enterprise CRM integration' },
+  { name:'Neto',             icon:'store',          color:'success',   connected:false, desc:'Neto e-commerce platform sync' },
 ]
 
 const notifications = ref({
@@ -232,7 +232,7 @@ function save() { saveSnack.value = true }
                 <v-col cols="12" sm="6"><v-text-field v-model="company.clientName" label="Client / Contact Name" variant="outlined" density="comfortable"></v-text-field></v-col>
                 <v-col cols="12" sm="6"><v-select v-model="company.industry" label="Industry" :items="['E-Commerce','SaaS','Retail','Media','Healthcare','Finance','Other']" variant="outlined" density="comfortable"></v-select></v-col>
                 <v-col cols="12" sm="6"><v-select v-model="company.language" label="Language" :items="['English (US)','English (UK)','French','Spanish','German','Portuguese']" variant="outlined" density="comfortable"></v-select></v-col>
-                <v-col cols="12" sm="6"><v-text-field v-model="company.website" label="Website URL" variant="outlined" density="comfortable" prepend-inner-icon="mdi-web"></v-text-field></v-col>
+                <v-col cols="12" sm="6"><v-text-field v-model="company.website" label="Website URL" variant="outlined" density="comfortable" prepend-inner-icon="globe"></v-text-field></v-col>
               </v-row>
               <div class="settings-section-divider"></div>
               <div class="settings-section-heading">Locale</div>
@@ -253,7 +253,7 @@ function save() { saveSnack.value = true }
               </v-row>
             </div>
           </v-card>
-          <div class="settings-save-bar"><v-btn color="primary" variant="elevated" class="text-none" prepend-icon="mdi-content-save" @click="save">Save Changes</v-btn></div>
+          <div class="settings-save-bar"><v-btn color="primary" variant="elevated" class="text-none" prepend-icon="save" @click="save">Save Changes</v-btn></div>
         </div>
 
         <!-- Billing ──────────────────────────────────────────── -->
@@ -268,7 +268,7 @@ function save() { saveSnack.value = true }
                   <div class="text-body-2" style="color:rgba(255,255,255,0.75);">50M emails · Unlimited contacts · Priority support</div>
                 </div>
                 <div class="d-flex flex-column align-end gap-2">
-                  <v-btn variant="flat" color="white" class="text-none billing-upgrade-btn" prepend-icon="mdi-arrow-up-circle">Upgrade Plan</v-btn>
+                  <v-btn variant="flat" color="white" class="text-none billing-upgrade-btn" prepend-icon="circle-arrow-up">Upgrade Plan</v-btn>
                   <v-btn variant="text" class="text-none" style="color:rgba(255,255,255,0.8);" size="small">View Usage Details</v-btn>
                 </div>
               </div>
@@ -285,7 +285,7 @@ function save() { saveSnack.value = true }
             </v-row>
             <div class="settings-section-heading">Payment Method</div>
             <v-card variant="flat" rounded="xl" class="pa-4 mb-6 d-flex align-center gap-4" style="background: rgba(var(--v-theme-surface-variant), 0.35);">
-              <v-icon color="primary" size="32">mdi-credit-card</v-icon>
+              <v-icon color="primary" size="32">credit-card</v-icon>
               <div><div class="font-weight-bold text-body-2">Visa ending in 4242</div><div class="text-caption text-medium-emphasis">Expires 12/2028</div></div>
               <v-spacer></v-spacer>
               <v-btn variant="outlined" size="small" color="primary" class="text-none">Change Card</v-btn>
@@ -298,7 +298,7 @@ function save() { saveSnack.value = true }
                   <td class="text-body-2">{{ inv.date }}</td><td class="text-body-2">{{ inv.desc }}</td>
                   <td class="font-weight-bold text-body-2">{{ inv.amt }}</td>
                   <td><v-chip color="success" size="x-small" variant="flat">Paid</v-chip></td>
-                  <td><v-btn icon="mdi-download" variant="text" size="small" color="primary"></v-btn></td>
+                  <td><v-btn icon="download" variant="text" size="small" color="primary"></v-btn></td>
                 </tr>
               </tbody>
             </v-table>
@@ -309,7 +309,7 @@ function save() { saveSnack.value = true }
         <v-card v-else-if="selectedSetting==='users'" variant="flat" rounded="xl" class="settings-panel-card">
           <div class="settings-card-header d-flex align-center justify-space-between">
             <div><div class="text-h6 font-weight-bold mb-1">Users & Permissions</div><div class="text-body-2 text-medium-emphasis">{{ teamUsers.length }} members · Manage access levels per module</div></div>
-            <v-btn color="primary" variant="elevated" class="text-none" prepend-icon="mdi-account-plus" @click="addUserDialog=true">Invite User</v-btn>
+            <v-btn color="primary" variant="elevated" class="text-none" prepend-icon="user-plus" @click="addUserDialog=true">Invite User</v-btn>
           </div>
           <div style="overflow-x: auto;">
           <v-table density="comfortable" style="min-width: 640px;">
@@ -331,14 +331,14 @@ function save() { saveSnack.value = true }
                   </div>
                 </td>
                 <td><v-chip size="x-small" variant="tonal" color="secondary">{{ u.role }}</v-chip></td>
-                <td class="text-center"><v-icon :color="u.marketing?'success':'grey-lighten-2'" size="18">{{ u.marketing ? 'mdi-check-circle':'mdi-minus-circle' }}</v-icon></td>
-                <td class="text-center"><v-icon :color="u.service?'success':'grey-lighten-2'" size="18">{{ u.service ? 'mdi-check-circle':'mdi-minus-circle' }}</v-icon></td>
-                <td class="text-center"><v-icon :color="u.commerce?'success':'grey-lighten-2'" size="18">{{ u.commerce ? 'mdi-check-circle':'mdi-minus-circle' }}</v-icon></td>
+                <td class="text-center"><v-icon :color="u.marketing?'success':'grey-lighten-2'" size="18">{{ u.marketing ? 'circle-check':'circle-minus' }}</v-icon></td>
+                <td class="text-center"><v-icon :color="u.service?'success':'grey-lighten-2'" size="18">{{ u.service ? 'circle-check':'circle-minus' }}</v-icon></td>
+                <td class="text-center"><v-icon :color="u.commerce?'success':'grey-lighten-2'" size="18">{{ u.commerce ? 'circle-check':'circle-minus' }}</v-icon></td>
                 <td><v-chip :color="u.status==='Active'?'success':'warning'" size="x-small" variant="flat">{{ u.status }}</v-chip></td>
                 <td>
                   <div class="d-flex">
-                    <v-tooltip text="Edit" location="top"><template v-slot:activator="{props}"><v-btn v-bind="props" icon="mdi-pencil-outline" variant="text" size="small"></v-btn></template></v-tooltip>
-                    <v-tooltip v-if="u.role!=='Owner'" text="Remove" location="top"><template v-slot:activator="{props}"><v-btn v-bind="props" icon="mdi-delete-outline" variant="text" size="small" color="error"></v-btn></template></v-tooltip>
+                    <v-tooltip text="Edit" location="top"><template v-slot:activator="{props}"><v-btn v-bind="props" icon="pencil" variant="text" size="small"></v-btn></template></v-tooltip>
+                    <v-tooltip v-if="u.role!=='Owner'" text="Remove" location="top"><template v-slot:activator="{props}"><v-btn v-bind="props" icon="trash-2" variant="text" size="small" color="error"></v-btn></template></v-tooltip>
                   </div>
                 </td>
               </tr>
@@ -355,7 +355,7 @@ function save() { saveSnack.value = true }
               <div class="d-flex align-center gap-5 mb-8">
                 <v-avatar color="primary" size="72" class="text-h5 font-weight-bold text-white">DV</v-avatar>
                 <div>
-                  <v-btn variant="outlined" color="primary" class="text-none mb-1" prepend-icon="mdi-camera" size="small">Change Photo</v-btn>
+                  <v-btn variant="outlined" color="primary" class="text-none mb-1" prepend-icon="camera" size="small">Change Photo</v-btn>
                   <div class="text-caption text-medium-emphasis">JPG or PNG. Max 2MB.</div>
                 </div>
               </div>
@@ -363,7 +363,7 @@ function save() { saveSnack.value = true }
                 <v-col cols="12" sm="6"><v-text-field label="First Name" model-value="Deepak" variant="outlined" density="comfortable"></v-text-field></v-col>
                 <v-col cols="12" sm="6"><v-text-field label="Last Name" model-value="Vaidya" variant="outlined" density="comfortable"></v-text-field></v-col>
                 <v-col cols="12" sm="6"><v-text-field label="Email" model-value="deepak.v@maropost.com" variant="outlined" density="comfortable"></v-text-field></v-col>
-                <v-col cols="12" sm="6"><v-text-field label="Phone" model-value="+1 (555) 000-0000" variant="outlined" density="comfortable" prepend-inner-icon="mdi-phone"></v-text-field></v-col>
+                <v-col cols="12" sm="6"><v-text-field label="Phone" model-value="+1 (555) 000-0000" variant="outlined" density="comfortable" prepend-inner-icon="phone"></v-text-field></v-col>
                 <v-col cols="12" sm="6"><v-select label="Timezone" model-value="America/New_York" :items="['America/New_York','UTC','Europe/London','Asia/Tokyo']" variant="outlined" density="comfortable"></v-select></v-col>
                 <v-col cols="12" sm="6"><v-select label="Preferred Language" model-value="English (US)" :items="['English (US)','French','Spanish','German']" variant="outlined" density="comfortable"></v-select></v-col>
               </v-row>
@@ -376,33 +376,33 @@ function save() { saveSnack.value = true }
               </v-row>
             </div>
           </v-card>
-          <div class="settings-save-bar"><v-btn color="primary" variant="elevated" class="text-none" prepend-icon="mdi-content-save" @click="save">Save Profile</v-btn></div>
+          <div class="settings-save-bar"><v-btn color="primary" variant="elevated" class="text-none" prepend-icon="save" @click="save">Save Profile</v-btn></div>
         </div>
 
         <!-- Sending Domains ────────────────────────────────────── -->
         <v-card v-else-if="selectedSetting==='domains'" variant="flat" rounded="xl" class="settings-panel-card">
           <div class="settings-card-header d-flex align-center justify-space-between">
             <div><div class="text-h6 font-weight-bold mb-1">Sending Domains</div><div class="text-body-2 text-medium-emphasis">Verify domains for DKIM, SPF, and DMARC compliance.</div></div>
-            <v-btn color="primary" variant="elevated" prepend-icon="mdi-plus" class="text-none" @click="addDomainDialog=true">Add Domain</v-btn>
+            <v-btn color="primary" variant="elevated" prepend-icon="plus" class="text-none" @click="addDomainDialog=true">Add Domain</v-btn>
           </div>
           <div class="settings-card-body">
             <v-card v-for="d in sendingDomains" :key="d.domain" variant="flat" rounded="xl" class="settings-panel-card pa-5 mb-4">
               <div class="d-flex align-center justify-space-between mb-4">
                 <div class="d-flex align-center gap-3">
-                  <v-icon color="primary" size="20">mdi-email-outline</v-icon>
+                  <v-icon color="primary" size="20">mail</v-icon>
                   <span class="font-weight-bold text-body-1">{{ d.domain }}</span>
                   <v-chip v-if="d.isDefault" size="x-small" variant="tonal" color="primary">Default</v-chip>
                 </div>
                 <div class="d-flex align-center gap-2">
                   <v-chip :color="d.status==='Verified'?'success':'warning'" size="small" variant="flat">{{ d.status }}</v-chip>
-                  <v-tooltip text="View DNS records" location="top"><template v-slot:activator="{props}"><v-btn v-bind="props" icon="mdi-dns" variant="text" size="small"></v-btn></template></v-tooltip>
-                  <v-tooltip text="Remove domain" location="top"><template v-slot:activator="{props}"><v-btn v-bind="props" icon="mdi-delete-outline" variant="text" size="small" color="error"></v-btn></template></v-tooltip>
+                  <v-tooltip text="View DNS records" location="top"><template v-slot:activator="{props}"><v-btn v-bind="props" icon="server" variant="text" size="small"></v-btn></template></v-tooltip>
+                  <v-tooltip text="Remove domain" location="top"><template v-slot:activator="{props}"><v-btn v-bind="props" icon="trash-2" variant="text" size="small" color="error"></v-btn></template></v-tooltip>
                 </div>
               </div>
               <div class="d-flex gap-6">
                 <div v-for="(val, key) in { DKIM: d.dkim, SPF: d.spf, DMARC: d.dmarc }" :key="key">
                   <div class="text-caption text-medium-emphasis font-weight-bold mb-1">{{ key }}</div>
-                  <v-chip :color="val==='Pass'?'success':val==='Pending'?'warning':'error'" size="x-small" variant="flat" :prepend-icon="val==='Pass'?'mdi-check':'mdi-clock-outline'">{{ val }}</v-chip>
+                  <v-chip :color="val==='Pass'?'success':val==='Pending'?'warning':'error'" size="x-small" variant="flat" :prepend-icon="val==='Pass'?'check':'clock'">{{ val }}</v-chip>
                 </div>
               </div>
             </v-card>
@@ -416,20 +416,20 @@ function save() { saveSnack.value = true }
         <v-card v-else-if="selectedSetting==='tracking'" variant="flat" rounded="xl" class="settings-panel-card">
           <div class="settings-card-header d-flex align-center justify-space-between">
             <div><div class="text-h6 font-weight-bold mb-1">Link Tracking Domains</div><div class="text-body-2 text-medium-emphasis">Custom subdomains for click and open tracking links.</div></div>
-            <v-btn color="primary" variant="elevated" prepend-icon="mdi-plus" class="text-none">Add Tracking Domain</v-btn>
+            <v-btn color="primary" variant="elevated" prepend-icon="plus" class="text-none">Add Tracking Domain</v-btn>
           </div>
           <div class="settings-card-body">
             <v-card v-for="d in trackingDomains" :key="d.domain" variant="flat" rounded="xl" class="settings-panel-card pa-5 mb-4">
               <div class="d-flex align-center justify-space-between">
                 <div class="d-flex align-center gap-3">
-                  <v-icon color="secondary" size="20">mdi-link-variant</v-icon>
+                  <v-icon color="secondary" size="20">link</v-icon>
                   <span class="font-weight-bold text-body-1">{{ d.domain }}</span>
                   <v-chip v-if="d.isDefault" size="x-small" color="primary" variant="tonal">Default</v-chip>
                 </div>
                 <div class="d-flex align-center gap-2">
-                  <v-chip :color="d.ssl?'success':'warning'" size="x-small" variant="flat" prepend-icon="mdi-lock">{{ d.ssl ? 'SSL Active' : 'SSL Pending' }}</v-chip>
+                  <v-chip :color="d.ssl?'success':'warning'" size="x-small" variant="flat" prepend-icon="lock">{{ d.ssl ? 'SSL Active' : 'SSL Pending' }}</v-chip>
                   <v-chip :color="d.status==='Verified'?'success':'warning'" size="small" variant="flat">{{ d.status }}</v-chip>
-                  <v-tooltip text="Remove" location="top"><template v-slot:activator="{props}"><v-btn v-bind="props" icon="mdi-delete-outline" variant="text" size="small" color="error"></v-btn></template></v-tooltip>
+                  <v-tooltip text="Remove" location="top"><template v-slot:activator="{props}"><v-btn v-bind="props" icon="trash-2" variant="text" size="small" color="error"></v-btn></template></v-tooltip>
                 </div>
               </div>
             </v-card>
@@ -440,7 +440,7 @@ function save() { saveSnack.value = true }
         <v-card v-else-if="selectedSetting==='apikeys'" variant="flat" rounded="xl" class="settings-panel-card">
           <div class="settings-card-header d-flex align-center justify-space-between">
             <div><div class="text-h6 font-weight-bold mb-1">API Keys</div><div class="text-body-2 text-medium-emphasis">Manage REST API access for integrations and custom apps.</div></div>
-            <v-btn color="primary" variant="elevated" prepend-icon="mdi-plus" class="text-none" @click="addKeyDialog=true">Generate Key</v-btn>
+            <v-btn color="primary" variant="elevated" prepend-icon="plus" class="text-none" @click="addKeyDialog=true">Generate Key</v-btn>
           </div>
           <div class="settings-card-body">
             <v-alert type="warning" variant="tonal" density="compact" rounded="xl" class="text-body-2 mb-5">Keep your API keys secret. Never share them or commit them to source control.</v-alert>
@@ -449,8 +449,8 @@ function save() { saveSnack.value = true }
                 <div><div class="font-weight-bold text-body-1">{{ k.label }}</div><div class="text-caption text-medium-emphasis">User: {{ k.user }}</div></div>
                 <div class="d-flex align-center gap-2">
                   <v-chip color="success" size="x-small" variant="flat">{{ k.status }}</v-chip>
-                  <v-tooltip text="Copy key" location="top"><template v-slot:activator="{props}"><v-btn v-bind="props" icon="mdi-content-copy" variant="text" size="small" color="primary"></v-btn></template></v-tooltip>
-                  <v-tooltip text="Revoke key" location="top"><template v-slot:activator="{props}"><v-btn v-bind="props" icon="mdi-delete-outline" variant="text" size="small" color="error"></v-btn></template></v-tooltip>
+                  <v-tooltip text="Copy key" location="top"><template v-slot:activator="{props}"><v-btn v-bind="props" icon="copy" variant="text" size="small" color="primary"></v-btn></template></v-tooltip>
+                  <v-tooltip text="Revoke key" location="top"><template v-slot:activator="{props}"><v-btn v-bind="props" icon="trash-2" variant="text" size="small" color="error"></v-btn></template></v-tooltip>
                 </div>
               </div>
               <code class="text-caption pa-3 rounded-lg d-block mb-2" style="background:rgba(var(--v-theme-surface-variant),1);font-family:monospace;">{{ k.key }}</code>
@@ -463,7 +463,7 @@ function save() { saveSnack.value = true }
         <v-card v-else-if="selectedSetting==='webhooks'" variant="flat" rounded="xl" class="settings-panel-card">
           <div class="settings-card-header d-flex align-center justify-space-between">
             <div><div class="text-h6 font-weight-bold mb-1">HTTP Post URLs (Webhooks)</div><div class="text-body-2 text-medium-emphasis">Configure endpoints to receive real-time event notifications.</div></div>
-            <v-btn color="primary" variant="elevated" prepend-icon="mdi-plus" class="text-none">Add Webhook</v-btn>
+            <v-btn color="primary" variant="elevated" prepend-icon="plus" class="text-none">Add Webhook</v-btn>
           </div>
           <div class="settings-card-body">
             <v-card v-for="w in webhooks" :key="w.id" variant="flat" rounded="xl" class="settings-panel-card pa-5 mb-4">
@@ -471,9 +471,9 @@ function save() { saveSnack.value = true }
                 <div class="font-weight-bold text-body-1">{{ w.label }}</div>
                 <div class="d-flex align-center gap-2">
                   <v-chip color="success" size="x-small" variant="flat">{{ w.status }}</v-chip>
-                  <v-tooltip text="Test endpoint" location="top"><template v-slot:activator="{props}"><v-btn v-bind="props" icon="mdi-play-circle-outline" variant="text" size="small" color="primary"></v-btn></template></v-tooltip>
-                  <v-tooltip text="Edit" location="top"><template v-slot:activator="{props}"><v-btn v-bind="props" icon="mdi-pencil-outline" variant="text" size="small"></v-btn></template></v-tooltip>
-                  <v-tooltip text="Delete" location="top"><template v-slot:activator="{props}"><v-btn v-bind="props" icon="mdi-delete-outline" variant="text" size="small" color="error"></v-btn></template></v-tooltip>
+                  <v-tooltip text="Test endpoint" location="top"><template v-slot:activator="{props}"><v-btn v-bind="props" icon="circle-play" variant="text" size="small" color="primary"></v-btn></template></v-tooltip>
+                  <v-tooltip text="Edit" location="top"><template v-slot:activator="{props}"><v-btn v-bind="props" icon="pencil" variant="text" size="small"></v-btn></template></v-tooltip>
+                  <v-tooltip text="Delete" location="top"><template v-slot:activator="{props}"><v-btn v-bind="props" icon="trash-2" variant="text" size="small" color="error"></v-btn></template></v-tooltip>
                 </div>
               </div>
               <code class="text-caption pa-3 rounded-lg d-block mb-3" style="background:rgba(var(--v-theme-surface-variant),1);">{{ w.url }}</code>
@@ -517,7 +517,7 @@ function save() { saveSnack.value = true }
               </div>
             </div>
           </v-card>
-          <div class="settings-save-bar"><v-btn color="primary" variant="elevated" class="text-none" prepend-icon="mdi-content-save" @click="save">Save Settings</v-btn></div>
+          <div class="settings-save-bar"><v-btn color="primary" variant="elevated" class="text-none" prepend-icon="save" @click="save">Save Settings</v-btn></div>
         </div>
 
         <!-- Campaign Settings ──────────────────────────────────── -->
@@ -539,7 +539,7 @@ function save() { saveSnack.value = true }
               </div>
             </div>
           </v-card>
-          <div class="settings-save-bar"><v-btn color="primary" variant="elevated" class="text-none" prepend-icon="mdi-content-save" @click="save">Save Settings</v-btn></div>
+          <div class="settings-save-bar"><v-btn color="primary" variant="elevated" class="text-none" prepend-icon="save" @click="save">Save Settings</v-btn></div>
         </div>
 
         <!-- Notifications ──────────────────────────────────────── -->
@@ -557,7 +557,7 @@ function save() { saveSnack.value = true }
               </div>
             </div>
           </v-card>
-          <div class="settings-save-bar"><v-btn color="primary" variant="elevated" class="text-none" prepend-icon="mdi-content-save" @click="save">Save Preferences</v-btn></div>
+          <div class="settings-save-bar"><v-btn color="primary" variant="elevated" class="text-none" prepend-icon="save" @click="save">Save Preferences</v-btn></div>
         </div>
 
         <!-- Service Settings ───────────────────────────────────── -->
@@ -567,7 +567,7 @@ function save() { saveSnack.value = true }
             <div class="settings-card-body">
               <div class="settings-section-heading">Support Channel</div>
               <v-row class="settings-field-row">
-                <v-col cols="12" sm="8"><v-text-field v-model="serviceSettings.supportEmail" label="Support Email Address" variant="outlined" density="comfortable" prepend-inner-icon="mdi-email-outline"></v-text-field></v-col>
+                <v-col cols="12" sm="8"><v-text-field v-model="serviceSettings.supportEmail" label="Support Email Address" variant="outlined" density="comfortable" prepend-inner-icon="mail"></v-text-field></v-col>
                 <v-col cols="12" sm="4"><v-text-field v-model="serviceSettings.ticketPrefix" label="Ticket ID Prefix" variant="outlined" density="comfortable" placeholder="TKT-"></v-text-field></v-col>
                 <v-col cols="12" sm="4"><v-text-field v-model.number="serviceSettings.slaHours" label="Default SLA (hours)" variant="outlined" density="comfortable" type="number"></v-text-field></v-col>
                 <v-col cols="12" sm="4"><v-select label="Default Priority" :items="['Low','Normal','High','Urgent']" model-value="Normal" variant="outlined" density="comfortable"></v-select></v-col>
@@ -579,20 +579,20 @@ function save() { saveSnack.value = true }
               <div class="settings-section-divider"></div>
               <div class="d-flex align-center justify-space-between mb-3">
                 <div class="settings-section-heading" style="margin-bottom: 0;">Reply Templates</div>
-                <v-btn size="small" variant="outlined" prepend-icon="mdi-plus" class="text-none">Add Template</v-btn>
+                <v-btn size="small" variant="outlined" prepend-icon="plus" class="text-none">Add Template</v-btn>
               </div>
               <v-card v-for="t in replyTemplates" :key="t.id" variant="flat" rounded="xl" class="settings-panel-card pa-4 mb-3">
                 <div class="d-flex align-center justify-space-between">
                   <div><div class="text-body-2 font-weight-bold">{{ t.name }}</div><div class="text-caption text-medium-emphasis text-truncate" style="max-width:420px;">{{ t.preview }}</div></div>
                   <div class="d-flex gap-1">
-                    <v-tooltip text="Edit" location="top"><template v-slot:activator="{props}"><v-btn v-bind="props" icon="mdi-pencil-outline" variant="text" size="small"></v-btn></template></v-tooltip>
-                    <v-tooltip text="Delete" location="top"><template v-slot:activator="{props}"><v-btn v-bind="props" icon="mdi-delete-outline" variant="text" size="small" color="error"></v-btn></template></v-tooltip>
+                    <v-tooltip text="Edit" location="top"><template v-slot:activator="{props}"><v-btn v-bind="props" icon="pencil" variant="text" size="small"></v-btn></template></v-tooltip>
+                    <v-tooltip text="Delete" location="top"><template v-slot:activator="{props}"><v-btn v-bind="props" icon="trash-2" variant="text" size="small" color="error"></v-btn></template></v-tooltip>
                   </div>
                 </div>
               </v-card>
             </div>
           </v-card>
-          <div class="settings-save-bar"><v-btn color="primary" variant="elevated" class="text-none" prepend-icon="mdi-content-save" @click="save">Save Settings</v-btn></div>
+          <div class="settings-save-bar"><v-btn color="primary" variant="elevated" class="text-none" prepend-icon="save" @click="save">Save Settings</v-btn></div>
         </div>
 
       </div><!-- /detail panels -->
@@ -618,14 +618,14 @@ function save() { saveSnack.value = true }
       <template #footer>
         <div class="w-100 d-flex justify-end gap-3">
           <v-btn variant="text" class="text-none" @click="addUserDialog=false">Cancel</v-btn>
-          <v-btn color="primary" variant="elevated" class="text-none" prepend-icon="mdi-email-send" :disabled="!newUserEmail">Send Invitation</v-btn>
+          <v-btn color="primary" variant="elevated" class="text-none" prepend-icon="send" :disabled="!newUserEmail">Send Invitation</v-btn>
         </div>
       </template>
     </MpFormDrawer>
 
     <!-- Save snackbar -->
     <v-snackbar v-model="saveSnack" :timeout="2500" color="success" rounded="pill" location="bottom center">
-      <div class="d-flex align-center gap-2"><v-icon>mdi-check-circle</v-icon> Settings saved successfully</div>
+      <div class="d-flex align-center gap-2"><v-icon>circle-check</v-icon> Settings saved successfully</div>
     </v-snackbar>
   </div>
 </template>

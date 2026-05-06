@@ -47,7 +47,7 @@ const meta = {
     },
     icon: {
       control: 'text',
-      description: 'MDI icon class (e.g. `mdi-account`). Leave empty for text/image avatars.',
+      description: 'Lucide icon name (e.g. `user`). Leave empty for text/image avatars.',
       table: { category: 'Icons', defaultValue: { summary: '—' } },
     },
     image: {
@@ -158,12 +158,12 @@ export const Colors: Story = {
   render: () => ({
     template: `
       <div class="d-flex gap-3">
-        <v-avatar size="40" color="primary" icon="mdi-account" />
-        <v-avatar size="40" color="secondary" icon="mdi-account" />
-        <v-avatar size="40" color="success" icon="mdi-check-circle" />
-        <v-avatar size="40" color="warning" icon="mdi-alert" />
-        <v-avatar size="40" color="error" icon="mdi-close-circle" />
-        <v-avatar size="40" color="info" icon="mdi-information" />
+        <v-avatar size="40" color="primary" icon="user" />
+        <v-avatar size="40" color="secondary" icon="user" />
+        <v-avatar size="40" color="success" icon="circle-check" />
+        <v-avatar size="40" color="warning" icon="triangle-alert" />
+        <v-avatar size="40" color="error" icon="circle-x" />
+        <v-avatar size="40" color="info" icon="info" />
       </div>
     `,
   }),

@@ -215,7 +215,7 @@ function buildSeedDashboards(account: Account): Dashboard[] {
       kind: 'system',
       name: 'Home',
       description: 'Your curated Maropost command center with quick business context.',
-      icon: 'mdi-view-dashboard-outline',
+      icon: 'layout-dashboard',
       accent: 'primary',
       isDefault: true,
       favorite: true,
@@ -234,7 +234,7 @@ function buildSeedDashboards(account: Account): Dashboard[] {
         kind: 'system',
         name: 'Commerce Overview',
         description: 'Revenue, order, and fulfillment context for merchants.',
-        icon: 'mdi-cart-outline',
+        icon: 'shopping-cart',
         accent: 'success',
         isDefault: false,
         widgets: [
@@ -255,7 +255,7 @@ function buildSeedDashboards(account: Account): Dashboard[] {
         kind: 'system',
         name: 'Marketing Performance',
         description: 'Campaign and engagement signals for merchants and marketers.',
-        icon: 'mdi-bullhorn-outline',
+        icon: 'megaphone',
         accent: 'secondary',
         isDefault: false,
         widgets: [
@@ -282,7 +282,7 @@ function buildSeedDashboards(account: Account): Dashboard[] {
         kind: 'system',
         name: 'Marketing Performance',
         description: 'Engagement and campaign health for growth teams.',
-        icon: 'mdi-bullhorn-outline',
+        icon: 'megaphone',
         accent: 'secondary',
         isDefault: false,
         widgets: [
@@ -306,7 +306,7 @@ function buildSeedDashboards(account: Account): Dashboard[] {
         kind: 'system',
         name: 'Campaign Analytics',
         description: 'A campaign-centric summary that links into analytics reporting.',
-        icon: 'mdi-chart-box-outline',
+        icon: 'bar-chart-2',
         accent: 'info',
         isDefault: false,
         widgets: [
@@ -331,7 +331,7 @@ function buildSeedDashboards(account: Account): Dashboard[] {
       kind: 'system',
       name: 'Service Overview',
       description: 'Ticket backlog, channel distribution, and support health.',
-      icon: 'mdi-headset',
+      icon: 'headset',
       accent: 'warning',
       isDefault: false,
       widgets: [
@@ -357,7 +357,7 @@ function buildSeedDashboards(account: Account): Dashboard[] {
     kind: 'system',
     name: 'Contacts & Audience',
     description: 'Audience composition, subscriber health, and growth insights.',
-    icon: 'mdi-account-group-outline',
+    icon: 'users',
     accent: 'info',
     isDefault: false,
     widgets: [
@@ -581,7 +581,7 @@ export const useDashboardsStore = defineStore('dashboards', () => {
       kind: 'custom',
       name,
       description: options?.description ?? 'A user-managed dashboard tailored to your workflow.',
-      icon: options?.icon ?? 'mdi-view-grid-plus-outline',
+      icon: options?.icon ?? 'grid-2x2-plus',
       accent: options?.accent ?? 'primary',
       isDefault: false,
       favorite: false,

@@ -8,7 +8,7 @@ const meta = {
   argTypes: {
     icon: {
       control: 'text',
-      description: 'MDI icon name for the action card'
+      description: 'Lucide icon name for the action card'
     },
     title: {
       control: 'text',
@@ -40,7 +40,7 @@ DvActionCard is a call-to-action component that presents a single action to the 
 - Always provide a descriptive explanation
 - Use appropriate colors (error for destructive actions)
 - Keep titles concise and actionable
-- Use relevant MDI icons to reinforce the action
+- Use relevant Lucide icons to reinforce the action
 
 ## Don'ts
 - Don't use for multiple conflicting actions
@@ -64,7 +64,7 @@ type Story = StoryObj<typeof meta>
 
 export const Default: Story = {
   args: {
-    icon: 'mdi-rocket-launch',
+    icon: 'rocket',
     title: 'Launch Campaign',
     description: 'Your email campaign is ready to send to 5,234 subscribers. Review settings and launch when ready.',
     confirmLabel: 'Launch Now',
@@ -74,7 +74,7 @@ export const Default: Story = {
 
 export const CustomColor: Story = {
   args: {
-    icon: 'mdi-content-save',
+    icon: 'save',
     title: 'Save as Template',
     description: 'Save this campaign configuration as a reusable template for future campaigns. You can apply it to similar audiences anytime.',
     confirmLabel: 'Save Template',
@@ -84,7 +84,7 @@ export const CustomColor: Story = {
 
 export const DangerAction: Story = {
   args: {
-    icon: 'mdi-trash-can',
+    icon: 'trash-2',
     title: 'Delete Campaign',
     description: 'This action cannot be undone. All analytics data for this campaign will be permanently removed.',
     confirmLabel: 'Delete Campaign',

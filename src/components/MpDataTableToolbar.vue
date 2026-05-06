@@ -78,7 +78,7 @@ function hiddenCount(filters: Array<{ key: string; label: string }>) {
               variant="outlined"
               aria-label="Open table filters"
               class="text-none text-medium-emphasis mp-filter-btn"
-              prepend-icon="mdi-filter-variant"
+              prepend-icon="list-filter"
               rounded="xl"
             >
               Filter
@@ -111,12 +111,12 @@ function hiddenCount(filters: Array<{ key: string; label: string }>) {
             <v-btn
               v-bind="menuProps"
               variant="outlined"
-              icon="mdi-view-column-outline"
+              icon="columns-3"
               aria-label="Toggle visible columns"
               rounded="xl"
               class="text-medium-emphasis mp-filter-btn"
             >
-              <v-icon>mdi-view-column-outline</v-icon>
+              <v-icon>columns-3</v-icon>
               <v-badge
                 v-if="hiddenColumns.length"
                 :content="hiddenColumns.length"
@@ -161,7 +161,7 @@ function hiddenCount(filters: Array<{ key: string; label: string }>) {
         <div class="mp-toolbar-search">
           <v-text-field
             v-model="search"
-            prepend-inner-icon="mdi-magnify"
+            prepend-inner-icon="search"
             :placeholder="searchPlaceholder ?? 'Search...'"
             :aria-label="searchPlaceholder ?? 'Search records'"
             variant="outlined"
@@ -233,7 +233,7 @@ function hiddenCount(filters: Array<{ key: string; label: string }>) {
         <slot name="bulk-actions" />
         <v-spacer />
         <v-btn
-          icon="mdi-close"
+          icon="x"
           variant="text"
           size="small"
           density="comfortable"

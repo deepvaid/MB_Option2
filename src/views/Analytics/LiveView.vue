@@ -4,6 +4,7 @@ import type { ApexOptions } from 'apexcharts'
 import L from 'leaflet'
 import 'leaflet/dist/leaflet.css'
 import MpKpiCard from '@/components/MpKpiCard.vue'
+import { applyChartTheme, chartPalette } from '@/plugins/chartPalette'
 
 const ApexChart = defineAsyncComponent({
   loader: async () => (await import('vue3-apexcharts')).default,
@@ -159,25 +160,22 @@ function sparklineOptions(color: string): ApexOptions {
   }
 }
 
-const visitorsSparkOptions = computed(() => sparklineOptions('rgb(var(--v-theme-primary))'))
-const salesSparkOptions = computed(() => sparklineOptions('rgb(var(--v-theme-success))'))
-const sessionsSparkOptions = computed(() => sparklineOptions('rgb(var(--v-theme-info))'))
-const ordersSparkOptions = computed(() => sparklineOptions('rgb(var(--v-theme-secondary))'))
+// visitors=cyan, sales=emerald, sessions=indigo, orders=magenta
+const visitorsSparkOptions = computed(() => sparklineOptions(chartPalette[0]!))
+const salesSparkOptions = computed(() => sparklineOptions(chartPalette[3]!))
+const sessionsSparkOptions = computed(() => sparklineOptions(chartPalette[5]!))
+const ordersSparkOptions = computed(() => sparklineOptions(chartPalette[1]!))
 
-// ─── Activity area chart ───────────────────────────────────────
+// ─── Activity area chart ─────────────────────────────────────── cyan + magenta
+const activityBase = applyChartTheme()
 const activityOptions = computed<ApexOptions>(() => ({
+  ...activityBase,
+  colors: [chartPalette[0]!, chartPalette[1]!],
   chart: {
-    toolbar: { show: false },
+    ...activityBase.chart,
     zoom: { enabled: false },
-    fontFamily: 'Inter, system-ui, sans-serif',
     animations: { enabled: false },
     redrawOnParentResize: true,
-  },
-  colors: ['rgb(var(--v-theme-primary))', 'rgb(var(--v-theme-secondary))'],
-  grid: {
-    borderColor: 'rgba(var(--v-theme-on-surface), 0.08)',
-    strokeDashArray: 4,
-    padding: { top: 8, right: 12, bottom: 0, left: 8 },
   },
   stroke: { curve: 'smooth', width: 3 },
   fill: {
@@ -194,10 +192,10 @@ const activityOptions = computed<ApexOptions>(() => ({
     markers: { strokeWidth: 0 },
   },
   xaxis: {
+    ...activityBase.xaxis,
     categories: activityLabels.value,
-    axisBorder: { show: false },
-    axisTicks: { show: false },
     labels: {
+      ...activityBase.xaxis?.labels,
       style: { colors: 'rgba(var(--v-theme-on-surface), 0.54)', fontSize: '11px' },
       rotate: 0,
       hideOverlappingLabels: true,
@@ -210,7 +208,7 @@ const activityOptions = computed<ApexOptions>(() => ({
       formatter: (v: number) => `${Math.round(v)}`,
     },
   },
-  tooltip: { theme: 'light' },
+  tooltip: { ...activityBase.tooltip },
 }))
 
 const activitySeries = computed(() => [
@@ -226,10 +224,11 @@ const customerMixSeries = computed(() => {
   return [fresh, returning]
 })
 
+// donut: cyan (new) + purple (returning)
 const donutOptions = computed<ApexOptions>(() => ({
   chart: { fontFamily: 'Inter, system-ui, sans-serif', toolbar: { show: false } },
   labels: ['New', 'Returning'],
-  colors: ['rgb(var(--v-theme-primary))', 'rgb(var(--v-theme-secondary))'],
+  colors: [chartPalette[0]!, chartPalette[2]!],
   legend: {
     position: 'bottom',
     fontSize: '12px',
@@ -382,11 +381,11 @@ const topProducts = computed(() => [
 ])
 
 const recentActivity = computed(() => [
-  { icon: 'mdi-cart-plus', color: 'primary', label: 'Cart updated', meta: `Toronto, CA · ${rand(1, 30)}s ago` },
-  { icon: 'mdi-credit-card-check', color: 'success', label: 'Order placed', meta: `New York, US · ${rand(15, 60)}s ago` },
-  { icon: 'mdi-eye-outline', color: 'info', label: 'Viewing product', meta: `Berlin, DE · ${rand(20, 80)}s ago` },
-  { icon: 'mdi-account-plus', color: 'secondary', label: 'New visitor', meta: `Sydney, AU · ${rand(30, 90)}s ago` },
-  { icon: 'mdi-cart-remove', color: 'warning', label: 'Cart abandoned', meta: `London, UK · ${rand(40, 120)}s ago` },
+  { icon: 'shopping-cart', color: 'primary', label: 'Cart updated', meta: `Toronto, CA · ${rand(1, 30)}s ago` },
+  { icon: 'credit-card', color: 'success', label: 'Order placed', meta: `New York, US · ${rand(15, 60)}s ago` },
+  { icon: 'eye', color: 'info', label: 'Viewing product', meta: `Berlin, DE · ${rand(20, 80)}s ago` },
+  { icon: 'user-plus', color: 'secondary', label: 'New visitor', meta: `Sydney, AU · ${rand(30, 90)}s ago` },
+  { icon: 'shopping-cart', color: 'warning', label: 'Cart abandoned', meta: `London, UK · ${rand(40, 120)}s ago` },
 ])
 </script>
 
@@ -395,7 +394,7 @@ const recentActivity = computed(() => [
     <!-- Header -->
     <div class="d-flex flex-wrap align-center justify-space-between gap-3">
       <div class="d-flex align-center gap-3">
-        <v-icon size="28" color="primary">mdi-broadcast</v-icon>
+        <v-icon size="28" color="primary">radio</v-icon>
         <div>
           <div class="text-h5 font-weight-bold">Live View</div>
           <div class="d-flex align-center gap-2 mt-1">
@@ -410,7 +409,7 @@ const recentActivity = computed(() => [
           variant="outlined"
           hide-details
           placeholder="Search location"
-          prepend-inner-icon="mdi-magnify"
+          prepend-inner-icon="search"
           rounded="lg"
           class="live-view__search"
         />
@@ -434,14 +433,14 @@ const recentActivity = computed(() => [
                     color="primary"
                     bg-color="rgba(var(--v-theme-on-surface), 0.12)"
                   />
-                  <v-icon size="12" class="live-view__refresh-icon">mdi-refresh</v-icon>
+                  <v-icon size="12" class="live-view__refresh-icon">refresh-cw</v-icon>
                 </div>
               </template>
               <span class="text-body-2">{{ isRefreshing ? 'Refreshing' : `${secondsLeft}s` }}</span>
             </v-btn>
           </template>
         </v-tooltip>
-        <v-btn variant="outlined" icon="mdi-fullscreen" rounded="lg" />
+        <v-btn variant="outlined" icon="maximize" rounded="lg" />
       </div>
     </div>
 
@@ -451,7 +450,7 @@ const recentActivity = computed(() => [
         <MpKpiCard
           label="Visitors right now"
           :value="visitors"
-          icon="mdi-account-multiple"
+          icon="users"
           color="primary"
         >
           <div class="mt-3 live-spark">
@@ -470,7 +469,7 @@ const recentActivity = computed(() => [
         <MpKpiCard
           label="Total sales"
           :value="formattedSales"
-          icon="mdi-cash-register"
+          icon="receipt"
           color="success"
         >
           <div class="mt-3 live-spark">
@@ -489,7 +488,7 @@ const recentActivity = computed(() => [
         <MpKpiCard
           label="Sessions"
           :value="sessions"
-          icon="mdi-monitor-cellphone"
+          icon="laptop"
           color="info"
         >
           <div class="mt-3 live-spark">
@@ -508,7 +507,7 @@ const recentActivity = computed(() => [
         <MpKpiCard
           label="Orders"
           :value="orders"
-          icon="mdi-package-variant-closed"
+          icon="package"
           color="secondary"
         >
           <div class="mt-3 live-spark">
@@ -533,12 +532,12 @@ const recentActivity = computed(() => [
           <div class="text-caption text-medium-emphasis">Active carts</div>
           <div class="text-h4 font-weight-bold">{{ activeCarts }}</div>
         </div>
-        <v-icon class="funnel__arrow">mdi-chevron-right</v-icon>
+        <v-icon class="funnel__arrow">chevron-right</v-icon>
         <div class="funnel__step">
           <div class="text-caption text-medium-emphasis">Checking out</div>
           <div class="text-h4 font-weight-bold">{{ checkingOut }}</div>
         </div>
-        <v-icon class="funnel__arrow">mdi-chevron-right</v-icon>
+        <v-icon class="funnel__arrow">chevron-right</v-icon>
         <div class="funnel__step">
           <div class="text-caption text-medium-emphasis">Purchased</div>
           <div class="text-h4 font-weight-bold">{{ purchased }}</div>
@@ -557,7 +556,7 @@ const recentActivity = computed(() => [
                 <div class="text-subtitle-2 font-weight-bold">Sessions by location</div>
                 <div class="text-caption text-medium-emphasis">Top markets right now</div>
               </div>
-              <v-chip size="x-small" variant="tonal" color="success" prepend-icon="mdi-circle-medium">
+              <v-chip size="x-small" variant="tonal" color="success" prepend-icon="circle">
                 Live
               </v-chip>
             </div>
@@ -622,7 +621,7 @@ const recentActivity = computed(() => [
                 <div class="text-subtitle-2 font-weight-bold">Real-time activity</div>
                 <div class="text-caption text-medium-emphasis">Last 30 minutes</div>
               </div>
-              <v-chip size="small" variant="tonal" color="success" prepend-icon="mdi-circle-medium">
+              <v-chip size="small" variant="tonal" color="success" prepend-icon="circle">
                 Live
               </v-chip>
             </div>

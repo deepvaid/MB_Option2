@@ -67,7 +67,7 @@ const meta = {
     },
     icon: {
       control: 'text',
-      description: 'Custom MDI icon override (e.g. `mdi-check-circle`). Leave empty to use the default icon for the `type`.',
+      description: 'Custom Lucide icon override (e.g. `circle-check`). Leave empty to use the default icon for the `type`.',
       table: { category: 'Icons', defaultValue: { summary: '—' } },
     },
     rounded: {
@@ -154,16 +154,16 @@ export const Types: Story = {
   render: () => ({
     template: `
       <div class="d-flex flex-column gap-4">
-        <v-alert type="success" icon="mdi-check-circle" title="Success">
+        <v-alert type="success" icon="circle-check" title="Success">
           Your order has been placed successfully. You will receive a confirmation email shortly.
         </v-alert>
-        <v-alert type="info" icon="mdi-information" title="Information">
+        <v-alert type="info" icon="info" title="Information">
           This feature is new. Check out the help documentation to learn more about how to use it.
         </v-alert>
-        <v-alert type="warning" icon="mdi-alert" title="Warning">
+        <v-alert type="warning" icon="triangle-alert" title="Warning">
           You are using 85% of your monthly API quota. Upgrade your plan to avoid service interruption.
         </v-alert>
-        <v-alert type="error" icon="mdi-alert-circle" title="Error">
+        <v-alert type="error" icon="alert-circle" title="Error">
           Failed to save your changes. Please check your connection and try again.
         </v-alert>
       </div>
@@ -178,16 +178,16 @@ export const Variants: Story = {
   render: () => ({
     template: `
       <div class="d-flex flex-column gap-4">
-        <v-alert type="info" icon="mdi-information" title="Tonal" variant="tonal">
+        <v-alert type="info" icon="info" title="Tonal" variant="tonal">
           This is the default tonal variant with background color.
         </v-alert>
-        <v-alert type="info" icon="mdi-information" title="Flat" variant="flat">
+        <v-alert type="info" icon="info" title="Flat" variant="flat">
           This is a flat variant with minimal styling.
         </v-alert>
-        <v-alert type="info" icon="mdi-information" title="Outlined" variant="outlined">
+        <v-alert type="info" icon="info" title="Outlined" variant="outlined">
           This is an outlined variant with a border.
         </v-alert>
-        <v-alert type="info" icon="mdi-information" title="Elevated" variant="elevated">
+        <v-alert type="info" icon="info" title="Elevated" variant="elevated">
           This is an elevated variant with shadow.
         </v-alert>
       </div>
@@ -201,7 +201,7 @@ export const Variants: Story = {
 export const WithActions: Story = {
   render: () => ({
     template: `
-      <v-alert type="warning" icon="mdi-alert" title="Action Required">
+      <v-alert type="warning" icon="triangle-alert" title="Action Required">
         Your account subscription expires in 7 days. Renew now to maintain access.
         <template #close="{ props }">
           <v-btn v-bind="props" variant="text" size="small" color="warning">Dismiss</v-btn>
@@ -221,7 +221,7 @@ export const Dismissible: Story = {
         <v-alert
           v-if="showAlert"
           type="info"
-          icon="mdi-information"
+          icon="info"
           title="Closable Alert"
           closable
           @click:close="showAlert = false"

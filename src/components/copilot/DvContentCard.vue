@@ -13,10 +13,10 @@ const emit = defineEmits<{
 
 // Colors use Vuetify semantic names — no hardcoded hex
 const typeConfig: Record<string, { icon: string; color: string; label: string }> = {
-  email: { icon: 'mdi-email-edit-outline', color: 'primary', label: 'Email Copy' },
-  product: { icon: 'mdi-package-variant', color: 'success', label: 'Product Description' },
-  blog: { icon: 'mdi-post-outline', color: 'warning', label: 'Blog Post' },
-  sms: { icon: 'mdi-message-text-outline', color: 'secondary', label: 'SMS Message' },
+  email: { icon: 'mail', color: 'primary', label: 'Email Copy' },
+  product: { icon: 'package', color: 'success', label: 'Product Description' },
+  blog: { icon: 'file-text', color: 'warning', label: 'Blog Post' },
+  sms: { icon: 'message-circle', color: 'secondary', label: 'SMS Message' },
 }
 </script>
 
@@ -37,9 +37,9 @@ const typeConfig: Record<string, { icon: string; color: string; label: string }>
       </div>
 
       <div class="d-flex ga-2 mt-3">
-        <v-btn variant="outlined" size="small" class="text-none" prepend-icon="mdi-content-copy" @click="emit('copy')">Copy</v-btn>
-        <v-btn variant="outlined" size="small" class="text-none" prepend-icon="mdi-pencil-outline" @click="emit('edit')">Edit</v-btn>
-        <v-btn color="primary" variant="flat" size="small" class="text-none" prepend-icon="mdi-check" @click="emit('use')">Use in Campaign</v-btn>
+        <v-btn variant="outlined" size="small" class="text-none" prepend-icon="copy" @click="emit('copy')">Copy</v-btn>
+        <v-btn variant="outlined" size="small" class="text-none" prepend-icon="pencil" @click="emit('edit')">Edit</v-btn>
+        <v-btn color="primary" variant="flat" size="small" class="text-none" prepend-icon="check" @click="emit('use')">Use in Campaign</v-btn>
       </div>
     </v-card-text>
   </v-card>

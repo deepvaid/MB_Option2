@@ -39,8 +39,8 @@ function saveEdit(contact: any) {
         <p class="text-medium-emphasis">Manage contacts, lists, and segments.</p>
       </div>
       <div class="d-flex gap-4">
-        <v-btn variant="outlined" prepend-icon="mdi-export">Export</v-btn>
-        <v-btn color="primary" prepend-icon="mdi-account-plus" class="ml-4">Add Contact</v-btn>
+        <v-btn variant="outlined" prepend-icon="share">Export</v-btn>
+        <v-btn color="primary" prepend-icon="user-plus" class="ml-4">Add Contact</v-btn>
       </div>
     </div>
 
@@ -51,13 +51,13 @@ function saveEdit(contact: any) {
           density="compact"
           variant="outlined"
           placeholder="Search contacts by name or email..."
-          prepend-inner-icon="mdi-magnify"
+          prepend-inner-icon="search"
           hide-details
           class="max-w-md"
           style="max-width: 400px;"
         ></v-text-field>
         <v-spacer></v-spacer>
-        <v-btn variant="text" prepend-icon="mdi-filter-variant">Filter</v-btn>
+        <v-btn variant="text" prepend-icon="list-filter">Filter</v-btn>
       </div>
 
       <v-table class="bg-transparent" fixed-header height="60vh">
@@ -97,7 +97,7 @@ function saveEdit(contact: any) {
               </div>
               <div v-else class="font-weight-medium d-flex align-center cursor-pointer" @dblclick="startEdit(contact)">
                 {{ contact.name }}
-                <v-icon icon="mdi-pencil-outline" size="x-small" class="ml-2 opacity-0 group-hover-opacity-50 transition-fast" @click.stop="startEdit(contact)"></v-icon>
+                <v-icon icon="pencil" size="x-small" class="ml-2 opacity-0 group-hover-opacity-50 transition-fast" @click.stop="startEdit(contact)"></v-icon>
               </div>
             </td>
             <td class="text-medium-emphasis py-2">{{ contact.email }}</td>
@@ -129,9 +129,9 @@ function saveEdit(contact: any) {
           </div>
           <v-divider vertical class="mx-2"></v-divider>
           <div class="d-flex gap-2">
-            <v-btn variant="text" prepend-icon="mdi-tag" class="text-none">Add Tags</v-btn>
-            <v-btn variant="text" prepend-icon="mdi-cancel" color="error" class="text-none">Unsubscribe</v-btn>
-            <v-btn variant="text" icon="mdi-close" density="comfortable" @click="selected = []" class="ml-2"></v-btn>
+            <v-btn variant="text" prepend-icon="tag" class="text-none">Add Tags</v-btn>
+            <v-btn variant="text" prepend-icon="ban" color="error" class="text-none">Unsubscribe</v-btn>
+            <v-btn variant="text" icon="x" density="comfortable" @click="selected = []" class="ml-2"></v-btn>
           </div>
         </v-card>
       </div>

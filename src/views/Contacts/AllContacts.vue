@@ -110,9 +110,9 @@ function selectAll() {
       ]"
     >
       <template #actions>
-        <v-btn variant="outlined" prepend-icon="mdi-upload" class="text-none" @click="startImport">Import</v-btn>
-        <v-btn class="text-none mp-btn-dark" variant="flat" prepend-icon="mdi-export-variant" @click="startImport">Export</v-btn>
-        <v-btn color="primary" variant="flat" prepend-icon="mdi-plus" class="text-none" @click="addDrawer=true;addStep=1">Add Contact</v-btn>
+        <v-btn variant="outlined" prepend-icon="upload" class="text-none" @click="startImport">Import</v-btn>
+        <v-btn class="text-none mp-btn-dark" variant="flat" prepend-icon="share" @click="startImport">Export</v-btn>
+        <v-btn color="primary" variant="flat" prepend-icon="plus" class="text-none" @click="addDrawer=true;addStep=1">Add Contact</v-btn>
       </template>
     </MpPageHeader>
 
@@ -150,18 +150,18 @@ function selectAll() {
           </div>
         </template>
         <template #bulk-actions>
-          <v-btn variant="outlined" size="small" class="text-none" prepend-icon="mdi-export-variant" rounded="lg">Export</v-btn>
-          <v-btn variant="outlined" size="small" class="text-none" prepend-icon="mdi-content-copy" rounded="lg">Duplicate</v-btn>
+          <v-btn variant="outlined" size="small" class="text-none" prepend-icon="share" rounded="lg">Export</v-btn>
+          <v-btn variant="outlined" size="small" class="text-none" prepend-icon="copy" rounded="lg">Duplicate</v-btn>
           <v-menu>
             <template v-slot:activator="{ props }">
-              <v-btn v-bind="props" variant="outlined" size="small" class="text-none" append-icon="mdi-chevron-down" rounded="lg">More Actions</v-btn>
+              <v-btn v-bind="props" variant="outlined" size="small" class="text-none" append-icon="chevron-down" rounded="lg">More Actions</v-btn>
             </template>
             <v-list density="compact" rounded="lg" elevation="3" class="py-1">
-              <v-list-item prepend-icon="mdi-playlist-plus" title="Add to List" />
-              <v-list-item prepend-icon="mdi-tag-plus" title="Apply Tag" />
-              <v-list-item prepend-icon="mdi-minus-circle-outline" title="Unsubscribe" />
+              <v-list-item prepend-icon="playlist-plus" title="Add to List" />
+              <v-list-item prepend-icon="tags" title="Apply Tag" />
+              <v-list-item prepend-icon="circle-minus" title="Unsubscribe" />
               <v-divider class="my-1" style="opacity: 0.4" />
-              <v-list-item prepend-icon="mdi-delete-outline" title="Delete" class="text-error" />
+              <v-list-item prepend-icon="trash-2" title="Delete" class="text-error" />
             </v-list>
           </v-menu>
         </template>
@@ -218,14 +218,14 @@ function selectAll() {
         <template v-slot:item.actions="{ item }">
           <v-menu location="bottom end">
             <template v-slot:activator="{ props }">
-              <v-btn v-bind="props" icon="mdi-dots-horizontal" variant="text" size="small" density="comfortable" color="medium-emphasis" />
+              <v-btn v-bind="props" icon="more-horizontal" variant="text" size="small" density="comfortable" color="medium-emphasis" />
             </template>
             <v-list density="compact" rounded="lg" min-width="160" elevation="3" class="py-1">
-              <v-list-item prepend-icon="mdi-open-in-new" title="View" @click="router.push(`/contacts/${(item as any).id}`)" />
-              <v-list-item prepend-icon="mdi-pencil-outline" title="Edit" />
-              <v-list-item prepend-icon="mdi-content-copy" title="Duplicate" />
+              <v-list-item prepend-icon="external-link" title="View" @click="router.push(`/contacts/${(item as any).id}`)" />
+              <v-list-item prepend-icon="pencil" title="Edit" />
+              <v-list-item prepend-icon="copy" title="Duplicate" />
               <v-divider class="my-1" style="opacity: 0.4" />
-              <v-list-item prepend-icon="mdi-delete-outline" title="Delete" class="text-error" />
+              <v-list-item prepend-icon="trash-2" title="Delete" class="text-error" />
             </v-list>
           </v-menu>
         </template>
@@ -244,29 +244,29 @@ function selectAll() {
         <v-row dense>
           <v-col cols="6"><v-text-field v-model="newContact.firstName" label="First Name *" variant="outlined" density="comfortable" /></v-col>
           <v-col cols="6"><v-text-field v-model="newContact.lastName" label="Last Name" variant="outlined" density="comfortable" /></v-col>
-          <v-col cols="12"><v-text-field v-model="newContact.email" label="Email Address *" type="email" variant="outlined" density="comfortable" prepend-inner-icon="mdi-email-outline" /></v-col>
-          <v-col cols="12"><v-text-field v-model="newContact.phone" label="Phone Number" variant="outlined" density="comfortable" prepend-inner-icon="mdi-phone-outline" /></v-col>
-          <v-col cols="12"><v-text-field v-model="newContact.company" label="Company" variant="outlined" density="comfortable" prepend-inner-icon="mdi-office-building-outline" /></v-col>
+          <v-col cols="12"><v-text-field v-model="newContact.email" label="Email Address *" type="email" variant="outlined" density="comfortable" prepend-inner-icon="mail" /></v-col>
+          <v-col cols="12"><v-text-field v-model="newContact.phone" label="Phone Number" variant="outlined" density="comfortable" prepend-inner-icon="phone" /></v-col>
+          <v-col cols="12"><v-text-field v-model="newContact.company" label="Company" variant="outlined" density="comfortable" prepend-inner-icon="building-2" /></v-col>
         </v-row>
       </div>
 
       <!-- Step 2: List, Tags, Status -->
       <div v-else>
-        <v-select v-model="newContact.list" label="Subscribe to List" :items="['Newsletter Subscribers','VIP Customer Circle','Win-Back Segment','All Contacts']" variant="outlined" density="comfortable" class="mb-4" prepend-inner-icon="mdi-playlist-check" />
+        <v-select v-model="newContact.list" label="Subscribe to List" :items="['Newsletter Subscribers','VIP Customer Circle','Win-Back Segment','All Contacts']" variant="outlined" density="comfortable" class="mb-4" prepend-inner-icon="playlist-check" />
         <v-select v-model="newContact.status" label="Status" :items="['Active','Unsubscribed']" variant="outlined" density="comfortable" class="mb-4" />
         <div class="text-subtitle-2 font-weight-bold mb-2">Tags</div>
         <div class="d-flex flex-wrap gap-2 mb-3">
           <v-chip v-for="(t,i) in newContact.tags" :key="i" closable size="small" color="secondary" variant="tonal" @click:close="removeTag(i)">{{ t }}</v-chip>
         </div>
         <v-text-field v-model="tagInput" label="Add tag..." variant="outlined" density="compact" hide-details
-          @keyup.enter="addTag" append-inner-icon="mdi-plus" @click:append-inner="addTag" />
+          @keyup.enter="addTag" append-inner-icon="plus" @click:append-inner="addTag" />
       </div>
 
       <template #footer>
         <v-btn v-if="addStep===2" variant="text" class="text-none" @click="addStep=1">Back</v-btn>
         <v-btn v-else variant="text" class="text-none" @click="addDrawer=false">Cancel</v-btn>
         <v-btn v-if="addStep===1" color="primary" variant="elevated" class="text-none" :disabled="!newContact.email||!newContact.firstName" @click="addStep=2">Next</v-btn>
-        <v-btn v-else color="primary" variant="elevated" class="text-none" prepend-icon="mdi-check" @click="saveContact">Save Contact</v-btn>
+        <v-btn v-else color="primary" variant="elevated" class="text-none" prepend-icon="check" @click="saveContact">Save Contact</v-btn>
       </template>
     </MpFormDrawer>
 
@@ -279,10 +279,10 @@ function selectAll() {
               <div class="text-subtitle-1 font-weight-bold mb-1">Upload your CSV file</div>
               <div class="text-body-2 text-medium-emphasis mb-5">Supported: CSV, XLSX. Max 25MB. First row should be column headers.</div>
               <v-card variant="outlined" rounded="xl" class="pa-8 text-center" style="border-style:dashed;cursor:pointer;">
-                <v-icon size="48" color="primary" class="mb-3">mdi-cloud-upload-outline</v-icon>
+                <v-icon size="48" color="primary" class="mb-3">cloud-upload</v-icon>
                 <div class="text-body-1 font-weight-medium mb-1">Drag & drop file here</div>
                 <div class="text-caption text-medium-emphasis mb-4">or click to browse</div>
-                <v-btn variant="outlined" color="primary" class="text-none" prepend-icon="mdi-folder-open">Browse File</v-btn>
+                <v-btn variant="outlined" color="primary" class="text-none" prepend-icon="folder-open">Browse File</v-btn>
               </v-card>
               <v-select v-model="importList" label="Import into list" :items="['Newsletter Subscribers','VIP Customer Circle','Win-Back Segment']" variant="outlined" density="comfortable" class="mt-4" />
             </div>
@@ -328,7 +328,7 @@ function selectAll() {
                 {{ importStep === 1 ? 'Cancel' : 'Back' }}
               </v-btn>
               <v-btn v-if="importStep < 3" color="primary" variant="elevated" class="text-none" @click="importStep++">Continue</v-btn>
-              <v-btn v-else color="success" variant="elevated" class="text-none" prepend-icon="mdi-upload" @click="importDialog=false;saveSnack=true">Import 1,241 Contacts</v-btn>
+              <v-btn v-else color="success" variant="elevated" class="text-none" prepend-icon="upload" @click="importDialog=false;saveSnack=true">Import 1,241 Contacts</v-btn>
             </div>
           </template>
         </v-stepper>
@@ -337,7 +337,7 @@ function selectAll() {
 
     <!-- Snackbar -->
     <v-snackbar v-model="saveSnack" :timeout="2500" color="success" rounded="pill" location="bottom center">
-      <div class="d-flex align-center gap-2"><v-icon>mdi-check-circle</v-icon> Contact saved successfully</div>
+      <div class="d-flex align-center gap-2"><v-icon>circle-check</v-icon> Contact saved successfully</div>
     </v-snackbar>
   </div>
 </template>

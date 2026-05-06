@@ -24,7 +24,7 @@ This is NOT a production app — it uses mock data and has no backend API.
 | Language | TypeScript (strict) | 5.9 |
 | State | Pinia | 3.x |
 | Routing | Vue Router | 5.x |
-| Icons | MDI (`@mdi/font`) | 7.x |
+| Icons | Lucide (`lucide-vue-next`) | 1.x |
 | Docs | Storybook 9 (`@storybook/vue3-vite`) | 9.1.x |
 | Tokens | Custom build script (zero-dep) | — |
 
@@ -147,6 +147,21 @@ This is NOT a production app — it uses mock data and has no backend API.
 - **Cards**: Always `flat border rounded="lg"` (no elevation shadows)
 - **Buttons**: `text-transform: none` (already set in Vuetify defaults)
 - **Font**: Inter (already configured globally)
+
+### Icon Usage
+Icons are rendered via `lucide-vue-next` through a custom Vuetify icon set (`src/plugins/lucideIcons.ts`).
+
+Use Lucide icon names in kebab-case wherever Vuetify accepts an icon string:
+```html
+<v-icon>settings</v-icon>
+<v-btn prepend-icon="plus">Create</v-btn>
+<v-text-field prepend-inner-icon="search" />
+```
+
+The name maps to the PascalCase Lucide export: `settings` → `Settings`, `chevron-down` → `ChevronDown`.
+Browse icons at [lucide.dev/icons](https://lucide.dev/icons).
+
+**Do not** use `mdi-*` strings for new code — they are only kept as a temporary fallback in the icon bridge.
 
 ### Data Table Pattern
 Every data table page follows this structure:

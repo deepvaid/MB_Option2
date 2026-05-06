@@ -19,35 +19,35 @@ const saveSnack = ref(false)
 const selectedNodeId = ref<string|null>(null)
 
 const triggerNodes = [
-  { type: 'trigger' as NodeType, title: 'New Subscription', subtitle: 'Contact joins a list', icon: 'mdi-account-plus', color: 'secondary' },
-  { type: 'trigger' as NodeType, title: 'Campaign Opened', subtitle: 'Contact opens an email', icon: 'mdi-email-open', color: 'secondary' },
-  { type: 'trigger' as NodeType, title: 'Link Clicked', subtitle: 'Contact clicks a link', icon: 'mdi-cursor-default-click', color: 'secondary' },
-  { type: 'trigger' as NodeType, title: 'Product Purchased', subtitle: 'Order completed', icon: 'mdi-cart-check', color: 'secondary' },
-  { type: 'trigger' as NodeType, title: 'Cart Abandoned', subtitle: 'Cart idle for N minutes', icon: 'mdi-cart-remove', color: 'secondary' },
-  { type: 'trigger' as NodeType, title: 'Form Submitted', subtitle: 'Acquisition form event', icon: 'mdi-form-select', color: 'secondary' },
-  { type: 'trigger' as NodeType, title: 'Segment Entry', subtitle: 'Contact matches segment', icon: 'mdi-account-group', color: 'secondary' },
-  { type: 'trigger' as NodeType, title: 'API Event', subtitle: 'External webhook', icon: 'mdi-api', color: 'secondary' },
+  { type: 'trigger' as NodeType, title: 'New Subscription', subtitle: 'Contact joins a list', icon: 'user-plus', color: 'secondary' },
+  { type: 'trigger' as NodeType, title: 'Campaign Opened', subtitle: 'Contact opens an email', icon: 'mail-open', color: 'secondary' },
+  { type: 'trigger' as NodeType, title: 'Link Clicked', subtitle: 'Contact clicks a link', icon: 'mouse-pointer-click', color: 'secondary' },
+  { type: 'trigger' as NodeType, title: 'Product Purchased', subtitle: 'Order completed', icon: 'shopping-cart', color: 'secondary' },
+  { type: 'trigger' as NodeType, title: 'Cart Abandoned', subtitle: 'Cart idle for N minutes', icon: 'shopping-cart', color: 'secondary' },
+  { type: 'trigger' as NodeType, title: 'Form Submitted', subtitle: 'Acquisition form event', icon: 'list-checks', color: 'secondary' },
+  { type: 'trigger' as NodeType, title: 'Segment Entry', subtitle: 'Contact matches segment', icon: 'users', color: 'secondary' },
+  { type: 'trigger' as NodeType, title: 'API Event', subtitle: 'External webhook', icon: 'code-2', color: 'secondary' },
 ]
 const actionNodes = [
-  { type: 'email' as NodeType, title: 'Send Email', subtitle: 'Deliver a campaign email', icon: 'mdi-email-send', color: 'primary' },
-  { type: 'delay' as NodeType, title: 'Wait / Delay', subtitle: 'Pause before next step', icon: 'mdi-timer-sand', color: 'grey-darken-1' },
-  { type: 'condition' as NodeType, title: 'If / Else Condition', subtitle: 'Branch based on event', icon: 'mdi-call-split', color: 'warning' },
-  { type: 'action' as NodeType, title: 'Apply Tag', subtitle: 'Add a tag to contact', icon: 'mdi-tag-plus', color: 'success' },
-  { type: 'action' as NodeType, title: 'Remove Tag', subtitle: 'Remove tag from contact', icon: 'mdi-tag-minus', color: 'error' },
-  { type: 'action' as NodeType, title: 'Update Field', subtitle: 'Set a contact field value', icon: 'mdi-pencil', color: 'info' },
-  { type: 'action' as NodeType, title: 'Add to List', subtitle: 'Subscribe to another list', icon: 'mdi-playlist-plus', color: 'success' },
-  { type: 'action' as NodeType, title: 'HTTP Post', subtitle: 'Send to external URL', icon: 'mdi-webhook', color: 'purple' },
+  { type: 'email' as NodeType, title: 'Send Email', subtitle: 'Deliver a campaign email', icon: 'send', color: 'primary' },
+  { type: 'delay' as NodeType, title: 'Wait / Delay', subtitle: 'Pause before next step', icon: 'hourglass', color: 'grey-darken-1' },
+  { type: 'condition' as NodeType, title: 'If / Else Condition', subtitle: 'Branch based on event', icon: 'split', color: 'warning' },
+  { type: 'action' as NodeType, title: 'Apply Tag', subtitle: 'Add a tag to contact', icon: 'tags', color: 'success' },
+  { type: 'action' as NodeType, title: 'Remove Tag', subtitle: 'Remove tag from contact', icon: 'tag', color: 'error' },
+  { type: 'action' as NodeType, title: 'Update Field', subtitle: 'Set a contact field value', icon: 'pencil', color: 'info' },
+  { type: 'action' as NodeType, title: 'Add to List', subtitle: 'Subscribe to another list', icon: 'playlist-plus', color: 'success' },
+  { type: 'action' as NodeType, title: 'HTTP Post', subtitle: 'Send to external URL', icon: 'globehook', color: 'purple' },
 ]
 
 const nodes = ref<FlowNode[]>([
-  { id:'n1', type:'trigger', title:'Product Purchased', subtitle:'Any order with total > $0', icon:'mdi-cart-check', color:'secondary', children:['n2'] },
-  { id:'n2', type:'delay', title:'Wait 2 Hours', subtitle:'Processing window', icon:'mdi-timer-sand', color:'grey-darken-1', children:['n3'] },
-  { id:'n3', type:'email', title:'Send: Thank You Email', subtitle:'Subject: "Your order is confirmed! 🎉"', icon:'mdi-email-send', color:'primary', children:['n4'] },
-  { id:'n4', type:'delay', title:'Wait 7 Days', subtitle:'Allow delivery + use time', icon:'mdi-timer-sand', color:'grey-darken-1', children:['n5'] },
-  { id:'n5', type:'condition', title:'Opened Thank You Email?', subtitle:'Check open event on Email #1', icon:'mdi-call-split', color:'warning', children:['n6','n7'] },
-  { id:'n6', type:'email', title:'YES → Send: Review Request', subtitle:'Subject: "How did we do? ⭐"', icon:'mdi-star-outline', color:'primary', branch:'yes', children:['n8'] },
-  { id:'n7', type:'email', title:'NO → Resend New Subject', subtitle:'Subject: "One quick question 👋"', icon:'mdi-email-off-outline', color:'error', branch:'no', children:['n8'] },
-  { id:'n8', type:'action', title:'Apply Tag: Reviewed', subtitle:'Mark contact journey complete', icon:'mdi-tag-plus', color:'success', children:[] },
+  { id:'n1', type:'trigger', title:'Product Purchased', subtitle:'Any order with total > $0', icon:'shopping-cart', color:'secondary', children:['n2'] },
+  { id:'n2', type:'delay', title:'Wait 2 Hours', subtitle:'Processing window', icon:'hourglass', color:'grey-darken-1', children:['n3'] },
+  { id:'n3', type:'email', title:'Send: Thank You Email', subtitle:'Subject: "Your order is confirmed! 🎉"', icon:'send', color:'primary', children:['n4'] },
+  { id:'n4', type:'delay', title:'Wait 7 Days', subtitle:'Allow delivery + use time', icon:'hourglass', color:'grey-darken-1', children:['n5'] },
+  { id:'n5', type:'condition', title:'Opened Thank You Email?', subtitle:'Check open event on Email #1', icon:'split', color:'warning', children:['n6','n7'] },
+  { id:'n6', type:'email', title:'YES → Send: Review Request', subtitle:'Subject: "How did we do? ⭐"', icon:'star', color:'primary', branch:'yes', children:['n8'] },
+  { id:'n7', type:'email', title:'NO → Resend New Subject', subtitle:'Subject: "One quick question 👋"', icon:'mail-x', color:'error', branch:'no', children:['n8'] },
+  { id:'n8', type:'action', title:'Apply Tag: Reviewed', subtitle:'Mark contact journey complete', icon:'tags', color:'success', children:[] },
 ])
 
 const selectedNode = computed(() => nodes.value.find(n => n.id === selectedNodeId.value))
@@ -91,7 +91,7 @@ const typeBadgeColor = (t: NodeType) => ({ trigger:'secondary', email:'primary',
       <div class="d-flex align-center gap-3">
         <v-tooltip text="Back to Journeys" location="bottom">
           <template v-slot:activator="{ props }">
-            <v-btn v-bind="props" icon="mdi-arrow-left" variant="text" size="small" @click="router.push('/workflows')"></v-btn>
+            <v-btn v-bind="props" icon="arrow-left" variant="text" size="small" @click="router.push('/workflows')"></v-btn>
           </template>
         </v-tooltip>
         <div v-if="!editingName" class="font-weight-bold text-body-1 cursor-pointer" @click="editingName=true;nameInput=journeyName">{{ journeyName }}</div>
@@ -102,12 +102,12 @@ const typeBadgeColor = (t: NodeType) => ({ trigger:'secondary', email:'primary',
       <div class="d-flex align-center gap-2">
         <v-tooltip text="Journey settings" location="bottom">
           <template v-slot:activator="{ props }">
-            <v-btn v-bind="props" icon="mdi-cog-outline" variant="text" size="small"></v-btn>
+            <v-btn v-bind="props" icon="settings" variant="text" size="small"></v-btn>
           </template>
         </v-tooltip>
         <v-divider vertical class="mx-1" style="height:24px;"></v-divider>
         <v-btn variant="outlined" size="small" class="text-none" @click="saveSnack=true">Save Draft</v-btn>
-        <v-btn color="success" variant="elevated" size="small" class="text-none" prepend-icon="mdi-play" @click="journeyStatus='Active';saveSnack=true">Activate</v-btn>
+        <v-btn color="success" variant="elevated" size="small" class="text-none" prepend-icon="play" @click="journeyStatus='Active';saveSnack=true">Activate</v-btn>
       </div>
     </div>
 
@@ -174,12 +174,12 @@ const typeBadgeColor = (t: NodeType) => ({ trigger:'secondary', email:'primary',
                   <div class="d-flex gap-1 node-actions">
                     <v-tooltip text="Edit" location="top">
                       <template v-slot:activator="{ props }">
-                        <v-btn v-bind="props" icon="mdi-pencil-outline" variant="text" size="x-small" color="primary" @click.stop="selectNode(node.id)"></v-btn>
+                        <v-btn v-bind="props" icon="pencil" variant="text" size="x-small" color="primary" @click.stop="selectNode(node.id)"></v-btn>
                       </template>
                     </v-tooltip>
                     <v-tooltip text="Delete" location="top">
                       <template v-slot:activator="{ props }">
-                        <v-btn v-bind="props" icon="mdi-delete-outline" variant="text" size="x-small" color="error"
+                        <v-btn v-bind="props" icon="trash-2" variant="text" size="x-small" color="error"
                           :disabled="node.type==='trigger'" @click.stop="deleteNode(node.id)"></v-btn>
                       </template>
                     </v-tooltip>
@@ -191,7 +191,7 @@ const typeBadgeColor = (t: NodeType) => ({ trigger:'secondary', email:'primary',
                 <div style="width:2px;height:24px;background:rgba(var(--v-border-color),0.5);"></div>
                 <v-menu :close-on-content-click="false" location="right">
                   <template v-slot:activator="{ props }">
-                    <v-btn v-bind="props" icon="mdi-plus" size="x-small" variant="outlined" color="primary" class="add-btn"></v-btn>
+                    <v-btn v-bind="props" icon="plus" size="x-small" variant="outlined" color="primary" class="add-btn"></v-btn>
                   </template>
                   <v-card rounded="xl" elevation="8" width="200" class="py-2">
                     <div class="px-3 py-1 text-caption text-medium-emphasis font-weight-bold text-uppercase border-b mb-1">Add Step</div>
@@ -208,7 +208,7 @@ const typeBadgeColor = (t: NodeType) => ({ trigger:'secondary', email:'primary',
             </div>
           </template>
           <v-card variant="outlined" rounded="xl" class="pa-3 d-flex align-center justify-center gap-2 text-medium-emphasis" style="border-style:dashed;width:200px;">
-            <v-icon size="18">mdi-flag-checkered</v-icon>
+            <v-icon size="18">flag</v-icon>
             <span class="text-caption font-weight-medium">End of Journey</span>
           </v-card>
         </div>
@@ -221,7 +221,7 @@ const typeBadgeColor = (t: NodeType) => ({ trigger:'secondary', email:'primary',
             <div class="text-caption text-medium-emphasis font-weight-bold text-uppercase mb-1">{{ typeLabel(selectedNode.type) }} Settings</div>
             <div class="text-body-2 font-weight-bold">{{ selectedNode.title }}</div>
           </div>
-          <v-btn icon="mdi-close" variant="text" size="small" @click="selectedNodeId=null"></v-btn>
+          <v-btn icon="x" variant="text" size="small" @click="selectedNodeId=null"></v-btn>
         </div>
         <div class="pa-4 flex-grow-1 overflow-y-auto">
           <template v-if="selectedNode.type==='trigger'">
@@ -257,7 +257,7 @@ const typeBadgeColor = (t: NodeType) => ({ trigger:'secondary', email:'primary',
     </div>
 
     <v-snackbar v-model="saveSnack" :timeout="2500" color="success" rounded="pill" location="bottom center">
-      <div class="d-flex align-center gap-2"><v-icon>mdi-check-circle</v-icon> Journey saved</div>
+      <div class="d-flex align-center gap-2"><v-icon>circle-check</v-icon> Journey saved</div>
     </v-snackbar>
   </div>
 </template>

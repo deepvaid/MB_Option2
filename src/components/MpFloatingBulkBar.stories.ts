@@ -52,9 +52,9 @@ export const Default: Story = {
           <v-btn size="small" @click="count = Math.max(0, count - 1)">Deselect one</v-btn>
         </div>
         <MpFloatingBulkBar :count="count" @clear="count = 0">
-          <v-btn size="small" variant="outlined" prepend-icon="mdi-truck-delivery">Fulfill</v-btn>
-          <v-btn size="small" variant="outlined" prepend-icon="mdi-download">Export</v-btn>
-          <v-btn size="small" variant="outlined" color="error" prepend-icon="mdi-delete">Delete</v-btn>
+          <v-btn size="small" variant="outlined" prepend-icon="truck">Fulfill</v-btn>
+          <v-btn size="small" variant="outlined" prepend-icon="download">Export</v-btn>
+          <v-btn size="small" variant="outlined" color="error" prepend-icon="trash-2">Delete</v-btn>
         </MpFloatingBulkBar>
       </div>
     `,
@@ -70,8 +70,8 @@ export const WithThreeSelected: Story = {
     template: `
       <div style="min-height: 200px; position: relative;">
         <MpFloatingBulkBar v-bind="args">
-          <v-btn size="small" variant="outlined" prepend-icon="mdi-tag">Tag</v-btn>
-          <v-btn size="small" variant="outlined" prepend-icon="mdi-email">Email</v-btn>
+          <v-btn size="small" variant="outlined" prepend-icon="tag">Tag</v-btn>
+          <v-btn size="small" variant="outlined" prepend-icon="mail">Email</v-btn>
         </MpFloatingBulkBar>
       </div>
     `,

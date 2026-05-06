@@ -18,7 +18,7 @@ const meta = {
   argTypes: {
     divider: {
       control: 'text',
-      description: 'Divider character or MDI icon between breadcrumb items.',
+      description: 'Divider character or Lucide icon name between breadcrumb items.',
       table: { category: 'Appearance', defaultValue: { summary: '/' } },
     },
     density: {
@@ -141,7 +141,7 @@ export const WithIcons: Story = {
   render: () => ({
     template: `
       <v-breadcrumbs :items="[
-        { title: 'Home', href: '#/', icon: 'mdi-home' },
+        { title: 'Home', href: '#/', icon: 'home' },
         { title: 'Products', href: '#/products' },
         { title: 'Electronics', href: '#/products/electronics' },
         { title: 'Laptops' }
@@ -163,7 +163,7 @@ export const CustomDivider: Story = {
           { title: 'Campaigns', href: '#/marketing/campaigns' },
           { title: 'Summer Sale' }
         ]"
-        divider="mdi-chevron-right"
+        divider="chevron-right"
       />
     `,
   }),

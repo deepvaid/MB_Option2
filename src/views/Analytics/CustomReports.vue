@@ -14,7 +14,7 @@ import MpPageHeader from '@/components/MpPageHeader.vue'
       ]"
     >
       <template #actions>
-        <v-btn color="primary" variant="flat" prepend-icon="mdi-plus" class="text-none">Create Report</v-btn>
+        <v-btn color="primary" variant="flat" prepend-icon="plus" class="text-none">Create Report</v-btn>
       </template>
     </MpPageHeader>
 

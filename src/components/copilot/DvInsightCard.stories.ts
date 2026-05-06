@@ -8,7 +8,7 @@ const meta = {
   argTypes: {
     icon: {
       control: 'text',
-      description: 'MDI icon name for the insight'
+      description: 'Lucide icon name for the insight'
     },
     headline: {
       control: 'text',
@@ -65,7 +65,7 @@ type Story = StoryObj<typeof meta>
 
 export const InfoInsight: Story = {
   args: {
-    icon: 'mdi-lightbulb',
+    icon: 'lightbulb',
     headline: 'Optimize Your Send Time',
     description: 'Your audience typically opens emails between 10 AM and 2 PM EST. Consider scheduling this campaign for Tuesday at 11 AM to maximize engagement.',
     actionLabel: 'Apply Recommendation',
@@ -75,7 +75,7 @@ export const InfoInsight: Story = {
 
 export const WarningInsight: Story = {
   args: {
-    icon: 'mdi-alert',
+    icon: 'triangle-alert',
     headline: 'Low Audience Engagement',
     description: 'Your last 3 campaigns had below-average open rates (18% vs 24% industry average). Review your subject lines and consider A/B testing.',
     actionLabel: 'View Analytics',
@@ -85,7 +85,7 @@ export const WarningInsight: Story = {
 
 export const SuccessInsight: Story = {
   args: {
-    icon: 'mdi-check-circle',
+    icon: 'circle-check',
     headline: 'Campaign Performing Well',
     description: 'Your spring sale campaign exceeded projections with a 34% open rate and 12% click-through rate. This segment responds well to promotional content.',
     actionLabel: 'View Details',
@@ -95,7 +95,7 @@ export const SuccessInsight: Story = {
 
 export const ErrorInsight: Story = {
   args: {
-    icon: 'mdi-close-circle',
+    icon: 'circle-x',
     headline: 'Campaign Launch Failed',
     description: 'Your email campaign could not be sent due to missing sender verification. Complete domain verification in Settings to continue.',
     actionLabel: 'Fix Now',

@@ -192,7 +192,7 @@ export const KpiCards: Story = {
                 <div class="text-h4 font-weight-bold mt-1">$84,230</div>
                 <div class="text-caption text-success mt-1">↑ 12.4% vs last month</div>
               </div>
-              <v-icon size="40" color="primary" opacity="0.25">mdi-cash-multiple</v-icon>
+              <v-icon size="40" color="primary" opacity="0.25">banknote</v-icon>
             </v-card-text>
           </v-card>
         </v-col>
@@ -204,7 +204,7 @@ export const KpiCards: Story = {
                 <div class="text-h4 font-weight-bold mt-1">1,284</div>
                 <div class="text-caption text-success mt-1">↑ 8.1% vs last month</div>
               </div>
-              <v-icon size="40" color="secondary" opacity="0.25">mdi-cart-outline</v-icon>
+              <v-icon size="40" color="secondary" opacity="0.25">shopping-cart</v-icon>
             </v-card-text>
           </v-card>
         </v-col>
@@ -216,7 +216,7 @@ export const KpiCards: Story = {
                 <div class="text-h4 font-weight-bold mt-1">24,891</div>
                 <div class="text-caption text-error mt-1">↓ 2.3% vs last month</div>
               </div>
-              <v-icon size="40" color="success" opacity="0.25">mdi-account-group-outline</v-icon>
+              <v-icon size="40" color="success" opacity="0.25">users</v-icon>
             </v-card-text>
           </v-card>
         </v-col>
@@ -228,7 +228,7 @@ export const KpiCards: Story = {
                 <div class="text-h4 font-weight-bold mt-1">34.7%</div>
                 <div class="text-caption text-warning mt-1">→ No change</div>
               </div>
-              <v-icon size="40" color="warning" opacity="0.25">mdi-email-open-outline</v-icon>
+              <v-icon size="40" color="warning" opacity="0.25">mail-open</v-icon>
             </v-card-text>
           </v-card>
         </v-col>
@@ -258,10 +258,10 @@ export const ColorAccent: Story = {
     setup() {
       return {
         items: [
-          { color: 'primary', icon: 'mdi-lightning-bolt', label: 'Primary' },
-          { color: 'success', icon: 'mdi-check-circle-outline', label: 'Success' },
-          { color: 'warning', icon: 'mdi-alert-outline', label: 'Warning' },
-          { color: 'error', icon: 'mdi-close-circle-outline', label: 'Error' },
+          { color: 'primary', icon: 'zap', label: 'Primary' },
+          { color: 'success', icon: 'circle-check', label: 'Success' },
+          { color: 'warning', icon: 'triangle-alert', label: 'Warning' },
+          { color: 'error', icon: 'circle-x', label: 'Error' },
         ],
       }
     },
@@ -285,7 +285,7 @@ export const Clickable: Story = {
               <div class="text-body-2 text-medium-emphasis">{{ item.desc }}</div>
             </v-card-text>
             <v-card-actions class="px-5 pb-4 pt-0">
-              <v-btn variant="text" color="primary" class="text-none px-0" append-icon="mdi-arrow-right" size="small">Configure</v-btn>
+              <v-btn variant="text" color="primary" class="text-none px-0" append-icon="arrow-right" size="small">Configure</v-btn>
             </v-card-actions>
           </v-card>
         </v-col>
@@ -294,9 +294,9 @@ export const Clickable: Story = {
     setup() {
       return {
         items: [
-          { icon: 'mdi-storefront-outline', title: 'Store Setup', desc: 'Configure your online store channels', color: 'primary' },
-          { icon: 'mdi-email-fast-outline', title: 'Email Campaigns', desc: 'Create and send targeted campaigns', color: 'secondary' },
-          { icon: 'mdi-chart-line', title: 'Analytics', desc: 'Track performance and engagement metrics', color: 'success' },
+          { icon: 'store', title: 'Store Setup', desc: 'Configure your online store channels', color: 'primary' },
+          { icon: 'send', title: 'Email Campaigns', desc: 'Create and send targeted campaigns', color: 'secondary' },
+          { icon: 'line-chart', title: 'Analytics', desc: 'Track performance and engagement metrics', color: 'success' },
         ],
       }
     },
@@ -312,7 +312,7 @@ export const WithHeaderActions: Story = {
       <v-card variant="flat" border rounded="xl" style="max-width: 480px;">
         <div class="d-flex align-center justify-space-between px-5 pt-4 pb-3 border-b">
           <div class="text-subtitle-1 font-weight-bold">Recent Orders</div>
-          <v-btn variant="text" size="small" class="text-none text-primary" append-icon="mdi-arrow-right">View all</v-btn>
+          <v-btn variant="text" size="small" class="text-none text-primary" append-icon="arrow-right">View all</v-btn>
         </div>
         <v-list lines="two" class="py-2">
           <v-list-item v-for="order in orders" :key="order.num" :title="order.num + ' · ' + order.name" :subtitle="order.status">

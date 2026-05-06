@@ -86,10 +86,10 @@ const stats = computed(() => {
 })
 
 const summaryTiles = computed<Array<{ key: string; label: string; value: number; icon: string; chip: FilterChip }>>(() => [
-  { key: 'total', label: 'Total', value: stats.value.total, icon: 'mdi-view-dashboard-outline', chip: 'all' },
-  { key: 'system', label: 'System', value: stats.value.system, icon: 'mdi-shield-check-outline', chip: 'system' },
-  { key: 'custom', label: 'Custom', value: stats.value.custom, icon: 'mdi-view-grid-plus-outline', chip: 'custom' },
-  { key: 'favorites', label: 'Favorites', value: stats.value.favorites, icon: 'mdi-star-outline', chip: 'favorites' },
+  { key: 'total', label: 'Total', value: stats.value.total, icon: 'layout-dashboard', chip: 'all' },
+  { key: 'system', label: 'System', value: stats.value.system, icon: 'shield-check', chip: 'system' },
+  { key: 'custom', label: 'Custom', value: stats.value.custom, icon: 'grid-2x2-plus', chip: 'custom' },
+  { key: 'favorites', label: 'Favorites', value: stats.value.favorites, icon: 'star', chip: 'favorites' },
 ])
 
 const filteredDashboards = computed(() => {
@@ -327,7 +327,7 @@ function handleDashboardCreated(dashboardId: string) {
       <v-btn
         variant="text"
         size="small"
-        prepend-icon="mdi-arrow-left"
+        prepend-icon="arrow-left"
         class="text-none px-2"
         @click="backToActiveDashboard"
       >
@@ -348,7 +348,7 @@ function handleDashboardCreated(dashboardId: string) {
         <v-btn
           color="primary"
           variant="flat"
-          prepend-icon="mdi-plus"
+          prepend-icon="plus"
           class="text-none"
           @click="createDialogOpen = true"
         >
@@ -380,7 +380,7 @@ function handleDashboardCreated(dashboardId: string) {
     <div class="dashboards-list__toolbar">
       <v-text-field
         v-model="search"
-        prepend-inner-icon="mdi-magnify"
+        prepend-inner-icon="search"
         placeholder="Search dashboards"
         density="comfortable"
         variant="outlined"
@@ -409,8 +409,8 @@ function handleDashboardCreated(dashboardId: string) {
             <v-btn
               v-bind="menuProps"
               variant="outlined"
-              prepend-icon="mdi-sort"
-              append-icon="mdi-chevron-down"
+              prepend-icon="arrow-up-down"
+              append-icon="chevron-down"
               class="text-none"
             >
               {{ SORT_OPTIONS.find((option) => option.value === sortKey)?.label ?? 'Sort' }}
@@ -434,15 +434,15 @@ function handleDashboardCreated(dashboardId: string) {
           density="comfortable"
           class="dashboards-list__view-toggle"
         >
-          <v-btn value="cards" size="small" icon="mdi-view-grid-outline" aria-label="Card view" />
-          <v-btn value="table" size="small" icon="mdi-table" aria-label="Table view" />
+          <v-btn value="cards" size="small" icon="grid-2x2" aria-label="Card view" />
+          <v-btn value="table" size="small" icon="table-2" aria-label="Table view" />
         </v-btn-toggle>
       </div>
     </div>
 
     <div v-if="hasSelection" class="dashboards-list__bulk-bar">
       <div class="d-flex align-center ga-3">
-        <v-btn icon="mdi-close" variant="text" size="small" aria-label="Clear selection" @click="clearSelection" />
+        <v-btn icon="x" variant="text" size="small" aria-label="Clear selection" @click="clearSelection" />
         <span class="text-body-2 font-weight-medium">{{ selectedIds.length }} selected</span>
       </div>
       <div class="d-flex align-center ga-2 flex-wrap">
@@ -450,7 +450,7 @@ function handleDashboardCreated(dashboardId: string) {
           variant="outlined"
           size="small"
           class="text-none"
-          :prepend-icon="selectedAllFavorited ? 'mdi-star-off' : 'mdi-star-outline'"
+          :prepend-icon="selectedAllFavorited ? 'star-off' : 'star'"
           @click="bulkFavorite"
         >
           {{ selectedAllFavorited ? 'Unfavorite' : 'Favorite' }}
@@ -459,7 +459,7 @@ function handleDashboardCreated(dashboardId: string) {
           variant="outlined"
           size="small"
           class="text-none"
-          prepend-icon="mdi-content-copy"
+          prepend-icon="copy"
           @click="bulkDuplicate"
         >
           Duplicate
@@ -469,7 +469,7 @@ function handleDashboardCreated(dashboardId: string) {
           size="small"
           color="error"
           class="text-none"
-          prepend-icon="mdi-delete-outline"
+          prepend-icon="trash-2"
           :disabled="!selectedHasCustom"
           @click="bulkDelete"
         >
@@ -480,11 +480,11 @@ function handleDashboardCreated(dashboardId: string) {
 
     <MpEmptyState
       v-if="totalCount === 0"
-      :icon="search || filterChip !== 'all' ? 'mdi-filter-variant-remove' : 'mdi-view-grid-plus-outline'"
+      :icon="search || filterChip !== 'all' ? 'list-x' : 'grid-2x2-plus'"
       :title="search || filterChip !== 'all' ? 'No dashboards match your filters' : 'No dashboards yet'"
       :description="search || filterChip !== 'all' ? 'Try a different search term or clear the active filters.' : 'Create the first custom dashboard for this workspace to get started.'"
       :action-label="search || filterChip !== 'all' ? 'Clear filters' : 'Create dashboard'"
-      action-icon="mdi-plus"
+      action-icon="plus"
       @action="search || filterChip !== 'all' ? clearFilters() : (createDialogOpen = true)"
     />
 

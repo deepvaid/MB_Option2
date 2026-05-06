@@ -13,12 +13,12 @@ const emit = defineEmits<{
 }>()
 
 const stepIcons: Record<string, string> = {
-  trigger: 'mdi-lightning-bolt',
-  wait: 'mdi-timer-sand',
-  email: 'mdi-email-outline',
-  sms: 'mdi-message-text-outline',
-  condition: 'mdi-source-branch',
-  action: 'mdi-cog-outline',
+  trigger: 'zap',
+  wait: 'hourglass',
+  email: 'mail',
+  sms: 'message-circle',
+  condition: 'git-branch',
+  action: 'settings',
 }
 
 // Step colors mapped to Vuetify semantic theme colors
@@ -37,7 +37,7 @@ const stepColors: Record<string, string> = {
     <v-card-text class="pa-4">
       <div class="d-flex align-center ga-2 mb-3">
         <v-avatar size="32" color="deep-purple" variant="tonal">
-          <v-icon size="18">mdi-relation-many-to-many</v-icon>
+          <v-icon size="18">network</v-icon>
         </v-avatar>
         <div>
           <div class="text-subtitle-2 font-weight-bold">{{ name }}</div>
@@ -54,12 +54,12 @@ const stepColors: Record<string, string> = {
             </v-avatar>
             <span class="text-caption text-center" style="font-size: var(--mp-typography-fontSize-xs); line-height: var(--mp-typography-lineHeight-tight); max-width: 60px;">{{ step.label }}</span>
           </div>
-          <v-icon v-if="i < steps.length - 1" size="16" color="medium-emphasis" class="mx-0">mdi-chevron-right</v-icon>
+          <v-icon v-if="i < steps.length - 1" size="16" color="medium-emphasis" class="mx-0">chevron-right</v-icon>
         </template>
       </div>
 
       <div class="d-flex ga-2 mt-3">
-        <v-btn color="deep-purple" variant="flat" size="small" class="text-none flex-grow-1" prepend-icon="mdi-play" @click="emit('activate')">
+        <v-btn color="deep-purple" variant="flat" size="small" class="text-none flex-grow-1" prepend-icon="play" @click="emit('activate')">
           Activate Journey
         </v-btn>
         <v-btn variant="outlined" size="small" class="text-none" @click="emit('edit')">

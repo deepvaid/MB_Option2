@@ -119,8 +119,8 @@ const statusColor = (s: string) => ({Open:'primary','Invoice Sent':'success'})[s
       ]"
     >
       <template #actions>
-        <v-btn class="text-none mp-btn-dark" variant="flat" prepend-icon="mdi-download">Export</v-btn>
-        <v-btn color="primary" variant="flat" prepend-icon="mdi-plus" class="text-none" @click="createDrawer=true;draftStep=1">Create Draft Order</v-btn>
+        <v-btn class="text-none mp-btn-dark" variant="flat" prepend-icon="download">Export</v-btn>
+        <v-btn color="primary" variant="flat" prepend-icon="plus" class="text-none" @click="createDrawer=true;draftStep=1">Create Draft Order</v-btn>
       </template>
     </MpPageHeader>
 
@@ -157,8 +157,8 @@ const statusColor = (s: string) => ({Open:'primary','Invoice Sent':'success'})[s
           </div>
         </template>
         <template #bulk-actions>
-          <v-btn size="small" variant="outlined" color="primary" class="text-none" prepend-icon="mdi-email-send" rounded="lg">Send Invoice</v-btn>
-          <v-btn size="small" variant="outlined" color="error" class="text-none" prepend-icon="mdi-delete" rounded="lg">Delete Drafts</v-btn>
+          <v-btn size="small" variant="outlined" color="primary" class="text-none" prepend-icon="send" rounded="lg">Send Invoice</v-btn>
+          <v-btn size="small" variant="outlined" color="error" class="text-none" prepend-icon="trash-2" rounded="lg">Delete Drafts</v-btn>
         </template>
       </MpDataTableToolbar>
 
@@ -191,17 +191,17 @@ const statusColor = (s: string) => ({Open:'primary','Invoice Sent':'success'})[s
         </template>
         <template v-slot:item.actions>
           <div class="ActionButtons d-flex justify-end gap-1">
-            <v-tooltip text="Edit order" location="top"><template v-slot:activator="{props}"><v-btn v-bind="props" icon="mdi-pencil-outline" variant="text" size="small" color="primary"></v-btn></template></v-tooltip>
-            <v-tooltip text="Send invoice" location="top"><template v-slot:activator="{props}"><v-btn v-bind="props" icon="mdi-email-send-outline" variant="text" size="small"></v-btn></template></v-tooltip>
-            <v-tooltip text="Delete" location="top"><template v-slot:activator="{props}"><v-btn v-bind="props" icon="mdi-delete-outline" variant="text" size="small" color="error"></v-btn></template></v-tooltip>
+            <v-tooltip text="Edit order" location="top"><template v-slot:activator="{props}"><v-btn v-bind="props" icon="pencil" variant="text" size="small" color="primary"></v-btn></template></v-tooltip>
+            <v-tooltip text="Send invoice" location="top"><template v-slot:activator="{props}"><v-btn v-bind="props" icon="send" variant="text" size="small"></v-btn></template></v-tooltip>
+            <v-tooltip text="Delete" location="top"><template v-slot:activator="{props}"><v-btn v-bind="props" icon="trash-2" variant="text" size="small" color="error"></v-btn></template></v-tooltip>
           </div>
         </template>
         <template v-slot:no-data>
           <div class="d-flex flex-column align-center justify-center pa-12">
-            <v-icon size="64" color="medium-emphasis" class="mb-4">mdi-cart-outline</v-icon>
+            <v-icon size="64" color="medium-emphasis" class="mb-4">shopping-cart</v-icon>
             <div class="text-h6 font-weight-medium mb-2">No draft orders yet</div>
             <div class="text-body-2 text-medium-emphasis mb-5">Create a manual order for a customer or wholesale buyer.</div>
-            <v-btn color="primary" variant="elevated" prepend-icon="mdi-plus" class="text-none" @click="createDrawer=true">Create First Draft</v-btn>
+            <v-btn color="primary" variant="elevated" prepend-icon="plus" class="text-none" @click="createDrawer=true">Create First Draft</v-btn>
           </div>
         </template>
       </v-data-table>
@@ -216,14 +216,14 @@ const statusColor = (s: string) => ({Open:'primary','Invoice Sent':'success'})[s
             <div class="text-h6 font-weight-bold">Create Draft Order</div>
             <div class="text-caption text-medium-emphasis">Step {{ draftStep }} of 3 · {{ draftStep===1?'Add products':draftStep===2?'Customer & shipping':'Review & send' }}</div>
           </div>
-          <v-btn icon="mdi-close" variant="text" size="small" @click="createDrawer=false"></v-btn>
+          <v-btn icon="x" variant="text" size="small" @click="createDrawer=false"></v-btn>
         </div>
         <v-progress-linear :model-value="(draftStep/3)*100" color="primary" height="2"></v-progress-linear>
 
         <!-- Step 1: Products ────────────────────────────────────── -->
         <div v-if="draftStep===1" class="d-flex flex-column flex-grow-1 overflow-hidden">
           <div class="pa-4 border-b" style="flex-shrink:0;">
-            <v-text-field v-model="productSearch" prepend-inner-icon="mdi-magnify" placeholder="Search products by name or SKU…"
+            <v-text-field v-model="productSearch" prepend-inner-icon="search" placeholder="Search products by name or SKU…"
               variant="outlined" density="compact" hide-details></v-text-field>
           </div>
           <div class="flex-grow-1 overflow-y-auto pa-4">
@@ -232,7 +232,7 @@ const statusColor = (s: string) => ({Open:'primary','Invoice Sent':'success'})[s
               <v-list-item v-for="p in filteredCatalog" :key="p.id" class="mb-2 border rounded-xl px-4" style="min-height:64px;">
                 <template v-slot:prepend>
                   <v-avatar color="surface-variant" variant="flat" size="40" rounded="lg" class="mr-3">
-                    <v-icon color="primary">mdi-package-variant</v-icon>
+                    <v-icon color="primary">package</v-icon>
                   </v-avatar>
                 </template>
                 <v-list-item-title class="text-body-2 font-weight-medium">{{ p.name }}</v-list-item-title>
@@ -240,7 +240,7 @@ const statusColor = (s: string) => ({Open:'primary','Invoice Sent':'success'})[s
                 <template v-slot:append>
                   <div class="d-flex align-center gap-3">
                     <span class="font-weight-bold text-body-2">${{ p.price.toFixed(2) }}</span>
-                    <v-btn icon="mdi-plus" variant="tonal" color="primary" size="small" @click="addProduct(p)"></v-btn>
+                    <v-btn icon="plus" variant="tonal" color="primary" size="small" @click="addProduct(p)"></v-btn>
                   </div>
                 </template>
               </v-list-item>
@@ -260,9 +260,9 @@ const statusColor = (s: string) => ({Open:'primary','Invoice Sent':'success'})[s
                   <div class="text-caption text-medium-emphasis">${{ item.price.toFixed(2) }} each</div>
                 </div>
                 <div class="d-flex align-center gap-1">
-                  <v-btn icon="mdi-minus" variant="text" size="x-small" @click="item.qty>1?item.qty--:removeItem(i)"></v-btn>
+                  <v-btn icon="minus" variant="text" size="x-small" @click="item.qty>1?item.qty--:removeItem(i)"></v-btn>
                   <span class="text-body-2 font-weight-bold" style="min-width:24px;text-align:center;">{{ item.qty }}</span>
-                  <v-btn icon="mdi-plus" variant="text" size="x-small" @click="item.qty++"></v-btn>
+                  <v-btn icon="plus" variant="text" size="x-small" @click="item.qty++"></v-btn>
                 </div>
                 <span class="font-weight-bold text-body-2" style="min-width:60px;text-align:right;">${{ (item.price*item.qty).toFixed(2) }}</span>
               </div>
@@ -276,8 +276,8 @@ const statusColor = (s: string) => ({Open:'primary','Invoice Sent':'success'})[s
         <!-- Step 2: Customer & Shipping ─────────────────────────── -->
         <div v-else-if="draftStep===2" class="pa-5 flex-grow-1 overflow-y-auto">
           <div class="text-subtitle-2 font-weight-bold mb-3 text-uppercase text-medium-emphasis">Customer</div>
-          <v-text-field v-model="draft.customer" label="Customer Name *" variant="outlined" density="comfortable" class="mb-3" prepend-inner-icon="mdi-account-outline"></v-text-field>
-          <v-text-field v-model="draft.customerEmail" label="Email Address *" type="email" variant="outlined" density="comfortable" class="mb-5" prepend-inner-icon="mdi-email-outline"></v-text-field>
+          <v-text-field v-model="draft.customer" label="Customer Name *" variant="outlined" density="comfortable" class="mb-3" prepend-inner-icon="user"></v-text-field>
+          <v-text-field v-model="draft.customerEmail" label="Email Address *" type="email" variant="outlined" density="comfortable" class="mb-5" prepend-inner-icon="mail"></v-text-field>
 
           <v-divider class="mb-5"></v-divider>
           <div class="text-subtitle-2 font-weight-bold mb-3 text-uppercase text-medium-emphasis">Shipping</div>
@@ -334,14 +334,14 @@ const statusColor = (s: string) => ({Open:'primary','Invoice Sent':'success'})[s
           <div class="d-flex gap-2">
             <v-btn v-if="draftStep===3" variant="outlined" color="primary" class="text-none" @click="saveDraft">Save Draft</v-btn>
             <v-btn v-if="draftStep<3" color="primary" variant="elevated" class="text-none" :disabled="draftStep===1&&draft.items.length===0" @click="draftStep++">Continue →</v-btn>
-            <v-btn v-else color="success" variant="elevated" class="text-none" prepend-icon="mdi-email-send" @click="saveDraft">Send Invoice</v-btn>
+            <v-btn v-else color="success" variant="elevated" class="text-none" prepend-icon="send" @click="saveDraft">Send Invoice</v-btn>
           </div>
         </div>
       </div>
     </v-navigation-drawer>
 
     <v-snackbar v-model="saveSnack" :timeout="2500" color="success" rounded="pill" location="bottom center">
-      <div class="d-flex align-center gap-2"><v-icon>mdi-check-circle</v-icon> Draft order saved</div>
+      <div class="d-flex align-center gap-2"><v-icon>circle-check</v-icon> Draft order saved</div>
     </v-snackbar>
   </div>
 </template>

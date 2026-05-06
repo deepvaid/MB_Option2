@@ -34,7 +34,7 @@ const titleId = useId()
           <div :id="titleId" class="text-h6 font-weight-bold">{{ title }}</div>
           <div v-if="subtitle" class="text-caption text-medium-emphasis mt-1">{{ subtitle }}</div>
         </div>
-        <v-btn icon="mdi-close" variant="tonal" color="surface-variant" size="small" aria-label="Close form drawer" @click="model = false" />
+        <v-btn icon="x" variant="tonal" color="surface-variant" size="small" aria-label="Close form drawer" @click="model = false" />
       </div>
 
       <div class="pa-5 flex-grow-1 overflow-y-auto">

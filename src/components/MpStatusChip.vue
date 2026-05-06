@@ -49,17 +49,17 @@ const colorMap: Record<string, Record<string, string>> = {
 
 const iconMap: Record<string, Record<string, string>> = {
   campaign: {
-    'Sent': 'mdi-check', 'Scheduled': 'mdi-calendar-clock',
-    'Draft': 'mdi-pencil-outline', 'Sending': 'mdi-truck-fast-outline',
+    'Sent': 'check', 'Scheduled': 'calendar-clock',
+    'Draft': 'pencil', 'Sending': 'truck',
   },
   fulfillment: {
-    'Unapproved': 'mdi-alert-circle-outline', 'Not Ready': 'mdi-package-variant',
-    'Ready For Fulfillment': 'mdi-package-check', 'Shipped': 'mdi-truck-fast-outline',
-    'Return Requested': 'mdi-keyboard-return', 'Cancelled': 'mdi-close-circle-outline',
+    'Unapproved': 'alert-circle', 'Not Ready': 'package',
+    'Ready For Fulfillment': 'package-check', 'Shipped': 'truck',
+    'Return Requested': 'corner-down-left', 'Cancelled': 'circle-x',
   },
   ticket: {
-    'Open': 'mdi-alert-circle-outline', 'In Progress': 'mdi-progress-clock',
-    'Awaiting Reply': 'mdi-message-reply-text', 'Resolved': 'mdi-check-circle',
+    'Open': 'alert-circle', 'In Progress': 'clock',
+    'Awaiting Reply': 'reply', 'Resolved': 'circle-check',
   },
 }
 

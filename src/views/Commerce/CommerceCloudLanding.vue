@@ -3,9 +3,9 @@ import { computed } from 'vue'
 import { MbCard } from '@marobase/ui'
 
 const heroMetrics = [
-  { label: 'Storefronts', value: '12', icon: 'mdi-storefront-outline' },
-  { label: 'Products', value: '2.4K', icon: 'mdi-package-variant-closed' },
-  { label: 'Markets', value: '8', icon: 'mdi-earth' },
+  { label: 'Storefronts', value: '12', icon: 'store' },
+  { label: 'Products', value: '2.4K', icon: 'package' },
+  { label: 'Markets', value: '8', icon: 'globe' },
 ] as const
 
 const heroBars = [38, 52, 46, 64, 58, 72, 81, 74, 92, 85, 78, 88] as const
@@ -20,17 +20,17 @@ const trustBrands = [
 
 const capabilities = [
   {
-    icon: 'mdi-storefront-outline',
+    icon: 'store',
     title: 'Run multiple storefronts from one shared catalog',
     body: 'Manage all storefronts centrally without duplication, so inventory, pricing and product data stay in sync wherever you sell.',
   },
   {
-    icon: 'mdi-cart-outline',
+    icon: 'shopping-cart',
     title: 'Unified orders and fulfillment across channels',
     body: 'See every order from every channel in one queue, route shipments automatically, and keep customers updated with real-time status.',
   },
   {
-    icon: 'mdi-chart-timeline-variant',
+    icon: 'gantt-chart',
     title: 'Operational visibility built for scale',
     body: 'Track revenue, inventory and fulfillment health across brands and markets with dashboards built for commerce operators.',
   },

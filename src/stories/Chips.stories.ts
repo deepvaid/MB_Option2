@@ -56,12 +56,12 @@ const meta = {
     },
     prependIcon: {
       control: 'text',
-      description: 'MDI icon prepended to the chip label (e.g. mdi-check-circle).',
+      description: 'Lucide icon prepended to the chip label (e.g. `circle-check`).',
       table: { category: 'Icons', defaultValue: { summary: '—' } },
     },
     appendIcon: {
       control: 'text',
-      description: 'MDI icon appended to the chip label (e.g. mdi-arrow-right).',
+      description: 'Lucide icon appended to the chip label (e.g. `arrow-right`).',
       table: { category: 'Icons', defaultValue: { summary: '—' } },
     },
     disabled: {
@@ -113,7 +113,7 @@ Use the **Playground** story below to interactively configure every chip propert
 - Create chips with very long labels (truncate at 20 chars)
 
 ### 💡 Best Practices
-- Use prepend-icon with MDI icons for better visual context
+- Use prepend-icon with Lucide icons for better visual context
 - Combine chips with filters for intuitive category selection
 - Always show count badges next to filter chips (e.g., "Active (12)")
 - Use closable variant for removable tags in input fields
@@ -186,11 +186,11 @@ export const WithIcons: Story = {
   render: () => ({
     template: `
       <div class="d-flex flex-wrap gap-2">
-        <v-chip prepend-icon="mdi-check-circle" color="success">Success</v-chip>
-        <v-chip prepend-icon="mdi-alert-circle" color="warning">Warning</v-chip>
-        <v-chip prepend-icon="mdi-close-circle" color="error" closable>Closable</v-chip>
-        <v-chip prepend-icon="mdi-filter" color="primary" filter>Filterable</v-chip>
-        <v-chip append-icon="mdi-arrow-right" color="primary">With Append</v-chip>
+        <v-chip prepend-icon="circle-check" color="success">Success</v-chip>
+        <v-chip prepend-icon="alert-circle" color="warning">Warning</v-chip>
+        <v-chip prepend-icon="circle-x" color="error" closable>Closable</v-chip>
+        <v-chip prepend-icon="filter" color="primary" filter>Filterable</v-chip>
+        <v-chip append-icon="arrow-right" color="primary">With Append</v-chip>
       </div>
     `,
   }),

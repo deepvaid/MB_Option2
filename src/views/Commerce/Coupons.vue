@@ -100,8 +100,8 @@ const statusColor = (s: string) => ({ Active:'success', Expired:'error', 'Maxed 
       ]"
     >
       <template #actions>
-        <v-btn class="text-none mp-btn-dark" variant="flat" prepend-icon="mdi-download">Export</v-btn>
-        <v-btn color="primary" variant="flat" prepend-icon="mdi-plus" class="text-none" @click="createDialog=true;step=1">Create Coupon</v-btn>
+        <v-btn class="text-none mp-btn-dark" variant="flat" prepend-icon="download">Export</v-btn>
+        <v-btn color="primary" variant="flat" prepend-icon="plus" class="text-none" @click="createDialog=true;step=1">Create Coupon</v-btn>
       </template>
     </MpPageHeader>
 
@@ -135,8 +135,8 @@ const statusColor = (s: string) => ({ Active:'success', Expired:'error', 'Maxed 
           </div>
         </template>
         <template #bulk-actions>
-          <v-btn size="small" variant="outlined" color="warning" class="text-none" prepend-icon="mdi-pause" rounded="lg">Deactivate</v-btn>
-          <v-btn size="small" variant="outlined" color="error" class="text-none" prepend-icon="mdi-delete" rounded="lg">Delete</v-btn>
+          <v-btn size="small" variant="outlined" color="warning" class="text-none" prepend-icon="pause" rounded="lg">Deactivate</v-btn>
+          <v-btn size="small" variant="outlined" color="error" class="text-none" prepend-icon="trash-2" rounded="lg">Delete</v-btn>
         </template>
       </MpDataTableToolbar>
 
@@ -155,7 +155,7 @@ const statusColor = (s: string) => ({ Active:'success', Expired:'error', 'Maxed 
         <template v-slot:item.code="{ item }">
           <div class="d-flex align-center gap-2">
             <v-chip variant="outlined" color="secondary" size="small" class="font-weight-bold font-mono">{{ item.code }}</v-chip>
-            <v-tooltip text="Copy code" location="top"><template v-slot:activator="{props}"><v-btn v-bind="props" icon="mdi-content-copy" variant="text" size="x-small" color="medium-emphasis"></v-btn></template></v-tooltip>
+            <v-tooltip text="Copy code" location="top"><template v-slot:activator="{props}"><v-btn v-bind="props" icon="copy" variant="text" size="x-small" color="medium-emphasis"></v-btn></template></v-tooltip>
           </div>
         </template>
         <template v-slot:item.value="{ item }">
@@ -179,9 +179,9 @@ const statusColor = (s: string) => ({ Active:'success', Expired:'error', 'Maxed 
         </template>
         <template v-slot:item.actions>
           <div class="ActionButtons d-flex justify-end gap-1">
-            <v-tooltip text="Edit" location="top"><template v-slot:activator="{props}"><v-btn v-bind="props" icon="mdi-pencil-outline" variant="text" size="small" color="primary"></v-btn></template></v-tooltip>
-            <v-tooltip text="Duplicate" location="top"><template v-slot:activator="{props}"><v-btn v-bind="props" icon="mdi-content-copy" variant="text" size="small"></v-btn></template></v-tooltip>
-            <v-tooltip text="Delete" location="top"><template v-slot:activator="{props}"><v-btn v-bind="props" icon="mdi-delete-outline" variant="text" size="small" color="error"></v-btn></template></v-tooltip>
+            <v-tooltip text="Edit" location="top"><template v-slot:activator="{props}"><v-btn v-bind="props" icon="pencil" variant="text" size="small" color="primary"></v-btn></template></v-tooltip>
+            <v-tooltip text="Duplicate" location="top"><template v-slot:activator="{props}"><v-btn v-bind="props" icon="copy" variant="text" size="small"></v-btn></template></v-tooltip>
+            <v-tooltip text="Delete" location="top"><template v-slot:activator="{props}"><v-btn v-bind="props" icon="trash-2" variant="text" size="small" color="error"></v-btn></template></v-tooltip>
           </div>
         </template>
       </v-data-table>
@@ -203,11 +203,11 @@ const statusColor = (s: string) => ({ Active:'success', Expired:'error', 'Maxed 
           <div class="d-flex gap-3 mb-5">
             <v-text-field v-model="coupon.code" label="Coupon Code" variant="outlined" density="comfortable"
               placeholder="e.g. SUMMER20" class="flex-grow-1" hint="Leave blank to auto-generate" persistent-hint></v-text-field>
-            <v-btn variant="outlined" color="primary" class="text-none mt-1 coupon-code-btn" prepend-icon="mdi-refresh" @click="generateCode">Auto-Generate</v-btn>
+            <v-btn variant="outlined" color="primary" class="text-none mt-1 coupon-code-btn" prepend-icon="refresh-cw" @click="generateCode">Auto-Generate</v-btn>
           </div>
           <div class="text-subtitle-2 font-weight-bold mb-3 text-uppercase text-medium-emphasis">Discount Type</div>
           <v-row dense class="mb-4">
-            <v-col v-for="t in [{val:'Percentage',icon:'mdi-percent',label:'Percentage Off'},{val:'Fixed Amount',icon:'mdi-currency-usd',label:'Fixed $ Amount'},{val:'Free Shipping',icon:'mdi-truck-outline',label:'Free Shipping'}]" :key="t.val" cols="4">
+            <v-col v-for="t in [{val:'Percentage',icon:'percent',label:'Percentage Off'},{val:'Fixed Amount',icon:'dollar-sign',label:'Fixed $ Amount'},{val:'Free Shipping',icon:'truck',label:'Free Shipping'}]" :key="t.val" cols="4">
               <v-card @click="coupon.type=t.val" :variant="coupon.type===t.val?'tonal':'outlined'" :color="coupon.type===t.val?'primary':'default'"
                 rounded="xl" class="pa-4 text-center cursor-pointer type-card" :class="{selected:coupon.type===t.val}">
                 <v-icon :color="coupon.type===t.val?'primary':'medium-emphasis'" size="28" class="mb-2">{{ t.icon }}</v-icon>
@@ -288,13 +288,13 @@ const statusColor = (s: string) => ({ Active:'success', Expired:'error', 'Maxed 
         <div class="w-100 d-flex justify-space-between align-center">
           <v-btn variant="text" class="text-none" @click="step>1?step--:createDialog=false">{{ step===1?'Cancel':'← Back' }}</v-btn>
           <v-btn v-if="step<3" color="primary" variant="elevated" class="text-none" :disabled="step===1&&!coupon.type" @click="step++">Continue →</v-btn>
-          <v-btn v-else color="success" variant="elevated" class="text-none" prepend-icon="mdi-check" @click="saveCoupon">Create Coupon</v-btn>
+          <v-btn v-else color="success" variant="elevated" class="text-none" prepend-icon="check" @click="saveCoupon">Create Coupon</v-btn>
         </div>
       </template>
     </MpFormDrawer>
 
     <v-snackbar v-model="saveSnack" :timeout="2500" color="success" rounded="pill" location="bottom center">
-      <div class="d-flex align-center gap-2"><v-icon>mdi-check-circle</v-icon> Coupon created successfully</div>
+      <div class="d-flex align-center gap-2"><v-icon>circle-check</v-icon> Coupon created successfully</div>
     </v-snackbar>
   </div>
 </template>

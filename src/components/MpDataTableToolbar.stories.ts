@@ -282,9 +282,9 @@ export const WithBulkActions: Story = {
           @clear-selection="clearSelection"
         >
           <template #bulk-actions>
-            <v-btn variant="outlined" size="small" class="text-none" prepend-icon="mdi-export-variant" rounded="lg">Export</v-btn>
-            <v-btn variant="outlined" size="small" class="text-none" prepend-icon="mdi-tag-outline" rounded="lg">Tag</v-btn>
-            <v-btn variant="outlined" size="small" class="text-none text-error" prepend-icon="mdi-delete-outline" rounded="lg">Delete</v-btn>
+            <v-btn variant="outlined" size="small" class="text-none" prepend-icon="share" rounded="lg">Export</v-btn>
+            <v-btn variant="outlined" size="small" class="text-none" prepend-icon="tag" rounded="lg">Tag</v-btn>
+            <v-btn variant="outlined" size="small" class="text-none text-error" prepend-icon="trash-2" rounded="lg">Delete</v-btn>
           </template>
         </MpDataTableToolbar>
       </v-card>
@@ -395,12 +395,12 @@ export const FullFeatured: Story = {
             </div>
           </template>
           <template #bulk-actions>
-            <v-btn variant="outlined" size="small" class="text-none" prepend-icon="mdi-export-variant" rounded="lg">Export</v-btn>
-            <v-btn variant="outlined" size="small" class="text-none" prepend-icon="mdi-tag-plus" rounded="lg">Tag</v-btn>
-            <v-btn variant="outlined" size="small" class="text-none text-error" prepend-icon="mdi-delete-outline" rounded="lg">Delete</v-btn>
+            <v-btn variant="outlined" size="small" class="text-none" prepend-icon="share" rounded="lg">Export</v-btn>
+            <v-btn variant="outlined" size="small" class="text-none" prepend-icon="tags" rounded="lg">Tag</v-btn>
+            <v-btn variant="outlined" size="small" class="text-none text-error" prepend-icon="trash-2" rounded="lg">Delete</v-btn>
           </template>
           <template #actions>
-            <v-btn variant="outlined" size="small" class="text-none" prepend-icon="mdi-download">Export All</v-btn>
+            <v-btn variant="outlined" size="small" class="text-none" prepend-icon="download">Export All</v-btn>
           </template>
         </MpDataTableToolbar>
       </v-card>

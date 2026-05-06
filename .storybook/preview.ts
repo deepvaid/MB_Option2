@@ -3,11 +3,12 @@ import { setup } from '@storybook/vue3'
 import { createPinia } from 'pinia'
 
 // Vuetify — full import to ensure all component styles are available in stories
-import '@mdi/font/css/materialdesignicons.css'
+import '@mdi/font/css/materialdesignicons.css' // fallback for any residual mdi-* strings
 import 'vuetify/styles'
 import { createVuetify } from 'vuetify'
 import * as components from 'vuetify/components'
 import * as directives from 'vuetify/directives'
+import { lucideIconSet } from '../src/plugins/lucideIcons'
 
 // Global styles
 import '@marobase/ui/tokens/index.css'
@@ -20,6 +21,12 @@ import { maropostDark, maropostDefaults, maropostLight } from '../src/plugins/ma
 const vuetify = createVuetify({
   components,
   directives,
+  icons: {
+    defaultSet: 'lucide',
+    sets: {
+      lucide: lucideIconSet,
+    },
+  },
   theme: {
     defaultTheme: 'maropostLight',
     themes: { maropostLight, maropostDark },

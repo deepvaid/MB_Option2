@@ -18,7 +18,7 @@ const timers = [
       ]"
     >
       <template #actions>
-        <v-btn color="primary" variant="flat" prepend-icon="mdi-plus" class="text-none">Create Timer</v-btn>
+        <v-btn color="primary" variant="flat" prepend-icon="plus" class="text-none">Create Timer</v-btn>
       </template>
     </MpPageHeader>
 
@@ -36,10 +36,10 @@ const timers = [
             <div class="text-body-2 text-medium-emphasis">Ends: {{ timer.endDate }}</div>
           </v-card-text>
           <v-card-actions class="px-4 pb-4">
-            <v-btn variant="outlined" size="small" class="text-none" prepend-icon="mdi-code-tags">Get Embed Code</v-btn>
+            <v-btn variant="outlined" size="small" class="text-none" prepend-icon="code-2">Get Embed Code</v-btn>
             <v-spacer />
-            <v-btn icon="mdi-pencil-outline" variant="text" size="small" />
-            <v-btn icon="mdi-delete-outline" variant="text" size="small" color="error" />
+            <v-btn icon="pencil" variant="text" size="small" />
+            <v-btn icon="trash-2" variant="text" size="small" color="error" />
           </v-card-actions>
         </v-card>
       </v-col>

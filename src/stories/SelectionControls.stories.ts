@@ -69,7 +69,7 @@ const meta: Meta<SelectionControlsArgs> = {
     },
     trueIcon: {
       control: 'text',
-      description: 'Icon when checked (e.g., mdi-heart)',
+      description: 'Icon when checked (e.g., heart)',
       table: {
         category: 'Icons',
         defaultValue: '',

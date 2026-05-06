@@ -20,8 +20,8 @@ const banks = [
       ]"
     >
       <template #actions>
-        <v-btn variant="outlined" prepend-icon="mdi-upload" class="text-none">Upload CSV</v-btn>
-        <v-btn color="primary" variant="flat" prepend-icon="mdi-plus" class="text-none">New Bank</v-btn>
+        <v-btn variant="outlined" prepend-icon="upload" class="text-none">Upload CSV</v-btn>
+        <v-btn color="primary" variant="flat" prepend-icon="plus" class="text-none">New Bank</v-btn>
       </template>
     </MpPageHeader>
 
@@ -44,7 +44,7 @@ const banks = [
             <div class="text-body-2 text-medium-emphasis">Expires: {{ bank.expires }}</div>
           </v-card-text>
           <v-card-actions class="px-4 pb-4 pt-0">
-            <v-btn variant="outlined" size="small" class="text-none" prepend-icon="mdi-download">Download Codes</v-btn>
+            <v-btn variant="outlined" size="small" class="text-none" prepend-icon="download">Download Codes</v-btn>
           </v-card-actions>
         </v-card>
       </v-col>

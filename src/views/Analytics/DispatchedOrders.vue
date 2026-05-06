@@ -47,7 +47,7 @@ function clearAllFilters() {
       ]"
     >
       <template #actions>
-        <v-btn variant="outlined" prepend-icon="mdi-download" class="text-none">Export CSV</v-btn>
+        <v-btn variant="outlined" prepend-icon="download" class="text-none">Export CSV</v-btn>
       </template>
     </MpPageHeader>
 

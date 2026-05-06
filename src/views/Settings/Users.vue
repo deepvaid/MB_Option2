@@ -32,7 +32,7 @@ const users = ref([
       ]"
     >
       <template #actions>
-        <v-btn color="primary" variant="flat" prepend-icon="mdi-plus" class="text-none">Invite User</v-btn>
+        <v-btn color="primary" variant="flat" prepend-icon="plus" class="text-none">Invite User</v-btn>
       </template>
     </MpPageHeader>
 
@@ -48,12 +48,12 @@ const users = ref([
         <template v-slot:item.actions>
           <v-menu>
             <template v-slot:activator="{ props }">
-              <v-btn v-bind="props" icon="mdi-dots-horizontal" variant="text" size="small" />
+              <v-btn v-bind="props" icon="more-horizontal" variant="text" size="small" />
             </template>
             <v-list density="compact" rounded="xl" nav min-width="160" elevation="8">
-              <v-list-item prepend-icon="mdi-pencil-outline">Edit Role</v-list-item>
-              <v-list-item prepend-icon="mdi-email-outline">Resend Invite</v-list-item>
-              <v-list-item prepend-icon="mdi-account-remove-outline" class="text-error">Remove User</v-list-item>
+              <v-list-item prepend-icon="pencil">Edit Role</v-list-item>
+              <v-list-item prepend-icon="mail">Resend Invite</v-list-item>
+              <v-list-item prepend-icon="user-minus" class="text-error">Remove User</v-list-item>
             </v-list>
           </v-menu>
         </template>

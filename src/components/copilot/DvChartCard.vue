@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { chartPalette } from '@/plugins/chartPalette'
+
 defineProps<{
   title?: string
   subtitle?: string
@@ -7,14 +9,7 @@ defineProps<{
   seriesNames?: string[]
 }>()
 
-// Chart series palette — references Vuetify theme primary via CSS custom properties
-const colors = [
-  'rgb(var(--v-theme-primary))',
-  'rgba(var(--v-theme-primary), 0.65)',
-  'rgba(var(--v-theme-primary), 0.45)',
-  'rgba(var(--v-theme-primary), 0.25)',
-  'rgba(var(--v-theme-primary), 0.12)',
-]
+const colors = chartPalette
 
 function getMax(bars: number[][]) {
   return Math.max(...bars.map(b => b.reduce((s, v) => s + v, 0)))
@@ -30,9 +25,9 @@ function getMax(bars: number[][]) {
           <div v-if="subtitle" class="text-caption text-medium-emphasis mt-1">{{ subtitle }}</div>
         </div>
         <div class="d-flex ga-1">
-          <v-btn icon size="28" variant="text"><v-icon size="16">mdi-content-save-outline</v-icon></v-btn>
-          <v-btn icon size="28" variant="text"><v-icon size="16">mdi-download-outline</v-icon></v-btn>
-          <v-btn icon size="28" variant="text"><v-icon size="16">mdi-arrow-expand</v-icon></v-btn>
+          <v-btn icon size="28" variant="text"><v-icon size="16">save</v-icon></v-btn>
+          <v-btn icon size="28" variant="text"><v-icon size="16">download</v-icon></v-btn>
+          <v-btn icon size="28" variant="text"><v-icon size="16">maximize-2</v-icon></v-btn>
         </div>
       </div>
 

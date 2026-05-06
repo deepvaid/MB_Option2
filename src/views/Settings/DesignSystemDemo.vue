@@ -93,19 +93,19 @@ function toggleSelect(id: string) {
       ]"
     >
       <template #actions>
-        <v-btn color="primary" prepend-icon="mdi-file-document-outline" @click="drawerOpen = true">Token Brief</v-btn>
+        <v-btn color="primary" prepend-icon="file-text" @click="drawerOpen = true">Token Brief</v-btn>
       </template>
     </MpPageHeader>
 
     <v-row>
       <v-col cols="12" md="4">
-        <MpKpiCard label="Token Source" value="1" icon="mdi-source-branch" color="primary" sub-stat="src/design-tokens/tokens.json" />
+        <MpKpiCard label="Token Source" value="1" icon="git-branch" color="primary" sub-stat="src/design-tokens/tokens.json" />
       </v-col>
       <v-col cols="12" md="4">
-        <MpKpiCard label="Core Mp Components" value="11+" icon="mdi-shape-outline" color="secondary" sub-stat="Shared by app + Storybook" />
+        <MpKpiCard label="Core Mp Components" value="11+" icon="shapes" color="secondary" sub-stat="Shared by app + Storybook" />
       </v-col>
       <v-col cols="12" md="4">
-        <MpKpiCard label="Sync Command" value="tokens:sync-figma" icon="mdi-sync" color="success" sub-stat="Updates app + Storybook tokens" />
+        <MpKpiCard label="Sync Command" value="tokens:sync-figma" icon="refresh-cw" color="success" sub-stat="Updates app + Storybook tokens" />
       </v-col>
     </v-row>
 
@@ -156,7 +156,7 @@ function toggleSelect(id: string) {
         @select-all="selected = filteredRows.map(r => r.id)"
       >
         <template #actions>
-          <v-btn variant="outlined" prepend-icon="mdi-refresh">Refresh preview</v-btn>
+          <v-btn variant="outlined" prepend-icon="refresh-cw">Refresh preview</v-btn>
         </template>
       </MpDataTableToolbar>
 
@@ -185,11 +185,11 @@ function toggleSelect(id: string) {
         <template #bottom>
           <MpEmptyState
             v-if="filteredRows.length === 0"
-            icon="mdi-palette-outline"
+            icon="palette"
             title="No rows for current filters"
             description="Try resetting filters to see all demo records."
             action-label="Reset filters"
-            action-icon="mdi-filter-off-outline"
+            action-icon="filter-x"
             @action="activeTab = 'all'; search = ''"
           />
         </template>
@@ -234,14 +234,14 @@ function toggleSelect(id: string) {
       subtitle="Use this as your stakeholder script"
     >
       <v-list density="comfortable" class="pa-0" lines="two">
-        <v-list-item prepend-icon="mdi-link-variant" title="Single source of truth" subtitle="All token values live in src/design-tokens/tokens.json." />
-        <v-list-item prepend-icon="mdi-format-color-fill" title="Visual consistency" subtitle="Same token variables drive app surfaces and Storybook stories." />
-        <v-list-item prepend-icon="mdi-auto-fix" title="Low-risk updates" subtitle="Design updates land through one sync command and regenerate outputs." />
+        <v-list-item prepend-icon="link" title="Single source of truth" subtitle="All token values live in src/design-tokens/tokens.json." />
+        <v-list-item prepend-icon="paint-bucket" title="Visual consistency" subtitle="Same token variables drive app surfaces and Storybook stories." />
+        <v-list-item prepend-icon="wand-2" title="Low-risk updates" subtitle="Design updates land through one sync command and regenerate outputs." />
       </v-list>
 
       <template #footer>
         <v-btn variant="text" @click="drawerOpen = false">Close</v-btn>
-        <v-btn color="primary" prepend-icon="mdi-check-circle-outline" @click="drawerOpen = false">Looks good</v-btn>
+        <v-btn color="primary" prepend-icon="circle-check" @click="drawerOpen = false">Looks good</v-btn>
       </template>
     </MpFormDrawer>
   </div>

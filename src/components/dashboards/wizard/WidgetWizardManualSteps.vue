@@ -122,7 +122,7 @@ function selectWidgetType(value: DashboardWidgetType) {
 
     <div v-else-if="step === 'metric'" class="d-flex flex-column ga-3">
       <div class="d-flex align-center ga-2 text-subtitle-2 font-weight-bold">
-        <v-icon size="18" color="primary">{{ source ? DASHBOARD_SOURCE_META[source].icon : 'mdi-database-outline' }}</v-icon>
+        <v-icon size="18" color="primary">{{ source ? DASHBOARD_SOURCE_META[source].icon : 'database' }}</v-icon>
         Choose a {{ source ? DASHBOARD_SOURCE_META[source].label.toLowerCase() : '' }} metric
       </div>
       <v-card

@@ -2,9 +2,9 @@
 import MpPageHeader from '@/components/MpPageHeader.vue'
 
 const metrics = [
-  { label: 'Avg. Lift via Smart Send', value: '+ 14.2%', color: 'primary', icon: 'mdi-trending-up' },
-  { label: 'Orders Saved (Churn Prevention)', value: '1,402', color: 'success', icon: 'mdi-cart-check' },
-  { label: 'Dynamic Recommendations Revenue', value: '$84,300', color: 'info', icon: 'mdi-currency-usd' },
+  { label: 'Avg. Lift via Smart Send', value: '+ 14.2%', color: 'primary', icon: 'trending-up' },
+  { label: 'Orders Saved (Churn Prevention)', value: '1,402', color: 'success', icon: 'shopping-cart' },
+  { label: 'Dynamic Recommendations Revenue', value: '$84,300', color: 'info', icon: 'dollar-sign' },
 ]
 </script>
 

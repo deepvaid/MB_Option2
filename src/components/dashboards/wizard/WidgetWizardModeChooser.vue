@@ -18,7 +18,7 @@ defineEmits<{
         @click="$emit('select', 'manual')"
       >
         <v-avatar size="44" variant="tonal" color="primary" class="mb-3">
-          <v-icon>mdi-tune-vertical-variant</v-icon>
+          <v-icon>sliders-vertical</v-icon>
         </v-avatar>
         <div class="text-subtitle-1 font-weight-bold mb-2">Build manually</div>
         <div class="text-body-2 text-medium-emphasis">
@@ -26,7 +26,7 @@ defineEmits<{
         </div>
         <div class="wizard-mode-chooser__cta">
           <span class="text-caption font-weight-bold">Start step by step</span>
-          <v-icon size="14">mdi-arrow-right</v-icon>
+          <v-icon size="14">arrow-right</v-icon>
         </div>
       </button>
 
@@ -36,7 +36,7 @@ defineEmits<{
         @click="$emit('select', 'davinci')"
       >
         <v-avatar size="44" variant="tonal" color="secondary" class="mb-3">
-          <v-icon>mdi-creation</v-icon>
+          <v-icon>sparkles</v-icon>
         </v-avatar>
         <div class="d-flex align-center ga-2 mb-2">
           <div class="text-subtitle-1 font-weight-bold">Create with Da Vinci</div>
@@ -47,7 +47,7 @@ defineEmits<{
         </div>
         <div class="wizard-mode-chooser__cta">
           <span class="text-caption font-weight-bold">Describe it in words</span>
-          <v-icon size="14">mdi-arrow-right</v-icon>
+          <v-icon size="14">arrow-right</v-icon>
         </div>
       </button>
     </div>

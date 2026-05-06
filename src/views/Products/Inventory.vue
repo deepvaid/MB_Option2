@@ -75,7 +75,7 @@ const headers = [
       ]"
     >
       <template #actions>
-        <v-btn variant="outlined" prepend-icon="mdi-download" class="text-none">Export</v-btn>
+        <v-btn variant="outlined" prepend-icon="download" class="text-none">Export</v-btn>
       </template>
     </MpPageHeader>
 
@@ -87,7 +87,7 @@ const headers = [
               <div class="text-overline text-medium-emphasis">Total Stock Items</div>
               <div class="text-h4 font-weight-bold">14,204</div>
             </div>
-            <v-icon size="40" color="primary" opacity="0.3">mdi-bookshelf</v-icon>
+            <v-icon size="40" color="primary" opacity="0.3">library</v-icon>
           </v-card-text>
         </v-card>
       </v-col>
@@ -157,7 +157,7 @@ const headers = [
             >
               <template #error>
                 <div class="w-100 h-100 d-flex align-center justify-center bg-surface-variant rounded-md">
-                  <v-icon size="16" color="medium-emphasis">mdi-image-outline</v-icon>
+                  <v-icon size="16" color="medium-emphasis">image</v-icon>
                 </div>
               </template>
             </v-img>
@@ -175,11 +175,11 @@ const headers = [
         <template v-slot:item.actions>
           <v-menu location="bottom end">
             <template v-slot:activator="{ props }">
-              <v-btn v-bind="props" icon="mdi-dots-horizontal" variant="text" size="small" density="comfortable" color="medium-emphasis" />
+              <v-btn v-bind="props" icon="more-horizontal" variant="text" size="small" density="comfortable" color="medium-emphasis" />
             </template>
             <v-list density="compact" rounded="lg" min-width="160" elevation="3" class="py-1">
-              <v-list-item prepend-icon="mdi-pencil-outline" title="Adjust Stock" />
-              <v-list-item prepend-icon="mdi-transfer" title="Transfer" />
+              <v-list-item prepend-icon="pencil" title="Adjust Stock" />
+              <v-list-item prepend-icon="arrow-left-right" title="Transfer" />
             </v-list>
           </v-menu>
         </template>

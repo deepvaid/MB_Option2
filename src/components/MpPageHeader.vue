@@ -7,11 +7,11 @@ defineProps<{
 </script>
 
 <template>
-  <div class="mp-page-header mb-6">
+  <div class="mp-page-header mb-4">
     <div class="mp-page-header__body d-flex align-center justify-space-between">
       <div class="mp-page-header__copy">
         <h1 class="mp-page-title mb-0">{{ title }}</h1>
-        <p v-if="subtitle" class="mp-page-subtitle text-medium-emphasis text-body-2 mb-0 mt-1">{{ subtitle }}</p>
+        <p v-if="subtitle" class="mp-page-subtitle text-medium-emphasis text-body-2 mb-0 mt-0">{{ subtitle }}</p>
       </div>
       <div v-if="$slots.actions" class="mp-page-header__actions d-flex gap-2 align-center flex-shrink-0">
         <slot name="actions" />
@@ -24,15 +24,16 @@ defineProps<{
 
 <style scoped lang="scss">
 .mp-page-title {
-  font-size: clamp(1.45rem, 2vw, 1.85rem);
-  line-height: 1.2;
+  font-size: clamp(1rem, 1.3vw, 1.125rem);
+  line-height: 1.3;
   letter-spacing: 0;
-  font-weight: 700;
+  font-weight: 600;
 }
 
 .mp-page-subtitle {
   max-width: 760px;
   line-height: 1.5;
+  font-size: 12px;
 }
 
 .mp-page-header__copy {

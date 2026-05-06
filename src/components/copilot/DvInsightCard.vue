@@ -28,7 +28,7 @@ const severityColor: Record<string, string> = {
   >
     <v-card-text class="pa-4">
       <div class="d-flex align-start ga-3">
-        <v-icon :color="severityColor[severity || 'info']" size="22">{{ icon || 'mdi-lightbulb-outline' }}</v-icon>
+        <v-icon :color="severityColor[severity || 'info']" size="22">{{ icon || 'lightbulb' }}</v-icon>
         <div class="flex-grow-1">
           <div class="text-subtitle-2 font-weight-bold mb-1">{{ headline }}</div>
           <div class="text-body-2 text-medium-emphasis mb-2" style="line-height: var(--mp-typography-lineHeight-normal);">{{ description }}</div>
