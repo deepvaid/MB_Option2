@@ -66,69 +66,123 @@ const chartHeight = computed(() => {
 
 const base = applyChartTheme()
 
-// For single-series bar charts (e.g. "Revenue by Channel"), distribute palette
-// colors across categories so each bar reads as a distinct color instead of
-// every bar using `colors[0]`.
+// For single-series bar charts, distribute palette colors across categories.
 const isDistributedBar = computed(
   () => props.widgetType === 'bar' && props.data.series.length <= 1,
 )
 
-const chartOptions = computed<ApexOptions>(() => ({
-  ...base,
-  colors: chartPalette,
-  chart: {
-    ...base.chart,
-    sparkline: { enabled: false },
-    zoom: { enabled: false },
-    redrawOnParentResize: true,
-  },
-  stroke: {
-    curve: 'smooth',
-    width: props.widgetType === 'timeseries' ? 3 : 0,
-  },
-  plotOptions: {
-    bar: {
-      borderRadius: 8,
-      columnWidth: '46%',
-      distributed: isDistributedBar.value,
+// Show a synthetic "Previous" dashed-gray overlay for single-series timeseries charts.
+const showPreviousOverlay = computed(
+  () => props.widgetType === 'timeseries' && props.data.series.length === 1,
+)
+
+// Synthesize a Previous series scaled down by ~15% for visual reference.
+const chartSeries = computed(() => {
+  if (!showPreviousOverlay.value) return props.data.series
+  const current = props.data.series[0]!
+  const previousData = (current.data as number[]).map((v) =>
+    typeof v === 'number' ? Math.round(v * 0.85) : v,
+  )
+  return [current, { name: 'Previous', data: previousData }]
+})
+
+const lastDataPointIndex = computed(() => {
+  if (!props.data.series[0]) return 0
+  return (props.data.series[0].data as number[]).length - 1
+})
+
+const chartOptions = computed<ApexOptions>(() => {
+  const isPrev = showPreviousOverlay.value
+
+  return {
+    ...base,
+    colors: isPrev
+      ? [chartPalette[0]!, 'rgba(160,160,180,0.55)']
+      : chartPalette,
+    chart: {
+      ...base.chart,
+      sparkline: { enabled: false },
+      zoom: { enabled: false },
+      redrawOnParentResize: true,
     },
-  },
-  fill: {
-    type: props.widgetType === 'timeseries' ? 'gradient' : 'solid',
-    gradient: {
-      shadeIntensity: 0.18,
-      opacityFrom: 0.36,
-      opacityTo: 0.02,
-      stops: [0, 96, 100],
+    stroke: {
+      curve: 'smooth',
+      width: isPrev ? [3, 2] : (props.widgetType === 'timeseries' ? 3 : 0),
+      ...(isPrev ? { dashArray: [0, 6] } : {}),
     },
-  },
-  dataLabels: { enabled: false },
-  legend: { show: false },
-  xaxis: {
-    ...base.xaxis,
-    categories: props.data.labels,
-    labels: {
-      ...base.xaxis?.labels,
-      offsetY: 2,
-    },
-  },
-  yaxis: {
-    labels: {
-      formatter: (value: number) => formatAxisValue(value, props.data.unit),
-      style: {
-        colors: 'rgba(var(--v-theme-on-surface), 0.55)',
-        fontSize: '12px',
-        fontWeight: 500,
+    plotOptions: {
+      bar: {
+        borderRadius: 8,
+        columnWidth: '46%',
+        distributed: isDistributedBar.value,
       },
     },
-  },
-  tooltip: {
-    ...base.tooltip,
-    y: {
-      formatter: (value: number) => formatAxisValue(value, props.data.unit),
+    fill: isPrev
+      ? {
+          type: 'gradient',
+          gradient: {
+            shadeIntensity: 0.18,
+            opacityFrom: 0.34,
+            opacityTo: 0.02,
+            stops: [0, 96, 100],
+          },
+        }
+      : {
+          type: props.widgetType === 'timeseries' ? 'gradient' : 'solid',
+          gradient: {
+            shadeIntensity: 0.18,
+            opacityFrom: 0.36,
+            opacityTo: 0.02,
+            stops: [0, 96, 100],
+          },
+        },
+    ...(isPrev
+      ? {
+          markers: {
+            size: 0,
+            discrete: [
+              {
+                seriesIndex: 0,
+                dataPointIndex: lastDataPointIndex.value,
+                fillColor: chartPalette[0]!,
+                strokeColor: '#ffffff',
+                size: 5,
+              },
+            ],
+            hover: { size: 5 },
+          },
+        }
+      : {}),
+    dataLabels: { enabled: false },
+    legend: isPrev
+      ? { show: true, position: 'top', horizontalAlign: 'right', fontSize: '12px', fontWeight: 500 }
+      : { show: false },
+    xaxis: {
+      ...base.xaxis,
+      categories: props.data.labels,
+      labels: {
+        ...base.xaxis?.labels,
+        offsetY: 2,
+      },
     },
-  },
-}))
+    yaxis: {
+      labels: {
+        formatter: (value: number) => formatAxisValue(value, props.data.unit),
+        style: {
+          colors: 'rgba(var(--v-theme-on-surface), 0.55)',
+          fontSize: '12px',
+          fontWeight: 500,
+        },
+      },
+    },
+    tooltip: {
+      ...base.tooltip,
+      y: {
+        formatter: (value: number) => formatAxisValue(value, props.data.unit),
+      },
+    },
+  }
+})
 </script>
 
 <template>
@@ -139,7 +193,7 @@ const chartOptions = computed<ApexOptions>(() => ({
       width="100%"
       :type="widgetType === 'timeseries' ? 'area' : 'bar'"
       :options="chartOptions"
-      :series="data.series"
+      :series="chartSeries"
     />
     <div v-else class="dashboard-chart-widget__placeholder">
       <v-skeleton-loader type="image" height="100%" width="100%" />
@@ -153,6 +207,7 @@ const chartOptions = computed<ApexOptions>(() => ({
   height: 100%;
   min-height: 0;
   overflow: hidden;
+  padding-top: 4px;
 }
 
 .dashboard-chart-widget__placeholder {

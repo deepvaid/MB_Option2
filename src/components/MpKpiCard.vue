@@ -11,25 +11,24 @@ defineProps<{
 </script>
 
 <template>
-  <v-card variant="flat" border rounded="xl" class="mp-kpi-card pa-6 h-100">
-    <div class="d-flex justify-space-between align-start mb-4">
-      <div class="mp-kpi-card__label">{{ label }}</div>
-      <div v-if="icon" class="mp-kpi-card__icon">
-        <v-icon :color="color || 'primary'" size="20">{{ icon }}</v-icon>
+  <v-card variant="flat" border rounded="lg" class="mp-kpi-card h-100">
+    <div class="mp-kpi-card__header">
+      <div v-if="icon" class="mp-kpi-card__icon-chip">
+        <v-icon size="14">{{ icon }}</v-icon>
       </div>
+      <div class="mp-kpi-card__label">{{ label }}</div>
     </div>
-    <div class="mp-kpi-card__value font-weight-bold mb-2">{{ value }}</div>
-    <div v-if="trend || subStat" class="d-flex align-center gap-2">
-      <v-chip
+    <div class="mp-kpi-card__value num">{{ value }}</div>
+    <div v-if="trend || subStat" class="mp-kpi-card__footer">
+      <span
         v-if="trend"
-        :color="trendPositive ? 'success' : 'error'"
-        size="x-small"
-        variant="tonal"
-        rounded="lg"
-        class="font-weight-bold"
-        :prepend-icon="trendPositive ? 'trending-up' : 'trending-down'"
-      >{{ trend }}</v-chip>
-      <span v-if="subStat" class="text-caption text-medium-emphasis">{{ subStat }}</span>
+        class="mp-kpi-card__trend"
+        :class="trendPositive ? 'mp-kpi-card__trend--positive' : 'mp-kpi-card__trend--negative'"
+      >
+        <v-icon size="12">{{ trendPositive ? 'chevron-up' : 'chevron-down' }}</v-icon>
+        {{ trend }}
+      </span>
+      <span v-if="subStat" class="mp-kpi-card__sub">{{ subStat }}</span>
     </div>
     <slot />
   </v-card>
@@ -39,31 +38,72 @@ defineProps<{
 .mp-kpi-card {
   position: relative;
   overflow: hidden;
-  background: rgb(var(--v-theme-surface));
-  transition: border-color $mp-transition-fast, background-color $mp-transition-fast;
+  padding: 16px 18px;
+  background: var(--surface-1);
+  border-color: var(--hairline) !important;
+  border-radius: var(--r-card) !important;
 }
 
-.mp-kpi-card__label {
-  font-size: var(--mp-typography-fontSize-sm);
-  font-weight: var(--mp-typography-fontWeight-semibold);
-  letter-spacing: -0.01em;
-  color: rgba(var(--v-theme-on-surface), 0.72);
+.mp-kpi-card__header {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  margin-bottom: 10px;
 }
 
-.mp-kpi-card__icon {
-  width: 42px;
-  height: 42px;
-  border-radius: 999px;
+.mp-kpi-card__icon-chip {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  background: rgba(var(--v-theme-surface-variant), 0.88);
-  border: 1px solid rgba(var(--v-theme-border), 0.92);
+  width: 28px;
+  height: 28px;
+  border-radius: var(--r-chip);
+  background: var(--accent-soft);
+  color: var(--accent-ink);
+  flex-shrink: 0;
+}
+
+.mp-kpi-card__label {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--ink);
 }
 
 .mp-kpi-card__value {
-  font-size: clamp(2rem, 2.4vw, 2.6rem);
-  line-height: 1.02;
-  letter-spacing: -0.05em;
+  font-size: 28px;
+  font-weight: 600;
+  letter-spacing: -0.5px;
+  line-height: 1.1;
+  color: var(--ink);
+  font-variant-numeric: tabular-nums;
+  margin-bottom: 8px;
+}
+
+.mp-kpi-card__footer {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.mp-kpi-card__trend {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.mp-kpi-card__trend--positive {
+  color: var(--pos);
+}
+
+.mp-kpi-card__trend--negative {
+  color: var(--neg);
+}
+
+.mp-kpi-card__sub {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--muted);
 }
 </style>

@@ -80,6 +80,33 @@ a {
   color: inherit;
 }
 
+/* Tabular nums for numeric values */
+.num { font-variant-numeric: tabular-nums; }
+
+/* Icon-only button — compact 32×32 ghost circle */
+.mp-btn--icon {
+  width: 32px !important;
+  height: 32px !important;
+  min-width: 32px !important;
+  padding: 0 !important;
+  border-radius: var(--r-pill) !important;
+}
+
+/* Filter/count badge inside buttons */
+.mp-btn-count {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1px 6px;
+  margin-left: 4px;
+  border-radius: var(--r-pill);
+  background: var(--accent-soft);
+  color: var(--accent-ink);
+  font-size: 11px;
+  font-weight: 600;
+  line-height: 1;
+}
+
 :where(
   a,
   button,
@@ -127,17 +154,6 @@ a {
   border-color: var(--mp-color-neutral-hairline, rgba(11, 53, 88, 0.08)) !important;
 }
 
-/* Soft-tone card variant — subtle blue tint for secondary surfaces */
-.v-card.mp-card--soft {
-  background: var(--mp-color-blue-50) !important;
-  border-color: transparent !important;
-}
-
-/* Warm-tone card variant — for content-first surfaces */
-.v-card.mp-card--warm {
-  background: var(--mp-color-neutral-100) !important;
-  border-color: transparent !important;
-}
 
 .v-card.mp-card--hover {
   transition:
@@ -165,7 +181,7 @@ a {
 }
 
 .v-btn--variant-flat:not(.v-btn--disabled) {
-  box-shadow: none;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.16), 0 1px 3px rgba(45, 99, 232, 0.24);
 }
 
 .v-btn--variant-outlined {

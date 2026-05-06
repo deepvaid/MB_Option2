@@ -527,6 +527,18 @@ export function useWidgetData(
           ],
         )
       }
+      case 'marketing_live_activity': {
+        return {
+          kind: 'activity',
+          items: [
+            { id: 'a1', tag: 'email', icon: 'mail', eyebrow: 'Campaign sent · 2m ago', title: 'Spring Refresh — Segment A', meta: '12,408 recipients' },
+            { id: 'a2', tag: 'order', icon: 'shopping-cart', eyebrow: 'Order placed · 6m ago', title: '#A-29481 · Maya Lin', meta: '$248.00' },
+            { id: 'a3', tag: 'audience', icon: 'users', eyebrow: 'Segment updated · 14m ago', title: 'VIP repeat buyers', meta: '+312 contacts' },
+            { id: 'a4', tag: 'automation', icon: 'zap', eyebrow: 'Automation triggered · 22m ago', title: 'Cart abandoned — Step 2', meta: '84 in flow' },
+            { id: 'a5', tag: 'order', icon: 'shopping-cart', eyebrow: 'Order placed · 31m ago', title: '#A-29479 · Theo Park', meta: '$1,120.00' },
+          ],
+        }
+      }
       default:
         return buildKpiData(0, 0, 'count', 'No data available for this widget')
     }

@@ -39,12 +39,12 @@ const campaignRows = computed(() => {
         <div v-for="row in campaignRows" :key="row.campaign" class="dashboard-campaign-list__row">
           <div class="dashboard-campaign-list__topline">
             <span class="dashboard-campaign-list__name">{{ row.campaign }}</span>
-            <strong>{{ row.revenue }}</strong>
+            <strong class="dashboard-campaign-list__value">{{ row.revenue }}</strong>
           </div>
           <div class="dashboard-campaign-list__meter">
             <span :style="{ width: `${row.percent}%` }" />
           </div>
-          <div class="dashboard-campaign-list__meta">{{ row.openRate }}</div>
+          <div v-if="row.openRate" class="dashboard-campaign-list__meta">{{ row.openRate }}</div>
         </div>
       </div>
       <button type="button" class="dashboard-campaign-list__link">
@@ -86,7 +86,7 @@ const campaignRows = computed(() => {
   height: 100%;
   min-height: 0;
   overflow: auto;
-  border-radius: var(--mp-radius-md, 8px);
+  border-radius: var(--r-card);
 }
 
 .dashboard-campaign-list {
@@ -99,7 +99,7 @@ const campaignRows = computed(() => {
 .dashboard-campaign-list__rows {
   display: flex;
   flex-direction: column;
-  gap: 14px;
+  gap: 16px;
   flex: 1 1 auto;
   min-height: 0;
   padding: 4px 2px 8px 0;
@@ -117,8 +117,8 @@ const campaignRows = computed(() => {
   grid-template-columns: minmax(0, 1fr) auto;
   align-items: baseline;
   gap: 12px;
-  color: rgb(var(--v-theme-on-surface));
-  font-size: var(--mp-typography-fontSize-sm);
+  color: var(--ink);
+  font-size: 13.5px;
 }
 
 .dashboard-campaign-list__name {
@@ -128,32 +128,34 @@ const campaignRows = computed(() => {
   white-space: nowrap;
 }
 
-.dashboard-campaign-list__topline strong {
+.dashboard-campaign-list__value {
+  font-size: 13.5px;
   font-weight: 700;
   white-space: nowrap;
   font-variant-numeric: tabular-nums;
+  color: var(--ink);
 }
 
 .dashboard-campaign-list__meter {
   height: 6px;
   overflow: hidden;
   border-radius: 999px;
-  background: rgba(var(--v-theme-on-surface), 0.06);
+  background: var(--accent-soft);
 }
 
 .dashboard-campaign-list__meter span {
   display: block;
   height: 100%;
   border-radius: inherit;
-  background: rgb(var(--v-theme-primary));
+  background: var(--accent);
   transition: width 240ms cubic-bezier(0.2, 0.8, 0.2, 1);
 }
 
 .dashboard-campaign-list__meta {
   justify-self: end;
-  margin-top: -2px;
-  color: rgba(var(--v-theme-on-surface), 0.56);
-  font-size: var(--mp-typography-fontSize-xs);
+  margin-top: -3px;
+  font-size: 11px;
+  color: var(--muted);
   font-weight: 500;
   font-variant-numeric: tabular-nums;
 }
@@ -161,28 +163,27 @@ const campaignRows = computed(() => {
 .dashboard-campaign-list__link {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
+  gap: 4px;
   flex-shrink: 0;
   padding: 10px 0 2px;
   border: 0;
-  border-top: 1px solid var(--mp-border-subtle);
-  background: rgb(var(--v-theme-surface));
-  color: rgb(var(--v-theme-on-surface));
+  background: transparent;
+  color: var(--accent-ink);
   cursor: pointer;
   font: inherit;
-  font-size: var(--mp-typography-fontSize-sm);
+  font-size: 12.5px;
   font-weight: 600;
   text-align: left;
-  transition: color 120ms ease;
+  transition: opacity 120ms ease;
 }
 
 .dashboard-campaign-list__link:hover {
-  color: rgb(var(--v-theme-primary));
+  opacity: 0.75;
 }
 
 .dashboard-campaign-list__link:focus-visible {
   outline: none;
-  box-shadow: 0 0 0 3px rgba(var(--v-theme-primary), 0.18);
+  box-shadow: 0 0 0 3px color-mix(in oklch, var(--accent) 18%, transparent);
 }
 
 .dashboard-table-widget__table {
@@ -191,22 +192,34 @@ const campaignRows = computed(() => {
 
 .dashboard-table-widget :deep(th) {
   font-size: 11px;
+  font-weight: 500;
   text-transform: uppercase;
-  letter-spacing: 0.05em;
-  color: rgba(var(--v-theme-on-surface), 0.56);
-  border-bottom: 1px solid var(--mp-border-subtle);
+  letter-spacing: 1px;
+  color: var(--muted);
+  border-bottom: 1px solid var(--hairline);
   position: sticky;
   top: 0;
-  background: rgb(var(--v-theme-surface));
+  background: var(--surface-1);
   z-index: 1;
   white-space: nowrap;
 }
 
 .dashboard-table-widget :deep(td) {
-  border-bottom: 1px solid var(--mp-border-subtle);
+  font-size: 13.5px;
+  color: var(--ink);
+  border-bottom: 1px solid var(--hairline);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
   max-width: 260px;
+  padding: 12px 4px;
+}
+
+.dashboard-table-widget :deep(tr:last-child td) {
+  border-bottom: none;
+}
+
+.dashboard-table-widget :deep(tr:hover td) {
+  background: var(--surface-2);
 }
 </style>

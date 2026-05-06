@@ -115,8 +115,8 @@ export const maropostDefaults = {
       font-family: ${mp_typography_fontFamily_base};
       font-size: ${mp_component_button_typography_fontSize};
       border-radius: ${mp_component_button_radius_default};
-      min-height: 44px;
-      padding-inline: 20px;
+      min-height: 36px;
+      padding-inline: 14px;
     `,
   },
   VCard: {

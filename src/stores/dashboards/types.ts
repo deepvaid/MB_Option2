@@ -1,5 +1,5 @@
 export type DashboardKind = 'system' | 'custom'
-export type DashboardWidgetType = 'kpi' | 'timeseries' | 'bar' | 'table'
+export type DashboardWidgetType = 'kpi' | 'timeseries' | 'bar' | 'table' | 'activity'
 export type DashboardDataSource = 'commerce' | 'marketing' | 'analytics' | 'contacts' | 'service'
 export type DashboardDatePreset =
   | 'today'
@@ -52,6 +52,7 @@ export type DashboardMetricId =
   | 'marketing_deliverability_score'
   | 'contacts_by_domain'
   | 'contacts_subscriber_summary'
+  | 'marketing_live_activity'
 
 export interface DashboardLayout {
   x: number
@@ -169,4 +170,18 @@ export interface DashboardTableData {
   rows: Array<Record<string, string | number>>
 }
 
-export type DashboardWidgetData = DashboardKpiData | DashboardSeriesData | DashboardTableData
+export interface DashboardActivityItem {
+  id: string
+  tag: 'email' | 'order' | 'audience' | 'automation'
+  icon: string
+  eyebrow: string
+  title: string
+  meta: string
+}
+
+export interface DashboardActivityData {
+  kind: 'activity'
+  items: DashboardActivityItem[]
+}
+
+export type DashboardWidgetData = DashboardKpiData | DashboardSeriesData | DashboardTableData | DashboardActivityData

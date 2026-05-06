@@ -8,15 +8,18 @@ const props = withDefaults(defineProps<{
   title?: string
   subtitle?: string
   comparisonLabel?: string
+  icon?: string
 }>(), {
   compact: false,
   title: '',
   subtitle: '',
   comparisonLabel: '',
+  icon: '',
 })
 
 const trendPositive = computed(() => props.data.delta == null || props.data.delta >= 0)
 const trendIcon = computed(() => (trendPositive.value ? 'chevron-up' : 'chevron-down'))
+
 const displayDeltaLabel = computed(() => {
   if (props.data.delta == null) return props.data.deltaLabel
   if (props.data.unit === 'percent') {
@@ -44,90 +47,130 @@ const sparklinePoints = computed(() => {
     .join(' ')
 })
 
-const sparklineAreaPoints = computed(() => `0,52 ${sparklinePoints.value} 100,52`)
 </script>
 
 <template>
   <div class="dashboard-kpi-widget d-flex flex-column h-100" :class="{ 'dashboard-kpi-widget--compact': compact }">
-    <div class="dashboard-kpi-widget__header">
-      <div v-if="title" class="dashboard-kpi-widget__title">{{ title }}</div>
-      <div v-if="subtitle" class="dashboard-kpi-widget__subtitle">{{ subtitle }}</div>
+    <div class="dashboard-kpi-widget__top-row">
+      <div class="dashboard-kpi-widget__text-stack">
+        <!-- Icon chip + label + period caption -->
+        <div class="dashboard-kpi-widget__header-row">
+          <div v-if="icon" class="dashboard-kpi-widget__icon-chip">
+            <v-icon :size="compact ? 13 : 14">{{ icon }}</v-icon>
+          </div>
+          <div v-if="title" class="dashboard-kpi-widget__title">{{ title }}</div>
+          <div class="dashboard-kpi-widget__period" v-if="subtitle">{{ subtitle }}</div>
+        </div>
+
+        <!-- Big value -->
+        <div class="dashboard-kpi-widget__value num">{{ data.formattedValue }}</div>
+
+        <!-- Trend inline with comparison label -->
+        <div class="dashboard-kpi-widget__trend">
+          <span
+            class="dashboard-kpi-widget__trend-pill"
+            :class="trendPositive ? 'dashboard-kpi-widget__trend-pill--positive' : 'dashboard-kpi-widget__trend-pill--negative'"
+          >
+            <v-icon size="12">{{ trendIcon }}</v-icon>
+            {{ displayDeltaLabel }}
+          </span>
+          <span v-if="comparisonLabel" class="dashboard-kpi-widget__comparison">{{ comparisonLabel }}</span>
+        </div>
+      </div>
+
+      <!-- Side sparkline -->
+      <div class="dashboard-kpi-widget__sparkline-col" aria-hidden="true">
+        <svg class="dashboard-kpi-widget__sparkline" viewBox="0 0 100 52" preserveAspectRatio="none">
+          <polyline :points="sparklinePoints" class="dashboard-kpi-widget__sparkline-line" />
+        </svg>
+      </div>
     </div>
-
-    <div class="dashboard-kpi-widget__value">{{ data.formattedValue }}</div>
-
-    <div class="dashboard-kpi-widget__trend">
-      <span
-        class="dashboard-kpi-widget__trend-pill"
-        :class="trendPositive ? 'dashboard-kpi-widget__trend-pill--positive' : 'dashboard-kpi-widget__trend-pill--negative'"
-      >
-        <v-icon size="14">{{ trendIcon }}</v-icon>
-        {{ displayDeltaLabel }}
-      </span>
-      <span v-if="comparisonLabel && !compact" class="dashboard-kpi-widget__comparison">{{ comparisonLabel }}</span>
-    </div>
-
-    <svg class="dashboard-kpi-widget__sparkline" viewBox="0 0 100 52" preserveAspectRatio="none" aria-hidden="true">
-      <polygon :points="sparklineAreaPoints" class="dashboard-kpi-widget__sparkline-area" />
-      <polyline :points="sparklinePoints" class="dashboard-kpi-widget__sparkline-line" />
-    </svg>
   </div>
 </template>
 
 <style scoped lang="scss">
 .dashboard-kpi-widget {
   justify-content: flex-start;
-  gap: 8px;
-  padding: 22px 24px 14px;
+  padding: 16px 18px;
 }
 
-.dashboard-kpi-widget__header {
+.dashboard-kpi-widget__top-row {
+  display: flex;
+  flex-direction: row;
+  align-items: stretch;
+  gap: 12px;
+  width: 100%;
+  flex: 1 1 auto;
+  min-height: 0;
+}
+
+.dashboard-kpi-widget__text-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  flex: 1 1 0;
   min-width: 0;
-  max-width: calc(100% - 38px);
+}
+
+.dashboard-kpi-widget__header-row {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  min-width: 0;
+}
+
+.dashboard-kpi-widget__icon-chip {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 28px;
+  height: 28px;
+  border-radius: var(--r-chip);
+  background: var(--accent-soft);
+  color: var(--accent-ink);
 }
 
 .dashboard-kpi-widget__title {
   overflow: hidden;
-  color: rgb(var(--v-theme-on-surface));
-  font-size: clamp(0.95rem, 1.3vw, 1.05rem);
-  font-weight: 700;
-  line-height: 1.2;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.dashboard-kpi-widget__subtitle {
-  overflow: hidden;
-  margin-top: 4px;
-  color: rgba(var(--v-theme-on-surface), 0.56);
-  font-size: var(--mp-typography-fontSize-sm);
+  color: var(--ink);
+  font-size: 13px;
   font-weight: 500;
   line-height: 1.3;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 
+.dashboard-kpi-widget__period {
+  margin-left: auto;
+  flex-shrink: 0;
+  color: var(--muted);
+  font-size: 11.5px;
+  font-weight: 500;
+}
+
 .dashboard-kpi-widget__value {
   overflow: visible;
-  margin-top: 10px;
-  padding-bottom: 3px;
-  font-size: clamp(1.6rem, 2.2vw, 2.05rem);
-  line-height: 1.2;
-  letter-spacing: -0.01em;
-  font-weight: 750;
-  color: rgb(var(--v-theme-on-surface));
+  margin-top: 6px;
+  font-size: 28px;
+  line-height: 1.1;
+  letter-spacing: -0.5px;
+  font-weight: 600;
+  color: var(--ink);
   white-space: nowrap;
+  font-variant-numeric: tabular-nums;
 }
 
 .dashboard-kpi-widget--compact .dashboard-kpi-widget__value {
-  margin-top: 6px;
-  font-size: clamp(1.45rem, 2.1vw, 1.9rem);
+  margin-top: 4px;
+  font-size: 22px;
 }
 
 .dashboard-kpi-widget__trend {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 6px;
+  margin-top: 4px;
   min-width: 0;
   flex-wrap: nowrap;
 }
@@ -136,68 +179,72 @@ const sparklineAreaPoints = computed(() => `0,52 ${sparklinePoints.value} 100,52
   display: inline-flex;
   align-items: center;
   gap: 2px;
-  height: 22px;
-  padding: 0 10px 0 7px;
-  border-radius: 999px;
-  font-size: var(--mp-typography-fontSize-xs);
-  font-weight: 700;
+  font-size: 12px;
+  font-weight: 600;
   white-space: nowrap;
+  flex-shrink: 0;
 }
 
 .dashboard-kpi-widget__trend-pill--positive {
-  background: rgba(var(--v-theme-success), 0.12);
-  color: rgb(var(--v-theme-success));
+  color: var(--pos);
 }
 
 .dashboard-kpi-widget__trend-pill--negative {
-  background: rgba(var(--v-theme-error), 0.12);
-  color: rgb(var(--v-theme-error));
+  color: var(--neg);
 }
 
 .dashboard-kpi-widget__comparison {
-  overflow: hidden;
-  color: rgba(var(--v-theme-on-surface), 0.54);
-  font-size: var(--mp-typography-fontSize-sm);
+  font-size: 12px;
   font-weight: 500;
-  line-height: 1.2;
-  text-overflow: ellipsis;
+  color: var(--muted);
   white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.dashboard-kpi-widget__sparkline-col {
+  display: flex;
+  align-items: flex-end;
+  flex: 0 0 40%;
+  max-width: 45%;
+  min-width: 100px;
+  align-self: stretch;
+  padding-top: 24px;
 }
 
 .dashboard-kpi-widget__sparkline {
   width: 100%;
-  min-height: 34px;
-  margin-top: auto;
+  height: 56px;
   overflow: visible;
-}
-
-.dashboard-kpi-widget__sparkline-area {
-  fill: rgba(var(--v-theme-primary), 0.09);
 }
 
 .dashboard-kpi-widget__sparkline-line {
   fill: none;
-  stroke: rgb(var(--v-theme-primary));
+  stroke: var(--accent);
   stroke-linecap: round;
   stroke-linejoin: round;
-  stroke-width: 2.4;
+  stroke-width: 1.6;
+  vector-effect: non-scaling-stroke;
 }
 
+/* Compact variant */
 .dashboard-kpi-widget--compact {
-  gap: 5px;
-  padding: 18px 20px 12px;
+  padding: 14px 16px;
 }
 
-.dashboard-kpi-widget--compact .dashboard-kpi-widget__subtitle {
-  font-size: var(--mp-typography-fontSize-xs);
-}
-
-.dashboard-kpi-widget--compact .dashboard-kpi-widget__trend-pill {
-  height: 22px;
-  padding-inline: 7px;
+.dashboard-kpi-widget--compact .dashboard-kpi-widget__sparkline-col {
+  flex: 0 0 35%;
+  max-width: 38%;
+  padding-top: 18px;
 }
 
 .dashboard-kpi-widget--compact .dashboard-kpi-widget__sparkline {
-  min-height: 24px;
+  height: 40px;
+}
+
+.dashboard-kpi-widget--compact .dashboard-kpi-widget__icon-chip {
+  width: 22px;
+  height: 22px;
+  border-radius: 6px;
 }
 </style>

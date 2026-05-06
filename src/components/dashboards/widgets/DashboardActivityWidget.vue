@@ -1,0 +1,101 @@
+<script setup lang="ts">
+import type { DashboardActivityData } from '@/stores/dashboards/types'
+
+defineProps<{
+  data: DashboardActivityData
+}>()
+
+const tagColors: Record<string, { bg: string; color: string }> = {
+  email: { bg: 'var(--accent-soft)', color: 'var(--accent-ink)' },
+  order: { bg: 'color-mix(in oklch, oklch(0.7 0.15 155) 14%, transparent)', color: 'oklch(0.45 0.15 155)' },
+  audience: { bg: 'color-mix(in oklch, oklch(0.75 0.12 90) 18%, transparent)', color: 'oklch(0.45 0.12 90)' },
+  automation: { bg: 'color-mix(in oklch, oklch(0.7 0.13 300) 14%, transparent)', color: 'oklch(0.45 0.13 300)' },
+}
+
+function getTagStyle(tag: string) {
+  const colors = tagColors[tag] ?? tagColors.email
+  return { background: colors.bg, color: colors.color }
+}
+</script>
+
+<template>
+  <div class="activity-feed">
+    <div
+      v-for="(item, index) in data.items"
+      :key="item.id"
+      class="activity-feed__row"
+      :class="{ 'activity-feed__row--last': index === data.items.length - 1 }"
+    >
+      <span class="activity-feed__chip" :style="getTagStyle(item.tag)">
+        <v-icon size="14">{{ item.icon }}</v-icon>
+      </span>
+      <div class="activity-feed__content">
+        <div class="activity-feed__eyebrow">{{ item.eyebrow }}</div>
+        <div class="activity-feed__title">{{ item.title }}</div>
+        <div v-if="item.meta" class="activity-feed__meta">{{ item.meta }}</div>
+      </div>
+    </div>
+  </div>
+</template>
+
+<style scoped>
+.activity-feed {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+  overflow-y: auto;
+}
+
+.activity-feed__row {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--hairline);
+}
+
+.activity-feed__row--last {
+  border-bottom: none;
+}
+
+.activity-feed__chip {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 28px;
+  height: 28px;
+  border-radius: var(--r-chip);
+}
+
+.activity-feed__content {
+  min-width: 0;
+  flex: 1;
+}
+
+.activity-feed__eyebrow {
+  font-family: ui-monospace, "SF Mono", monospace;
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--muted);
+  margin-bottom: 1px;
+}
+
+.activity-feed__title {
+  font-size: 13.5px;
+  font-weight: 600;
+  color: var(--ink);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.activity-feed__meta {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--muted);
+  margin-top: 1px;
+}
+</style>

@@ -350,19 +350,19 @@ function performConfirm() {
       <pre class="text-caption" style="white-space: pre-wrap; margin: 0;">{{ renderError }}</pre>
     </v-alert>
 
-    <section class="dashboard-builder-header">
-      <div class="dashboard-builder-header__title-row">
-        <div class="dashboard-builder-header__title">
+    <section class="dashboard-page-bar">
+      <div class="dashboard-page-bar__left">
+        <div class="dashboard-page-bar__title-area">
           <v-menu location="bottom start" offset="8" :close-on-content-click="false">
             <template #activator="{ props: menuProps }">
               <button
                 v-bind="menuProps"
                 type="button"
                 class="dashboard-title-switcher"
-                :aria-label="`Switch dashboard. Current dashboard ${pageTitle}`"
+                :aria-label="`Switch dashboard. Current: ${pageTitle}`"
               >
-                <h1>{{ pageTitle }}</h1>
-                <v-icon size="20">chevron-down</v-icon>
+                <h1 class="dashboard-page-bar__h1">{{ pageTitle }}</h1>
+                <v-icon size="20" class="dashboard-title-switcher__chevron">chevron-down</v-icon>
               </button>
             </template>
 
@@ -447,193 +447,180 @@ function performConfirm() {
               </div>
             </v-card>
           </v-menu>
-
-          <span class="dashboard-refresh-status" aria-live="polite">
-            <span class="dashboard-refresh-status__label">Updated 2 min ago</span>
-            <v-btn
-              icon="refresh-cw"
-              variant="text"
-              size="small"
-              aria-label="Refresh dashboard"
-              @click="refreshDashboard"
-            />
-          </span>
         </div>
 
-        <div class="dashboard-builder-header__actions">
+        <div class="dashboard-page-bar__status">
+          <span class="dashboard-page-bar__dot" />
+          <span class="dashboard-page-bar__status-label">Live &middot; synced 2 min ago</span>
           <v-btn
+            icon="refresh-cw"
             variant="text"
-            density="compact"
-            class="text-none dashboard-header-action"
-            @click="openListingPage"
-          >
-            Manage Dashboards
-          </v-btn>
-          <v-btn
-            variant="text"
-            density="compact"
-            prepend-icon="plus"
-            class="text-none dashboard-header-action"
-            @click="openCreateDashboard"
-          >
-            Create Dashboard
-          </v-btn>
+            size="x-small"
+            class="dashboard-page-bar__refresh"
+            aria-label="Refresh dashboard"
+            @click="refreshDashboard"
+          />
         </div>
       </div>
 
-      <div class="dashboard-builder-header__control-row">
-        <div class="dashboard-control-group">
-          <v-menu v-model="dateMenuOpen" location="bottom start" offset="8" :close-on-content-click="false">
-            <template #activator="{ props: menuProps }">
-              <v-btn
-                v-bind="menuProps"
-                variant="text"
-                density="compact"
-                prepend-icon="calendar-range"
-                append-icon="chevron-down"
-                class="text-none dashboard-date-trigger"
-                @click.stop="openDateMenu"
-              >
-                {{ dateRangeLabel }}
-              </v-btn>
-            </template>
-            <v-card width="760" rounded="lg" flat border class="dashboard-date-menu">
-              <div class="dashboard-date-menu__presets">
-                <template v-for="(option, index) in datePresetOptions" :key="option.value">
-                  <div
-                    v-if="index === 0 || datePresetOptions[index - 1]?.group !== option.group"
-                    class="dashboard-date-menu__group"
-                  >
-                    {{ option.group }}
-                  </div>
-                  <button
-                    type="button"
-                    class="dashboard-date-menu__preset"
-                    :class="{ 'dashboard-date-menu__preset--active': dateDraft.rangePreset === option.value }"
-                    @click="updateDateDraftPreset(option.value)"
-                  >
-                    {{ option.title }}
-                  </button>
-                </template>
-              </div>
-              <div class="dashboard-date-menu__body">
-                <div class="dashboard-date-menu__fields">
-                  <v-text-field v-model="dateDraft.startDate" label="Start date" type="date" density="comfortable" variant="outlined" hide-details />
-                  <v-icon size="18">arrow-right</v-icon>
-                  <v-text-field v-model="dateDraft.endDate" label="End date" type="date" density="comfortable" variant="outlined" hide-details />
+      <div class="dashboard-page-bar__right">
+        <v-menu v-model="dateMenuOpen" location="bottom start" offset="8" :close-on-content-click="false">
+          <template #activator="{ props: menuProps }">
+            <v-btn
+              v-bind="menuProps"
+              variant="outlined"
+              size="small"
+              prepend-icon="calendar-range"
+              class="text-none"
+              @click.stop="openDateMenu"
+            >
+              {{ dateRangeLabel }}
+            </v-btn>
+          </template>
+          <v-card width="760" rounded="lg" flat border class="dashboard-date-menu">
+            <div class="dashboard-date-menu__presets">
+              <template v-for="(option, index) in datePresetOptions" :key="option.value">
+                <div
+                  v-if="index === 0 || datePresetOptions[index - 1]?.group !== option.group"
+                  class="dashboard-date-menu__group"
+                >
+                  {{ option.group }}
                 </div>
-                <div class="dashboard-date-menu__fields mt-3">
-                  <v-select v-model="dateDraft.grain" :items="grainOptions" item-title="title" item-value="value" label="Grain" density="comfortable" variant="outlined" hide-details />
-                  <v-select v-model="dateDraft.comparison" :items="comparisonOptions" item-title="title" item-value="value" label="Comparison" density="comfortable" variant="outlined" hide-details />
-                </div>
-                <v-alert variant="tonal" color="info" class="mt-4" density="compact">
-                  Widgets will show {{ datePresetOptions.find((option) => option.value === dateDraft.rangePreset)?.title ?? 'the selected range' }} with {{ grainOptions.find((option) => option.value === dateDraft.grain)?.title.toLowerCase() ?? 'daily' }} grouping.
-                </v-alert>
-                <div class="d-flex justify-end ga-2 mt-4">
-                  <v-btn variant="text" class="text-none" @click="dateMenuOpen = false">Cancel</v-btn>
-                  <v-btn color="primary" variant="flat" class="text-none" @click="applyDateDraft">Apply</v-btn>
-                </div>
+                <button
+                  type="button"
+                  class="dashboard-date-menu__preset"
+                  :class="{ 'dashboard-date-menu__preset--active': dateDraft.rangePreset === option.value }"
+                  @click="updateDateDraftPreset(option.value)"
+                >
+                  {{ option.title }}
+                </button>
+              </template>
+            </div>
+            <div class="dashboard-date-menu__body">
+              <div class="dashboard-date-menu__fields">
+                <v-text-field v-model="dateDraft.startDate" label="Start date" type="date" density="comfortable" variant="outlined" hide-details />
+                <v-icon size="18">arrow-right</v-icon>
+                <v-text-field v-model="dateDraft.endDate" label="End date" type="date" density="comfortable" variant="outlined" hide-details />
               </div>
-            </v-card>
-          </v-menu>
-
-          <v-menu v-model="advancedFiltersOpen" location="bottom start" offset="8" :close-on-content-click="false">
-            <template #activator="{ props: menuProps }">
-              <v-btn
-                v-bind="menuProps"
-                variant="text"
-                density="compact"
-                prepend-icon="list-filter"
-                class="text-none dashboard-filter-button"
-              >
-                Filters
-              </v-btn>
-            </template>
-            <v-card width="360" rounded="lg" flat border class="pa-3">
-              <div class="text-subtitle-2 font-weight-bold mb-2">Filters</div>
-              <v-select label="Data source" :items="['All sources', 'Commerce', 'Marketing', 'Contacts', 'Service']" density="compact" variant="outlined" hide-details class="mb-3" />
-              <v-select label="Owner" :items="['Everyone', 'Marketing team', 'Commerce team']" density="compact" variant="outlined" hide-details />
-              <div class="d-flex flex-wrap ga-2 mt-3">
-                <v-chip size="small" variant="tonal" color="primary">Channel</v-chip>
-                <v-chip size="small" variant="tonal" color="primary">Campaign type</v-chip>
-                <v-chip size="small" variant="tonal" color="primary">Customer segment</v-chip>
+              <div class="dashboard-date-menu__fields mt-3">
+                <v-select v-model="dateDraft.grain" :items="grainOptions" item-title="title" item-value="value" label="Grain" density="comfortable" variant="outlined" hide-details />
+                <v-select v-model="dateDraft.comparison" :items="comparisonOptions" item-title="title" item-value="value" label="Comparison" density="comfortable" variant="outlined" hide-details />
               </div>
-            </v-card>
-          </v-menu>
+              <v-alert variant="tonal" color="info" class="mt-4" density="compact">
+                Widgets will show {{ datePresetOptions.find((option) => option.value === dateDraft.rangePreset)?.title ?? 'the selected range' }} with {{ grainOptions.find((option) => option.value === dateDraft.grain)?.title.toLowerCase() ?? 'daily' }} grouping.
+              </v-alert>
+              <div class="d-flex justify-end ga-2 mt-4">
+                <v-btn variant="text" class="text-none" @click="dateMenuOpen = false">Cancel</v-btn>
+                <v-btn color="primary" variant="flat" class="text-none" @click="applyDateDraft">Apply</v-btn>
+              </div>
+            </div>
+          </v-card>
+        </v-menu>
 
-        </div>
+        <v-menu v-model="advancedFiltersOpen" location="bottom start" offset="8" :close-on-content-click="false">
+          <template #activator="{ props: menuProps }">
+            <v-btn
+              v-bind="menuProps"
+              variant="outlined"
+              size="small"
+              prepend-icon="list-filter"
+              class="text-none"
+            >
+              Filters
+              <span class="mp-btn-count">2</span>
+            </v-btn>
+          </template>
+          <v-card width="360" rounded="lg" flat border class="pa-3">
+            <div class="text-subtitle-2 font-weight-bold mb-2">Filters</div>
+            <v-select label="Data source" :items="['All sources', 'Commerce', 'Marketing', 'Contacts', 'Service']" density="compact" variant="outlined" hide-details class="mb-3" />
+            <v-select label="Owner" :items="['Everyone', 'Marketing team', 'Commerce team']" density="compact" variant="outlined" hide-details />
+            <div class="d-flex flex-wrap ga-2 mt-3">
+              <v-chip size="small" variant="tonal" color="primary">Channel</v-chip>
+              <v-chip size="small" variant="tonal" color="primary">Campaign type</v-chip>
+              <v-chip size="small" variant="tonal" color="primary">Customer segment</v-chip>
+            </div>
+          </v-card>
+        </v-menu>
 
-        <div class="dashboard-builder-header__control-actions">
-          <v-menu location="bottom end">
-            <template #activator="{ props: menuProps }">
-              <v-btn
-                v-bind="menuProps"
-                variant="text"
-                density="compact"
-                append-icon="chevron-down"
-                class="text-none dashboard-header-action"
-                :disabled="!activeDashboard"
-              >
-                Actions
-              </v-btn>
-            </template>
-            <v-list density="compact" min-width="240">
-              <v-list-item
-                prepend-icon="pencil"
-                title="Edit dashboard details"
-                :disabled="!activeDashboard"
-                @click="openEditDashboard"
-              />
-              <v-list-item
-                prepend-icon="copy-plus"
-                title="Duplicate dashboard"
-                :disabled="!activeDashboard"
-                @click="duplicateCurrentDashboard"
-              />
-              <v-list-item
-                v-if="activeDashboard && !activeDashboard.isDefault"
-                prepend-icon="bookmark"
-                title="Set as default"
-                @click="setActiveAsDefault"
-              />
-              <v-divider class="my-1" />
-              <v-list-item
-                prepend-icon="move"
-                :title="editMode ? 'Done editing layout' : 'Edit layout'"
-                :active="editMode"
-                @click="editMode = !editMode"
-              />
-              <v-divider class="my-1" />
-              <v-list-item prepend-icon="link" title="Copy dashboard link" @click="openStubAction('Copy dashboard link')" />
-              <v-list-item prepend-icon="user-plus" title="Invite editors" @click="openStubAction('Invite editors')" />
-              <v-divider v-if="activeDashboard?.kind === 'system' || activeDashboard?.kind === 'custom'" class="my-1" />
-              <v-list-item
-                v-if="activeDashboard?.kind === 'system'"
-                prepend-icon="rotate-ccw"
-                title="Reset to defaults"
-                @click="resetCurrentDashboard"
-              />
-              <v-list-item
-                v-if="activeDashboard?.kind === 'custom'"
-                prepend-icon="trash-2"
-                title="Delete dashboard"
-                base-color="error"
-                @click="deleteCurrentDashboard"
-              />
-            </v-list>
-          </v-menu>
-          <v-btn
-            color="primary"
-            variant="flat"
-            density="compact"
-            prepend-icon="plus"
-            class="text-none dashboard-add-content"
-            :disabled="!activeDashboard"
-            @click="openWidgetBuilder()"
-          >
-            Add Widget
-          </v-btn>
-        </div>
+        <v-menu location="bottom end">
+          <template #activator="{ props: menuProps }">
+            <v-btn
+              v-bind="menuProps"
+              icon="more-horizontal"
+              variant="text"
+              size="small"
+              :disabled="!activeDashboard"
+              aria-label="Dashboard actions"
+            />
+          </template>
+          <v-list density="compact" min-width="240">
+            <v-list-item
+              prepend-icon="layout-list"
+              title="Manage dashboards"
+              @click="openListingPage"
+            />
+            <v-list-item
+              prepend-icon="plus"
+              title="Create dashboard"
+              @click="openCreateDashboard"
+            />
+            <v-divider class="my-1" />
+            <v-list-item
+              prepend-icon="pencil"
+              title="Edit dashboard details"
+              :disabled="!activeDashboard"
+              @click="openEditDashboard"
+            />
+            <v-list-item
+              prepend-icon="copy-plus"
+              title="Duplicate dashboard"
+              :disabled="!activeDashboard"
+              @click="duplicateCurrentDashboard"
+            />
+            <v-list-item
+              v-if="activeDashboard && !activeDashboard.isDefault"
+              prepend-icon="bookmark"
+              title="Set as default"
+              @click="setActiveAsDefault"
+            />
+            <v-divider class="my-1" />
+            <v-list-item
+              prepend-icon="move"
+              :title="editMode ? 'Done editing layout' : 'Edit layout'"
+              :active="editMode"
+              @click="editMode = !editMode"
+            />
+            <v-divider class="my-1" />
+            <v-list-item prepend-icon="link" title="Copy dashboard link" @click="openStubAction('Copy dashboard link')" />
+            <v-list-item prepend-icon="user-plus" title="Invite editors" @click="openStubAction('Invite editors')" />
+            <v-divider v-if="activeDashboard?.kind === 'system' || activeDashboard?.kind === 'custom'" class="my-1" />
+            <v-list-item
+              v-if="activeDashboard?.kind === 'system'"
+              prepend-icon="rotate-ccw"
+              title="Reset to defaults"
+              @click="resetCurrentDashboard"
+            />
+            <v-list-item
+              v-if="activeDashboard?.kind === 'custom'"
+              prepend-icon="trash-2"
+              title="Delete dashboard"
+              base-color="error"
+              @click="deleteCurrentDashboard"
+            />
+          </v-list>
+        </v-menu>
+
+        <v-btn
+          color="primary"
+          variant="flat"
+          size="small"
+          prepend-icon="plus"
+          class="text-none"
+          :disabled="!activeDashboard"
+          @click="openWidgetBuilder()"
+        >
+          Add widget
+        </v-btn>
       </div>
     </section>
 
@@ -715,185 +702,127 @@ function performConfirm() {
   gap: 24px;
 }
 
-.dashboard-builder-header {
+.dashboard-page-bar {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+  padding: 20px 0 16px;
+  border-bottom: 1px solid var(--hairline);
+}
+
+.dashboard-page-bar__left {
   display: flex;
   flex-direction: column;
-  gap: 6px;
-  padding-block: 0;
-  background: transparent;
+  gap: 4px;
 }
 
-.dashboard-builder-header__title-row {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-  padding: 0;
-}
-
-.dashboard-builder-header__title {
+.dashboard-page-bar__title-area {
   display: flex;
   align-items: center;
-  gap: 9px;
-  min-width: 0;
+  gap: 6px;
 }
 
 .dashboard-title-switcher {
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  min-width: 0;
-  padding: 2px 4px;
+  padding: 2px 6px;
   border: 1px solid transparent;
   border-radius: 8px;
   background: transparent;
-  color: rgb(var(--v-theme-on-surface));
+  color: var(--ink);
   cursor: pointer;
   font: inherit;
+  appearance: none;
 }
 
 .dashboard-title-switcher:hover {
-  border-color: var(--mp-border-subtle);
-  background: rgba(var(--v-theme-surface-variant), 0.42);
+  background: var(--surface-2);
+  border-color: var(--hairline);
 }
 
-.dashboard-title-switcher:focus-visible,
-.dashboard-date-menu__preset:focus-visible {
+.dashboard-title-switcher:focus-visible {
   outline: none;
-  box-shadow: 0 0 0 3px rgba(var(--v-theme-primary), 0.18);
+  box-shadow: 0 0 0 3px color-mix(in oklch, var(--accent) 18%, transparent);
 }
 
-.dashboard-title-switcher h1 {
+.dashboard-page-bar__h1 {
   margin: 0;
-  font-size: clamp(1rem, 1.3vw, 1.125rem);
-  line-height: 1.3;
-  letter-spacing: 0;
+  font-size: 22px;
   font-weight: 600;
+  letter-spacing: -0.3px;
+  line-height: 1.2;
   white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
 }
 
-.dashboard-builder-header__actions {
+.dashboard-title-switcher__chevron {
+  color: var(--muted);
+}
+
+.dashboard-page-bar__status {
   display: flex;
   align-items: center;
-  justify-content: flex-end;
-  gap: 8px;
-  flex-wrap: nowrap;
-  min-width: 0;
+  gap: 5px;
+  padding-left: 4px;
 }
 
-.dashboard-builder-header__actions :deep(.v-btn) {
-  min-height: 28px;
-  height: 28px;
-  padding-inline: 8px;
-  border-radius: 8px;
-  color: rgba(var(--v-theme-on-surface), 0.76);
-  font-size: var(--mp-typography-fontSize-sm);
-  font-weight: 600;
-}
-
-.dashboard-builder-header__actions :deep(.v-btn__append) {
-  margin-inline-start: 4px;
-}
-
-.dashboard-builder-header__actions :deep(.v-icon) {
-  font-size: 15px;
-}
-
-.dashboard-header-action:hover {
-  background: rgba(var(--v-theme-surface-variant), 0.52);
-}
-
-.dashboard-builder-header__control-row {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 8px;
-  flex-wrap: wrap;
-  min-height: 36px;
-  padding: 0;
-}
-
-.dashboard-control-group {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  flex-wrap: wrap;
-}
-
-.dashboard-control-group :deep(.v-btn) {
-  min-height: 30px;
-  height: 30px;
-  padding-inline: 10px;
-  border: 1px solid var(--mp-border-subtle);
+.dashboard-page-bar__dot {
+  width: 6px;
+  height: 6px;
+  flex-shrink: 0;
   border-radius: 999px;
-  background: rgb(var(--v-theme-surface));
-  color: rgba(var(--v-theme-on-surface), 0.78);
-  font-size: var(--mp-typography-fontSize-sm);
-  font-weight: 600;
+  background: var(--pos);
 }
 
-.dashboard-control-group :deep(.v-icon) {
-  font-size: 15px;
+.dashboard-page-bar__status-label {
+  white-space: nowrap;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--muted);
 }
 
-.dashboard-date-trigger {
-  justify-content: flex-start;
+.dashboard-page-bar__refresh {
+  width: 22px !important;
+  height: 22px !important;
+  color: var(--muted) !important;
 }
 
-.dashboard-refresh-status {
-  display: inline-flex;
+.dashboard-page-bar__refresh :deep(.v-icon) {
+  font-size: 13px;
+}
+
+.dashboard-page-bar__right {
+  display: flex;
   align-items: center;
-  gap: 4px;
-  margin-inline-start: 6px;
-  color: rgba(var(--v-theme-on-surface), 0.52);
-  font-size: var(--mp-typography-fontSize-sm);
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.dashboard-page-bar__right :deep(.v-btn--variant-outlined) {
+  border-color: var(--hairline);
+  background: var(--surface-1);
+  color: var(--ink);
   font-weight: 500;
 }
 
-.dashboard-refresh-status__label {
-  white-space: nowrap;
-  font-size: 12px;
-  color: rgba(var(--v-theme-on-surface), 0.55);
+.dashboard-page-bar__right :deep(.v-btn--variant-outlined:hover) {
+  background: var(--surface-2);
 }
 
-.dashboard-refresh-status :deep(.v-btn) {
-  width: 22px;
-  height: 22px;
-  color: rgba(var(--v-theme-on-surface), 0.48);
-}
-
-.dashboard-refresh-status :deep(.v-icon) {
-  font-size: 14px;
-}
-
-.dashboard-builder-header__control-actions {
+.mp-btn-count {
   display: inline-flex;
   align-items: center;
-  gap: 8px;
-}
-
-.dashboard-builder-header__control-actions :deep(.v-btn:not(.dashboard-add-content)) {
-  min-height: 30px;
-  height: 30px;
-  padding-inline: 10px;
-  border: 1px solid var(--mp-border-subtle);
-  border-radius: 999px;
-  background: rgb(var(--v-theme-surface));
-  color: rgba(var(--v-theme-on-surface), 0.78);
-  font-size: var(--mp-typography-fontSize-sm);
+  justify-content: center;
+  padding: 1px 6px;
+  margin-left: 4px;
+  border-radius: var(--r-pill);
+  background: var(--accent-soft);
+  color: var(--accent-ink);
+  font-size: 11px;
   font-weight: 600;
-}
-
-.dashboard-builder-header__control-actions :deep(.v-icon) {
-  font-size: 15px;
-}
-
-.dashboard-add-content {
-  min-height: 30px !important;
-  height: 30px !important;
+  line-height: 1;
 }
 
 .dashboard-date-menu {
@@ -904,15 +833,16 @@ function performConfirm() {
 
 .dashboard-date-menu__presets {
   padding: 10px;
-  border-right: 1px solid var(--mp-border-subtle);
-  background: rgba(var(--v-theme-surface-variant), 0.28);
+  border-right: 1px solid var(--hairline);
+  background: var(--surface-2);
 }
 
 .dashboard-date-menu__group {
   padding: 12px 8px 6px;
-  color: rgba(var(--v-theme-on-surface), 0.55);
-  font-size: var(--mp-typography-fontSize-xs);
-  font-weight: 750;
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 1px;
   text-transform: uppercase;
 }
 
@@ -924,17 +854,23 @@ function performConfirm() {
   border: 0;
   border-radius: 8px;
   background: transparent;
-  color: rgba(var(--v-theme-on-surface), 0.78);
+  color: var(--ink);
   cursor: pointer;
   font: inherit;
+  font-size: 13px;
   text-align: left;
 }
 
 .dashboard-date-menu__preset:hover,
 .dashboard-date-menu__preset--active {
-  background: rgb(var(--v-theme-surface));
-  color: rgb(var(--v-theme-primary));
-  font-weight: 700;
+  background: var(--surface-1);
+  color: var(--accent-ink);
+  font-weight: 600;
+}
+
+.dashboard-date-menu__preset:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px color-mix(in oklch, var(--accent) 18%, transparent);
 }
 
 .dashboard-date-menu__body {
@@ -953,29 +889,22 @@ function performConfirm() {
 }
 
 .dashboard-switcher-card {
-  border-color: var(--mp-border-subtle);
+  border-color: var(--hairline);
 }
 
 .dashboard-switcher-card__search {
-  border-bottom: 1px solid var(--mp-border-subtle);
+  border-bottom: 1px solid var(--hairline);
 }
 
 @media (max-width: 960px) {
-  .dashboard-builder-header__title-row {
-    grid-template-columns: 1fr;
+  .dashboard-page-bar {
+    flex-direction: column;
+    align-items: stretch;
   }
 
-  .dashboard-builder-header__title,
-  .dashboard-control-group {
-    width: 100%;
-  }
-
-  .dashboard-builder-header__actions,
-  .dashboard-builder-header__control-actions {
-    justify-content: flex-start;
+  .dashboard-page-bar__right {
     width: 100%;
     overflow-x: auto;
-    padding-bottom: 2px;
   }
 
   .dashboard-date-menu {
@@ -985,7 +914,7 @@ function performConfirm() {
 
   .dashboard-date-menu__presets {
     border-right: 0;
-    border-bottom: 1px solid var(--mp-border-subtle);
+    border-bottom: 1px solid var(--hairline);
     max-height: 230px;
     overflow: auto;
   }

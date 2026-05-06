@@ -3,6 +3,7 @@ import { computed, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { useWidgetData } from '@/composables/useWidgetData'
 import { useElementSize } from '@/composables/useElementSize'
+import { getMetricDescriptor } from '@/stores/dashboards/metricCatalog'
 import type { DashboardFilterState, DashboardWidget } from '@/stores/dashboards/types'
 import {
   WIDGET_SIZES,
@@ -11,6 +12,7 @@ import {
 } from './widgetSizePresets'
 import DashboardChartWidget from './widgets/DashboardChartWidget.vue'
 import DashboardKpiWidget from './widgets/DashboardKpiWidget.vue'
+import DashboardActivityWidget from './widgets/DashboardActivityWidget.vue'
 import DashboardTableWidget from './widgets/DashboardTableWidget.vue'
 
 const props = withDefaults(defineProps<{
@@ -38,6 +40,7 @@ const { size: bodySize } = useElementSize(bodyEl)
 const currentSize = computed<WidgetSize | null>(() => detectSize(props.widget.type, props.widget.layout.w, props.widget.layout.h))
 const isCompactHeight = computed(() => bodySize.value.height > 0 && bodySize.value.height < 128)
 const isKpiWidget = computed(() => data.value.kind === 'kpi')
+const metricIcon = computed(() => getMetricDescriptor(props.widget.metricId)?.icon ?? '')
 const rangeLabels: Record<DashboardFilterState['rangePreset'], string> = {
   today: 'Today',
   yesterday: 'Yesterday',
@@ -118,7 +121,7 @@ function openSettings() {
   <v-card
     flat
     border
-    rounded="xl"
+    rounded="lg"
     class="dashboard-widget-card h-100 d-flex flex-column"
     :class="{
       'dashboard-widget-card--preview': preview,
@@ -253,12 +256,17 @@ function openSettings() {
         :title="widget.title"
         :subtitle="widgetSubtitle"
         :comparison-label="kpiComparisonLabel"
+        :icon="metricIcon"
       />
       <DashboardChartWidget
         v-else-if="data.kind === 'series'"
         :data="data"
         :widget-type="widget.type as 'timeseries' | 'bar'"
         :height="bodySize.height"
+      />
+      <DashboardActivityWidget
+        v-else-if="data.kind === 'activity'"
+        :data="data"
       />
       <DashboardTableWidget
         v-else
@@ -271,17 +279,17 @@ function openSettings() {
 <style scoped lang="scss">
 .dashboard-widget-card {
   position: relative;
-  border-color: var(--mp-border-subtle);
-  border-radius: 12px !important;
-  background: rgb(var(--v-theme-surface));
+  border-color: var(--hairline) !important;
+  border-radius: var(--r-section) !important;
+  background: var(--surface-1) !important;
   overflow: hidden;
   min-height: 0;
-  box-shadow: 0 1px 2px rgba(var(--v-theme-on-surface), 0.025);
-  transition: border-color $mp-transition-fast, box-shadow $mp-transition-fast;
+  box-shadow: none;
+  transition: border-color 0.15s ease;
 }
 
 .dashboard-widget-card:hover {
-  border-color: rgba(var(--v-theme-on-surface), 0.14);
+  border-color: color-mix(in oklch, var(--ink) 16%, transparent) !important;
 }
 
 .dashboard-widget-card__header {
@@ -289,7 +297,7 @@ function openSettings() {
   grid-template-columns: minmax(0, 1fr) auto;
   align-items: start;
   gap: 12px;
-  min-height: 60px;
+  min-height: 56px;
   padding: 18px 20px 12px;
 }
 
@@ -307,9 +315,9 @@ function openSettings() {
 .dashboard-widget-card__title {
   min-width: 0;
   overflow: hidden;
-  color: rgb(var(--v-theme-on-surface));
-  font-size: clamp(1rem, 1.35vw, 1.12rem);
-  font-weight: 700;
+  color: var(--ink);
+  font-size: 14.5px;
+  font-weight: 600;
   line-height: 1.25;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -317,9 +325,9 @@ function openSettings() {
 
 .dashboard-widget-card__subtitle {
   overflow: hidden;
-  margin-top: 4px;
-  color: rgba(var(--v-theme-on-surface), 0.56);
-  font-size: var(--mp-typography-fontSize-sm);
+  margin-top: 3px;
+  color: var(--muted);
+  font-size: 12px;
   font-weight: 500;
   line-height: 1.3;
   text-overflow: ellipsis;
@@ -340,12 +348,19 @@ function openSettings() {
   width: 28px !important;
   height: 28px !important;
   padding: 0;
-  color: rgba(var(--v-theme-on-surface), 0.54);
+  color: var(--muted);
+  border-radius: var(--r-pill);
+}
+
+.dashboard-widget-card__actions :deep(.v-btn:hover),
+.dashboard-widget-card__kpi-actions :deep(.v-btn:hover) {
+  background: var(--surface-2);
+  color: var(--ink);
 }
 
 .dashboard-widget-card__actions :deep(.v-icon),
 .dashboard-widget-card__kpi-actions :deep(.v-icon) {
-  font-size: 18px;
+  font-size: 16px;
 }
 
 .dashboard-widget-card__kpi-actions {
@@ -359,7 +374,7 @@ function openSettings() {
 }
 
 .dashboard-widget-card__drag-handle {
-  color: rgba(var(--v-theme-on-surface), 0.48);
+  color: var(--muted);
   cursor: grab;
 }
 
@@ -368,8 +383,8 @@ function openSettings() {
 }
 
 .dashboard-widget-card--editable {
-  border-color: rgba(var(--v-theme-primary), 0.40);
-  box-shadow: 0 0 0 1px rgba(var(--v-theme-primary), 0.12);
+  border-color: color-mix(in oklch, var(--accent) 40%, transparent) !important;
+  box-shadow: 0 0 0 1px color-mix(in oklch, var(--accent) 12%, transparent);
   cursor: grab;
 }
 

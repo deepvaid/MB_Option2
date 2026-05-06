@@ -1,8 +1,9 @@
 /**
- * Theme-scoped aliases for borders (uses generated --mp-color-* from tokens.json).
+ * Theme-scoped aliases for borders and compact dashboard semantic tokens.
  * Default matches light theme; dark overrides when Vuetify switches theme.
  */
 :root {
+  /* Existing border aliases */
   --mp-border-subtle: var(--mp-color-light-borderSubtle);
   --mp-border-hairline: var(--mp-color-neutral-hairline);
   --mp-border-table-row: var(--mp-color-light-borderTableRow);
@@ -10,6 +11,36 @@
   --mp-border-table-footer-divider: var(--mp-color-light-borderTableFooterDivider);
   --mp-surface-tint: var(--mp-color-light-surfaceTint);
   --mp-surface-warm: var(--mp-color-neutral-100);
+
+  /* Compact dashboard semantic surface tokens */
+  --surface-0: var(--mp-color-light-background);
+  --surface-1: var(--mp-color-light-surface);
+  --surface-2: var(--mp-color-light-surfaceVariant);
+
+  /* Text */
+  --ink: var(--mp-color-light-textPrimary);
+  --muted: var(--mp-color-light-textMuted);
+
+  /* Lines */
+  --hairline: var(--mp-color-light-borderSubtle);
+
+  /* Accent (signal blue) */
+  --accent: var(--mp-color-light-primary);
+  --accent-fg: var(--mp-color-light-onPrimary);
+  --accent-ink: var(--mp-color-light-primaryDarken);
+  --accent-soft: color-mix(in oklch, var(--accent) 12%, transparent);
+
+  /* Semantic colors */
+  --pos: oklch(0.5 0.15 155);
+  --pos-soft: color-mix(in oklch, oklch(0.7 0.15 155) 14%, transparent);
+  --neg: oklch(0.55 0.2 25);
+  --neg-soft: color-mix(in oklch, oklch(0.65 0.2 25) 14%, transparent);
+
+  /* Radius */
+  --r-pill: 9999px;
+  --r-card: 12px;
+  --r-section: 14px;
+  --r-chip: 8px;
 }
 
 .v-application.v-theme--maropostDark {
@@ -27,4 +58,16 @@
   --mp-color-sidebar-textMuted: var(--mp-color-dark-textMuted);
   --mp-color-sidebar-textFaint: rgba(151, 174, 202, 0.62);
   --mp-color-sidebar-hover: rgba(89, 194, 255, 0.14);
+
+  /* Dark mode semantic overrides */
+  --surface-0: var(--mp-color-dark-background);
+  --surface-1: var(--mp-color-dark-surface);
+  --surface-2: var(--mp-color-dark-surfaceVariant);
+  --ink: var(--mp-color-dark-textPrimary);
+  --muted: var(--mp-color-dark-textMuted);
+  --hairline: var(--mp-color-dark-borderSubtle);
+  --accent: var(--mp-color-dark-primary);
+  --accent-fg: var(--mp-color-dark-onPrimary);
+  --accent-ink: var(--mp-color-dark-primaryDarken);
+  --accent-soft: color-mix(in oklch, var(--accent) 12%, transparent);
 }

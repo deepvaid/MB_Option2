@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { computed, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import maropostLogo from '@/assets/logo-svg.svg'
 import { useAccountsStore, type SubscriptionKey } from '@/stores/useAccounts'
 
 const props = defineProps<{
@@ -243,30 +242,40 @@ function isLocked(group: NavGroup) {
     :rail="localRail"
     permanent
     :mobile-breakpoint="0"
-    width="230"
+    width="248"
     class="mp-sidebar"
   >
-    <!-- Logo + collapse toggle -->
-    <div class="sidebar-header px-3 py-3">
-      <v-btn
-        icon="menu"
-        variant="text"
-        size="small"
-        :aria-label="localRail ? 'Expand navigation sidebar' : 'Collapse navigation sidebar'"
-        @click.stop="localRail = !localRail"
-        class="mr-2 flex-shrink-0 sidebar-muted"
-      />
+    <!-- Brand + collapse toggle -->
+    <div class="sidebar-header">
       <button
+        v-if="!localRail"
         type="button"
-        class="d-flex align-center gap-3 cursor-pointer sidebar-brand sidebar-brand-button"
+        class="sidebar-brand"
         aria-label="Go to dashboard"
         @click="$router.push(`/accounts/${resolvedAccountId}/dashboard`)"
       >
-        <img :src="maropostLogo" alt="Maropost" class="sidebar-brand-logo" />
+        <span class="sidebar-brand__mark">M</span>
+        <span class="sidebar-brand__wordmark">MAROPOST</span>
       </button>
+      <button
+        v-else
+        type="button"
+        class="sidebar-brand sidebar-brand--rail"
+        aria-label="Expand sidebar"
+        @click.stop="localRail = false"
+      >
+        <span class="sidebar-brand__mark">M</span>
+      </button>
+      <v-btn
+        v-if="!localRail"
+        icon="panel-left-close"
+        variant="text"
+        size="x-small"
+        class="sidebar-collapse-btn"
+        :aria-label="'Collapse sidebar'"
+        @click.stop="localRail = !localRail"
+      />
     </div>
-
-    <div class="my-1" />
 
     <!-- Navigation List -->
     <v-list v-model:opened="openedGroups" density="compact" nav class="px-2 py-1 sidebar-scroll">
@@ -432,16 +441,17 @@ function isLocked(group: NavGroup) {
       </template>
     </v-list>
 
-    <!-- Bottom: Help -->
+    <!-- Bottom: User block -->
     <template v-slot:append>
-      <div class="my-1" />
-      <div class="pa-2" v-if="!localRail">
-        <v-btn block variant="text" prepend-icon="help-circle" class="text-none justify-start sidebar-help" aria-label="Open help and documentation">
-          Help & Documentation
-        </v-btn>
+      <div class="sidebar-user-block" v-if="!localRail">
+        <v-avatar color="primary" size="32" class="sidebar-user-block__avatar">DV</v-avatar>
+        <div class="sidebar-user-block__info">
+          <div class="sidebar-user-block__name">Deepak Vaidya</div>
+          <div class="sidebar-user-block__tenant">Acme Studios</div>
+        </div>
       </div>
       <div class="d-flex justify-center pa-2" v-else>
-        <v-btn icon="help-circle" variant="text" size="small" class="sidebar-muted" aria-label="Open help and documentation" />
+        <v-avatar color="primary" size="28" class="sidebar-user-block__avatar">DV</v-avatar>
       </div>
     </template>
   </v-navigation-drawer>
@@ -449,102 +459,120 @@ function isLocked(group: NavGroup) {
 
 <style scoped lang="scss">
 .mp-sidebar {
-  background: var(--mp-color-sidebar-bg);
-  border-right: 1px solid var(--mp-color-sidebar-border);
-  overflow: visible; /* Required for flyouts to overflow if needed, though v-menu manages z-index */
+  background: var(--surface-1) !important;
+  border-right: 1px solid var(--hairline) !important;
 }
+
 .sidebar-header {
-  height: 52px;
   display: flex;
   align-items: center;
-  padding-inline: 12px;
+  justify-content: space-between;
+  height: 60px;
+  padding: 0 14px;
 }
+
 .sidebar-brand {
-  min-width: 0;
-}
-.sidebar-brand-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
   appearance: none;
-  width: 100%;
-  padding: 0;
   border: 0;
   background: transparent;
-  text-align: left;
+  cursor: pointer;
   font: inherit;
+  padding: 0;
 }
-.sidebar-brand-button:focus-visible {
+
+.sidebar-brand:focus-visible {
   outline: none;
-  box-shadow: 0 0 0 3px rgba(var(--v-theme-primary), 0.18);
-  border-radius: 16px;
+  border-radius: 8px;
+  box-shadow: 0 0 0 3px color-mix(in oklch, var(--accent) 18%, transparent);
 }
-.sidebar-scroll {
-  overflow-y: auto;
-  padding-top: 4px;
-  padding-bottom: 12px;
+
+.sidebar-brand__mark {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  border-radius: 6px;
+  background: var(--accent);
+  color: var(--accent-fg);
+  font-size: 11px;
+  font-weight: 700;
+  flex-shrink: 0;
 }
-.sidebar-muted {
-  color: var(--mp-color-sidebar-textMuted);
+
+.sidebar-brand__wordmark {
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 1.4px;
+  text-transform: uppercase;
+  color: var(--ink);
 }
-.sidebar-text {
-  color: var(--mp-color-sidebar-text);
+
+.sidebar-brand--rail {
+  justify-content: center;
+  width: 100%;
 }
-.sidebar-lock {
-  color: var(--mp-color-sidebar-textFaint);
-  opacity: 0.55;
-  transition: color 120ms ease, opacity 120ms ease;
+
+.sidebar-collapse-btn {
+  width: 24px !important;
+  height: 24px !important;
+  color: var(--muted) !important;
+  opacity: 0;
+  transition: opacity 120ms ease;
 }
-:deep(.v-list-item:hover) .sidebar-lock {
-  color: var(--mp-color-sidebar-textMuted);
+
+.sidebar-header:hover .sidebar-collapse-btn {
   opacity: 1;
 }
-.sidebar-brand-logo {
-  height: 21px;
-  width: auto;
-  display: block;
+
+.sidebar-scroll {
+  overflow-y: auto;
+  padding: 4px 14px 12px;
 }
-.sidebar-chip {
-  font-size: 10px;
-  height: 16px;
-  padding: 0 6px;
-  border-radius: 999px;
-  letter-spacing: 0.04em;
+
+.sidebar-user-block {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px;
+  border-top: 1px solid var(--hairline);
 }
-.sidebar-subgroup {
-  font-size: var(--mp-typography-fontSize-xs);
-  color: var(--mp-color-sidebar-textFaint);
-  letter-spacing: 0.08em;
+
+.sidebar-user-block__avatar {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--accent-fg) !important;
+  flex-shrink: 0;
 }
-.sidebar-child-item {
-  padding-left: var(--mp-spacing-7);
+
+.sidebar-user-block__info {
+  min-width: 0;
 }
-.sidebar-subgroup-item {
-  padding-left: var(--mp-spacing-5);
-  color: var(--mp-color-sidebar-textMuted);
-}
-.sidebar-surface {
-  background: var(--mp-color-sidebar-surface);
-  box-shadow: none;
-}
-.rail-popover {
-  border: 1px solid var(--mp-color-sidebar-border) !important;
-  box-shadow:
-    0 8px 24px rgba(15, 23, 42, 0.08),
-    0 2px 6px rgba(15, 23, 42, 0.04) !important;
+
+.sidebar-user-block__name {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--ink);
   overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
-.rail-icon-btn {
-  color: var(--mp-color-sidebar-text) !important;
+
+.sidebar-user-block__tenant {
+  font-size: 11.5px;
+  color: var(--muted);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
-.rail-popover-item {
-  font-size: var(--mp-typography-fontSize-sm);
-  min-height: 32px;
-}
-.sidebar-subheader {
-  color: var(--mp-color-sidebar-textMuted);
-  font-size: var(--mp-typography-fontSize-xs);
-}
+
 .sidebar-divider {
-  border-color: var(--mp-color-sidebar-border);
-  opacity: 0.7;
+  border-color: var(--hairline) !important;
+  opacity: 1;
+  margin: 4px 0 !important;
 }
 
 .sidebar-badge {
@@ -553,64 +581,123 @@ function isLocked(group: NavGroup) {
   font-size: 10px !important;
   letter-spacing: 0.04em;
 }
-.sidebar-help {
-  color: var(--mp-color-sidebar-textFaint);
-  font-size: var(--mp-typography-fontSize-sm);
-}
 
 :deep(.active-nav-item) {
   position: relative;
-  background: rgba(var(--v-theme-primary), 0.08) !important;
+  background: var(--accent-soft) !important;
   box-shadow: none;
-  color: rgb(var(--v-theme-primary));
+  color: var(--accent-ink) !important;
   font-weight: 600;
 }
+
 :deep(.active-nav-item::before) {
-  position: absolute;
-  left: 4px;
-  top: 7px;
-  bottom: 7px;
-  width: 3px;
-  border-radius: 999px;
-  background: rgb(var(--v-theme-primary));
-  content: '';
+  display: none;
 }
+
 :deep(.active-nav-item > .v-list-item__overlay) {
   opacity: 0 !important;
 }
+
 :deep(.active-nav-item .v-list-item__prepend > .v-icon),
 :deep(.active-nav-item .v-list-item-title) {
-  color: rgb(var(--v-theme-primary));
+  color: var(--accent-ink) !important;
 }
+
 :deep(.v-list-item__prepend .v-icon),
 :deep(.v-list-item-title) {
-  color: var(--mp-color-sidebar-text);
+  color: var(--ink);
 }
+
 :deep(.v-list-item-subtitle) {
-  color: var(--mp-color-sidebar-textMuted);
+  color: var(--muted);
 }
 
 :deep(.v-list-item) {
   min-height: 36px;
   margin-bottom: 1px;
-  padding-inline: 10px;
+  padding: 9px 10px;
+  border-radius: 10px !important;
 }
 
 :deep(.v-list-item-title) {
-  font-size: var(--mp-typography-fontSize-sm);
-  font-weight: 560;
+  font-size: 13.5px;
+  font-weight: 500;
   line-height: 1.2;
 }
 
 :deep(.v-list-item__prepend > .v-icon) {
-  font-size: 21px;
+  font-size: 18px;
+  margin-inline-end: 10px;
 }
 
 :deep(.v-list-item:hover > .v-list-item__overlay) {
-  opacity: 0.04;
+  opacity: 0.03;
 }
 
-:deep(.v-list-item--nav) {
+.sidebar-child-item {
+  padding-left: 28px !important;
+  position: relative;
+}
+
+.sidebar-child-item::before {
+  content: '';
+  position: absolute;
+  left: 18px;
+  top: 4px;
+  bottom: 4px;
+  width: 1px;
+  background: var(--hairline);
+}
+
+:deep(.sidebar-child-item) {
+  min-height: 32px;
+  padding: 7px 10px 7px 28px !important;
   border-radius: 8px !important;
+}
+
+:deep(.sidebar-child-item .v-list-item-title) {
+  font-size: 13px;
+}
+
+.sidebar-subgroup-item {
+  padding-left: 20px !important;
+  color: var(--muted);
+}
+
+.sidebar-surface {
+  background: var(--surface-1);
+  box-shadow: none;
+}
+
+.rail-popover {
+  border: 1px solid var(--hairline) !important;
+  box-shadow:
+    0 8px 24px rgba(15, 23, 42, 0.08),
+    0 2px 6px rgba(15, 23, 42, 0.04) !important;
+  overflow: hidden;
+}
+
+.rail-popover-item {
+  font-size: 13px;
+  min-height: 32px;
+}
+
+.sidebar-subheader {
+  color: var(--muted);
+  font-size: 11px;
+}
+
+.sidebar-expanded-group :deep(.v-list-group__items) {
+  position: relative;
+}
+
+.sidebar-expanded-group :deep(.v-list-group__items::before) {
+  content: '';
+  position: absolute;
+  left: 24px;
+  top: 0;
+  bottom: 8px;
+  width: 1px;
+  background: var(--hairline);
 }
 </style>

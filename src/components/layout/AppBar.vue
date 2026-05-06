@@ -81,7 +81,7 @@ function openStub(label: string) {
 </script>
 
 <template>
-  <v-app-bar height="52" color="surface" flat class="mp-appbar">
+  <v-app-bar height="60" color="surface" flat class="mp-appbar">
     <div class="mp-appbar-shell w-100 d-flex align-center px-4 gap-2">
       <v-menu v-model="searchOpen" location="bottom start" offset="8" :close-on-content-click="false">
         <template #activator="{ props }">
@@ -91,8 +91,8 @@ function openStub(label: string) {
             density="compact"
             variant="outlined"
             hide-details
-            prepend-inner-icon="search"
-            placeholder="Search or ask Da Vinci anything..."
+            prepend-inner-icon="sparkles"
+            placeholder="Ask Da Vinci or search"
             aria-label="Universal AI search"
             rounded="lg"
             class="appbar-search"
@@ -100,7 +100,11 @@ function openStub(label: string) {
             clearable
             @focus="searchOpen = true"
             @keydown.enter.prevent="askDaVinciFromSearch"
-          />
+          >
+            <template #append-inner>
+              <kbd class="appbar-search-cmd">⌘K</kbd>
+            </template>
+          </v-text-field>
         </template>
         <v-card width="620" rounded="lg" flat border class="appbar-search-menu">
           <div class="appbar-search-menu__hero">
@@ -146,22 +150,6 @@ function openStub(label: string) {
       <v-spacer />
 
       <div class="appbar-utilities">
-        <v-tooltip text="Da Vinci" location="bottom">
-          <template #activator="{ props }">
-            <v-btn
-              v-bind="props"
-              size="small"
-              :variant="copilotOpen ? 'flat' : 'text'"
-              icon
-              :aria-label="copilotOpen ? 'Close Da Vinci Copilot' : 'Open Da Vinci Copilot'"
-              @click="copilotOpen = !copilotOpen"
-              :class="['copilot-trigger', { 'copilot-trigger--active': copilotOpen }]"
-            >
-              <v-icon>sparkles</v-icon>
-            </v-btn>
-          </template>
-        </v-tooltip>
-
         <v-tooltip text="Notifications" location="bottom">
           <template #activator="{ props }">
             <v-btn
@@ -184,12 +172,6 @@ function openStub(label: string) {
           </template>
         </v-tooltip>
 
-        <v-tooltip text="Apps" location="bottom">
-          <template #activator="{ props }">
-            <v-btn v-bind="props" icon="puzzle" variant="text" size="small" aria-label="Apps" :to="appsRoute" />
-          </template>
-        </v-tooltip>
-
         <v-tooltip text="Settings" location="bottom">
           <template #activator="{ props }">
             <v-btn v-bind="props" icon="settings" variant="text" size="small" aria-label="Settings" :to="settingsRoute" />
@@ -197,17 +179,19 @@ function openStub(label: string) {
         </v-tooltip>
       </div>
 
+      <span class="appbar-divider" aria-hidden="true"></span>
+
       <v-menu location="bottom end" offset="8">
         <template #activator="{ props }">
           <button
             v-bind="props"
             type="button"
             aria-label="Open user menu"
-            class="d-flex align-center gap-2 cursor-pointer py-1 px-2 rounded-lg user-menu-trigger"
+            class="user-pill"
           >
-            <v-avatar color="primary" size="30" class="user-avatar-ring appbar-avatar-sm">{{ userInitials }}</v-avatar>
-            <span class="appbar-user-name d-none d-md-block">{{ userName }}</span>
-            <v-icon size="16" color="medium-emphasis">chevron-down</v-icon>
+            <v-avatar color="primary" size="26" class="user-pill__avatar">{{ userInitials }}</v-avatar>
+            <span class="user-pill__name d-none d-md-block">{{ userName }}</span>
+            <v-icon size="14" class="user-pill__chevron">chevron-down</v-icon>
           </button>
         </template>
           <v-card width="280" rounded="lg" elevation="0" class="user-menu-card">
@@ -280,13 +264,14 @@ function openStub(label: string) {
 
 <style scoped lang="scss">
 .mp-appbar {
-  border-bottom: 1px solid var(--mp-border-subtle);
-  background: rgb(var(--v-theme-surface));
+  border-bottom: 1px solid var(--hairline);
+  background: var(--surface-1) !important;
 }
 
 .mp-appbar-shell {
   min-width: 0;
-  padding-block: 5px;
+  padding: 0 22px;
+  height: 100%;
 }
 
 .min-width-0 {
@@ -297,54 +282,86 @@ function openStub(label: string) {
   display: flex;
   align-items: center;
   gap: 2px;
-  padding-inline: 4px;
 }
 
 .appbar-utilities :deep(.v-btn) {
-  width: 34px;
-  height: 34px;
-  border-radius: 8px;
-  color: rgba(var(--v-theme-on-surface), 0.72);
-  transition:
-    background-color $mp-transition-fast,
-    color $mp-transition-fast;
+  width: 32px;
+  height: 32px;
+  border-radius: var(--r-pill);
+  color: var(--ink);
+  opacity: 0.72;
+  transition: background 120ms ease, opacity 120ms ease;
 }
 
 .appbar-utilities :deep(.v-btn:hover) {
-  background: rgba(var(--v-theme-on-surface), 0.06);
-  color: rgb(var(--v-theme-on-surface));
+  background: var(--surface-2);
+  opacity: 1;
 }
 
 .appbar-utilities :deep(.v-icon) {
-  font-size: 20px;
+  font-size: 17px;
 }
 
-.user-menu-trigger {
-  transition: background $mp-transition-fast, border-color $mp-transition-fast;
-  appearance: none;
-  border: 1px solid transparent;
+.appbar-divider {
+  display: block;
+  width: 1px;
+  height: 22px;
+  margin-inline: 8px;
+  background: var(--hairline);
+  flex-shrink: 0;
+}
+
+.user-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 4px 8px;
+  border: 1px solid var(--hairline);
+  border-radius: var(--r-pill);
   background: transparent;
+  cursor: pointer;
   font: inherit;
-  text-align: left;
-  min-height: 36px;
+  appearance: none;
+  transition: background 120ms ease, border-color 120ms ease;
 }
-.user-menu-trigger:hover {
-  background: rgba(var(--v-theme-surface-variant), 0.58);
-  border-color: rgba(var(--v-theme-border), 0.92);
+
+.user-pill:hover {
+  background: var(--surface-2);
 }
-.user-avatar-ring {
-  box-shadow: inset 0 0 0 1px rgba(var(--v-theme-secondary), 0.08);
-  transition: box-shadow $mp-transition-fast;
+
+.user-pill:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px color-mix(in oklch, var(--accent) 18%, transparent);
 }
-.user-menu-trigger:hover .user-avatar-ring {
-  box-shadow: inset 0 0 0 1px rgba(var(--v-theme-secondary), 0.12);
+
+.user-pill__avatar {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--accent-fg) !important;
 }
+
+.user-pill__name {
+  max-width: 96px;
+  overflow: hidden;
+  color: var(--ink);
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1.15;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.user-pill__chevron {
+  color: var(--muted);
+}
+
 .user-menu-card {
-  border-color: var(--mp-border-subtle);
+  border-color: var(--hairline);
 }
+
 .user-menu-header {
-  background: rgba(var(--v-theme-surface-variant), 0.66);
-  padding: $mp-space-3 $mp-space-4;
+  background: var(--surface-2);
+  padding: 12px 16px;
 }
 
 .user-menu-card :deep(.v-list-item.menu-item) {
@@ -352,7 +369,7 @@ function openStub(label: string) {
   padding-inline: 10px;
 }
 .user-menu-card :deep(.menu-item .v-list-item-title) {
-  font-size: var(--mp-typography-fontSize-sm);
+  font-size: 12px;
   font-weight: 560;
   line-height: 1.2;
 }
@@ -381,17 +398,16 @@ function openStub(label: string) {
   opacity: 1;
 }
 .theme-switch :deep(.v-selection-control--dirty .v-switch__track) {
-  background: rgb(var(--v-theme-primary));
+  background: var(--accent);
 }
 .theme-switch :deep(.v-switch__thumb) {
-  background: rgb(var(--v-theme-surface));
-  box-shadow: var(--mp-shadow-sm, 0 1px 2px rgba(15, 23, 42, 0.18));
+  background: var(--surface-1);
 }
 .theme-toggle-item :deep(.v-list-item__append) {
   align-self: center;
 }
 .sign-out-item {
-  transition: background $mp-transition-fast;
+  transition: background 120ms ease;
   color: rgb(var(--v-theme-error));
 }
 .sign-out-item:hover {
@@ -401,81 +417,23 @@ function openStub(label: string) {
 .sign-out-item :deep(.v-list-item-title) {
   color: rgb(var(--v-theme-error));
 }
-.sign-out-item :deep(.v-list-item-title) {
-  font-weight: var(--mp-typography-fontWeight-medium);
-}
-.account-switcher-trigger {
-  transition: background $mp-transition-fast, border-color $mp-transition-fast;
-  appearance: none;
-  border: 1px solid transparent;
-  background: transparent;
-  font: inherit;
-  text-align: left;
-}
-.account-switcher-trigger:hover {
-  background: rgba(var(--v-theme-surface-variant), 0.58);
-  border-color: rgba(var(--v-theme-border), 0.92);
-}
 
-.user-menu-trigger:focus-visible,
-.account-switcher-trigger:focus-visible {
-  outline: none;
-  box-shadow: 0 0 0 3px rgba(var(--v-theme-primary), 0.18);
-}
-.account-switcher-card {
-  box-shadow: none;
-  border-color: var(--mp-border-subtle);
-}
-.account-menu-header {
-  padding: $mp-space-6;
-  background: rgba(var(--v-theme-surface-variant), 0.66);
-}
-.copilot-trigger {
-  width: 34px !important;
-  height: 34px !important;
-  border-radius: 8px !important;
-  border: 1px solid rgba(var(--v-theme-primary), 0.16);
-  background: rgba(var(--v-theme-primary), 0.06);
-  color: rgb(var(--v-theme-primary));
-  transition:
-    background-color $mp-transition-fast,
-    color $mp-transition-fast,
-    border-color $mp-transition-fast;
-}
-
-.copilot-trigger:hover {
-  background: rgba(var(--v-theme-primary), 0.10);
-  border-color: rgba(var(--v-theme-primary), 0.30);
-}
-
-.copilot-trigger--active {
-  background: rgb(var(--v-theme-primary));
-  color: rgb(var(--v-theme-on-primary));
-  border-color: transparent;
-}
-
-.copilot-trigger--active:hover {
-  background: rgb(var(--v-theme-primary));
-  filter: brightness(1.04);
-}
-
-:deep(.copilot-trigger .v-btn__overlay) {
-  opacity: 0;
-}
-
-:deep(.copilot-trigger .v-icon) {
-  color: inherit;
+.appbar-subheader {
+  font-size: 11px;
+  letter-spacing: 0.05em;
+  color: var(--muted);
 }
 
 .appbar-search {
   flex: 1 1 460px;
-  max-width: 520px;
+  max-width: 560px;
   min-width: 260px;
 }
 
 :deep(.appbar-search .v-field) {
-  border-radius: 999px;
-  background: rgba(var(--v-theme-on-surface), 0.03);
+  border-radius: var(--r-pill);
+  background: var(--surface-2);
+  border: 1px solid var(--hairline);
 }
 
 :deep(.appbar-search .v-field__outline) {
@@ -483,33 +441,49 @@ function openStub(label: string) {
 }
 
 :deep(.appbar-search .v-field--focused .v-field__outline) {
-  --v-field-border-opacity: 1;
-  color: rgba(var(--v-theme-primary), 0.42);
+  --v-field-border-opacity: 0;
 }
 
 :deep(.appbar-search .v-field--focused) {
-  background: rgb(var(--v-theme-surface));
-  box-shadow: 0 0 0 3px rgba(var(--v-theme-primary), 0.10);
+  background: var(--surface-1);
+  box-shadow: 0 0 0 3px color-mix(in oklch, var(--accent) 12%, transparent);
+  border-color: var(--accent);
 }
 
 :deep(.appbar-search .v-field__input) {
-  font-size: 0.9rem;
+  font-size: 13.5px;
+  font-weight: 500;
   min-height: 36px;
   padding-top: 6px;
   padding-bottom: 6px;
 }
 
 :deep(.appbar-search input::placeholder) {
-  color: rgba(var(--v-theme-on-surface), 0.48);
+  color: var(--muted);
   font-weight: 500;
 }
 
-.account-avatar {
-  color: rgb(var(--v-theme-secondary));
+:deep(.appbar-search .v-field__prepend-inner .v-icon) {
+  color: var(--accent);
+}
+
+.appbar-search-cmd {
+  display: inline-flex;
+  align-items: center;
+  flex-shrink: 0;
+  padding: 1px 6px;
+  border: 1px solid var(--hairline);
+  border-radius: var(--r-pill);
+  background: transparent;
+  color: var(--muted);
+  font-family: ui-monospace, "SF Mono", monospace;
+  font-size: 11px;
+  font-weight: 500;
+  white-space: nowrap;
 }
 
 .appbar-search-menu {
-  border-color: var(--mp-border-subtle);
+  border-color: var(--hairline);
   overflow: hidden;
 }
 
@@ -519,7 +493,7 @@ function openStub(label: string) {
   align-items: center;
   gap: 12px;
   padding: 14px;
-  background: rgba(var(--v-theme-surface-variant), 0.3);
+  background: var(--surface-2);
 }
 
 .appbar-search-menu__results {
@@ -534,9 +508,10 @@ function openStub(label: string) {
 
 .appbar-search-group__label {
   padding: 8px 8px 4px;
-  color: rgba(var(--v-theme-on-surface), 0.55);
-  font-size: var(--mp-typography-fontSize-xs);
-  font-weight: 750;
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 1px;
   text-transform: uppercase;
 }
 
@@ -549,7 +524,7 @@ function openStub(label: string) {
   min-height: 58px;
   padding: 9px 10px;
   border: 0;
-  border-radius: 8px;
+  border-radius: var(--r-chip);
   background: transparent;
   color: inherit;
   cursor: pointer;
@@ -559,12 +534,12 @@ function openStub(label: string) {
 
 .appbar-search-result:hover,
 .appbar-search-result:focus-visible {
-  background: rgba(var(--v-theme-primary), 0.06);
+  background: var(--surface-2);
 }
 
 .appbar-search-result:focus-visible {
   outline: none;
-  box-shadow: 0 0 0 3px rgba(var(--v-theme-primary), 0.18);
+  box-shadow: 0 0 0 3px color-mix(in oklch, var(--accent) 18%, transparent);
 }
 
 .appbar-search-result strong,
@@ -576,100 +551,28 @@ function openStub(label: string) {
 }
 
 .appbar-search-result strong {
-  font-size: var(--mp-typography-fontSize-sm);
+  font-size: 13px;
+  font-weight: 600;
   line-height: 1.3;
 }
 
 .appbar-search-result small {
   margin-top: 2px;
-  color: rgba(var(--v-theme-on-surface), 0.6);
-  font-size: var(--mp-typography-fontSize-xs);
-}
-
-:deep(.account-list-item.v-list-item--active) {
-  background: rgba(var(--v-theme-primary), 0.22);
-  color: rgb(var(--v-theme-secondary));
-}
-
-:deep(.account-list-item.v-list-item--active .v-list-item__overlay) {
-  opacity: 0;
-}
-.appbar-avatar-sm {
-  font-size: var(--mp-typography-fontSize-xs);
-  font-weight: var(--mp-typography-fontWeight-bold);
-  color: rgb(var(--v-theme-on-primary));
-}
-.appbar-avatar-md {
-  font-weight: var(--mp-typography-fontWeight-bold);
-  color: rgb(var(--v-theme-on-primary));
-  flex-shrink: 0;
-}
-.appbar-avatar-lg {
-  font-weight: var(--mp-typography-fontWeight-bold);
-  color: rgb(var(--v-theme-on-primary));
-  flex-shrink: 0;
-}
-.account-summary {
-  line-height: 1.2;
-}
-.account-name {
-  max-width: 160px;
-}
-.account-user {
-  font-size: var(--mp-typography-fontSize-xs);
-}
-.appbar-subheader {
-  font-size: var(--mp-typography-fontSize-xs);
-  letter-spacing: 0.05em;
-  color: rgba(var(--v-theme-on-surface), 0.55);
-}
-.appbar-avatar-initials {
-  font-size: var(--mp-typography-fontSize-xs);
-  font-weight: var(--mp-typography-fontWeight-bold);
-}
-.account-avatar-initial {
-  font-size: 10px;
-  margin-inline-end: 12px;
-}
-.account-item-text {
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  font-size: var(--mp-typography-fontSize-sm);
-  font-weight: 560;
-  line-height: 1.2;
-}
-.account-min-width {
-  min-width: 0;
-}
-.notification-badge {
-  font-size: var(--mp-typography-fontSize-xs);
+  color: var(--muted);
+  font-size: 11px;
 }
 
 .notification-badge :deep(.v-badge__badge) {
-  height: 18px;
-  min-width: 18px;
-  padding-inline: 5px;
-  font-size: 11px;
-  line-height: 18px;
-}
-
-.appbar-user-name {
-  max-width: 96px;
-  overflow: hidden;
-  color: rgba(var(--v-theme-on-surface), 0.86);
-  font-size: var(--mp-typography-fontSize-sm);
-  font-weight: 650;
-  line-height: 1.15;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  height: 16px;
+  min-width: 16px;
+  padding-inline: 4px;
+  font-size: 10px;
+  line-height: 16px;
+  background: var(--neg) !important;
+  box-shadow: 0 0 0 2px var(--surface-1);
 }
 
 @media (max-width: 1180px) {
-  .appbar-utilities :deep(.v-btn) {
-    width: 32px;
-  }
-
   .appbar-search {
     max-width: 420px;
   }
