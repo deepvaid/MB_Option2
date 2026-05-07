@@ -333,14 +333,7 @@ function activeRailSubGroupItems(group: NavGroup) {
           aria-label="Expand sidebar"
           @click.stop="localRail = false"
         >
-          <div class="rail-brand-container">
-            <svg class="sidebar-brand__mark-simple" viewBox="0 0 24 24" fill="currentColor">
-              <path d="M4 20h4.5V4H4v16zm11.5 0H20V4h-4.5v16z"/>
-              <polygon points="4,4 8.5,4 12,12 15.5,4 20,4 12,19"/>
-              <rect x="4" y="11" width="16" height="2.5" />
-            </svg>
-            <v-icon size="18" class="rail-brand-hover-icon">menu</v-icon>
-          </div>
+          <div class="rail-brand-box">M</div>
         </button>
       </template>
     </div>
@@ -726,39 +719,28 @@ function activeRailSubGroupItems(group: NavGroup) {
   transition: opacity 120ms ease;
 }
 
-.rail-brand-container {
-  position: relative;
+.sidebar-brand--rail {
+  width: 100%;
+  justify-content: center;
+}
+
+.rail-brand-box {
   width: 32px;
   height: 32px;
   display: flex;
   align-items: center;
   justify-content: center;
   border-radius: 8px;
-  transition: background 120ms ease;
-}
-
-.sidebar-brand--rail {
-  width: 100%;
-  justify-content: center;
-}
-
-.sidebar-brand--rail:hover .rail-brand-container {
-  background: var(--surface-2);
-}
-
-.rail-brand-hover-icon {
-  position: absolute;
-  opacity: 0;
-  color: var(--ink);
+  background: var(--ink);
+  color: var(--surface-1);
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: -0.5px;
   transition: opacity 120ms ease;
 }
 
-.sidebar-brand--rail:hover .sidebar-brand__mark-simple {
-  opacity: 0;
-}
-
-.sidebar-brand--rail:hover .rail-brand-hover-icon {
-  opacity: 1;
+.sidebar-brand--rail:hover .rail-brand-box {
+  opacity: 0.82;
 }
 
 .sidebar-brand__wordmark {

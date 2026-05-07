@@ -21,12 +21,54 @@ function resolveLucideIcon(name: string): Component | null {
 }
 
 /**
+ * Maps Vuetify's built-in mdi-* alias strings to Lucide kebab-case names.
+ * Vuetify uses these strings for internal UI icons (expand chevrons, checkboxes, etc.)
+ * Routing them through Lucide SVGs avoids the class-doubling bug from the MDI CSS fallback.
+ */
+const MDI_TO_LUCIDE: Record<string, string> = {
+  'mdi-chevron-down': 'chevron-down',
+  'mdi-chevron-up': 'chevron-up',
+  'mdi-chevron-left': 'chevron-left',
+  'mdi-chevron-right': 'chevron-right',
+  'mdi-menu-down': 'chevron-down',
+  'mdi-menu-right': 'chevron-right',
+  'mdi-menu-up': 'chevron-up',
+  'mdi-unfold-more-horizontal': 'chevrons-up-down',
+  'mdi-page-first': 'chevrons-left',
+  'mdi-page-last': 'chevrons-right',
+  'mdi-check': 'check',
+  'mdi-check-circle': 'check-circle',
+  'mdi-close': 'x',
+  'mdi-close-circle': 'x-circle',
+  'mdi-arrow-up': 'arrow-up',
+  'mdi-arrow-down': 'arrow-down',
+  'mdi-checkbox-marked': 'square-check',
+  'mdi-checkbox-blank-outline': 'square',
+  'mdi-minus-box': 'minus-square',
+  'mdi-radiobox-marked': 'circle-dot',
+  'mdi-radiobox-blank': 'circle',
+  'mdi-information': 'info',
+  'mdi-alert-circle-outline': 'alert-triangle',
+  'mdi-menu': 'menu',
+  'mdi-plus': 'plus',
+  'mdi-minus': 'minus',
+  'mdi-calendar': 'calendar',
+  'mdi-paperclip': 'paperclip',
+  'mdi-eyedropper': 'pipette',
+  'mdi-star': 'star',
+  'mdi-star-outline': 'star',
+  'mdi-star-half-full': 'star-half',
+  'mdi-cached': 'loader',
+}
+
+/**
  * Vuetify 3 icon set that renders Lucide SVG icons as the primary source.
  *
- * Fallback behaviour for strings that start with `mdi-`:
- *   Renders an <i> with MDI CSS classes so existing `@mdi/font` glyphs still
- *   show while the migration is in progress. Once all mdi-* strings have been
- *   replaced, the MDI CSS import can be removed.
+ * Resolution order:
+ * 1. Vue component passed directly via aliases
+ * 2. Known mdi-* strings → mapped to Lucide SVG (avoids class-doubling bug)
+ * 3. Kebab-case string → Lucide lookup
+ * 4. Unknown mdi-* strings → MDI CSS font fallback (requires @mdi/font)
  *
  * Usage in templates (after registration as defaultSet):
  *   icon="settings"         → Lucide Settings
@@ -46,12 +88,19 @@ export const lucideIconSet: IconSet = {
     }
 
     if (typeof icon === 'string') {
-      // MDI fallback: still works while @mdi/font CSS is loaded
       if (icon.startsWith('mdi-')) {
-        return h(tag as string, {
-          class: ['mdi', icon, cls],
-          style,
-        })
+        // Route known mdi-* strings to Lucide SVGs (no class doubling)
+        const lucideName = MDI_TO_LUCIDE[icon]
+        if (lucideName) {
+          const lucideIcon = resolveLucideIcon(lucideName)
+          if (lucideIcon) {
+            return h(tag as string, { class: cls, style }, [
+              h(lucideIcon, { size: '0.875em', strokeWidth: 1.75 }),
+            ])
+          }
+        }
+        // True MDI CSS fallback for unmapped icons
+        return h(tag as string, { class: ['mdi', icon], style })
       }
 
       // Lucide lookup by kebab-case name
