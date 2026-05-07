@@ -15,6 +15,7 @@ const userName = ref('Deepak Vaidya')
 const userInitials = ref('DV')
 const userEmail = ref('deepak.v@maropost.com')
 const userRole = ref('Super Admin')
+const userAvatarUrl = ref('https://i.pravatar.cc/128?img=12')
 const searchOpen = ref(false)
 const searchQuery = ref('')
 const appbarNotice = ref('')
@@ -289,7 +290,16 @@ function openStub(label: string) {
             aria-label="Open user menu"
             class="user-pill"
           >
-            <v-avatar color="primary" size="26" class="user-pill__avatar">{{ userInitials }}</v-avatar>
+            <v-avatar size="26" class="user-pill__avatar">
+              <v-img :src="userAvatarUrl" :alt="userName" cover>
+                <template #placeholder>
+                  <div class="user-avatar-fallback user-avatar-fallback--sm">{{ userInitials }}</div>
+                </template>
+                <template #error>
+                  <div class="user-avatar-fallback user-avatar-fallback--sm">{{ userInitials }}</div>
+                </template>
+              </v-img>
+            </v-avatar>
             <span class="user-pill__name d-none d-md-block">{{ userName }}</span>
             <v-icon size="14" class="user-pill__chevron">chevron-down</v-icon>
           </button>
@@ -297,7 +307,16 @@ function openStub(label: string) {
           <div class="user-menu-card">
             <!-- Header block -->
             <div class="um-header">
-              <v-avatar color="primary" size="56" class="flex-shrink-0">{{ userInitials }}</v-avatar>
+              <v-avatar size="56" class="flex-shrink-0">
+                <v-img :src="userAvatarUrl" :alt="userName" cover>
+                  <template #placeholder>
+                    <div class="user-avatar-fallback user-avatar-fallback--lg">{{ userInitials }}</div>
+                  </template>
+                  <template #error>
+                    <div class="user-avatar-fallback user-avatar-fallback--lg">{{ userInitials }}</div>
+                  </template>
+                </v-img>
+              </v-avatar>
               <div class="um-header__info">
                 <div class="um-header__name">{{ userName }}</div>
                 <div class="um-header__email">deepak.v@maropost.com</div>
@@ -484,6 +503,25 @@ function openStub(label: string) {
   font-size: 11px;
   font-weight: 700;
   color: var(--accent-fg) !important;
+}
+
+.user-avatar-fallback {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgb(var(--v-theme-primary));
+  color: rgb(var(--v-theme-on-primary));
+  font-weight: 700;
+}
+
+.user-avatar-fallback--sm {
+  font-size: 11px;
+}
+
+.user-avatar-fallback--lg {
+  font-size: 20px;
 }
 
 .user-pill__name {

@@ -129,7 +129,16 @@ const cartHeaders = [
         <!-- Card 1: Profile -->
         <v-card flat border rounded="xl" class="pa-5">
           <div class="d-flex align-start gap-4">
-            <v-avatar size="64" color="primary" class="text-h5 font-weight-bold">{{ initials }}</v-avatar>
+            <v-avatar size="64">
+              <v-img :src="contact.avatarUrl" :alt="fullName" cover>
+                <template #placeholder>
+                  <div class="avatar-fallback-lg">{{ initials }}</div>
+                </template>
+                <template #error>
+                  <div class="avatar-fallback-lg">{{ initials }}</div>
+                </template>
+              </v-img>
+            </v-avatar>
             <div class="flex-grow-1 pt-1">
               <div class="text-h6 font-weight-bold">{{ fullName }}</div>
               <a :href="`mailto:${contact.email}`" class="text-primary text-body-2 d-block mb-1">{{ contact.email }}</a>
@@ -585,6 +594,18 @@ const cartHeaders = [
   display: flex;
   flex-direction: column;
   gap: 20px;
+}
+
+.avatar-fallback-lg {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgb(var(--v-theme-primary-container));
+  color: rgb(var(--v-theme-on-primary-container));
+  font-weight: 700;
+  font-size: 22px;
 }
 
 .content-area {

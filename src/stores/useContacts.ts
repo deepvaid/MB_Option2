@@ -66,6 +66,7 @@ export const useContactsStore = defineStore('contacts', () => {
       orders: status === 'Subscribed' ? Math.floor(Math.random() * 15) : 0,
       lastActive: new Date(Date.now() - (Math.random() * 7776000000)).toISOString().split('T')[0],
       createdAt: new Date(Date.now() - (Math.random() * 31536000000)).toISOString().split('T')[0],
+      avatarUrl: `https://i.pravatar.cc/96?u=contact-${i + 1}`,
     }
   }))
 

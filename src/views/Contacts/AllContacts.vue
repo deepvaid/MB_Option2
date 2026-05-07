@@ -182,8 +182,15 @@ function selectAll() {
       >
         <template v-slot:item.contact="{ item }">
           <div class="d-flex align-center py-2">
-            <v-avatar color="blue-lighten-5" class="text-primary font-weight-bold mr-3 border" size="36">
-              {{ ((item as any).firstName?.[0] ?? '?') }}
+            <v-avatar size="36" class="mr-3 border">
+              <v-img :src="(item as any).avatarUrl" :alt="`${(item as any).firstName} ${(item as any).lastName}`" cover>
+                <template #placeholder>
+                  <div class="avatar-fallback">{{ (item as any).firstName?.[0] ?? '?' }}</div>
+                </template>
+                <template #error>
+                  <div class="avatar-fallback">{{ (item as any).firstName?.[0] ?? '?' }}</div>
+                </template>
+              </v-img>
             </v-avatar>
             <div>
               <div class="text-body-2 font-weight-medium text-decoration-underline cursor-pointer" @click="router.push(`/contacts/${(item as any).id}`)">
@@ -353,5 +360,17 @@ function selectAll() {
 
 :deep(.v-data-table thead tr) {
   border-bottom: 1px solid rgba(var(--v-border-color), 0.15);
+}
+
+.avatar-fallback {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgb(var(--v-theme-primary-container));
+  color: rgb(var(--v-theme-on-primary-container));
+  font-weight: 700;
+  font-size: 14px;
 }
 </style>
