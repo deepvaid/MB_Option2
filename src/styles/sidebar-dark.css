@@ -20,8 +20,14 @@
 }
 
 /* ─── Brand mark text (stays bright) ─────────────────────────── */
-[data-sidebar="dark"] .mp-sidebar .sidebar-brand__wordmark {
+[data-sidebar="dark"] .mp-sidebar .sidebar-brand__wordmark,
+[data-sidebar="dark"] .mp-sidebar .sidebar-brand__mark-simple,
+[data-sidebar="dark"] .mp-sidebar .rail-brand-hover-icon {
   color: rgba(255, 255, 255, 0.9);
+}
+
+[data-sidebar="dark"] .mp-sidebar .sidebar-brand--rail:hover .rail-brand-container {
+  background: rgba(255, 255, 255, 0.08) !important;
 }
 
 /* ─── Header divider (subtle) ────────────────────────────────── */

@@ -307,24 +307,38 @@ function activeRailSubGroupItems(group: NavGroup) {
   >
     <!-- Brand + collapse toggle -->
     <div class="sidebar-header" :class="{ 'sidebar-header--rail': localRail }">
-      <button
-        type="button"
-        class="sidebar-menu-btn"
-        :aria-label="localRail ? 'Expand sidebar' : 'Collapse sidebar'"
-        @click.stop="localRail = !localRail"
-      >
-        <v-icon size="18">menu</v-icon>
-      </button>
-      <button
-        v-if="!localRail"
-        type="button"
-        class="sidebar-brand"
-        aria-label="Go to dashboard"
-        @click="$router.push(`/accounts/${resolvedAccountId}/dashboard`)"
-      >
-        <span class="sidebar-brand__mark">M</span>
-        <span class="sidebar-brand__wordmark">Maropost</span>
-      </button>
+      <template v-if="!localRail">
+        <button
+          type="button"
+          class="sidebar-menu-btn"
+          aria-label="Collapse sidebar"
+          @click.stop="localRail = true"
+        >
+          <v-icon size="18">menu</v-icon>
+        </button>
+        <button
+          type="button"
+          class="sidebar-brand"
+          aria-label="Go to dashboard"
+          @click="$router.push(`/accounts/${resolvedAccountId}/dashboard`)"
+        >
+          <span class="sidebar-brand__wordmark">Maropost</span>
+        </button>
+      </template>
+
+      <template v-else>
+        <button
+          type="button"
+          class="sidebar-brand sidebar-brand--rail"
+          aria-label="Expand sidebar"
+          @click.stop="localRail = false"
+        >
+          <div class="rail-brand-container">
+            <span class="sidebar-brand__mark-simple">M</span>
+            <v-icon size="18" class="rail-brand-hover-icon">menu</v-icon>
+          </div>
+        </button>
+      </template>
     </div>
 
     <!-- Navigation List -->
@@ -696,18 +710,51 @@ function activeRailSubGroupItems(group: NavGroup) {
   box-shadow: 0 0 0 3px color-mix(in oklch, var(--accent) 18%, transparent);
 }
 
-.sidebar-brand__mark {
+.sidebar-brand__mark-simple {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   width: 22px;
   height: 22px;
-  border-radius: 6px;
-  background: var(--accent);
-  color: var(--accent-fg);
-  font-size: 11px;
-  font-weight: 700;
-  flex-shrink: 0;
+  color: var(--ink);
+  font-size: 18px;
+  font-weight: 800;
+  transition: opacity 120ms ease;
+}
+
+.rail-brand-container {
+  position: relative;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  transition: background 120ms ease;
+}
+
+.sidebar-brand--rail {
+  width: 100%;
+  justify-content: center;
+}
+
+.sidebar-brand--rail:hover .rail-brand-container {
+  background: var(--surface-2);
+}
+
+.rail-brand-hover-icon {
+  position: absolute;
+  opacity: 0;
+  color: var(--ink);
+  transition: opacity 120ms ease;
+}
+
+.sidebar-brand--rail:hover .sidebar-brand__mark-simple {
+  opacity: 0;
+}
+
+.sidebar-brand--rail:hover .rail-brand-hover-icon {
+  opacity: 1;
 }
 
 .sidebar-brand__wordmark {
