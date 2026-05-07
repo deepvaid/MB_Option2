@@ -243,6 +243,40 @@ function openStub(label: string) {
             </v-btn>
           </template>
         </v-tooltip>
+
+        <v-tooltip text="LINE" location="bottom">
+          <template #activator="{ props }">
+            <v-btn
+              v-bind="props"
+              icon
+              variant="text"
+              class="appbar-action-btn appbar-action-btn--brand"
+              aria-label="Open LINE in a new tab"
+              href="https://line.me"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <svg class="line-brand-icon" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                <rect width="100" height="100" rx="22" fill="#06C755"/>
+                <!-- speech bubble -->
+                <path fill="#fff" d="M84 45.4c0-15.2-15.2-27.6-34-27.6S16 30.2 16 45.4c0 13.6 12.1 25 28.4 27.2.6.1 1.4.2 2 .3 1.1.1 2.2.3 3.3.3v3.6c0 1.5 0 4 1.4 4.3 1.5.4 3-1 4.4-2 1.6-1.2 11.7-7.7 16.6-13.2 4.5-5.1 8.5-10.6 11-16.4 1.3-3.1 1.9-6.4 1.9-9.8z"/>
+                <!-- L -->
+                <rect fill="#06C755" x="22" y="38" width="4.5" height="18"/>
+                <rect fill="#06C755" x="22" y="52" width="11" height="4.5"/>
+                <!-- I -->
+                <rect fill="#06C755" x="37" y="38" width="4.5" height="22.5"/>
+                <!-- N -->
+                <rect fill="#06C755" x="46" y="38" width="4.5" height="22.5"/>
+                <polygon fill="#06C755" points="46,38 50.5,38 60.5,52 60.5,38 65,38 65,60.5 60.5,60.5 50.5,46.5 50.5,60.5 46,60.5"/>
+                <!-- E -->
+                <rect fill="#06C755" x="69" y="38" width="4.5" height="22.5"/>
+                <rect fill="#06C755" x="69" y="38" width="12" height="4.5"/>
+                <rect fill="#06C755" x="69" y="47.3" width="10" height="4"/>
+                <rect fill="#06C755" x="69" y="56" width="12" height="4.5"/>
+              </svg>
+            </v-btn>
+          </template>
+        </v-tooltip>
       </div>
 
       <span class="appbar-divider" aria-hidden="true"></span>
@@ -401,6 +435,17 @@ function openStub(label: string) {
 
 .appbar-utilities :deep(.appbar-action-btn .v-icon) {
   font-size: 20px;
+}
+
+.appbar-utilities :deep(.appbar-action-btn--brand) {
+  opacity: 1;
+}
+
+.line-brand-icon {
+  width: 22px;
+  height: 22px;
+  display: block;
+  border-radius: 5px;
 }
 
 .appbar-divider {
