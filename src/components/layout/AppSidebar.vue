@@ -334,7 +334,11 @@ function activeRailSubGroupItems(group: NavGroup) {
           @click.stop="localRail = false"
         >
           <div class="rail-brand-container">
-            <span class="sidebar-brand__mark-simple">M</span>
+            <svg class="sidebar-brand__mark-simple" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M4 20h4.5V4H4v16zm11.5 0H20V4h-4.5v16z"/>
+              <polygon points="4,4 8.5,4 12,12 15.5,4 20,4 12,19"/>
+              <rect x="4" y="11" width="16" height="2.5" />
+            </svg>
             <v-icon size="18" class="rail-brand-hover-icon">menu</v-icon>
           </div>
         </button>
