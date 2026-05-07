@@ -1151,16 +1151,7 @@ function performConfirm() {
   }
 
   .setup-strip {
-    flex-direction: column;
-    align-items: stretch;
-  }
-
-  .setup-strip__left {
-    width: auto;
-    padding-right: 0;
-    padding-bottom: 10px;
-    border-right: 0;
-    border-bottom: 1px solid var(--hairline);
+    gap: 12px;
   }
 
   .setup-strip__tasks {
@@ -1169,10 +1160,72 @@ function performConfirm() {
 
   .setup-task {
     flex: 1 1 calc(50% - 3px);
+    min-width: 0;
+  }
+}
+
+@media (max-width: 900px) {
+  .setup-strip {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .setup-strip__left {
+    width: auto;
+    padding-right: 0;
+    padding-bottom: 0;
+    border-right: 0;
+    border-bottom: none;
+  }
+
+  .setup-strip__tasks {
+    gap: 4px;
+  }
+
+  .setup-task {
+    flex: 1 1 calc(50% - 2px);
   }
 }
 
 @media (max-width: 640px) {
+  .setup-strip {
+    padding: 8px 10px;
+    gap: 8px;
+  }
+
+  .setup-strip__left {
+    padding-bottom: 8px;
+  }
+
+  .setup-strip__heading {
+    gap: 4px;
+  }
+
+  .setup-strip__title {
+    font-size: 11px;
+  }
+
+  .setup-strip__fraction {
+    font-size: 10px;
+  }
+
+  .setup-task {
+    flex: 1 1 calc(50% - 2px);
+    padding: 4px 7px;
+    font-size: 11px;
+  }
+
+  .setup-task__label {
+    font-size: 11px;
+  }
+
+  .setup-task__badge {
+    font-size: 9px;
+    padding: 1px 5px;
+  }
+}
+
+@media (max-width: 480px) {
   .setup-task {
     flex: 1 1 100%;
   }
