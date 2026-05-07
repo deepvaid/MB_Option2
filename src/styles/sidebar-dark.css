@@ -1,0 +1,138 @@
+/**
+ * Dark Sidebar — applied when [data-sidebar="dark"] is on <html>.
+ * Provides a soft, calm dark sidebar while the rest of the app stays in light mode.
+ * All overrides are scoped to .mp-sidebar so they don't leak.
+ */
+
+/* ─── Transition for smooth toggle ───────────────────────────── */
+[data-sidebar="dark"] .mp-sidebar,
+[data-sidebar="dark"] .mp-sidebar * {
+  transition:
+    background-color 0.28s cubic-bezier(0.4, 0, 0.2, 1),
+    color 0.22s cubic-bezier(0.4, 0, 0.2, 1),
+    border-color 0.22s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* ─── Dark sidebar surface ───────────────────────────────────── */
+[data-sidebar="dark"] .mp-sidebar {
+  background: #1B1F2B !important;
+  border-right-color: rgba(255, 255, 255, 0.06) !important;
+}
+
+/* ─── Brand mark text (stays bright) ─────────────────────────── */
+[data-sidebar="dark"] .mp-sidebar .sidebar-brand__wordmark {
+  color: rgba(255, 255, 255, 0.9);
+}
+
+/* ─── Header divider (subtle) ────────────────────────────────── */
+[data-sidebar="dark"] .mp-sidebar .sidebar-header {
+  border-bottom-color: rgba(255, 255, 255, 0.1) !important;
+}
+
+/* ─── Navigation text + icons ────────────────────────────────── */
+[data-sidebar="dark"] .mp-sidebar .v-list-item-title {
+  color: rgba(255, 255, 255, 0.82) !important;
+}
+
+[data-sidebar="dark"] .mp-sidebar .v-icon {
+  color: rgba(255, 255, 255, 0.7) !important;
+}
+
+/* ─── Muted / secondary text ─────────────────────────────────── */
+[data-sidebar="dark"] .mp-sidebar .sidebar-subheader,
+[data-sidebar="dark"] .mp-sidebar .sidebar-subgroup-item,
+[data-sidebar="dark"] .mp-sidebar .sidebar-muted {
+  color: rgba(255, 255, 255, 0.42) !important;
+}
+
+/* ─── Lock icon ──────────────────────────────────────────────── */
+[data-sidebar="dark"] .mp-sidebar .sidebar-lock {
+  color: rgba(255, 255, 255, 0.32) !important;
+}
+
+/* ─── Dividers ───────────────────────────────────────────────── */
+[data-sidebar="dark"] .mp-sidebar .sidebar-divider {
+  border-color: rgba(255, 255, 255, 0.08) !important;
+}
+
+/* ─── Hairline on child items ────────────────────────────────── */
+[data-sidebar="dark"] .mp-sidebar .sidebar-child-item::before {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+[data-sidebar="dark"] .mp-sidebar .sidebar-expanded-group .v-list-group__items::before {
+  background: rgba(255, 255, 255, 0.08) !important;
+}
+
+/* ─── Hover state ────────────────────────────────────────────── */
+[data-sidebar="dark"] .mp-sidebar .v-list-item:hover > .v-list-item__overlay {
+  opacity: 0.06 !important;
+  background: #ffffff;
+}
+
+/* ─── Active nav item ────────────────────────────────────────── */
+[data-sidebar="dark"] .mp-sidebar .v-list-item--active {
+  background: rgba(255, 255, 255, 0.08) !important;
+}
+
+[data-sidebar="dark"] .mp-sidebar .active-nav-item {
+  background: color-mix(in oklch, var(--accent) 22%, transparent) !important;
+}
+
+[data-sidebar="dark"] .mp-sidebar .active-nav-item .v-list-item-title,
+[data-sidebar="dark"] .mp-sidebar .active-nav-item .v-icon {
+  color: var(--accent) !important;
+}
+
+/* ─── Active child in expanded groups ────────────────────────── */
+[data-sidebar="dark"] .mp-sidebar .v-list-group__items .v-list-item--active {
+  background: rgba(255, 255, 255, 0.06) !important;
+}
+
+[data-sidebar="dark"] .mp-sidebar .v-list-group__items .v-list-item--active .v-list-item-title {
+  color: var(--accent) !important;
+}
+
+/* ─── Collapse button ────────────────────────────────────────── */
+[data-sidebar="dark"] .mp-sidebar .sidebar-collapse-btn {
+  color: rgba(255, 255, 255, 0.5) !important;
+}
+
+/* ─── Badge (NEW) ────────────────────────────────────────────── */
+[data-sidebar="dark"] .mp-sidebar .sidebar-badge {
+  background: rgba(255, 255, 255, 0.1) !important;
+  color: rgba(255, 255, 255, 0.8) !important;
+}
+
+/* ─── Bottom controls (toggle + accent picker) ───────────────── */
+[data-sidebar="dark"] .mp-sidebar .sidebar-controls {
+  border-top-color: rgba(255, 255, 255, 0.08) !important;
+}
+
+[data-sidebar="dark"] .mp-sidebar .sidebar-controls__label {
+  color: rgba(255, 255, 255, 0.6) !important;
+}
+
+/* ─── V-Switch in dark sidebar ───────────────────────────────── */
+[data-sidebar="dark"] .mp-sidebar .v-switch .v-switch__track {
+  background: rgba(255, 255, 255, 0.18) !important;
+}
+
+/* ─── Scrollbar for dark sidebar ─────────────────────────────── */
+[data-sidebar="dark"] .mp-sidebar ::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.12);
+}
+
+[data-sidebar="dark"] .mp-sidebar ::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.22);
+}
+
+/* ─── Accent swatch ring in dark sidebar ─────────────────────── */
+[data-sidebar="dark"] .mp-sidebar .accent-swatch--active {
+  box-shadow: 0 0 0 2px #1B1F2B, 0 0 0 3.5px currentColor !important;
+}
+
+/* ─── V-List background reset ────────────────────────────────── */
+[data-sidebar="dark"] .mp-sidebar .v-list {
+  background: transparent !important;
+}

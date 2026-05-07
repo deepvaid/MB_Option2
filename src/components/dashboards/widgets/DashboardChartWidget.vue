@@ -3,6 +3,7 @@ import { computed, defineAsyncComponent, onBeforeUnmount, onMounted, ref } from 
 import type { ApexOptions } from 'apexcharts'
 import type { DashboardSeriesData, DashboardWidgetType } from '@/stores/dashboards/types'
 import { applyChartTheme, chartPalette } from '@/plugins/chartPalette'
+import { useAppTheme } from '@/composables/useAppTheme'
 
 const props = withDefaults(defineProps<{
   data: DashboardSeriesData
@@ -64,6 +65,7 @@ const chartHeight = computed(() => {
   return Math.max(120, props.height - 4)
 })
 
+const { accentHex } = useAppTheme()
 const base = applyChartTheme()
 
 // For single-series bar charts, distribute palette colors across categories.
@@ -97,8 +99,8 @@ const chartOptions = computed<ApexOptions>(() => {
   return {
     ...base,
     colors: isPrev
-      ? [chartPalette[0]!, 'rgba(160,160,180,0.55)']
-      : chartPalette,
+      ? [accentHex.value, 'rgba(160,160,180,0.55)']
+      : [accentHex.value, ...chartPalette.slice(1)],
     chart: {
       ...base.chart,
       sparkline: { enabled: false },
@@ -144,7 +146,7 @@ const chartOptions = computed<ApexOptions>(() => {
               {
                 seriesIndex: 0,
                 dataPointIndex: lastDataPointIndex.value,
-                fillColor: chartPalette[0]!,
+                fillColor: accentHex.value,
                 strokeColor: '#ffffff',
                 size: 5,
               },

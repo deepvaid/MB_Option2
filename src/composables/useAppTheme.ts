@@ -1,14 +1,67 @@
 import { ref, watch } from 'vue'
 import { useTheme } from 'vuetify'
 
-export type AccentKey = 'cyan' | 'blue' | 'teal' | 'amber' | 'violet' | 'black'
+export type AccentKey = 'cyan' | 'blue' | 'amber' | 'gray' | 'purple'
 export type ThemeMode = 'light' | 'dark' | 'auto'
 
 const LS_ACCENT = 'app-accent'
 const LS_MODE = 'app-theme-mode'
+const LS_DARK_SIDEBAR = 'app-dark-sidebar'
 
+// ─── Accent color definitions ─────────────────────────────────────────────────
+interface AccentDef {
+  hex: string
+  rgb: string          // "r, g, b" for Vuetify --v-theme-primary
+  onPrimary: string
+  container: string
+  onContainer: string
+}
+
+const ACCENT_DEFS: Record<AccentKey, AccentDef> = {
+  cyan: {
+    hex: '#1ab7ea',
+    rgb: '26, 183, 234',
+    onPrimary: '255, 255, 255',
+    container: '214, 238, 251',   // #d6eefb
+    onContainer: '10, 79, 108',   // #0a4f6c
+  },
+  blue: {
+    hex: '#2D63E8',
+    rgb: '45, 99, 232',
+    onPrimary: '255, 255, 255',
+    container: '235, 240, 255',
+    onContainer: '30, 68, 155',
+  },
+  amber: {
+    hex: '#B45309',
+    rgb: '180, 83, 9',
+    onPrimary: '255, 255, 255',
+    container: '254, 243, 199',
+    onContainer: '120, 53, 5',
+  },
+  gray: {
+    hex: '#4B5563',
+    rgb: '75, 85, 99',
+    onPrimary: '255, 255, 255',
+    container: '229, 231, 235',
+    onContainer: '31, 41, 55',
+  },
+  purple: {
+    hex: '#8B5CF6',
+    rgb: '139, 92, 246',
+    onPrimary: '255, 255, 255',
+    container: '237, 233, 254',
+    onContainer: '76, 29, 149',
+  },
+}
+
+// ─── Reactive state ───────────────────────────────────────────────────────────
 const accent = ref<AccentKey>((localStorage.getItem(LS_ACCENT) as AccentKey) || 'cyan')
 const mode = ref<ThemeMode>((localStorage.getItem(LS_MODE) as ThemeMode) || 'light')
+const darkSidebar = ref<boolean>(localStorage.getItem(LS_DARK_SIDEBAR) === 'true')
+
+/** Current accent hex color — reactive, for use in charts and dynamic JS. */
+const accentHex = ref<string>(ACCENT_DEFS[accent.value].hex)
 
 function applyAccent(key: AccentKey) {
   if (key === 'cyan') {
@@ -16,6 +69,7 @@ function applyAccent(key: AccentKey) {
   } else {
     document.documentElement.dataset.accent = key
   }
+  accentHex.value = ACCENT_DEFS[key].hex
   localStorage.setItem(LS_ACCENT, key)
 }
 
@@ -27,12 +81,32 @@ function applyMode(m: ThemeMode) {
   localStorage.setItem(LS_MODE, m)
 }
 
+function applyDarkSidebar(val: boolean) {
+  if (val) {
+    document.documentElement.dataset.sidebar = 'dark'
+  } else {
+    delete document.documentElement.dataset.sidebar
+  }
+  localStorage.setItem(LS_DARK_SIDEBAR, String(val))
+}
+
 export function useAppTheme() {
   const vuetifyTheme = useTheme()
 
   function setAccent(key: AccentKey) {
     accent.value = key
     applyAccent(key)
+
+    // Programmatically update Vuetify theme colors so every component reacts
+    const def = ACCENT_DEFS[key]
+    const currentThemeName = vuetifyTheme.global.name.value
+    const theme = vuetifyTheme.global.current.value
+    if (theme && theme.colors) {
+      vuetifyTheme.themes.value[currentThemeName].colors.primary = def.hex
+      vuetifyTheme.themes.value[currentThemeName].colors.info = def.hex
+      vuetifyTheme.themes.value[currentThemeName].colors['primary-container'] = `rgb(${def.container})`
+      vuetifyTheme.themes.value[currentThemeName].colors['on-primary-container'] = `rgb(${def.onContainer})`
+    }
   }
 
   function setMode(m: ThemeMode) {
@@ -41,9 +115,20 @@ export function useAppTheme() {
     vuetifyTheme.global.name.value = m === 'dark' || (m === 'auto' && window.matchMedia('(prefers-color-scheme: dark)').matches)
       ? 'maropostDark'
       : 'maropostLight'
+
+    // Re-apply accent to the new theme
+    const def = ACCENT_DEFS[accent.value]
+    const currentThemeName = vuetifyTheme.global.name.value
+    vuetifyTheme.themes.value[currentThemeName].colors.primary = def.hex
+    vuetifyTheme.themes.value[currentThemeName].colors.info = def.hex
   }
 
-  return { accent, mode, setAccent, setMode }
+  function setDarkSidebar(val: boolean) {
+    darkSidebar.value = val
+    applyDarkSidebar(val)
+  }
+
+  return { accent, accentHex, mode, darkSidebar, setAccent, setMode, setDarkSidebar, ACCENT_DEFS }
 }
 
 /**
@@ -53,6 +138,8 @@ export function useAppTheme() {
 export function initAppTheme() {
   const storedAccent = (localStorage.getItem(LS_ACCENT) as AccentKey) || 'cyan'
   const storedMode = (localStorage.getItem(LS_MODE) as ThemeMode) || 'light'
+  const storedDarkSidebar = localStorage.getItem(LS_DARK_SIDEBAR) === 'true'
   applyAccent(storedAccent)
   applyMode(storedMode)
+  applyDarkSidebar(storedDarkSidebar)
 }

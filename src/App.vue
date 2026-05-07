@@ -5,6 +5,11 @@ import { useDisplay } from 'vuetify'
 import AppSidebar from '@/components/layout/AppSidebar.vue'
 import AppBar from '@/components/layout/AppBar.vue'
 import MpDaVinciBot from '@/components/MpDaVinciBot.vue'
+import { useAppTheme } from '@/composables/useAppTheme'
+
+// Apply stored accent to Vuetify theme on initial mount
+const { accent, setAccent } = useAppTheme()
+setAccent(accent.value)
 
 const route = useRoute()
 const drawer = ref(true)

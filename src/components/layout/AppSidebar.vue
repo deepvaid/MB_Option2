@@ -2,6 +2,7 @@
 import { computed, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useAccountsStore, type SubscriptionKey } from '@/stores/useAccounts'
+import { useAppTheme, type AccentKey } from '@/composables/useAppTheme'
 
 const props = defineProps<{
   modelValue: boolean
@@ -14,6 +15,24 @@ const emit = defineEmits<{
 }>()
 
 const accountsStore = useAccountsStore()
+const { accent, darkSidebar, setAccent, setDarkSidebar } = useAppTheme()
+
+// ─── Accent Swatches ─────────────────────────────────────────
+interface AccentSwatch {
+  key: AccentKey
+  label: string
+  color: string
+}
+
+const accentSwatches: AccentSwatch[] = [
+  { key: 'cyan',   label: 'Cyan',   color: '#0EA5E9' },
+  { key: 'blue',   label: 'Blue',   color: '#2D63E8' },
+  { key: 'amber',  label: 'Amber',  color: '#B45309' },
+  { key: 'gray',   label: 'Gray',   color: '#4B5563' },
+  { key: 'purple', label: 'Purple', color: '#8B5CF6' },
+]
+
+const showAccentPicker = ref(false)
 
 // ─── Navigation Structure ────────────────────────────────────
 interface NavItem { title: string; route: string; }
@@ -465,17 +484,87 @@ function activeRailSubGroupItems(group: NavGroup) {
       </template>
     </v-list>
 
-    <!-- Bottom: User block -->
+    <!-- Bottom: Controls -->
     <template v-slot:append>
-      <div class="sidebar-user-block" v-if="!localRail">
-        <v-avatar color="primary" size="32" class="sidebar-user-block__avatar">DV</v-avatar>
-        <div class="sidebar-user-block__info">
-          <div class="sidebar-user-block__name">Deepak Vaidya</div>
-          <div class="sidebar-user-block__tenant">Acme Studios</div>
+      <!-- Expanded mode -->
+      <div v-if="!localRail" class="sidebar-controls">
+        <!-- Dark sidebar toggle -->
+        <div class="sidebar-controls__row">
+          <v-icon size="16" class="sidebar-controls__icon">moon</v-icon>
+          <span class="sidebar-controls__label">Dark sidebar</span>
+          <v-switch
+            :model-value="darkSidebar"
+            @update:model-value="setDarkSidebar($event as boolean)"
+            density="compact"
+            hide-details
+            color="primary"
+            class="sidebar-controls__switch"
+          />
+        </div>
+
+        <!-- Accent picker -->
+        <div class="sidebar-controls__row sidebar-controls__accents">
+          <v-icon size="16" class="sidebar-controls__icon">palette</v-icon>
+          <div class="accent-picker">
+            <button
+              v-for="swatch in accentSwatches"
+              :key="swatch.key"
+              type="button"
+              class="accent-swatch"
+              :class="{ 'accent-swatch--active': accent === swatch.key }"
+              :style="{ '--swatch-color': swatch.color, background: swatch.color, color: swatch.color }"
+              :aria-label="`Set accent to ${swatch.label}`"
+              :title="swatch.label"
+              @click="setAccent(swatch.key)"
+            />
+          </div>
         </div>
       </div>
-      <div class="d-flex justify-center pa-2" v-else>
-        <v-avatar color="primary" size="28" class="sidebar-user-block__avatar">DV</v-avatar>
+
+      <!-- Rail mode -->
+      <div v-else class="sidebar-controls sidebar-controls--rail">
+        <v-tooltip location="end" :text="darkSidebar ? 'Light sidebar' : 'Dark sidebar'">
+          <template #activator="{ props: tipProps }">
+            <button
+              v-bind="tipProps"
+              type="button"
+              class="sidebar-rail-btn"
+              @click="setDarkSidebar(!darkSidebar)"
+            >
+              <v-icon size="18">{{ darkSidebar ? 'sun' : 'moon' }}</v-icon>
+            </button>
+          </template>
+        </v-tooltip>
+
+        <v-menu location="end" offset="8" v-model="showAccentPicker">
+          <template #activator="{ props: menuProps }">
+            <button
+              v-bind="menuProps"
+              type="button"
+              class="sidebar-rail-btn"
+            >
+              <v-icon size="18">palette</v-icon>
+            </button>
+          </template>
+          <v-card flat rounded="lg" class="sidebar-surface rail-popover accent-popover">
+            <div class="accent-popover__inner">
+              <div class="accent-popover__title">Accent Color</div>
+              <div class="accent-picker">
+                <button
+                  v-for="swatch in accentSwatches"
+                  :key="swatch.key"
+                  type="button"
+                  class="accent-swatch accent-swatch--lg"
+                  :class="{ 'accent-swatch--active': accent === swatch.key }"
+                  :style="{ '--swatch-color': swatch.color, background: swatch.color, color: swatch.color }"
+                  :aria-label="`Set accent to ${swatch.label}`"
+                  :title="swatch.label"
+                  @click="setAccent(swatch.key); showAccentPicker = false"
+                />
+              </div>
+            </div>
+          </v-card>
+        </v-menu>
       </div>
     </template>
   </v-navigation-drawer>
@@ -570,41 +659,128 @@ function activeRailSubGroupItems(group: NavGroup) {
   padding: 4px 14px 12px;
 }
 
-.sidebar-user-block {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 14px;
+.sidebar-controls {
+  padding: 10px 14px;
   border-top: 1px solid var(--hairline);
 }
 
-.sidebar-user-block__avatar {
-  font-size: 12px;
-  font-weight: 700;
-  color: var(--accent-fg) !important;
+.sidebar-controls--rail {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 8px 0 10px;
+}
+
+.sidebar-controls__row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 32px;
+}
+
+.sidebar-controls__icon {
   flex-shrink: 0;
 }
 
-.sidebar-user-block__info {
-  min-width: 0;
-}
-
-.sidebar-user-block__name {
-  font-size: 13px;
-  font-weight: 600;
-  color: var(--ink);
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.sidebar-user-block__tenant {
-  font-size: 11.5px;
+.sidebar-controls__label {
+  font-size: 12.5px;
+  font-weight: 500;
   color: var(--muted);
-  overflow: hidden;
-  text-overflow: ellipsis;
+  flex: 1;
   white-space: nowrap;
 }
+
+.sidebar-controls__switch {
+  flex: none;
+}
+
+:deep(.sidebar-controls__switch .v-switch__track) {
+  height: 16px;
+  min-width: 28px;
+  width: 28px;
+}
+
+:deep(.sidebar-controls__switch .v-switch__thumb) {
+  width: 12px;
+  height: 12px;
+}
+
+:deep(.sidebar-controls__switch .v-selection-control) {
+  min-height: 24px;
+}
+
+.sidebar-controls__accents {
+  margin-top: 2px;
+}
+
+.accent-picker {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+
+.accent-swatch {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  appearance: none;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+  position: relative;
+}
+
+.accent-swatch:hover {
+  transform: scale(1.18);
+}
+
+.accent-swatch--active {
+  box-shadow: 0 0 0 2px var(--surface-1), 0 0 0 3.5px currentColor;
+}
+
+.accent-swatch--lg {
+  width: 22px;
+  height: 22px;
+}
+
+.sidebar-rail-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 10px;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  appearance: none;
+  padding: 0;
+  transition: background-color 0.15s ease;
+}
+
+.sidebar-rail-btn:hover {
+  background: color-mix(in oklch, var(--ink) 8%, transparent);
+}
+
+.accent-popover {
+  padding: 0 !important;
+}
+
+.accent-popover__inner {
+  padding: 12px 16px;
+}
+
+.accent-popover__title {
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--muted);
+  margin-bottom: 10px;
+}
+
 
 .sidebar-divider {
   border-color: var(--hairline) !important;
