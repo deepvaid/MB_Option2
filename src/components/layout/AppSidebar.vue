@@ -59,6 +59,7 @@ function buildNavGroups(accountId: string): NavGroup[] {
     {
       title: 'Dashboards',
       icon: 'layout-dashboard',
+      singleRoute: `/accounts/${accountId}/dashboard`,
       items: [
         { title: 'Home', route: `/accounts/${accountId}/dashboard` },
         { title: 'Manage', route: `/accounts/${accountId}/dashboards` },
@@ -68,6 +69,7 @@ function buildNavGroups(accountId: string): NavGroup[] {
     {
       title: 'CDP',
       icon: 'users',
+      singleRoute: `/accounts/${accountId}/contacts`,
       items: [
         { title: 'All Contacts', route: `/accounts/${accountId}/contacts` },
         { title: 'Contact Lists', route: `/accounts/${accountId}/lists` },
@@ -84,6 +86,7 @@ function buildNavGroups(accountId: string): NavGroup[] {
       title: 'Analytics',
       icon: 'line-chart',
       dividerAfter: true,
+      singleRoute: `/accounts/${accountId}/analytics/monthly_totals`,
       items: [
         { title: 'Monthly Totals', route: `/accounts/${accountId}/analytics/monthly_totals` },
         { title: 'Sales by Order', route: `/accounts/${accountId}/analytics/orders` },
@@ -105,6 +108,7 @@ function buildNavGroups(accountId: string): NavGroup[] {
       title: 'Products',
       icon: 'package',
       requires: 'commerce',
+      singleRoute: `/commerce/${accountId}/products`,
       items: [
         { title: 'Product Recommendations', route: `/commerce/${accountId}/product_recommendations` },
         { title: 'Products', route: `/commerce/${accountId}/products` },
@@ -117,6 +121,7 @@ function buildNavGroups(accountId: string): NavGroup[] {
     {
       title: 'Marketing',
       icon: 'megaphone',
+      singleRoute: `/accounts/${accountId}/marketing`,
       items: [
         {
           title: 'Campaigns',
@@ -166,6 +171,7 @@ function buildNavGroups(accountId: string): NavGroup[] {
       title: 'Commerce',
       icon: 'shopping-cart',
       requires: 'commerce',
+      singleRoute: `/commerce/${accountId}/orders`,
       items: [
         {
           title: 'Orders',
@@ -199,6 +205,7 @@ function buildNavGroups(accountId: string): NavGroup[] {
       icon: 'headset',
       dividerAfter: true,
       requires: 'service',
+      singleRoute: `/accounts/${accountId}/service`,
       items: [
         { title: 'Tickets', route: `/accounts/${accountId}/service` },
       ],
@@ -332,6 +339,56 @@ function activeRailSubGroupItems(group: NavGroup) {
 function isAppsGroup(group: NavGroup) {
   return group.title === 'Apps'
 }
+
+// ─── Module-active prefix matching ─────────────────────────
+function collectGroupRoutes(group: NavGroup): string[] {
+  const routes: string[] = []
+  if (group.singleRoute) routes.push(group.singleRoute)
+  for (const item of group.items) {
+    if ('isSubGroup' in item && item.isSubGroup) {
+      for (const sub of item.items) routes.push(sub.route)
+    } else if ('route' in item) {
+      routes.push(item.route)
+    }
+  }
+  return routes
+}
+
+function isModuleActive(group: NavGroup): boolean {
+  const path = route.path
+  return collectGroupRoutes(group).some((r) => path === r || path.startsWith(r + '/'))
+}
+
+// ─── Manual expand/collapse tracking (split label/chevron) ──
+const expandedKeys = ref<Set<string>>(new Set())
+
+function isExpanded(group: NavGroup) {
+  return expandedKeys.value.has(group.title)
+}
+
+function toggleExpanded(group: NavGroup) {
+  const next = new Set(expandedKeys.value)
+  if (next.has(group.title)) next.delete(group.title)
+  else next.add(group.title)
+  expandedKeys.value = next
+}
+
+// Auto-expand the group whose route is currently active
+watch(
+  () => route.path,
+  () => {
+    for (const g of navGroups.value) {
+      if (g.items.length && isModuleActive(g)) {
+        if (!expandedKeys.value.has(g.title)) {
+          const next = new Set(expandedKeys.value)
+          next.add(g.title)
+          expandedKeys.value = next
+        }
+      }
+    }
+  },
+  { immediate: true },
+)
 </script>
 
 <template>
@@ -457,22 +514,22 @@ function isAppsGroup(group: NavGroup) {
           </template>
         </v-list-item>
 
-        <v-list-group
+        <div
           v-else-if="!localRail"
-          :value="group.title"
-          class="sidebar-expanded-group"
+          class="sidebar-parent"
+          :class="{ 'sidebar-parent--active': isModuleActive(group) }"
         >
-          <template #activator="{ props: groupProps }">
+          <div class="sidebar-parent-row">
             <v-list-item
-              v-bind="groupProps"
+              :to="group.singleRoute"
               :prepend-icon="group.icon"
               :title="group.title"
               rounded="lg"
-              class="sidebar-text mb-1"
+              class="sidebar-text sidebar-parent-row__label"
               :class="{ 'expanded-icon-hovered': expandedHoveredGroup === group.title }"
             >
-              <template #append v-if="isLocked(group)">
-                <v-tooltip location="end" text="Upgrade to unlock">
+              <template #append>
+                <v-tooltip v-if="isLocked(group)" location="end" text="Upgrade to unlock">
                   <template #activator="{ props: tipProps }">
                     <v-icon v-bind="tipProps" size="14" class="ml-2 sidebar-lock">lock</v-icon>
                   </template>
@@ -487,7 +544,7 @@ function isAppsGroup(group: NavGroup) {
                 :close-delay="120"
                 offset="8"
                 :close-on-content-click="false"
-                @update:model-value="(v: boolean) => { 
+                @update:model-value="(v: boolean) => {
                   if (v) expandedHoveredGroup = group.title;
                   else { expandedHoveredGroup = null; railHoveredSubGroup = null; }
                 }"
@@ -506,7 +563,6 @@ function isAppsGroup(group: NavGroup) {
 
                 <!-- Two separate flyout cards (cascade — groups with sub-groups) -->
                 <div v-else class="rail-cascade-wrap">
-                  <!-- Card 1: group children & subgroup headers -->
                   <div class="rail-flyout-card">
                     <div class="rail-flyout-card__header">{{ group.title }}</div>
                     <div
@@ -527,7 +583,6 @@ function isAppsGroup(group: NavGroup) {
                       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m9 6 6 6-6 6"/></svg>
                     </div>
                   </div>
-                  <!-- Card 2: grandchildren of the hovered subgroup -->
                   <div v-if="railHoveredSubGroup && activeRailSubGroupItems(group).length" class="rail-flyout-card">
                     <div class="rail-flyout-card__header">{{ railHoveredSubGroup }}</div>
                     <div
@@ -541,46 +596,62 @@ function isAppsGroup(group: NavGroup) {
                 </div>
               </v-menu>
             </v-list-item>
-          </template>
 
-          <template v-for="item in group.items" :key="item.title">
-            <v-list-group
-              v-if="'isSubGroup' in item && item.isSubGroup"
-              :value="`${group.title}-${item.title}`"
-              class="sidebar-expanded-subgroup"
+            <button
+              type="button"
+              class="sidebar-parent-row__chevron"
+              :aria-expanded="isExpanded(group)"
+              :aria-label="`${isExpanded(group) ? 'Collapse' : 'Expand'} ${group.title}`"
+              @click.stop.prevent="toggleExpanded(group)"
+              @keydown.enter.stop.prevent="toggleExpanded(group)"
+              @keydown.space.stop.prevent="toggleExpanded(group)"
             >
-              <template #activator="{ props: subgroupProps }">
+              <v-icon size="14">{{ isExpanded(group) ? 'chevron-up' : 'chevron-down' }}</v-icon>
+            </button>
+          </div>
+
+          <v-expand-transition>
+            <div v-show="isExpanded(group)" class="sidebar-parent__children">
+              <template v-for="item in group.items" :key="item.title">
+                <v-list-group
+                  v-if="'isSubGroup' in item && item.isSubGroup"
+                  :value="`${group.title}-${item.title}`"
+                  class="sidebar-expanded-subgroup"
+                >
+                  <template #activator="{ props: subgroupProps }">
+                    <v-list-item
+                      v-bind="subgroupProps"
+                      :title="item.title"
+                      class="sidebar-text sidebar-subgroup-item"
+                      rounded="lg"
+                    />
+                  </template>
+
+                  <v-list-item
+                    v-for="subItem in item.items"
+                    :key="subItem.title"
+                    :title="subItem.title"
+                    :to="subItem.route"
+                    @click="goTo(subItem.route)"
+                    class="sidebar-text sidebar-grandchild-item"
+                    rounded="lg"
+                    exact
+                  />
+                </v-list-group>
+
                 <v-list-item
-                  v-bind="subgroupProps"
+                  v-else-if="!('isSubGroup' in item)"
                   :title="item.title"
-                  class="sidebar-text sidebar-subgroup-item"
+                  :to="item.route"
+                  @click="goTo(item.route)"
+                  class="sidebar-text sidebar-child-item"
                   rounded="lg"
+                  exact
                 />
               </template>
-
-              <v-list-item
-                v-for="subItem in item.items"
-                :key="subItem.title"
-                :title="subItem.title"
-                :to="subItem.route"
-                @click="goTo(subItem.route)"
-                class="sidebar-text sidebar-grandchild-item"
-                rounded="lg"
-                exact
-              />
-            </v-list-group>
-
-            <v-list-item
-              v-else-if="!('isSubGroup' in item)"
-              :title="item.title"
-              :to="item.route"
-              @click="goTo(item.route)"
-              class="sidebar-text sidebar-child-item"
-              rounded="lg"
-              exact
-            />
-          </template>
-        </v-list-group>
+            </div>
+          </v-expand-transition>
+        </div>
 
         <v-menu v-else location="end" open-on-hover :open-delay="0" :close-delay="120" offset="8" :close-on-content-click="false" @update:model-value="(v: boolean) => { if (!v) railHoveredSubGroup = null }">
           <template #activator="{ props: menuProps, isActive: menuOpen }">
@@ -1018,6 +1089,75 @@ function isAppsGroup(group: NavGroup) {
   box-shadow: none;
   color: var(--accent-ink) !important;
   font-weight: 600;
+}
+
+/* ─── Split parent row: clickable label + chevron toggle ─── */
+.sidebar-parent {
+  margin-bottom: 1px;
+}
+
+.sidebar-parent-row {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.sidebar-parent-row__label {
+  flex: 1;
+  min-width: 0;
+}
+
+.sidebar-parent-row__chevron {
+  position: absolute;
+  right: 6px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 22px;
+  height: 22px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border: none;
+  border-radius: 6px;
+  color: var(--muted);
+  cursor: pointer;
+  z-index: 2;
+  padding: 0;
+  transition: background 120ms ease, color 120ms ease;
+}
+
+.sidebar-parent-row__chevron:hover {
+  background: color-mix(in oklch, var(--accent) 14%, transparent);
+  color: var(--accent-ink);
+}
+
+.sidebar-parent-row__chevron:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 2px color-mix(in oklch, var(--accent) 35%, transparent);
+}
+
+.sidebar-parent--active .sidebar-parent-row__label {
+  background: color-mix(in oklch, var(--accent) 10%, transparent) !important;
+  color: var(--accent-ink) !important;
+  font-weight: 600;
+}
+
+.sidebar-parent--active .sidebar-parent-row__label :deep(.v-list-item__overlay) {
+  opacity: 0 !important;
+}
+
+.sidebar-parent--active .sidebar-parent-row__label :deep(.v-list-item__prepend > .v-icon),
+.sidebar-parent--active .sidebar-parent-row__label :deep(.v-list-item-title) {
+  color: var(--accent-ink) !important;
+}
+
+.sidebar-parent--active .sidebar-parent-row__chevron {
+  color: var(--accent-ink);
+}
+
+.sidebar-parent__children {
+  padding-left: 0;
 }
 
 :deep(.sidebar-child-item.v-list-item--active) {
