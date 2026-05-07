@@ -395,7 +395,6 @@ function activeRailSubGroupItems(group: NavGroup) {
               @click="goTo(item.route)"
               class="sidebar-text sidebar-child-item"
               rounded="lg"
-              slim
               exact
             />
           </template>
@@ -706,25 +705,23 @@ function activeRailSubGroupItems(group: NavGroup) {
   opacity: 0.03;
 }
 
-.sidebar-child-item {
-  padding-left: 28px !important;
+/* Level-2 flat child items — override Vuetify's logical indent (was 64px → now 28px) */
+:deep(.sidebar-child-item) {
+  --indent-padding: 12px;
+  min-height: 32px !important;
+  border-radius: 8px !important;
   position: relative;
 }
 
 .sidebar-child-item::before {
   content: '';
   position: absolute;
-  left: 18px;
+  left: 10px;
   top: 4px;
   bottom: 4px;
   width: 1px;
   background: var(--hairline);
-}
-
-:deep(.sidebar-child-item) {
-  min-height: 32px;
-  padding: 7px 10px 7px 28px !important;
-  border-radius: 8px !important;
+  pointer-events: none;
 }
 
 :deep(.sidebar-child-item .v-list-item-title) {
@@ -732,7 +729,6 @@ function activeRailSubGroupItems(group: NavGroup) {
 }
 
 .sidebar-subgroup-item {
-  padding-left: 20px !important;
   color: var(--muted);
 }
 
