@@ -725,7 +725,8 @@ function activeRailSubGroupItems(group: NavGroup) {
 }
 
 :deep(.sidebar-child-item .v-list-item-title) {
-  font-size: 13px;
+  font-size: 13.5px;
+  font-weight: 500;
 }
 
 .sidebar-subgroup-item {
@@ -740,12 +741,12 @@ function activeRailSubGroupItems(group: NavGroup) {
 /* Level-3 grandchild items — override --indent-padding so calc(16px + var(--indent-padding)) gives ~44px */
 :deep(.sidebar-grandchild-item) {
   --indent-padding: 28px;
-  min-height: 30px !important;
+  min-height: 32px !important;
   border-radius: 8px !important;
 }
 
 :deep(.sidebar-grandchild-item .v-list-item-title) {
-  font-size: 12.5px;
+  font-size: 13px;
   color: rgb(var(--v-theme-on-surface-variant));
   overflow: hidden;
   text-overflow: ellipsis;
