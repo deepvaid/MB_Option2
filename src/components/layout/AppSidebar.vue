@@ -420,7 +420,7 @@ function activeRailSubGroupItems(group: NavGroup) {
         </v-list-group>
 
         <v-menu v-else location="end" open-on-hover offset="8" :close-on-content-click="false" @update:model-value="(v: boolean) => { if (!v) railHoveredSubGroup = null }">
-          <template #activator="{ props: menuProps }">
+          <template #activator="{ props: menuProps, isActive: menuOpen }">
             <v-list-item
               v-bind="menuProps"
               :prepend-icon="group.icon"
@@ -428,6 +428,7 @@ function activeRailSubGroupItems(group: NavGroup) {
               :value="group.title"
               rounded="lg"
               class="sidebar-text mb-1"
+              :class="{ 'rail-icon-hovered': menuOpen }"
             />
           </template>
 
@@ -830,6 +831,19 @@ function activeRailSubGroupItems(group: NavGroup) {
 :deep(.v-list-item__prepend .v-icon),
 :deep(.v-list-item-title) {
   color: var(--ink);
+}
+
+/* Rail icon hover state when flyout menu is open */
+:deep(.rail-icon-hovered) {
+  background: color-mix(in oklch, var(--accent) 10%, transparent) !important;
+}
+
+:deep(.rail-icon-hovered > .v-list-item__overlay) {
+  opacity: 0 !important;
+}
+
+:deep(.rail-icon-hovered .v-list-item__prepend > .v-icon) {
+  color: var(--accent-ink) !important;
 }
 
 :deep(.v-list-item-subtitle) {
