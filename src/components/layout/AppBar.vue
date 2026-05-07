@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, ref } from 'vue'
+import { computed, onMounted, onUnmounted, ref, watch } from 'vue'
 import { useTheme } from 'vuetify'
 import { useRouter } from 'vue-router'
 import { useAccountsStore } from '@/stores/useAccounts'
@@ -29,7 +29,53 @@ const appsRoute = computed(() => ({ name: 'AppStore' as const, params: { account
 
 const accounts = computed(() => accountsStore.accounts)
 const activeAccountId = computed(() => accountsStore.activeId)
-const themeToggleValue = ref('light')
+type ThemeMode = 'light' | 'dark' | 'auto'
+const STORAGE_KEY = 'mp-theme-mode'
+
+function getInitialThemeMode(): ThemeMode {
+  if (typeof window === 'undefined') return 'light'
+  const stored = window.localStorage.getItem(STORAGE_KEY) as ThemeMode | null
+  if (stored === 'light' || stored === 'dark' || stored === 'auto') return stored
+  return 'light'
+}
+
+function applyTheme(mode: ThemeMode) {
+  let resolved: 'maropostLight' | 'maropostDark'
+  if (mode === 'auto') {
+    const prefersDark = typeof window !== 'undefined'
+      && window.matchMedia?.('(prefers-color-scheme: dark)').matches
+    resolved = prefersDark ? 'maropostDark' : 'maropostLight'
+  } else {
+    resolved = mode === 'dark' ? 'maropostDark' : 'maropostLight'
+  }
+  theme.global.name.value = resolved
+}
+
+const themeToggleValue = ref<ThemeMode>(getInitialThemeMode())
+
+watch(themeToggleValue, (next) => {
+  if (typeof window !== 'undefined') {
+    window.localStorage.setItem(STORAGE_KEY, next)
+  }
+  applyTheme(next)
+})
+
+let mql: MediaQueryList | null = null
+const handleSystemThemeChange = () => {
+  if (themeToggleValue.value === 'auto') applyTheme('auto')
+}
+
+onMounted(() => {
+  applyTheme(themeToggleValue.value)
+  if (typeof window !== 'undefined' && window.matchMedia) {
+    mql = window.matchMedia('(prefers-color-scheme: dark)')
+    mql.addEventListener?.('change', handleSystemThemeChange)
+  }
+})
+
+onUnmounted(() => {
+  mql?.removeEventListener?.('change', handleSystemThemeChange)
+})
 
 function switchAccount(id: string) {
   accountsStore.switchTo(id)
@@ -214,90 +260,100 @@ function openStub(label: string) {
             <v-icon size="14" class="user-pill__chevron">chevron-down</v-icon>
           </button>
         </template>
-          <v-card width="320" rounded="lg" elevation="0" class="user-menu-card">
+          <div class="user-menu-card">
             <!-- Header block -->
-            <div class="user-menu-header d-flex align-center gap-3">
-              <v-avatar color="primary" variant="tonal" size="48">{{ userInitials }}</v-avatar>
-              <div>
-                <div class="text-body-2 font-weight-bold">{{ userName }}</div>
-                <div class="text-caption text-medium-emphasis">deepak.v@maropost.com</div>
+            <div class="um-header">
+              <v-avatar color="primary" size="56" class="flex-shrink-0">{{ userInitials }}</v-avatar>
+              <div class="um-header__info">
+                <div class="um-header__name">{{ userName }}</div>
+                <div class="um-header__email">deepak.v@maropost.com</div>
                 <v-chip size="x-small" variant="tonal" color="primary" class="mt-1">Super Admin</v-chip>
               </div>
             </div>
 
-            <v-divider />
+            <div class="um-divider" />
 
             <!-- PERSONAL -->
-            <div class="px-3 pt-3 pb-1">
-              <div class="appbar-subheader">PERSONAL</div>
+            <div class="um-section">
+              <div class="um-subheader">Personal</div>
+              <div class="um-item" @click="$router.push(profileRoute)">
+                <v-icon class="um-item__icon" size="20">user</v-icon>
+                <div class="um-item__body">
+                  <div class="um-item__title">My Profile</div>
+                  <div class="um-item__sub">View and edit your info</div>
+                </div>
+              </div>
+              <div class="um-item">
+                <v-icon class="um-item__icon" size="20">sun-moon</v-icon>
+                <div class="um-item__body">
+                  <div class="um-item__title">Theme</div>
+                  <div class="um-item__sub">Toggle light or dark mode</div>
+                </div>
+                <v-btn-toggle v-model="themeToggleValue" density="compact" mandatory class="theme-segment ml-auto">
+                  <v-btn size="x-small" value="light" icon="sun" variant="text" />
+                  <v-btn size="x-small" value="dark" icon="moon" variant="text" />
+                  <v-btn size="x-small" value="auto" icon="monitor" variant="text" />
+                </v-btn-toggle>
+              </div>
             </div>
-            <v-list density="compact" class="py-0 bg-transparent">
-              <v-list-item prepend-icon="user" title="My Profile" class="menu-item" :to="profileRoute" />
-              <v-list-item class="menu-item theme-toggle-item">
-                <template #prepend><v-icon>sun-moon</v-icon></template>
-                <v-list-item-title>Theme</v-list-item-title>
-                <template #append>
-                  <v-btn-toggle v-model="themeToggleValue" density="compact" mandatory class="theme-segment">
-                    <v-btn size="x-small" value="light" icon="sun" variant="text" />
-                    <v-btn size="x-small" value="dark" icon="moon" variant="text" />
-                    <v-btn size="x-small" value="auto" icon="monitor" variant="text" />
-                  </v-btn-toggle>
-                </template>
-              </v-list-item>
-            </v-list>
 
-            <v-divider class="mx-3" />
+            <div class="um-divider" />
 
             <!-- ACCOUNT -->
-            <div class="px-3 pt-3 pb-1">
-              <div class="appbar-subheader">ACCOUNT</div>
+            <div class="um-section">
+              <div class="um-subheader">Account</div>
+              <div class="um-item" @click="$router.push(settingsRoute)">
+                <v-icon class="um-item__icon" size="20">settings</v-icon>
+                <div class="um-item__body"><div class="um-item__title">Account Settings</div><div class="um-item__sub">Company, users, permissions</div></div>
+              </div>
+              <div class="um-item" @click="openStub('Billing')">
+                <v-icon class="um-item__icon" size="20">credit-card</v-icon>
+                <div class="um-item__body"><div class="um-item__title">Billing</div><div class="um-item__sub">Plan, usage, invoices</div></div>
+              </div>
+              <div class="um-item" @click="openStub('Galaxy')">
+                <v-icon class="um-item__icon" size="20">target</v-icon>
+                <div class="um-item__body"><div class="um-item__title">Galaxy</div><div class="um-item__sub">Cross-product workspace</div></div>
+              </div>
+              <div class="um-item" @click="openStub('Roadmap')">
+                <v-icon class="um-item__icon" size="20">route</v-icon>
+                <div class="um-item__body"><div class="um-item__title">Roadmap</div><div class="um-item__sub">Planned product work</div></div>
+              </div>
+              <div class="um-item" @click="openStub('System Status')">
+                <v-icon class="um-item__icon" size="20">shield-check</v-icon>
+                <div class="um-item__body"><div class="um-item__title">System Status</div><div class="um-item__sub">Trust and availability</div></div>
+              </div>
             </div>
-            <v-list density="compact" class="py-0 bg-transparent">
-              <v-list-item prepend-icon="settings" title="Account Settings" class="menu-item" :to="settingsRoute" />
-              <v-list-item prepend-icon="credit-card" title="Billing" class="menu-item" @click="openStub('Billing')" />
-              <v-list-item prepend-icon="target" title="Galaxy" class="menu-item" @click="openStub('Galaxy')" />
-              <v-list-item prepend-icon="route" title="Roadmap" class="menu-item" @click="openStub('Roadmap')" />
-              <v-list-item prepend-icon="shield-check" title="System Status" class="menu-item" @click="openStub('System Status')" />
-            </v-list>
 
-            <v-divider class="mx-3" />
+            <div class="um-divider" />
 
             <!-- SWITCH ACCOUNT -->
-            <div class="px-3 pt-3 pb-1">
-              <div class="appbar-subheader">SWITCH ACCOUNT</div>
-            </div>
-            <v-list density="compact" class="py-0 bg-transparent" max-height="160">
-              <v-list-item
+            <div class="um-section">
+              <div class="um-subheader">Switch Account</div>
+              <div
                 v-for="account in accounts"
                 :key="account.id"
-                class="menu-item"
-                :active="account.id === activeAccountId"
+                class="um-item"
+                :class="{ 'um-item--active': account.id === activeAccountId }"
                 @click="switchAccount(account.id)"
               >
-                <template #prepend>
-                  <v-avatar size="28" variant="tonal" :color="account.id === activeAccountId ? 'primary' : undefined">
-                    {{ account.name.slice(0, 2).toUpperCase() }}
-                  </v-avatar>
-                </template>
-                <v-list-item-title>{{ account.name }}</v-list-item-title>
-                <template #append>
-                  <v-icon v-if="account.id === activeAccountId" size="16" color="primary">check-circle-2</v-icon>
-                </template>
-              </v-list-item>
-            </v-list>
+                <v-avatar size="28" variant="tonal" :color="account.id === activeAccountId ? 'primary' : undefined" class="flex-shrink-0 um-item__avatar">
+                  {{ account.name.slice(0, 2).toUpperCase() }}
+                </v-avatar>
+                <div class="um-item__body"><div class="um-item__title">{{ account.name }}</div></div>
+                <v-icon v-if="account.id === activeAccountId" size="16" color="primary" class="ml-auto">check-circle-2</v-icon>
+              </div>
+            </div>
 
-            <v-divider class="mx-3" />
+            <div class="um-divider" />
 
             <!-- Sign out -->
-            <v-list density="compact" class="py-1 bg-transparent">
-              <v-list-item
-                prepend-icon="log-out"
-                title="Sign Out"
-                class="menu-item sign-out-item"
-                @click="openStub('Sign out')"
-              />
-            </v-list>
-          </v-card>
+            <div class="um-section um-section--last">
+              <div class="um-item um-item--danger" @click="openStub('Sign out')">
+                <v-icon class="um-item__icon" size="20">log-out</v-icon>
+                <div class="um-item__body"><div class="um-item__title">Sign Out</div></div>
+              </div>
+            </div>
+          </div>
       </v-menu>
     </div>
 
@@ -400,32 +456,131 @@ function openStub(label: string) {
   color: var(--muted);
 }
 
+/* ── Profile dropdown ───────────────────────────── */
 .user-menu-card {
-  border-color: var(--hairline);
+  width: 360px;
+  background: rgb(var(--v-theme-surface));
+  border: 1px solid var(--hairline);
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.10), 0 1px 4px rgba(0,0,0,0.06);
+  overflow: hidden;
+  max-height: 90vh;
+  overflow-y: auto;
 }
 
-.user-menu-header {
-  background: var(--surface-2);
-  padding: 12px 16px;
+.um-header {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  padding: 18px;
+  background: rgb(var(--v-theme-surface-variant));
 }
 
-.user-menu-card :deep(.v-list-item.menu-item) {
-  min-height: 32px;
-  padding-inline: 10px;
+.um-header__info {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  min-width: 0;
 }
-.user-menu-card :deep(.menu-item .v-list-item-title) {
-  font-size: 12px;
-  font-weight: 560;
+
+.um-header__name {
+  font-size: 16px;
+  font-weight: 600;
   line-height: 1.2;
+  color: rgb(var(--v-theme-on-surface));
 }
-.user-menu-card :deep(.menu-item .v-list-item__prepend > .v-icon) {
-  font-size: 18px;
-  margin-inline-end: 12px;
-  opacity: 0.85;
+
+.um-header__email {
+  font-size: 13px;
+  color: rgb(var(--v-theme-on-surface-variant));
 }
-.user-menu-card :deep(.v-list-subheader) {
-  min-height: 24px;
-  padding-inline-start: 10px;
+
+.um-divider {
+  height: 1px;
+  background: rgb(var(--v-theme-outline-variant));
+}
+
+.um-section {
+  padding: 8px;
+}
+
+.um-section--last {
+  padding-bottom: 12px;
+}
+
+.um-subheader {
+  padding: 8px 12px 4px;
+  font-size: 11px;
+  font-weight: 600;
+  line-height: 1;
+  color: rgb(var(--v-theme-on-surface-variant));
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.um-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 100ms ease;
+}
+
+.um-item:hover {
+  background: rgb(var(--v-theme-surface-variant));
+}
+
+.um-item--active {
+  background: rgb(var(--v-theme-primary-container));
+}
+
+.um-item--active:hover {
+  background: rgb(var(--v-theme-primary-container));
+}
+
+.um-item--active .um-item__title {
+  color: rgb(var(--v-theme-on-primary-container));
+  font-weight: 600;
+}
+
+.um-item__icon {
+  color: rgb(var(--v-theme-on-surface-variant));
+  flex-shrink: 0;
+}
+
+.um-item__avatar {
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.um-item__body {
+  flex: 1;
+  min-width: 0;
+}
+
+.um-item__title {
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 1.3;
+  color: rgb(var(--v-theme-on-surface));
+}
+
+.um-item__sub {
+  font-size: 12.5px;
+  line-height: 1.3;
+  color: rgb(var(--v-theme-on-surface-variant));
+  margin-top: 2px;
+}
+
+.um-item--danger .um-item__title,
+.um-item--danger .um-item__icon {
+  color: rgb(var(--v-theme-error)) !important;
+}
+
+.um-item--danger:hover {
+  background: rgba(var(--v-theme-error), 0.06);
 }
 
 .theme-segment {
