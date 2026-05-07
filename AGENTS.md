@@ -234,3 +234,24 @@ Example: `[feat]: add MpDateRangePicker component with story`
 - `maropost-screenshots/` — 50+ screenshots of every real app section
 - `docs/personas/` — Merchant personas for UX decisions
 - `docs/design-system.md` — Living component + token reference
+
+---
+
+## Recent Changes (last session — for continuity)
+
+### Icons — `src/plugins/lucideIcons.ts`
+Vuetify internally uses `mdi-*` string aliases for expand chevrons, checkboxes, etc.
+A `MDI_TO_LUCIDE` map was added to route these to Lucide SVGs (avoids the MDI CSS class-doubling bug).
+**Do not** remove the map or revert to the old MDI CSS fallback — chevrons in `v-list-group` will break.
+
+### Sidebar — `src/components/layout/AppSidebar.vue`
+Rail (collapsed) brand mark: a `<div class="rail-brand-box">M</div>` — white "M" on dark box (32×32px, border-radius 8px).
+Do **not** replace with an SVG or img tag.
+
+### AppBar — `src/components/layout/AppBar.vue`
+- LINE messenger icon button added after the Settings icon (inline SVG, links to https://line.me in new tab)
+- User avatar uses `https://i.pravatar.cc/128?img=12` (deterministic male portrait) — pill size 26px, dropdown card size 56px
+
+### Contact avatars — `src/stores/useContacts.ts`
+Each seeded Contact has `avatarUrl: \`https://i.pravatar.cc/96?u=contact-${id}\``
+`AllContacts.vue` table rows and `ContactDetail.vue` header both render these via `v-avatar > v-img` with an initial-letter fallback div.
