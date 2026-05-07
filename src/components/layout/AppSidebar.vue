@@ -412,76 +412,53 @@ function activeRailSubGroupItems(group: NavGroup) {
             />
           </template>
 
-          <!-- Single-column layout for groups without sub-groups -->
-          <v-card v-if="!hasSubGroups(group)" min-width="200" elevation="3" rounded="lg" class="sidebar-surface rail-popover">
-            <v-list density="compact" class="bg-transparent py-1">
-              <v-list-subheader class="sidebar-subheader font-weight-bold px-4 pt-2 pb-2">{{ group.title }}</v-list-subheader>
-              <v-list-item
-                v-for="item in group.items"
-                :key="item.title"
-                :title="('route' in item) ? item.title : ''"
-                :to="('route' in item) ? item.route : undefined"
-                @click="('route' in item) && goTo(item.route)"
-                class="sidebar-text rail-popover-item"
-                rounded="lg"
-                slim
-                exact
-              />
-            </v-list>
-          </v-card>
+          <!-- Single-column flyout card (groups without sub-groups) -->
+          <div v-if="!hasSubGroups(group)" class="rail-flyout-card">
+            <div class="rail-flyout-card__header">{{ group.title }}</div>
+            <div
+              v-for="item in group.items"
+              :key="item.title"
+              class="rail-flyout-item"
+              :class="{ 'rail-flyout-item--active': ('route' in item) && $route.path.startsWith(item.route) }"
+              @click="('route' in item) && goTo(item.route)"
+            >{{ ('route' in item) ? item.title : '' }}</div>
+          </div>
 
-          <!-- Two-column cascade layout for groups with sub-groups -->
-          <v-card v-else elevation="3" rounded="lg" class="sidebar-surface rail-popover rail-popover--cascade">
-            <div class="rail-popover__col">
-              <v-list density="compact" class="bg-transparent py-1">
-                <v-list-subheader class="sidebar-subheader font-weight-bold px-4 pt-2 pb-2">{{ group.title }}</v-list-subheader>
-
-                <v-list-item
-                  v-for="flat in railFlatItems(group)"
-                  :key="flat.title"
-                  :title="flat.title"
-                  :to="flat.route"
-                  @click="goTo(flat.route)"
-                  class="sidebar-text rail-popover-item"
-                  rounded="lg"
-                  slim
-                  exact
-                />
-
-                <v-list-item
-                  v-for="sub in railSubGroups(group)"
-                  :key="sub.title"
-                  :title="sub.title"
-                  :active="railHoveredSubGroup === sub.title"
-                  class="sidebar-text rail-popover-item"
-                  rounded="lg"
-                  slim
-                  @mouseenter="railHoveredSubGroup = sub.title"
-                >
-                  <template v-slot:append>
-                    <v-icon size="small" class="sidebar-muted">chevron-right</v-icon>
-                  </template>
-                </v-list-item>
-              </v-list>
+          <!-- Two separate flyout cards (cascade — groups with sub-groups) -->
+          <div v-else class="rail-cascade-wrap">
+            <!-- Card 1: group children & subgroup headers -->
+            <div class="rail-flyout-card">
+              <div class="rail-flyout-card__header">{{ group.title }}</div>
+              <div
+                v-for="flat in railFlatItems(group)"
+                :key="flat.title"
+                class="rail-flyout-item"
+                :class="{ 'rail-flyout-item--active': $route.path.startsWith(flat.route) }"
+                @click="goTo(flat.route)"
+              >{{ flat.title }}</div>
+              <div
+                v-for="sub in railSubGroups(group)"
+                :key="sub.title"
+                class="rail-flyout-item rail-flyout-item--has-sub"
+                :class="{ 'rail-flyout-item--active': railHoveredSubGroup === sub.title }"
+                @mouseenter="railHoveredSubGroup = sub.title"
+              >
+                <span>{{ sub.title }}</span>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m9 6 6 6-6 6"/></svg>
+              </div>
             </div>
-
-            <div v-if="railHoveredSubGroup && activeRailSubGroupItems(group).length" class="rail-popover__col">
-              <v-list density="compact" class="bg-transparent py-1">
-                <v-list-subheader class="sidebar-subheader font-weight-bold px-4 pt-2 pb-2">{{ railHoveredSubGroup }}</v-list-subheader>
-                <v-list-item
-                  v-for="child in activeRailSubGroupItems(group)"
-                  :key="child.title"
-                  :title="child.title"
-                  :to="child.route"
-                  @click="goTo(child.route)"
-                  class="sidebar-text rail-popover-item"
-                  rounded="lg"
-                  slim
-                  exact
-                />
-              </v-list>
+            <!-- Card 2: grandchildren of the hovered subgroup -->
+            <div v-if="railHoveredSubGroup && activeRailSubGroupItems(group).length" class="rail-flyout-card">
+              <div class="rail-flyout-card__header">{{ railHoveredSubGroup }}</div>
+              <div
+                v-for="child in activeRailSubGroupItems(group)"
+                :key="child.title"
+                class="rail-flyout-item"
+                :class="{ 'rail-flyout-item--active': $route.path.startsWith(child.route) }"
+                @click="goTo(child.route)"
+              >{{ child.title }}</div>
             </div>
-          </v-card>
+          </div>
         </v-menu>
 
         <v-divider v-if="group.dividerAfter" class="sidebar-divider my-1 mx-2" />
@@ -707,21 +684,9 @@ function activeRailSubGroupItems(group: NavGroup) {
 
 /* Level-2 flat child items — override Vuetify's logical indent (was 64px → now 28px) */
 :deep(.sidebar-child-item) {
-  --indent-padding: 12px;
+  --indent-padding: 20px;
   min-height: 32px !important;
   border-radius: 8px !important;
-  position: relative;
-}
-
-.sidebar-child-item::before {
-  content: '';
-  position: absolute;
-  left: 10px;
-  top: 4px;
-  bottom: 4px;
-  width: 1px;
-  background: var(--hairline);
-  pointer-events: none;
 }
 
 :deep(.sidebar-child-item .v-list-item-title) {
@@ -762,39 +727,60 @@ function activeRailSubGroupItems(group: NavGroup) {
   font-weight: 600;
 }
 
-.sidebar-surface {
+/* Rail flyout — single card */
+.rail-flyout-card {
   background: var(--surface-1);
-  box-shadow: none;
-}
-
-.rail-popover {
-  border: 1px solid var(--hairline) !important;
-  overflow: hidden;
-}
-
-.rail-popover--cascade {
-  display: grid;
-  grid-template-columns: 200px 200px;
-  min-width: 400px;
-}
-
-.rail-popover__col {
+  border: 1px solid var(--hairline);
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.10), 0 1px 4px rgba(0, 0, 0, 0.06);
   padding: 8px;
-  min-height: 100px;
+  min-width: 220px;
 }
 
-.rail-popover__col + .rail-popover__col {
-  border-left: 1px solid rgb(var(--v-theme-outline-variant));
-}
-
-.rail-popover-item {
-  font-size: 13px;
-  min-height: 32px;
-}
-
-.sidebar-subheader {
-  color: var(--muted);
+.rail-flyout-card__header {
+  padding: 8px 12px 6px;
   font-size: 11px;
+  font-weight: 600;
+  line-height: 1;
+  color: rgb(var(--v-theme-on-surface-variant));
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.rail-flyout-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 9px 12px;
+  border-radius: 8px;
+  font-size: 13.5px;
+  font-weight: 500;
+  color: rgb(var(--v-theme-on-surface));
+  cursor: pointer;
+  transition: background 100ms ease;
+  user-select: none;
+}
+
+.rail-flyout-item:hover {
+  background: rgb(var(--v-theme-surface-variant));
+}
+
+.rail-flyout-item--active {
+  background: rgb(var(--v-theme-primary-container));
+  color: rgb(var(--v-theme-on-primary-container));
+  font-weight: 600;
+}
+
+.rail-flyout-item svg {
+  flex-shrink: 0;
+  opacity: 0.45;
+}
+
+/* Rail cascade — two cards side by side */
+.rail-cascade-wrap {
+  display: flex;
+  gap: 8px;
+  align-items: flex-start;
 }
 
 .sidebar-expanded-group :deep(.v-list-group__items) {
