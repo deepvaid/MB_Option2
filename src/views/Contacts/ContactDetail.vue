@@ -18,7 +18,7 @@ const contact = computed(() => store.getContactById(contactId.value))
 const detail = computed(() => store.getContactDetail(contactId.value))
 
 onMounted(() => {
-  if (!contact.value) router.replace('/contacts')
+  if (!contact.value) router.replace(`/accounts/${route.params.accountId}/contacts`)
 })
 
 // Tab state
@@ -46,7 +46,7 @@ const fullName = computed(() => contact.value ? `${contact.value.firstName} ${co
 const initials = computed(() => contact.value ? `${contact.value.firstName[0]}${contact.value.lastName[0]}` : '')
 
 const breadcrumbs = computed(() => [
-  { title: 'Contacts', to: '/contacts' },
+  { title: 'Contacts', to: `/accounts/${route.params.accountId}/contacts` },
   { title: fullName.value, disabled: true },
 ])
 
@@ -101,7 +101,7 @@ const cartHeaders = [
   <div v-if="contact && detail" class="contact-detail-page">
 
     <!-- ── Page Header ────────────────────────────────────────────────────── -->
-    <MpPageHeader :title="fullName" :breadcrumbs="breadcrumbs">
+    <MpPageHeader :title="fullName" :breadcrumbs="breadcrumbs" :backTo="`/accounts/${route.params.accountId}/contacts`">
       <template #actions>
         <v-btn variant="outlined" prepend-icon="pencil" @click="openEditDrawer">Edit Contact</v-btn>
         <v-menu>
@@ -126,10 +126,16 @@ const cartHeaders = [
       <div class="contact-sidebar">
         <div class="d-flex flex-column gap-4">
 
-        <!-- Card 1: Profile -->
-        <v-card flat border rounded="xl" class="pa-5">
-          <div class="d-flex align-start gap-4">
-            <v-avatar size="64">
+        <!-- Card 1: Profile Hero -->
+        <v-card flat border rounded="lg" class="profile-hero-card overflow-hidden">
+          <!-- Gradient hero banner -->
+          <div class="profile-hero-banner">
+            <div class="profile-hero-banner__pattern" />
+          </div>
+
+          <!-- Avatar overlapping banner -->
+          <div class="profile-hero-avatar">
+            <v-avatar size="80" class="profile-hero-avatar__ring">
               <v-img :src="contact.avatarUrl" :alt="fullName" cover>
                 <template #placeholder>
                   <div class="avatar-fallback-lg">{{ initials }}</div>
@@ -139,51 +145,63 @@ const cartHeaders = [
                 </template>
               </v-img>
             </v-avatar>
-            <div class="flex-grow-1 pt-1">
-              <div class="text-h6 font-weight-bold">{{ fullName }}</div>
-              <a :href="`mailto:${contact.email}`" class="text-primary text-body-2 d-block mb-1">{{ contact.email }}</a>
-              <div v-if="contact.phone" class="text-body-2 text-medium-emphasis">{{ contact.phone }}</div>
-            </div>
-            <MpStatusChip :status="contact.status" type="contact" size="small" />
+            <MpStatusChip :status="contact.status" type="contact" size="x-small" variant="flat" class="profile-hero-avatar__status" />
           </div>
 
-          <v-divider class="my-4" />
+          <!-- Identity -->
+          <div class="text-center px-5 mt-1 mb-1">
+            <div class="text-h6 font-weight-bold">{{ fullName }}</div>
+            <div v-if="contact.company" class="text-body-2 text-medium-emphasis">{{ contact.company }}</div>
+          </div>
 
-          <div class="d-flex flex-column gap-3">
-            <div class="detail-row">
-              <span class="detail-label">UID</span>
-              <span class="detail-value text-truncate" style="max-width: 200px;">{{ detail.uid }}</span>
+          <!-- Quick contact pills -->
+          <div class="d-flex justify-center gap-2 px-5 mb-4">
+            <v-chip size="small" variant="tonal" color="primary" prepend-icon="mail" :href="`mailto:${contact.email}`" tag="a">{{ contact.email }}</v-chip>
+          </div>
+          <div v-if="contact.phone" class="d-flex justify-center gap-2 px-5 mb-4" style="margin-top:-8px;">
+            <v-chip size="small" variant="tonal" prepend-icon="phone">{{ contact.phone }}</v-chip>
+          </div>
+
+          <!-- Score bar -->
+          <div class="px-5 mb-4">
+            <div class="d-flex align-center justify-space-between mb-1">
+              <span class="text-caption text-medium-emphasis font-weight-medium">Contact Score</span>
+              <span class="text-caption font-weight-bold" :class="contact.score >= 70 ? 'text-success' : contact.score >= 40 ? 'text-warning' : 'text-error'">{{ contact.score }}/100</span>
             </div>
-            <div class="detail-row">
-              <span class="detail-label">Customer Created</span>
-              <span class="detail-value">{{ contact.createdAt }}</span>
+            <v-progress-linear :model-value="contact.score" :color="contact.score >= 70 ? 'success' : contact.score >= 40 ? 'warning' : 'error'" rounded height="6" bg-color="surface-variant" />
+          </div>
+
+          <v-divider style="opacity:0.5" />
+
+          <!-- Detail fields -->
+          <div class="d-flex flex-column gap-0 px-5 py-3">
+            <div class="detail-row-v2">
+              <v-icon size="15" class="detail-row-v2__icon">fingerprint</v-icon>
+              <span class="detail-row-v2__label">UID</span>
+              <span class="detail-row-v2__value text-truncate" style="max-width: 160px;">{{ detail.uid }}</span>
             </div>
-            <div v-if="contact.company" class="detail-row">
-              <span class="detail-label">Company</span>
-              <span class="detail-value">{{ contact.company }}</span>
+            <div class="detail-row-v2">
+              <v-icon size="15" class="detail-row-v2__icon">calendar</v-icon>
+              <span class="detail-row-v2__label">Created</span>
+              <span class="detail-row-v2__value">{{ contact.createdAt }}</span>
             </div>
-            <div class="detail-row">
-              <span class="detail-label">Location</span>
-              <span class="detail-value">{{ contact.location }}</span>
-            </div>
-            <div class="detail-row">
-              <span class="detail-label">Score</span>
-              <div class="d-flex align-center gap-2">
-                <v-progress-linear :model-value="contact.score" :color="contact.score >= 70 ? 'success' : contact.score >= 40 ? 'warning' : 'error'" rounded height="6" style="width: 60px;" />
-                <span class="detail-value">{{ contact.score }}</span>
-              </div>
+            <div class="detail-row-v2">
+              <v-icon size="15" class="detail-row-v2__icon">map-pin</v-icon>
+              <span class="detail-row-v2__label">Location</span>
+              <span class="detail-row-v2__value">{{ contact.location }}</span>
             </div>
             <template v-for="field in detail.customFields" :key="field.label">
-              <div class="detail-row">
-                <span class="detail-label">{{ field.label }}</span>
-                <span class="detail-value">{{ field.value }}</span>
+              <div class="detail-row-v2">
+                <v-icon size="15" class="detail-row-v2__icon">{{ field.label === 'Source' ? 'globe' : field.label === 'Gender' ? 'user' : 'layers' }}</v-icon>
+                <span class="detail-row-v2__label">{{ field.label }}</span>
+                <span class="detail-row-v2__value">{{ field.value }}</span>
               </div>
             </template>
           </div>
         </v-card>
 
         <!-- Card 2: Tags -->
-        <v-card flat border rounded="xl" class="pa-5">
+        <v-card flat border rounded="lg" class="pa-5">
           <MpSectionHeader :title="`Contact Tags (${contact.tags?.length ?? 0})`" />
           <div v-if="contact.tags?.length" class="d-flex flex-wrap gap-2 mb-4">
             <v-chip v-for="tag in contact.tags" :key="tag" size="small" variant="tonal" color="secondary">{{ tag }}</v-chip>
@@ -193,7 +211,7 @@ const cartHeaders = [
         </v-card>
 
         <!-- Card 3: Lists & Subscriptions -->
-        <v-card flat border rounded="xl" class="pa-5">
+        <v-card flat border rounded="lg" class="pa-5">
           <MpSectionHeader title="Contact Lists">
             <template #actions>
               <v-btn icon="pencil" variant="text" size="small" density="comfortable" />
@@ -230,7 +248,7 @@ const cartHeaders = [
         </v-card>
 
         <!-- Card 4: Brands -->
-        <v-card flat border rounded="xl" class="pa-5">
+        <v-card flat border rounded="lg" class="pa-5">
           <MpSectionHeader :title="`Brands (${detail.brands.length})`" />
           <div v-if="detail.brands.length" class="d-flex flex-wrap gap-2">
             <v-chip v-for="b in detail.brands" :key="b" size="small" variant="tonal">{{ b }}</v-chip>
@@ -239,7 +257,7 @@ const cartHeaders = [
         </v-card>
 
         <!-- Card 5: eRFM -->
-        <v-card flat border rounded="xl" class="pa-5">
+        <v-card flat border rounded="lg" class="pa-5">
           <MpSectionHeader title="eRFM (Customer Group)" />
           <div class="d-flex flex-column gap-3">
             <div class="detail-row">
@@ -254,7 +272,7 @@ const cartHeaders = [
         </v-card>
 
         <!-- Card 6: Keywords -->
-        <v-card flat border rounded="xl" class="pa-5">
+        <v-card flat border rounded="lg" class="pa-5">
           <MpSectionHeader :title="`Most Engaging Keywords (${detail.keywords.length})`" />
           <div v-if="detail.keywords.length" class="d-flex flex-wrap gap-2">
             <v-chip v-for="kw in detail.keywords" :key="kw" size="small" variant="tonal" color="info">{{ kw }}</v-chip>
@@ -322,7 +340,7 @@ const cartHeaders = [
               </v-row>
 
               <!-- Customer Engagement Section -->
-              <v-card flat border rounded="xl" class="pa-5">
+              <v-card flat border rounded="lg" class="pa-5">
                 <MpSectionHeader title="Customer Engagement (Last 7 days)">
                   <template #actions>
                     <v-btn variant="text" prepend-icon="list-filter" size="small">Filters</v-btn>
@@ -337,88 +355,112 @@ const cartHeaders = [
                 </v-tabs>
 
                 <!-- Email engagement metrics -->
-                <v-row v-if="engagementSubTab === 'emails'" dense class="mb-5">
-                  <v-col cols="3">
-                    <v-card flat border rounded="lg" class="pa-4 text-center">
-                      <v-icon color="primary" size="24" class="mb-2">send</v-icon>
-                      <div class="text-h5 font-weight-bold">{{ detail.engagement.email.sends }}</div>
-                      <div class="text-caption text-medium-emphasis">Sends</div>
-                    </v-card>
-                  </v-col>
-                  <v-col cols="3">
-                    <v-card flat border rounded="lg" class="pa-4 text-center">
-                      <v-icon color="success" size="24" class="mb-2">mail-open</v-icon>
-                      <div class="text-h5 font-weight-bold">{{ detail.engagement.email.opens }}</div>
-                      <div class="text-caption text-medium-emphasis">Opens · {{ detail.engagement.email.openRate }}</div>
-                    </v-card>
-                  </v-col>
-                  <v-col cols="3">
-                    <v-card flat border rounded="lg" class="pa-4 text-center">
-                      <v-icon color="info" size="24" class="mb-2">mouse-pointer-click</v-icon>
-                      <div class="text-h5 font-weight-bold">{{ detail.engagement.email.clicks }}</div>
-                      <div class="text-caption text-medium-emphasis">Clicks · {{ detail.engagement.email.clickRate }}</div>
-                    </v-card>
-                  </v-col>
-                  <v-col cols="3">
-                    <v-card flat border rounded="lg" class="pa-4 text-center">
-                      <v-icon color="error" size="24" class="mb-2">mail-x</v-icon>
-                      <div class="text-h5 font-weight-bold">{{ detail.engagement.email.bounceRate }}</div>
-                      <div class="text-caption text-medium-emphasis">Bounces</div>
-                    </v-card>
-                  </v-col>
-                </v-row>
+                <div v-if="engagementSubTab === 'emails'" class="engagement-grid mb-5">
+                  <div class="engagement-metric-card">
+                    <div class="engagement-metric-card__icon" style="background: var(--accent-soft); color: var(--accent-ink);">
+                      <v-icon size="18">send</v-icon>
+                    </div>
+                    <div class="engagement-metric-card__body">
+                      <div class="engagement-metric-card__value num">{{ detail.engagement.email.sends }}</div>
+                      <div class="engagement-metric-card__label">Sends</div>
+                    </div>
+                  </div>
+                  <div class="engagement-metric-card">
+                    <div class="engagement-metric-card__icon" style="background: var(--pos-soft); color: var(--pos);">
+                      <v-icon size="18">mail-open</v-icon>
+                    </div>
+                    <div class="engagement-metric-card__body">
+                      <div class="engagement-metric-card__value num">{{ detail.engagement.email.opens }}</div>
+                      <div class="engagement-metric-card__label">Opens · {{ detail.engagement.email.openRate }}</div>
+                    </div>
+                  </div>
+                  <div class="engagement-metric-card">
+                    <div class="engagement-metric-card__icon" style="background: color-mix(in oklch, rgb(var(--v-theme-info)) 14%, transparent); color: rgb(var(--v-theme-info));">
+                      <v-icon size="18">mouse-pointer-click</v-icon>
+                    </div>
+                    <div class="engagement-metric-card__body">
+                      <div class="engagement-metric-card__value num">{{ detail.engagement.email.clicks }}</div>
+                      <div class="engagement-metric-card__label">Clicks · {{ detail.engagement.email.clickRate }}</div>
+                    </div>
+                  </div>
+                  <div class="engagement-metric-card">
+                    <div class="engagement-metric-card__icon" style="background: var(--neg-soft); color: var(--neg);">
+                      <v-icon size="18">mail-x</v-icon>
+                    </div>
+                    <div class="engagement-metric-card__body">
+                      <div class="engagement-metric-card__value num">{{ detail.engagement.email.bounceRate }}</div>
+                      <div class="engagement-metric-card__label">Bounces</div>
+                    </div>
+                  </div>
+                </div>
 
                 <!-- Tickets engagement -->
-                <v-row v-else-if="engagementSubTab === 'tickets'" dense class="mb-5">
-                  <v-col cols="3">
-                    <v-card flat border rounded="lg" class="pa-4 text-center">
-                      <div class="text-h5 font-weight-bold">{{ detail.engagement.tickets.total }}</div>
-                      <div class="text-caption text-medium-emphasis">Total</div>
-                    </v-card>
-                  </v-col>
-                  <v-col cols="3">
-                    <v-card flat border rounded="lg" class="pa-4 text-center">
-                      <div class="text-h5 font-weight-bold">{{ detail.engagement.tickets.open }}</div>
-                      <div class="text-caption text-medium-emphasis">Open</div>
-                    </v-card>
-                  </v-col>
-                  <v-col cols="3">
-                    <v-card flat border rounded="lg" class="pa-4 text-center">
-                      <div class="text-h5 font-weight-bold">{{ detail.engagement.tickets.solved }}</div>
-                      <div class="text-caption text-medium-emphasis">Solved</div>
-                    </v-card>
-                  </v-col>
-                  <v-col cols="3">
-                    <v-card flat border rounded="lg" class="pa-4 text-center">
-                      <div class="text-h5 font-weight-bold">{{ detail.engagement.tickets.onHold }}</div>
-                      <div class="text-caption text-medium-emphasis">On-hold</div>
-                    </v-card>
-                  </v-col>
-                </v-row>
+                <div v-else-if="engagementSubTab === 'tickets'" class="engagement-grid mb-5">
+                  <div class="engagement-metric-card">
+                    <div class="engagement-metric-card__icon" style="background: var(--accent-soft); color: var(--accent-ink);">
+                      <v-icon size="18">ticket</v-icon>
+                    </div>
+                    <div class="engagement-metric-card__body">
+                      <div class="engagement-metric-card__value num">{{ detail.engagement.tickets.total }}</div>
+                      <div class="engagement-metric-card__label">Total</div>
+                    </div>
+                  </div>
+                  <div class="engagement-metric-card">
+                    <div class="engagement-metric-card__icon" style="background: color-mix(in oklch, rgb(var(--v-theme-info)) 14%, transparent); color: rgb(var(--v-theme-info));">
+                      <v-icon size="18">ticket-check</v-icon>
+                    </div>
+                    <div class="engagement-metric-card__body">
+                      <div class="engagement-metric-card__value num">{{ detail.engagement.tickets.open }}</div>
+                      <div class="engagement-metric-card__label">Open</div>
+                    </div>
+                  </div>
+                  <div class="engagement-metric-card">
+                    <div class="engagement-metric-card__icon" style="background: var(--pos-soft); color: var(--pos);">
+                      <v-icon size="18">circle-check</v-icon>
+                    </div>
+                    <div class="engagement-metric-card__body">
+                      <div class="engagement-metric-card__value num">{{ detail.engagement.tickets.solved }}</div>
+                      <div class="engagement-metric-card__label">Solved</div>
+                    </div>
+                  </div>
+                  <div class="engagement-metric-card">
+                    <div class="engagement-metric-card__icon" style="background: var(--neg-soft); color: var(--neg);">
+                      <v-icon size="18">circle-pause</v-icon>
+                    </div>
+                    <div class="engagement-metric-card__body">
+                      <div class="engagement-metric-card__value num">{{ detail.engagement.tickets.onHold }}</div>
+                      <div class="engagement-metric-card__label">On-hold</div>
+                    </div>
+                  </div>
+                </div>
 
                 <!-- Orders / SMS engagement -->
-                <v-row v-else dense class="mb-5">
-                  <v-col cols="12">
-                    <div class="text-body-2 text-medium-emphasis pa-4 text-center">
-                      {{ engagementSubTab === 'orders' ? 'Order engagement data' : 'SMS engagement data' }} — coming soon
-                    </div>
-                  </v-col>
-                </v-row>
+                <div v-else class="mb-5">
+                  <div class="text-body-2 text-medium-emphasis pa-4 text-center">
+                    {{ engagementSubTab === 'orders' ? 'Order engagement data' : 'SMS engagement data' }} — coming soon
+                  </div>
+                </div>
 
                 <!-- History Timeline -->
-                <div class="text-subtitle-1 font-weight-medium mb-3">History Timeline</div>
-                <div class="d-flex flex-column">
-                  <div v-for="entry in detail.timeline" :key="entry.id" class="timeline-entry d-flex align-start gap-3 py-3">
-                    <v-avatar :color="entry.color" size="36" variant="tonal">
-                      <v-icon size="18">{{ entry.icon }}</v-icon>
-                    </v-avatar>
-                    <div class="flex-grow-1">
+                <div class="d-flex align-center justify-space-between mb-3">
+                  <div class="text-subtitle-1 font-weight-medium">History Timeline</div>
+                  <v-chip size="x-small" variant="tonal" color="primary">{{ detail.timeline.length }} events</v-chip>
+                </div>
+                <div class="timeline-v2">
+                  <div v-for="(entry, idx) in detail.timeline" :key="entry.id" class="timeline-v2__entry">
+                    <div class="timeline-v2__rail">
+                      <v-avatar :color="entry.color" size="32" variant="tonal" class="timeline-v2__dot">
+                        <v-icon size="15">{{ entry.icon }}</v-icon>
+                      </v-avatar>
+                      <div v-if="idx < detail.timeline.length - 1" class="timeline-v2__line" />
+                    </div>
+                    <div class="timeline-v2__content">
                       <div class="text-body-2 font-weight-medium">{{ entry.title }}</div>
                       <div class="d-flex align-center gap-2 mt-1 flex-wrap">
                         <v-chip v-for="s in entry.statuses" :key="s" size="x-small" variant="outlined" :color="activityChipColor(s)">{{ s }}</v-chip>
+                        <span class="text-caption text-medium-emphasis">{{ entry.date }}</span>
                       </div>
                     </div>
-                    <div class="text-caption text-medium-emphasis text-no-wrap">{{ entry.date }}</div>
                   </div>
                 </div>
               </v-card>
@@ -434,8 +476,8 @@ const cartHeaders = [
                 <v-tab value="sms">SMS Campaigns ({{ smsCampaigns.length }})</v-tab>
               </v-tabs>
 
-              <div v-if="campaignSubTab === 'email' && emailCampaigns.length" class="d-flex flex-column">
-                <div v-for="c in emailCampaigns" :key="c.id" class="campaign-row d-flex align-center gap-3 py-3 px-2">
+              <div v-if="campaignSubTab === 'email' && emailCampaigns.length" class="d-flex flex-column gap-3">
+                <v-card v-for="c in emailCampaigns" :key="c.id" flat border rounded="lg" class="d-flex align-center gap-3 py-3 px-4">
                   <v-avatar color="primary" size="36" variant="tonal">
                     <v-icon size="18">mail</v-icon>
                   </v-avatar>
@@ -448,11 +490,11 @@ const cartHeaders = [
                   <div class="text-caption text-medium-emphasis text-no-wrap mr-3">{{ c.sentDate }}</div>
                   <v-btn variant="outlined" size="small">Re-send Campaign</v-btn>
                   <v-btn variant="tonal" size="small">Details</v-btn>
-                </div>
+                </v-card>
               </div>
 
-              <div v-else-if="campaignSubTab === 'sms' && smsCampaigns.length" class="d-flex flex-column">
-                <div v-for="c in smsCampaigns" :key="c.id" class="campaign-row d-flex align-center gap-3 py-3 px-2">
+              <div v-else-if="campaignSubTab === 'sms' && smsCampaigns.length" class="d-flex flex-column gap-3">
+                <v-card v-for="c in smsCampaigns" :key="c.id" flat border rounded="lg" class="d-flex align-center gap-3 py-3 px-4">
                   <v-avatar color="info" size="36" variant="tonal">
                     <v-icon size="18">message-circle</v-icon>
                   </v-avatar>
@@ -465,7 +507,7 @@ const cartHeaders = [
                   <div class="text-caption text-medium-emphasis text-no-wrap mr-3">{{ c.sentDate }}</div>
                   <v-btn variant="outlined" size="small">Re-send</v-btn>
                   <v-btn variant="tonal" size="small">Details</v-btn>
-                </div>
+                </v-card>
               </div>
 
               <MpEmptyState
@@ -480,20 +522,22 @@ const cartHeaders = [
           <!-- ─── TICKETS TAB ───────────────────────────────────────────── -->
           <v-window-item value="tickets">
             <div class="pa-1">
-              <v-data-table
-                v-if="detail.tickets.length"
-                :headers="ticketHeaders"
-                :items="detail.tickets"
-                items-per-page="10"
-                density="comfortable"
-              >
-                <template v-slot:item.status="{ item }">
-                  <MpStatusChip :status="item.status" type="ticket" size="x-small" />
-                </template>
-                <template v-slot:item.priority="{ item }">
-                  <v-chip size="x-small" variant="tonal" :color="item.priority === 'High' ? 'error' : item.priority === 'Medium' ? 'warning' : 'info'">{{ item.priority }}</v-chip>
-                </template>
-              </v-data-table>
+              <v-card v-if="detail.tickets.length" flat border rounded="lg">
+                <v-data-table
+                  :headers="ticketHeaders"
+                  :items="detail.tickets"
+                  items-per-page="10"
+                  density="comfortable"
+                  style="background: transparent;"
+                >
+                  <template v-slot:item.status="{ item }">
+                    <MpStatusChip :status="item.status" type="ticket" size="x-small" />
+                  </template>
+                  <template v-slot:item.priority="{ item }">
+                    <v-chip size="x-small" variant="tonal" :color="item.priority === 'High' ? 'error' : item.priority === 'Medium' ? 'warning' : 'info'">{{ item.priority }}</v-chip>
+                  </template>
+                </v-data-table>
+              </v-card>
               <MpEmptyState
                 v-else
                 icon="headset"
@@ -507,26 +551,28 @@ const cartHeaders = [
           <v-window-item value="orders">
             <div class="pa-1">
               <div class="text-subtitle-1 font-weight-medium mb-3">All Orders ({{ detail.orders.length }})</div>
-              <v-data-table
-                v-if="detail.orders.length"
-                :headers="orderHeaders"
-                :items="detail.orders"
-                items-per-page="10"
-                density="comfortable"
-              >
-                <template v-slot:item.total="{ item }">
-                  <span class="font-weight-medium">${{ item.total.toFixed(2) }}</span>
-                </template>
-                <template v-slot:item.status="{ item }">
-                  <MpStatusChip :status="item.status" type="order" size="x-small" />
-                </template>
-                <template v-slot:item.paymentStatus="{ item }">
-                  <MpStatusChip :status="item.paymentStatus" type="payment" size="x-small" />
-                </template>
-                <template v-slot:item.fulfillmentStatus="{ item }">
-                  <MpStatusChip :status="item.fulfillmentStatus" type="fulfillment" size="x-small" />
-                </template>
-              </v-data-table>
+              <v-card v-if="detail.orders.length" flat border rounded="lg">
+                <v-data-table
+                  :headers="orderHeaders"
+                  :items="detail.orders"
+                  items-per-page="10"
+                  density="comfortable"
+                  style="background: transparent;"
+                >
+                  <template v-slot:item.total="{ item }">
+                    <span class="font-weight-medium">${{ item.total.toFixed(2) }}</span>
+                  </template>
+                  <template v-slot:item.status="{ item }">
+                    <MpStatusChip :status="item.status" type="order" size="x-small" />
+                  </template>
+                  <template v-slot:item.paymentStatus="{ item }">
+                    <MpStatusChip :status="item.paymentStatus" type="payment" size="x-small" />
+                  </template>
+                  <template v-slot:item.fulfillmentStatus="{ item }">
+                    <MpStatusChip :status="item.fulfillmentStatus" type="fulfillment" size="x-small" />
+                  </template>
+                </v-data-table>
+              </v-card>
               <MpEmptyState
                 v-else
                 icon="shopping-cart"
@@ -539,25 +585,27 @@ const cartHeaders = [
           <!-- ─── ABANDONED CART TAB ────────────────────────────────────── -->
           <v-window-item value="abandoned">
             <div class="pa-1">
-              <v-data-table
-                v-if="detail.abandonedCarts.length"
-                :headers="cartHeaders"
-                :items="detail.abandonedCarts"
-                items-per-page="10"
-                density="comfortable"
-              >
-                <template v-slot:item.items="{ item }">
-                  {{ item.items.length }} item{{ item.items.length !== 1 ? 's' : '' }}
-                </template>
-                <template v-slot:item.total="{ item }">
-                  <span class="font-weight-medium">${{ item.total.toFixed(2) }}</span>
-                </template>
-                <template v-slot:item.recovered="{ item }">
-                  <v-chip size="x-small" variant="flat" :color="item.recovered ? 'success' : 'warning'">
-                    {{ item.recovered ? 'Recovered' : 'Not Recovered' }}
-                  </v-chip>
-                </template>
-              </v-data-table>
+              <v-card v-if="detail.abandonedCarts.length" flat border rounded="lg">
+                <v-data-table
+                  :headers="cartHeaders"
+                  :items="detail.abandonedCarts"
+                  items-per-page="10"
+                  density="comfortable"
+                  style="background: transparent;"
+                >
+                  <template v-slot:item.items="{ item }">
+                    {{ item.items.length }} item{{ item.items.length !== 1 ? 's' : '' }}
+                  </template>
+                  <template v-slot:item.total="{ item }">
+                    <span class="font-weight-medium">${{ item.total.toFixed(2) }}</span>
+                  </template>
+                  <template v-slot:item.recovered="{ item }">
+                    <v-chip size="x-small" variant="flat" :color="item.recovered ? 'success' : 'warning'">
+                      {{ item.recovered ? 'Recovered' : 'Not Recovered' }}
+                    </v-chip>
+                  </template>
+                </v-data-table>
+              </v-card>
               <MpEmptyState
                 v-else
                 icon="shopping-cart"
@@ -596,6 +644,59 @@ const cartHeaders = [
   gap: 20px;
 }
 
+/* Ensure all cards use the design kit's subtle border and white background */
+.v-card:not(.bg-transparent) {
+  border-color: var(--hairline) !important;
+  box-shadow: none !important;
+  background: var(--surface-1) !important;
+}
+
+.v-card.bg-transparent {
+  border-color: var(--hairline) !important;
+  box-shadow: none !important;
+}
+
+/* ── Profile Hero Card ──────────────────────────────── */
+.profile-hero-card {
+  background: var(--surface-1);
+}
+
+.profile-hero-banner {
+  height: 72px;
+  background: linear-gradient(135deg, rgb(var(--v-theme-primary)) 0%, color-mix(in oklch, rgb(var(--v-theme-primary)) 60%, rgb(var(--v-theme-secondary))) 100%);
+  position: relative;
+  overflow: hidden;
+}
+
+.profile-hero-banner__pattern {
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(
+    120deg,
+    rgba(255,255,255,0.04) 0px,
+    rgba(255,255,255,0.04) 1px,
+    transparent 1px,
+    transparent 32px
+  );
+}
+
+.profile-hero-avatar {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: -40px;
+  position: relative;
+}
+
+.profile-hero-avatar__ring {
+  border: 3px solid var(--surface-1);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.12);
+}
+
+.profile-hero-avatar__status {
+  margin-top: 6px;
+}
+
 .avatar-fallback-lg {
   width: 100%;
   height: 100%;
@@ -608,14 +709,15 @@ const cartHeaders = [
   font-size: 22px;
 }
 
+/* ── Two-column layout ──────────────────────────────── */
 .content-area {
   height: calc(100vh - 200px);
   overflow: hidden;
 }
 
 .contact-sidebar {
-  width: 380px;
-  min-width: 380px;
+  width: 340px;
+  min-width: 340px;
   flex-shrink: 0;
   overflow-y: auto;
   padding-bottom: 24px;
@@ -635,13 +737,41 @@ const cartHeaders = [
   border-radius: 4px;
 }
 
-.detail-row {
+/* ── Detail rows v2 (icon + label + value) ──────────── */
+.detail-row-v2 {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  gap: 12px;
+  gap: 8px;
+  padding: 7px 0;
+  border-bottom: 1px solid rgba(var(--v-border-color), 0.06);
 }
 
+.detail-row-v2:last-child {
+  border-bottom: none;
+}
+
+.detail-row-v2__icon {
+  color: var(--muted);
+  flex-shrink: 0;
+  opacity: 0.6;
+}
+
+.detail-row-v2__label {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--muted);
+  white-space: nowrap;
+  min-width: 64px;
+}
+
+.detail-row-v2__value {
+  font-size: 13px;
+  font-weight: 600;
+  margin-left: auto;
+  text-align: right;
+}
+
+/* ── Right content area ─────────────────────────────── */
 .right-tab-content {
   overflow-y: auto;
   scrollbar-width: thin;
@@ -654,6 +784,123 @@ const cartHeaders = [
 .right-tab-content::-webkit-scrollbar-thumb {
   background: rgba(var(--v-border-color), 0.3);
   border-radius: 4px;
+}
+
+/* ── Engagement metric grid ─────────────────────────── */
+.engagement-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+}
+
+.engagement-metric-card {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 16px;
+  border: 1px solid var(--hairline);
+  border-radius: var(--r-card);
+  background: var(--surface-1);
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.engagement-metric-card:hover {
+  border-color: rgba(var(--v-theme-primary), 0.2);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+}
+
+.engagement-metric-card__icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  flex-shrink: 0;
+}
+
+.engagement-metric-card__body {
+  min-width: 0;
+}
+
+.engagement-metric-card__value {
+  font-size: 20px;
+  font-weight: 700;
+  line-height: 1.1;
+  letter-spacing: -0.3px;
+}
+
+.engagement-metric-card__label {
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--muted);
+  margin-top: 2px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* ── Timeline v2 (vertical connector) ───────────────── */
+.timeline-v2 {
+  display: flex;
+  flex-direction: column;
+}
+
+.timeline-v2__entry {
+  display: flex;
+  gap: 12px;
+  min-height: 56px;
+}
+
+.timeline-v2__rail {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex-shrink: 0;
+  width: 32px;
+}
+
+.timeline-v2__dot {
+  flex-shrink: 0;
+  z-index: 1;
+}
+
+.timeline-v2__line {
+  width: 2px;
+  flex-grow: 1;
+  background: rgba(var(--v-border-color), 0.15);
+  border-radius: 1px;
+  margin: 4px 0;
+  min-height: 12px;
+}
+
+.timeline-v2__content {
+  flex-grow: 1;
+  padding-bottom: 14px;
+  min-width: 0;
+}
+
+/* ── Campaign rows ──────────────────────────────────── */
+.campaign-row {
+  border-bottom: 1px solid rgba(var(--v-border-color), 0.08);
+  transition: background 0.15s ease;
+  border-radius: 8px;
+}
+
+.campaign-row:hover {
+  background: rgba(var(--v-theme-primary), 0.03);
+}
+
+.campaign-row:last-child {
+  border-bottom: none;
+}
+
+/* Legacy (keep for older sections) */
+.detail-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
 }
 
 .detail-label {
@@ -674,14 +921,6 @@ const cartHeaders = [
 }
 
 .timeline-entry:last-child {
-  border-bottom: none;
-}
-
-.campaign-row {
-  border-bottom: 1px solid rgba(var(--v-border-color), 0.08);
-}
-
-.campaign-row:last-child {
   border-bottom: none;
 }
 </style>

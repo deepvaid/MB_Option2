@@ -58,7 +58,7 @@ const ACCENT_DEFS: Record<AccentKey, AccentDef> = {
 // ─── Reactive state ───────────────────────────────────────────────────────────
 const accent = ref<AccentKey>((localStorage.getItem(LS_ACCENT) as AccentKey) || 'cyan')
 const mode = ref<ThemeMode>((localStorage.getItem(LS_MODE) as ThemeMode) || 'light')
-const darkSidebar = ref<boolean>(localStorage.getItem(LS_DARK_SIDEBAR) === 'true')
+const darkSidebar = ref<boolean>(localStorage.getItem(LS_DARK_SIDEBAR) !== 'false')
 
 /** Current accent hex color — reactive, for use in charts and dynamic JS. */
 const accentHex = ref<string>(ACCENT_DEFS[accent.value].hex)
@@ -138,7 +138,7 @@ export function useAppTheme() {
 export function initAppTheme() {
   const storedAccent = (localStorage.getItem(LS_ACCENT) as AccentKey) || 'cyan'
   const storedMode = (localStorage.getItem(LS_MODE) as ThemeMode) || 'light'
-  const storedDarkSidebar = localStorage.getItem(LS_DARK_SIDEBAR) === 'true'
+  const storedDarkSidebar = localStorage.getItem(LS_DARK_SIDEBAR) !== 'false'
   applyAccent(storedAccent)
   applyMode(storedMode)
   applyDarkSidebar(storedDarkSidebar)
