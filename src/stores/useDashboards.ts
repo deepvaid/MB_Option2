@@ -43,7 +43,7 @@ interface PersistedDashboardStateV3 {
 
 type AnyPersistedDashboardState = PersistedDashboardStateV1 | PersistedDashboardStateV2 | PersistedDashboardStateV3
 
-const STORAGE_KEY = 'mp.dashboard-hub.v4'
+const STORAGE_KEY = 'mp.dashboard-hub.v5'
 const LEGACY_STORAGE_KEY_V1 = 'mp.dashboard-hub.v1'
 const MAX_WIDGETS_PER_DASHBOARD = 24
 const PERSIST_DEBOUNCE_MS = 250
