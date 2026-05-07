@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed, onErrorCaptured, ref, watch } from 'vue'
-import { useRoute, useRouter } from 'vue-router'
+import { useRoute, useRouter, type RouteLocationRaw } from 'vue-router'
 import DashboardGrid from '@/components/dashboards/DashboardGrid.vue'
 import WidgetWizardDrawer from '@/components/dashboards/WidgetWizardDrawer.vue'
 import CreateDashboardDialog from '@/components/dashboards/CreateDashboardDialog.vue'
@@ -49,6 +49,15 @@ const confirmAction = ref<{
   destructive?: boolean
   perform: () => void
 } | null>(null)
+
+interface SetupTask {
+  title: string
+  description: string
+  icon: string
+  status: string
+  complete: boolean
+  route: RouteLocationRaw
+}
 
 const datePresetOptions: Array<{ title: string; value: DashboardDatePreset; group: string }> = [
   { title: 'Today', value: 'today', group: 'Current' },
@@ -115,6 +124,42 @@ const activeWidgetDraft = computed<DashboardWidgetDraft | null>(() => {
   if (!draft || draft.dashboardId !== activeDashboardId.value) return null
   return draft
 })
+const setupTasks = computed<SetupTask[]>(() => [
+  {
+    title: 'Verify sending DNS',
+    description: 'DKIM, SPF, and DMARC are ready.',
+    icon: 'shield-check',
+    status: 'Done',
+    complete: true,
+    route: { name: 'Settings', params: { accountId: accountId.value } },
+  },
+  {
+    title: 'Connect payment gateway',
+    description: 'Finish payment setup before launch.',
+    icon: 'credit-card',
+    status: 'Needs review',
+    complete: false,
+    route: { name: 'StoreSetup', params: { accountId: accountId.value } },
+  },
+  {
+    title: 'Complete store setup',
+    description: 'Review channels, checkout, and fulfillment.',
+    icon: 'store',
+    status: 'In progress',
+    complete: false,
+    route: { name: 'StoreSetup', params: { accountId: accountId.value } },
+  },
+  {
+    title: 'Review connected apps',
+    description: 'Check installed apps and sync health.',
+    icon: 'puzzle',
+    status: '4 active',
+    complete: true,
+    route: { name: 'AppStore', params: { accountId: accountId.value } },
+  },
+])
+const completedSetupTasks = computed(() => setupTasks.value.filter((task) => task.complete).length)
+const setupProgress = computed(() => Math.round((completedSetupTasks.value / setupTasks.value.length) * 100))
 
 const pageTitle = computed(() => activeDashboard.value?.name ?? 'Dashboard')
 
@@ -234,6 +279,10 @@ function showDashboardNotice(message: string) {
 
 function openStubAction(label: string) {
   showDashboardNotice(`${label} is represented as a prototype action.`)
+}
+
+function openSetupTask(task: SetupTask) {
+  router.push(task.route)
 }
 
 function openWidgetBuilder(mode: 'choose' | 'manual' | 'davinci' = 'choose') {
@@ -650,6 +699,48 @@ function performConfirm() {
       </div>
     </section>
 
+    <section class="dashboard-setup-strip" aria-label="Things to do">
+      <div class="dashboard-setup-strip__summary">
+        <v-avatar size="36" variant="tonal" color="primary" rounded="lg">
+          <v-icon size="19">list-checks</v-icon>
+        </v-avatar>
+        <div class="min-width-0">
+          <div class="dashboard-setup-strip__title">Things to do</div>
+          <div class="dashboard-setup-strip__meta">
+            {{ completedSetupTasks }} of {{ setupTasks.length }} complete · Store launch setup
+          </div>
+          <v-progress-linear
+            :model-value="setupProgress"
+            color="primary"
+            bg-color="surface-variant"
+            height="5"
+            rounded
+            class="dashboard-setup-strip__progress"
+          />
+        </div>
+      </div>
+
+      <div class="dashboard-setup-strip__tasks">
+        <button
+          v-for="task in setupTasks"
+          :key="task.title"
+          type="button"
+          class="dashboard-setup-task"
+          :class="{ 'dashboard-setup-task--complete': task.complete }"
+          @click="openSetupTask(task)"
+        >
+          <v-icon size="17" class="dashboard-setup-task__icon">
+            {{ task.complete ? 'circle-check' : task.icon }}
+          </v-icon>
+          <span class="dashboard-setup-task__body">
+            <strong>{{ task.title }}</strong>
+            <small>{{ task.description }}</small>
+          </span>
+          <span class="dashboard-setup-task__status">{{ task.status }}</span>
+        </button>
+      </div>
+    </section>
+
     <v-alert
       v-if="editMode"
       type="info"
@@ -922,6 +1013,123 @@ function performConfirm() {
   border-bottom: 1px solid var(--hairline);
 }
 
+.dashboard-setup-strip {
+  display: grid;
+  grid-template-columns: minmax(260px, 320px) minmax(0, 1fr);
+  gap: 16px;
+  align-items: stretch;
+  padding: 14px;
+  border: 1px solid var(--hairline);
+  border-radius: 12px;
+  background: var(--surface-1);
+}
+
+.dashboard-setup-strip__summary {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 12px;
+  align-items: center;
+  padding-right: 14px;
+  border-right: 1px solid var(--hairline);
+}
+
+.dashboard-setup-strip__title {
+  color: var(--ink);
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 1.25;
+}
+
+.dashboard-setup-strip__meta {
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 500;
+  margin-top: 2px;
+}
+
+.dashboard-setup-strip__progress {
+  max-width: 220px;
+  margin-top: 9px;
+}
+
+.dashboard-setup-strip__tasks {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.dashboard-setup-task {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  grid-template-rows: auto auto;
+  column-gap: 8px;
+  row-gap: 3px;
+  min-height: 76px;
+  padding: 10px;
+  border: 1px solid var(--hairline);
+  border-radius: 10px;
+  background: var(--surface-1);
+  color: var(--ink);
+  cursor: pointer;
+  font: inherit;
+  text-align: left;
+  transition: background 120ms ease, border-color 120ms ease;
+}
+
+.dashboard-setup-task:hover {
+  background: var(--surface-2);
+  border-color: color-mix(in oklch, var(--accent) 26%, var(--hairline));
+}
+
+.dashboard-setup-task:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px color-mix(in oklch, var(--accent) 18%, transparent);
+}
+
+.dashboard-setup-task__icon {
+  grid-row: 1 / span 2;
+  margin-top: 1px;
+  color: var(--accent-ink);
+}
+
+.dashboard-setup-task--complete .dashboard-setup-task__icon {
+  color: var(--pos);
+}
+
+.dashboard-setup-task__body {
+  min-width: 0;
+}
+
+.dashboard-setup-task__body strong,
+.dashboard-setup-task__body small {
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.dashboard-setup-task__body strong {
+  color: var(--ink);
+  font-size: 12.5px;
+  line-height: 1.25;
+  white-space: nowrap;
+}
+
+.dashboard-setup-task__body small {
+  color: var(--muted);
+  font-size: 11.5px;
+  line-height: 1.3;
+  margin-top: 2px;
+}
+
+.dashboard-setup-task__status {
+  grid-column: 2;
+  color: var(--accent-ink);
+  font-size: 10.5px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
 @media (max-width: 960px) {
   .dashboard-page-bar {
     flex-direction: column;
@@ -947,6 +1155,27 @@ function performConfirm() {
 
   .dashboard-date-menu__fields,
   .dashboard-date-menu__fields + .dashboard-date-menu__fields {
+    grid-template-columns: 1fr;
+  }
+
+  .dashboard-setup-strip {
+    grid-template-columns: 1fr;
+  }
+
+  .dashboard-setup-strip__summary {
+    padding-right: 0;
+    padding-bottom: 12px;
+    border-right: 0;
+    border-bottom: 1px solid var(--hairline);
+  }
+
+  .dashboard-setup-strip__tasks {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 640px) {
+  .dashboard-setup-strip__tasks {
     grid-template-columns: 1fr;
   }
 }

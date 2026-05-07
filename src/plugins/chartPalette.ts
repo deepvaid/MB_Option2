@@ -10,8 +10,8 @@ import {
 } from '@/design-tokens/generated/tokens'
 
 /**
- * Shopify-style saturated palette for chart series.
- * [cyan, magenta, purple, emerald, amber, indigo]
+ * Maropost-aligned palette for chart series.
+ * [blue, cyan, teal, green, amber, slate]
  */
 export const chartPalette: string[] = [
   mp_color_chart_light_series1,

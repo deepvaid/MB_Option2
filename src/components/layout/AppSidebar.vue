@@ -47,15 +47,22 @@ interface NavGroup {
   items: (NavItem | NavSubGroup)[]
 }
 
+interface InstalledAppItem {
+  title: string
+  icon: string
+  status: 'Active' | 'Available'
+  route: string
+}
+
 function buildNavGroups(accountId: string): NavGroup[] {
   return [
     {
       title: 'Dashboards',
       icon: 'layout-dashboard',
       items: [
-        { title: 'Active Dashboard', route: `/accounts/${accountId}/dashboard` },
-        { title: 'All Dashboards', route: `/accounts/${accountId}/dashboards` },
-        { title: 'Live View', route: `/accounts/${accountId}/analytics/live_view` },
+        { title: 'Home', route: `/accounts/${accountId}/dashboard` },
+        { title: 'Manage', route: `/accounts/${accountId}/dashboards` },
+        { title: 'Live', route: `/accounts/${accountId}/analytics/live_view` },
       ],
     },
     {
@@ -219,6 +226,7 @@ const localRail = ref(props.rail)
 const openedGroups = ref<string[]>([])
 const railHoveredSubGroup = ref<string | null>(null)
 const expandedHoveredGroup = ref<string | null>(null)
+const appsExpanded = ref(false)
 
 // Enforce single-expand invariant: only one level-2 sub-group open per parent.
 // We watch the opened-array Vuetify maintains and prune siblings whenever a new
@@ -228,6 +236,7 @@ watch(openedGroups, (next, prev) => {
   const byParent: Record<string, string[]> = {}
   for (const k of subKeys) {
     const parent = k.split('-')[0]
+    if (!parent) continue
     ;(byParent[parent] = byParent[parent] || []).push(k)
   }
   let pruned = next
@@ -250,6 +259,32 @@ const resolvedAccountId = computed(() => {
   return routeAccountId ?? accountsStore.activeId
 })
 const navGroups = computed(() => buildNavGroups(resolvedAccountId.value))
+const installedApps = computed<InstalledAppItem[]>(() => [
+  {
+    title: 'Shopify',
+    icon: 'shopping-bag',
+    status: 'Active',
+    route: `/accounts/${resolvedAccountId.value}/app_store?app=shopify`,
+  },
+  {
+    title: 'Salesforce',
+    icon: 'cloud',
+    status: 'Active',
+    route: `/accounts/${resolvedAccountId.value}/app_store?app=salesforce`,
+  },
+  {
+    title: 'Facebook Ads',
+    icon: 'megaphone',
+    status: 'Active',
+    route: `/accounts/${resolvedAccountId.value}/app_store?app=facebook-ads`,
+  },
+  {
+    title: 'Twilio',
+    icon: 'message-square',
+    status: 'Active',
+    route: `/accounts/${resolvedAccountId.value}/app_store?app=twilio`,
+  },
+])
 
 watch(() => props.modelValue, (nextValue) => {
   localDrawer.value = nextValue
@@ -292,6 +327,10 @@ function activeRailSubGroupItems(group: NavGroup) {
   if (!railHoveredSubGroup.value) return []
   const sub = railSubGroups(group).find((s) => s.title === railHoveredSubGroup.value)
   return sub?.items ?? []
+}
+
+function isAppsGroup(group: NavGroup) {
+  return group.title === 'Apps'
 }
 </script>
 
@@ -341,8 +380,58 @@ function activeRailSubGroupItems(group: NavGroup) {
     <!-- Navigation List -->
     <v-list v-model:opened="openedGroups" density="compact" nav class="px-2 py-1 sidebar-scroll">
       <template v-for="group in navGroups" :key="group.title">
+        <template v-if="isAppsGroup(group) && !localRail">
+          <v-list-item
+            :to="group.singleRoute"
+            @click="group.singleRoute && goTo(group.singleRoute)"
+            :prepend-icon="group.icon"
+            :title="group.title"
+            :value="group.title"
+            rounded="lg"
+            active-class="active-nav-item"
+            class="mb-1 sidebar-text"
+          >
+            <template #append>
+              <v-tooltip :text="appsExpanded ? 'Hide installed apps' : 'Show installed apps'" location="end">
+                <template #activator="{ props: tipProps }">
+                  <v-btn
+                    v-bind="tipProps"
+                    :icon="appsExpanded ? 'minus' : 'plus'"
+                    variant="text"
+                    size="x-small"
+                    density="comfortable"
+                    class="sidebar-apps-toggle"
+                    :aria-label="appsExpanded ? 'Hide installed apps' : 'Show installed apps'"
+                    @click.stop.prevent="appsExpanded = !appsExpanded"
+                  />
+                </template>
+              </v-tooltip>
+            </template>
+          </v-list-item>
+
+          <div v-if="appsExpanded" class="sidebar-installed-apps">
+            <v-list-item
+              v-for="app in installedApps"
+              :key="app.title"
+              :to="app.route"
+              @click="goTo(app.route)"
+              rounded="lg"
+              class="sidebar-text sidebar-child-item sidebar-app-item"
+              exact
+            >
+              <template #prepend>
+                <v-icon size="15">{{ app.icon }}</v-icon>
+              </template>
+              <v-list-item-title>{{ app.title }}</v-list-item-title>
+              <template #append>
+                <span class="sidebar-app-item__status">{{ app.status }}</span>
+              </template>
+            </v-list-item>
+          </div>
+        </template>
+
         <v-list-item
-          v-if="group.items.length === 0"
+          v-else-if="group.items.length === 0"
           :to="group.singleRoute"
           @click="group.singleRoute && goTo(group.singleRoute)"
           :prepend-icon="group.icon"
@@ -744,11 +833,42 @@ function activeRailSubGroupItems(group: NavGroup) {
 }
 
 .sidebar-brand__wordmark {
-  font-size: 13px;
+  font-size: 15px;
   font-weight: 700;
-  letter-spacing: 1.4px;
+  letter-spacing: 1.1px;
   text-transform: uppercase;
   color: var(--ink);
+}
+
+.sidebar-apps-toggle {
+  width: 24px !important;
+  height: 24px !important;
+  color: var(--muted) !important;
+}
+
+.sidebar-apps-toggle:hover {
+  color: var(--accent-ink) !important;
+}
+
+.sidebar-installed-apps {
+  margin: 0 0 6px;
+}
+
+.sidebar-app-item {
+  --indent-padding: 20px;
+}
+
+.sidebar-app-item :deep(.v-list-item__prepend > .v-icon) {
+  margin-inline-end: 8px;
+  color: var(--muted);
+}
+
+.sidebar-app-item__status {
+  color: var(--muted);
+  font-size: 10.5px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
 }
 
 .sidebar-scroll {

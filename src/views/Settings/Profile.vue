@@ -1,5 +1,11 @@
 <script setup lang="ts">
 import MpPageHeader from '@/components/MpPageHeader.vue'
+
+const userName = 'Ross Andrew Paquette'
+const userEmail = 'Ross@maropost.com'
+const userRole = 'Super Admin'
+const userInitials = 'RP'
+const userAvatarUrl = 'https://maropost.com/hubfs/Maropost%20website/leadership/ross.png'
 </script>
 
 <template>
@@ -18,10 +24,14 @@ import MpPageHeader from '@/components/MpPageHeader.vue'
       <v-col cols="12" md="4">
         <v-card variant="flat" border rounded="xl" class="text-center py-6">
           <v-avatar size="120" color="primary" class="mb-4">
-            <span class="text-h3 text-white">AD</span>
+            <v-img :src="userAvatarUrl" :alt="userName" cover>
+              <template #error>
+                <span class="text-h3 text-white">{{ userInitials }}</span>
+              </template>
+            </v-img>
           </v-avatar>
-          <div class="text-h5 font-weight-bold mb-1">Admin Manager</div>
-          <div class="text-medium-emphasis mb-4">Super Admin</div>
+          <div class="text-h5 font-weight-bold mb-1">{{ userName }}</div>
+          <div class="text-medium-emphasis mb-4">{{ userRole }}</div>
           <v-btn variant="outlined" class="text-none">Change Avatar</v-btn>
         </v-card>
       </v-col>
@@ -29,8 +39,8 @@ import MpPageHeader from '@/components/MpPageHeader.vue'
         <v-card variant="flat" border rounded="xl">
           <v-card-text class="pa-5">
             <div class="text-subtitle-1 font-weight-bold mb-4">Personal Information</div>
-            <v-text-field label="Full Name" variant="outlined" model-value="Admin Manager" density="comfortable" class="mb-3" />
-            <v-text-field label="Email Address" variant="outlined" model-value="admin@example.com" density="comfortable" class="mb-3" />
+            <v-text-field label="Full Name" variant="outlined" :model-value="userName" density="comfortable" class="mb-3" />
+            <v-text-field label="Email Address" variant="outlined" :model-value="userEmail" density="comfortable" class="mb-3" />
             <v-text-field label="Phone Number" variant="outlined" density="comfortable" />
           </v-card-text>
           <v-card-actions class="px-5 pb-5 pt-0">

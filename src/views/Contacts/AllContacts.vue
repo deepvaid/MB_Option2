@@ -96,6 +96,25 @@ const saveSnack = ref(false)
 function selectAll() {
   selected.value = store.contacts.map((_, i) => i)
 }
+
+function contactPath(contactId: number | string) {
+  const accountId = Array.isArray(route.params.accountId)
+    ? route.params.accountId[0]
+    : route.params.accountId
+  return `/accounts/${accountId}/contacts/${contactId}`
+}
+
+function openContact(contactId: number | string) {
+  router.push(contactPath(contactId))
+}
+
+function handleContactRowClick(event: MouseEvent, payload: { item: unknown }) {
+  const target = event.target as HTMLElement | null
+  if (target?.closest('button, a, input, [role="button"], .v-selection-control, .v-overlay')) return
+
+  const item = payload.item as { id?: number | string }
+  if (item.id) openContact(item.id)
+}
 </script>
 
 <template>
@@ -179,7 +198,8 @@ function selectAll() {
         density="comfortable"
         :items-per-page="15"
         fixed-header
-        class="flex-grow-1"
+        class="flex-grow-1 contacts-table"
+        @click:row="handleContactRowClick"
       >
         <template v-slot:item.contact="{ item }">
           <div class="d-flex align-center py-2">
@@ -194,10 +214,18 @@ function selectAll() {
               </v-img>
             </v-avatar>
             <div>
-              <div class="text-body-2 font-weight-medium text-decoration-underline cursor-pointer" @click="router.push(`/accounts/${route.params.accountId}/contacts/${(item as any).id}`)">
+              <button
+                type="button"
+                class="contact-link"
+                @click.stop="openContact((item as any).id)"
+              >
                 {{ (item as any).firstName + ' ' + ((item as any).lastName ?? '') }}
-              </div>
+              </button>
               <div class="text-caption text-medium-emphasis">{{ (item as any).email }}</div>
+              <div class="contact-row-hint">
+                View profile
+                <v-icon size="12">arrow-up-right</v-icon>
+              </div>
             </div>
           </div>
         </template>
@@ -213,7 +241,7 @@ function selectAll() {
         </template>
 
         <template v-slot:item.status="{ item }">
-          <MpStatusChip :status="item.status" type="contact" size="x-small" variant="flat" />
+          <MpStatusChip :status="String(item.status ?? '')" type="contact" size="x-small" variant="flat" />
         </template>
 
         <template v-slot:item.score="{ item }">
@@ -226,10 +254,10 @@ function selectAll() {
         <template v-slot:item.actions="{ item }">
           <v-menu location="bottom end">
             <template v-slot:activator="{ props }">
-              <v-btn v-bind="props" icon="more-horizontal" variant="text" size="small" density="comfortable" color="medium-emphasis" />
+              <v-btn v-bind="props" icon="more-horizontal" variant="text" size="small" density="comfortable" color="medium-emphasis" @click.stop />
             </template>
             <v-list density="compact" rounded="lg" min-width="160" elevation="3" class="py-1">
-              <v-list-item prepend-icon="external-link" title="View" @click="router.push(`/accounts/${route.params.accountId}/contacts/${(item as any).id}`)" />
+              <v-list-item prepend-icon="external-link" title="View profile" @click="openContact((item as any).id)" />
               <v-list-item prepend-icon="pencil" title="Edit" />
               <v-list-item prepend-icon="copy" title="Duplicate" />
               <v-divider class="my-1" style="opacity: 0.4" />
@@ -361,6 +389,56 @@ function selectAll() {
 
 :deep(.v-data-table thead tr) {
   border-bottom: 1px solid rgba(var(--v-border-color), 0.15);
+}
+
+.contacts-table :deep(tbody tr) {
+  cursor: pointer;
+}
+
+.contacts-table :deep(tbody tr:hover) {
+  background: color-mix(in oklch, var(--accent) 4%, transparent);
+}
+
+.contact-link {
+  appearance: none;
+  border: 0;
+  background: transparent;
+  color: rgb(var(--v-theme-on-surface));
+  cursor: pointer;
+  font: inherit;
+  font-weight: 600;
+  padding: 0;
+  text-align: left;
+}
+
+.contact-link:hover,
+.contact-link:focus-visible {
+  color: rgb(var(--v-theme-primary));
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.contact-link:focus-visible {
+  outline: none;
+  border-radius: 4px;
+  box-shadow: 0 0 0 3px rgba(var(--v-theme-primary), 0.16);
+}
+
+.contact-row-hint {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  margin-top: 2px;
+  color: rgb(var(--v-theme-primary));
+  font-size: 11px;
+  font-weight: 600;
+  opacity: 0;
+  transition: opacity 120ms ease;
+}
+
+.contacts-table :deep(tbody tr:hover) .contact-row-hint,
+.contacts-table :deep(tbody tr:focus-within) .contact-row-hint {
+  opacity: 1;
 }
 
 .avatar-fallback {

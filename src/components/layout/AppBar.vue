@@ -11,17 +11,15 @@ const router = useRouter()
 const accountsStore = useAccountsStore()
 
 const notificationCount = ref(18)
-const userName = ref('Deepak Vaidya')
-const userInitials = ref('DV')
-const userEmail = ref('deepak.v@maropost.com')
+const userName = ref('Ross Andrew Paquette')
+const userInitials = ref('RP')
+const userEmail = ref('Ross@maropost.com')
 const userRole = ref('Super Admin')
-const userAvatarUrl = ref('https://i.pravatar.cc/128?img=12')
+const userAvatarUrl = ref('https://maropost.com/hubfs/Maropost%20website/leadership/ross.png')
 const searchOpen = ref(false)
 const searchQuery = ref('')
 const appbarNotice = ref('')
 const appbarNoticeVisible = ref(false)
-
-const isDark = computed(() => theme.global.current.value.dark)
 
 const currentAccountId = computed(() => accountsStore.activeId)
 const settingsRoute = computed(() => ({ name: 'Settings' as const, params: { accountId: currentAccountId.value } }))
@@ -110,10 +108,6 @@ const filteredSearchGroups = computed(() => {
     }, {}),
   )
 })
-
-function toggleTheme() {
-  theme.global.name.value = theme.global.current.value.dark ? 'maropostLight' : 'maropostDark'
-}
 
 function showAppbarNotice(message: string) {
   appbarNotice.value = message
@@ -229,9 +223,9 @@ function openStub(label: string) {
           </template>
         </v-tooltip>
 
-        <v-tooltip text="Galaxy Help portal" location="bottom">
+        <v-tooltip text="Galaxy" location="bottom">
           <template #activator="{ props }">
-            <v-btn v-bind="props" icon variant="text" class="appbar-action-btn" aria-label="Galaxy Help portal" @click="openStub('Galaxy Help portal')">
+            <v-btn v-bind="props" icon variant="text" class="appbar-action-btn" aria-label="Galaxy" @click="openStub('Galaxy')">
               <v-icon>book-open</v-icon>
             </v-btn>
           </template>
@@ -245,7 +239,7 @@ function openStub(label: string) {
           </template>
         </v-tooltip>
 
-        <v-tooltip text="LINE" location="bottom">
+        <v-tooltip text="LINE messenger" location="bottom">
           <template #activator="{ props }">
             <v-btn
               v-bind="props"
@@ -319,8 +313,8 @@ function openStub(label: string) {
               </v-avatar>
               <div class="um-header__info">
                 <div class="um-header__name">{{ userName }}</div>
-                <div class="um-header__email">deepak.v@maropost.com</div>
-                <v-chip size="x-small" variant="tonal" color="primary" class="mt-1">Super Admin</v-chip>
+                <div class="um-header__email">{{ userEmail }}</div>
+                <v-chip size="x-small" variant="tonal" color="primary" class="mt-1">{{ userRole }}</v-chip>
               </div>
             </div>
 

@@ -57,20 +57,29 @@ const settingCards: Record<string, { key: string; icon: string; color: string; l
 }
 
 const currentCards = computed(() => settingCards[activeTab.value] ?? [])
+const profileName = 'Ross Andrew Paquette'
+const profileFirstName = 'Ross Andrew'
+const profileLastName = 'Paquette'
+const profileEmail = 'Ross@maropost.com'
+const profileInitials = 'RP'
+const profileAvatarUrl = 'https://maropost.com/hubfs/Maropost%20website/leadership/ross.png'
 
 // When top-level nav changes, jump to first sub-item of that section
+function getFirstSettingKey(key: string) {
+  return settingCards[key]?.[0]?.key ?? null
+}
+
 function selectTab(key: string) {
   activeTab.value = key
-  const cards = settingCards[key]
-  selectedSetting.value = cards?.length ? cards[0].key : null
+  selectedSetting.value = getFirstSettingKey(key)
 }
 
 // Initialise to first card of default tab (account)
-selectedSetting.value = settingCards['account'][0].key
+selectedSetting.value = getFirstSettingKey('account')
 
 // ── Data ──────────────────────────────────────────────────────────────────
 const company = ref({
-  accountId: '2000290', name: 'MMC-MSC-MCC Scooter Village', clientName: 'Deepak Vaidya',
+  accountId: '2000290', name: 'MMC-MSC-MCC Scooter Village', clientName: profileName,
   industry: 'E-Commerce', language: 'English (US)', website: 'https://scootervillage.com',
   address1: '123 Commerce St', address2: '', country: 'United States',
   state: 'New York', city: 'New York', zip: '10001',
@@ -78,7 +87,7 @@ const company = ref({
 })
 
 const teamUsers = ref([
-  { id:1, name:'Deepak Vaidya', email:'deepak.v@maropost.com',  role:'Owner',         marketing:true,  service:true,  commerce:true,  status:'Active', avatar:'DV' },
+  { id:1, name: profileName, email: profileEmail,  role:'Owner',         marketing:true,  service:true,  commerce:true,  status:'Active', avatar: profileInitials },
   { id:2, name:'Sarah Connor',  email:'sarah@maropost.com',     role:'Admin',         marketing:true,  service:true,  commerce:false, status:'Active', avatar:'SC' },
   { id:3, name:'Mike Zhang',    email:'mike@maropost.com',      role:'Support Agent', marketing:false, service:true,  commerce:false, status:'Active', avatar:'MZ' },
   { id:4, name:'Priya Sharma',  email:'priya@maropost.com',     role:'Marketer',      marketing:true,  service:false, commerce:false, status:'Active', avatar:'PS' },
@@ -96,8 +105,8 @@ const trackingDomains = ref([
 ])
 
 const apiKeys = ref([
-  { id:1, label:'Production Key', user:'deepak.v@maropost.com', key:'mp_live_sk_••••••••••••••••••••••4xyz', created:'2024-01-15', lastUsed:'2026-03-07', status:'Active' },
-  { id:2, label:'Dev / Staging',  user:'deepak.v@maropost.com', key:'mp_test_sk_••••••••••••••••••••••1abc', created:'2024-03-01', lastUsed:'2026-02-28', status:'Active' },
+  { id:1, label:'Production Key', user: profileEmail, key:'mp_live_sk_••••••••••••••••••••••4xyz', created:'2024-01-15', lastUsed:'2026-03-07', status:'Active' },
+  { id:2, label:'Dev / Staging',  user: profileEmail, key:'mp_test_sk_••••••••••••••••••••••1abc', created:'2024-03-01', lastUsed:'2026-02-28', status:'Active' },
 ])
 
 const webhooks = ref([
@@ -353,16 +362,20 @@ function save() { saveSnack.value = true }
             <div class="settings-card-header"><div class="text-h6 font-weight-bold mb-1">My Profile</div><div class="text-body-2 text-medium-emphasis">Update your personal info, timezone, and password.</div></div>
             <div class="settings-card-body">
               <div class="d-flex align-center gap-5 mb-8">
-                <v-avatar color="primary" size="72" class="text-h5 font-weight-bold text-white">DV</v-avatar>
+                <v-avatar color="primary" size="72" class="text-h5 font-weight-bold text-white">
+                  <v-img :src="profileAvatarUrl" :alt="profileName" cover>
+                    <template #error>{{ profileInitials }}</template>
+                  </v-img>
+                </v-avatar>
                 <div>
                   <v-btn variant="outlined" color="primary" class="text-none mb-1" prepend-icon="camera" size="small">Change Photo</v-btn>
                   <div class="text-caption text-medium-emphasis">JPG or PNG. Max 2MB.</div>
                 </div>
               </div>
               <v-row class="settings-field-row">
-                <v-col cols="12" sm="6"><v-text-field label="First Name" model-value="Deepak" variant="outlined" density="comfortable"></v-text-field></v-col>
-                <v-col cols="12" sm="6"><v-text-field label="Last Name" model-value="Vaidya" variant="outlined" density="comfortable"></v-text-field></v-col>
-                <v-col cols="12" sm="6"><v-text-field label="Email" model-value="deepak.v@maropost.com" variant="outlined" density="comfortable"></v-text-field></v-col>
+                <v-col cols="12" sm="6"><v-text-field label="First Name" :model-value="profileFirstName" variant="outlined" density="comfortable"></v-text-field></v-col>
+                <v-col cols="12" sm="6"><v-text-field label="Last Name" :model-value="profileLastName" variant="outlined" density="comfortable"></v-text-field></v-col>
+                <v-col cols="12" sm="6"><v-text-field label="Email" :model-value="profileEmail" variant="outlined" density="comfortable"></v-text-field></v-col>
                 <v-col cols="12" sm="6"><v-text-field label="Phone" model-value="+1 (555) 000-0000" variant="outlined" density="comfortable" prepend-inner-icon="phone"></v-text-field></v-col>
                 <v-col cols="12" sm="6"><v-select label="Timezone" model-value="America/New_York" :items="['America/New_York','UTC','Europe/London','Asia/Tokyo']" variant="outlined" density="comfortable"></v-select></v-col>
                 <v-col cols="12" sm="6"><v-select label="Preferred Language" model-value="English (US)" :items="['English (US)','French','Spanish','German']" variant="outlined" density="comfortable"></v-select></v-col>
