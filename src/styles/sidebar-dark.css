@@ -70,6 +70,20 @@
   background: #ffffff;
 }
 
+/* ─── Expanded group activator hover ─────────────────────────── */
+[data-sidebar="dark"] .mp-sidebar .sidebar-expanded-group > .v-list-group__header:hover {
+  background: color-mix(in oklch, var(--accent) 18%, transparent) !important;
+}
+
+[data-sidebar="dark"] .mp-sidebar .sidebar-expanded-group > .v-list-group__header:hover .v-icon,
+[data-sidebar="dark"] .mp-sidebar .sidebar-expanded-group > .v-list-group__header:hover .v-list-item-title {
+  color: var(--accent) !important;
+}
+
+[data-sidebar="dark"] .mp-sidebar .sidebar-expanded-group > .v-list-group__header:hover > .v-list-item__overlay {
+  opacity: 0 !important;
+}
+
 /* ─── Active nav item ────────────────────────────────────────── */
 [data-sidebar="dark"] .mp-sidebar .v-list-item--active {
   background: rgba(255, 255, 255, 0.08) !important;
@@ -84,12 +98,15 @@
   color: var(--accent) !important;
 }
 
-/* ─── Rail icon hover when flyout is open ────────────────────── */
-[data-sidebar="dark"] .mp-sidebar .rail-icon-hovered {
+/* ─── Rail & Expanded icon hover when flyout is open ──────────── */
+[data-sidebar="dark"] .mp-sidebar .rail-icon-hovered,
+[data-sidebar="dark"] .mp-sidebar .expanded-icon-hovered {
   background: color-mix(in oklch, var(--accent) 22%, transparent) !important;
 }
 
-[data-sidebar="dark"] .mp-sidebar .rail-icon-hovered .v-icon {
+[data-sidebar="dark"] .mp-sidebar .rail-icon-hovered .v-icon,
+[data-sidebar="dark"] .mp-sidebar .expanded-icon-hovered .v-icon,
+[data-sidebar="dark"] .mp-sidebar .expanded-icon-hovered .v-list-item-title {
   color: var(--accent) !important;
 }
 

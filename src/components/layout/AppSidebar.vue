@@ -219,6 +219,7 @@ const localDrawer = ref(props.modelValue)
 const localRail = ref(props.rail)
 const openedGroups = ref<string[]>([])
 const railHoveredSubGroup = ref<string | null>(null)
+const expandedHoveredGroup = ref<string | null>(null)
 
 // Enforce single-expand invariant: only one level-2 sub-group open per parent.
 // We watch the opened-array Vuetify maintains and prune siblings whenever a new
@@ -369,6 +370,7 @@ function activeRailSubGroupItems(group: NavGroup) {
               :title="group.title"
               rounded="lg"
               class="sidebar-text mb-1"
+              :class="{ 'expanded-icon-hovered': expandedHoveredGroup === group.title }"
             >
               <template #append v-if="isLocked(group)">
                 <v-tooltip location="end" text="Upgrade to unlock">
@@ -377,6 +379,68 @@ function activeRailSubGroupItems(group: NavGroup) {
                   </template>
                 </v-tooltip>
               </template>
+
+              <v-menu
+                activator="parent"
+                location="end"
+                open-on-hover
+                :open-delay="0"
+                :close-delay="120"
+                offset="8"
+                :close-on-content-click="false"
+                @update:model-value="(v: boolean) => { 
+                  if (v) expandedHoveredGroup = group.title;
+                  else { expandedHoveredGroup = null; railHoveredSubGroup = null; }
+                }"
+              >
+                <!-- Single-column flyout card (groups without sub-groups) -->
+                <div v-if="!hasSubGroups(group)" class="rail-flyout-card">
+                  <div class="rail-flyout-card__header">{{ group.title }}</div>
+                  <div
+                    v-for="item in group.items"
+                    :key="item.title"
+                    class="rail-flyout-item"
+                    :class="{ 'rail-flyout-item--active': ('route' in item) && $route.path.startsWith(item.route) }"
+                    @click="('route' in item) && goTo(item.route)"
+                  >{{ ('route' in item) ? item.title : '' }}</div>
+                </div>
+
+                <!-- Two separate flyout cards (cascade — groups with sub-groups) -->
+                <div v-else class="rail-cascade-wrap">
+                  <!-- Card 1: group children & subgroup headers -->
+                  <div class="rail-flyout-card">
+                    <div class="rail-flyout-card__header">{{ group.title }}</div>
+                    <div
+                      v-for="flat in railFlatItems(group)"
+                      :key="flat.title"
+                      class="rail-flyout-item"
+                      :class="{ 'rail-flyout-item--active': $route.path.startsWith(flat.route) }"
+                      @click="goTo(flat.route)"
+                    >{{ flat.title }}</div>
+                    <div
+                      v-for="sub in railSubGroups(group)"
+                      :key="sub.title"
+                      class="rail-flyout-item rail-flyout-item--has-sub"
+                      :class="{ 'rail-flyout-item--active': railHoveredSubGroup === sub.title }"
+                      @mouseenter="railHoveredSubGroup = sub.title"
+                    >
+                      <span>{{ sub.title }}</span>
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m9 6 6 6-6 6"/></svg>
+                    </div>
+                  </div>
+                  <!-- Card 2: grandchildren of the hovered subgroup -->
+                  <div v-if="railHoveredSubGroup && activeRailSubGroupItems(group).length" class="rail-flyout-card">
+                    <div class="rail-flyout-card__header">{{ railHoveredSubGroup }}</div>
+                    <div
+                      v-for="child in activeRailSubGroupItems(group)"
+                      :key="child.title"
+                      class="rail-flyout-item"
+                      :class="{ 'rail-flyout-item--active': $route.path.startsWith(child.route) }"
+                      @click="goTo(child.route)"
+                    >{{ child.title }}</div>
+                  </div>
+                </div>
+              </v-menu>
             </v-list-item>
           </template>
 
@@ -419,7 +483,7 @@ function activeRailSubGroupItems(group: NavGroup) {
           </template>
         </v-list-group>
 
-        <v-menu v-else location="end" open-on-hover offset="8" :close-on-content-click="false" @update:model-value="(v: boolean) => { if (!v) railHoveredSubGroup = null }">
+        <v-menu v-else location="end" open-on-hover :open-delay="0" :close-delay="120" offset="8" :close-on-content-click="false" @update:model-value="(v: boolean) => { if (!v) railHoveredSubGroup = null }">
           <template #activator="{ props: menuProps, isActive: menuOpen }">
             <v-list-item
               v-bind="menuProps"
@@ -833,16 +897,20 @@ function activeRailSubGroupItems(group: NavGroup) {
   color: var(--ink);
 }
 
-/* Rail icon hover state when flyout menu is open */
-:deep(.rail-icon-hovered) {
+/* Rail icon & Expanded icon hover state when flyout menu is open */
+:deep(.rail-icon-hovered),
+:deep(.expanded-icon-hovered) {
   background: color-mix(in oklch, var(--accent) 10%, transparent) !important;
 }
 
-:deep(.rail-icon-hovered > .v-list-item__overlay) {
+:deep(.rail-icon-hovered > .v-list-item__overlay),
+:deep(.expanded-icon-hovered > .v-list-item__overlay) {
   opacity: 0 !important;
 }
 
-:deep(.rail-icon-hovered .v-list-item__prepend > .v-icon) {
+:deep(.rail-icon-hovered .v-list-item__prepend > .v-icon),
+:deep(.expanded-icon-hovered .v-list-item__prepend > .v-icon),
+:deep(.expanded-icon-hovered .v-list-item-title) {
   color: var(--accent-ink) !important;
 }
 
@@ -870,6 +938,23 @@ function activeRailSubGroupItems(group: NavGroup) {
 
 :deep(.v-list-item:hover > .v-list-item__overlay) {
   opacity: 0.03;
+}
+
+/* Expanded sidebar group activator — accent-tinted hover */
+:deep(.sidebar-expanded-group > .v-list-group__header:hover) {
+  background: color-mix(in oklch, var(--accent) 8%, transparent) !important;
+}
+
+:deep(.sidebar-expanded-group > .v-list-group__header:hover .v-list-item__prepend > .v-icon) {
+  color: var(--accent-ink) !important;
+}
+
+:deep(.sidebar-expanded-group > .v-list-group__header:hover .v-list-item-title) {
+  color: var(--accent-ink) !important;
+}
+
+:deep(.sidebar-expanded-group > .v-list-group__header:hover > .v-list-item__overlay) {
+  opacity: 0 !important;
 }
 
 /* Level-2 flat child items — override Vuetify's logical indent (was 64px → now 28px) */
