@@ -699,44 +699,36 @@ function performConfirm() {
       </div>
     </section>
 
-    <section class="dashboard-setup-strip" aria-label="Things to do">
-      <div class="dashboard-setup-strip__summary">
-        <v-avatar size="36" variant="tonal" color="primary" rounded="lg">
-          <v-icon size="19">list-checks</v-icon>
-        </v-avatar>
-        <div class="min-width-0">
-          <div class="dashboard-setup-strip__title">Things to do</div>
-          <div class="dashboard-setup-strip__meta">
-            {{ completedSetupTasks }} of {{ setupTasks.length }} complete · Store launch setup
-          </div>
-          <v-progress-linear
-            :model-value="setupProgress"
-            color="primary"
-            bg-color="surface-variant"
-            height="5"
-            rounded
-            class="dashboard-setup-strip__progress"
-          />
+    <section class="setup-strip" aria-label="Things to do">
+      <div class="setup-strip__left">
+        <div class="setup-strip__heading">
+          <v-icon size="13" class="setup-strip__icon">list-checks</v-icon>
+          <span class="setup-strip__title">Things to do</span>
+          <span class="setup-strip__fraction">{{ completedSetupTasks }}/{{ setupTasks.length }}</span>
         </div>
+        <v-progress-linear
+          :model-value="setupProgress"
+          color="primary"
+          bg-color="surface-variant"
+          height="3"
+          rounded
+          class="setup-strip__bar"
+        />
       </div>
-
-      <div class="dashboard-setup-strip__tasks">
+      <div class="setup-strip__tasks">
         <button
           v-for="task in setupTasks"
           :key="task.title"
           type="button"
-          class="dashboard-setup-task"
-          :class="{ 'dashboard-setup-task--complete': task.complete }"
+          class="setup-task"
+          :class="{ 'setup-task--done': task.complete }"
           @click="openSetupTask(task)"
         >
-          <v-icon size="17" class="dashboard-setup-task__icon">
+          <v-icon size="13" class="setup-task__icon">
             {{ task.complete ? 'circle-check' : task.icon }}
           </v-icon>
-          <span class="dashboard-setup-task__body">
-            <strong>{{ task.title }}</strong>
-            <small>{{ task.description }}</small>
-          </span>
-          <span class="dashboard-setup-task__status">{{ task.status }}</span>
+          <span class="setup-task__label">{{ task.title }}</span>
+          <span class="setup-task__badge">{{ task.status }}</span>
         </button>
       </div>
     </section>
@@ -1013,121 +1005,121 @@ function performConfirm() {
   border-bottom: 1px solid var(--hairline);
 }
 
-.dashboard-setup-strip {
-  display: grid;
-  grid-template-columns: minmax(260px, 320px) minmax(0, 1fr);
-  gap: 16px;
-  align-items: stretch;
-  padding: 14px;
-  border: 1px solid var(--hairline);
-  border-radius: 12px;
-  background: var(--surface-1);
-}
-
-.dashboard-setup-strip__summary {
-  display: grid;
-  grid-template-columns: auto minmax(0, 1fr);
-  gap: 12px;
+.setup-strip {
+  display: flex;
   align-items: center;
-  padding-right: 14px;
-  border-right: 1px solid var(--hairline);
-}
-
-.dashboard-setup-strip__title {
-  color: var(--ink);
-  font-size: 14px;
-  font-weight: 700;
-  line-height: 1.25;
-}
-
-.dashboard-setup-strip__meta {
-  color: var(--muted);
-  font-size: 12px;
-  font-weight: 500;
-  margin-top: 2px;
-}
-
-.dashboard-setup-strip__progress {
-  max-width: 220px;
-  margin-top: 9px;
-}
-
-.dashboard-setup-strip__tasks {
-  display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 8px;
-}
-
-.dashboard-setup-task {
-  display: grid;
-  grid-template-columns: auto minmax(0, 1fr);
-  grid-template-rows: auto auto;
-  column-gap: 8px;
-  row-gap: 3px;
-  min-height: 76px;
-  padding: 10px;
+  gap: 16px;
+  padding: 9px 12px;
   border: 1px solid var(--hairline);
   border-radius: 10px;
   background: var(--surface-1);
+}
+
+.setup-strip__left {
+  flex: 0 0 auto;
+  width: 152px;
+  padding-right: 16px;
+  border-right: 1px solid var(--hairline);
+}
+
+.setup-strip__heading {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.setup-strip__icon {
+  color: var(--accent-ink);
+  flex-shrink: 0;
+}
+
+.setup-strip__title {
+  flex: 1;
+  font-size: 12px;
+  font-weight: 700;
   color: var(--ink);
+}
+
+.setup-strip__fraction {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--muted);
+}
+
+.setup-strip__bar {
+  margin-top: 6px;
+}
+
+.setup-strip__tasks {
+  display: flex;
+  flex: 1;
+  gap: 6px;
+}
+
+.setup-task {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex: 1;
+  min-width: 0;
+  padding: 5px 9px;
+  border: 1px solid var(--hairline);
+  border-radius: 7px;
+  background: transparent;
   cursor: pointer;
   font: inherit;
   text-align: left;
   transition: background 120ms ease, border-color 120ms ease;
 }
 
-.dashboard-setup-task:hover {
+.setup-task:hover {
   background: var(--surface-2);
   border-color: color-mix(in oklch, var(--accent) 26%, var(--hairline));
 }
 
-.dashboard-setup-task:focus-visible {
+.setup-task:focus-visible {
   outline: none;
   box-shadow: 0 0 0 3px color-mix(in oklch, var(--accent) 18%, transparent);
 }
 
-.dashboard-setup-task__icon {
-  grid-row: 1 / span 2;
-  margin-top: 1px;
+.setup-task--done {
+  opacity: 0.6;
+}
+
+.setup-task__icon {
+  flex-shrink: 0;
   color: var(--accent-ink);
 }
 
-.dashboard-setup-task--complete .dashboard-setup-task__icon {
+.setup-task--done .setup-task__icon {
   color: var(--pos);
 }
 
-.dashboard-setup-task__body {
-  min-width: 0;
-}
-
-.dashboard-setup-task__body strong,
-.dashboard-setup-task__body small {
-  display: block;
+.setup-task__label {
+  flex: 1;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--ink);
+  white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 
-.dashboard-setup-task__body strong {
-  color: var(--ink);
-  font-size: 12.5px;
-  line-height: 1.25;
-  white-space: nowrap;
-}
-
-.dashboard-setup-task__body small {
-  color: var(--muted);
-  font-size: 11.5px;
-  line-height: 1.3;
-  margin-top: 2px;
-}
-
-.dashboard-setup-task__status {
-  grid-column: 2;
-  color: var(--accent-ink);
-  font-size: 10.5px;
+.setup-task__badge {
+  flex-shrink: 0;
+  font-size: 10px;
   font-weight: 700;
   letter-spacing: 0.04em;
   text-transform: uppercase;
+  color: var(--accent-ink);
+  background: color-mix(in oklch, var(--accent) 10%, transparent);
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+
+.setup-task--done .setup-task__badge {
+  color: var(--pos);
+  background: color-mix(in oklch, var(--pos) 10%, transparent);
 }
 
 @media (max-width: 960px) {
@@ -1158,25 +1150,31 @@ function performConfirm() {
     grid-template-columns: 1fr;
   }
 
-  .dashboard-setup-strip {
-    grid-template-columns: 1fr;
+  .setup-strip {
+    flex-direction: column;
+    align-items: stretch;
   }
 
-  .dashboard-setup-strip__summary {
+  .setup-strip__left {
+    width: auto;
     padding-right: 0;
-    padding-bottom: 12px;
+    padding-bottom: 10px;
     border-right: 0;
     border-bottom: 1px solid var(--hairline);
   }
 
-  .dashboard-setup-strip__tasks {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+  .setup-strip__tasks {
+    flex-wrap: wrap;
+  }
+
+  .setup-task {
+    flex: 1 1 calc(50% - 3px);
   }
 }
 
 @media (max-width: 640px) {
-  .dashboard-setup-strip__tasks {
-    grid-template-columns: 1fr;
+  .setup-task {
+    flex: 1 1 100%;
   }
 }
 </style>
