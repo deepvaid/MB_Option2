@@ -1,5 +1,6 @@
 export type DashboardKind = 'system' | 'custom'
-export type DashboardWidgetType = 'kpi' | 'timeseries' | 'bar' | 'table' | 'activity'
+export type DashboardWidgetType = 'kpi' | 'timeseries' | 'bar' | 'pie' | 'table' | 'activity'
+export type DashboardChartVariant = 'horizontal' | 'vertical' | 'area' | 'line'
 export type DashboardDataSource = 'commerce' | 'marketing' | 'analytics' | 'contacts' | 'service'
 export type DashboardDatePreset =
   | 'today'
@@ -83,9 +84,11 @@ export interface DashboardWidget {
   id: string
   type: DashboardWidgetType
   title: string
+  subtitle?: string
   dataSource: DashboardDataSource
   metricId: DashboardMetricId
   dimension?: string
+  chartVariant?: DashboardChartVariant
   layout: DashboardLayout
   filters?: DashboardWidgetFilter[]
   drilldown: DashboardWidgetDrilldown
@@ -132,13 +135,29 @@ export interface DashboardWidgetDraft {
   widgetId?: string
   type: DashboardWidgetType
   title: string
+  subtitle?: string
   dataSource: DashboardDataSource
   metricId: DashboardMetricId
   dimension?: string
+  chartVariant?: DashboardChartVariant
   filters?: DashboardWidgetFilter[]
   drilldown: DashboardWidgetDrilldown
   layout?: Partial<DashboardLayout>
   aiProvenance?: DashboardAiProvenance
+}
+
+export interface DashboardWidgetLibraryEntry {
+  id: string
+  title: string
+  description: string
+  category: 'commerce' | 'marketing' | 'service' | 'davinci'
+  type: DashboardWidgetType
+  icon: string
+  recommended?: boolean
+  metricId: DashboardMetricId
+  dataSource: DashboardDataSource
+  drilldown: DashboardWidgetDrilldown
+  chartVariant?: DashboardChartVariant
 }
 
 export interface DashboardTableColumn {

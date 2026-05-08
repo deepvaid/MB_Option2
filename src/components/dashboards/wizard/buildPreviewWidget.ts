@@ -1,5 +1,6 @@
 import { getDefaultPreset } from '@/components/dashboards/widgetSizePresets'
 import type {
+  DashboardChartVariant,
   DashboardWidget,
   DashboardWidgetDraft,
   DashboardWidgetType,
@@ -11,9 +12,11 @@ export interface PreviewWidgetInput {
   widgetId?: string
   type: DashboardWidgetType
   title: string
+  subtitle?: string
   dataSource: DashboardWidget['dataSource']
   metricId: DashboardWidget['metricId']
   descriptor: DashboardMetricDescriptor
+  chartVariant?: DashboardChartVariant
 }
 
 export function buildPreviewWidget(input: PreviewWidgetInput): DashboardWidget {
@@ -22,9 +25,11 @@ export function buildPreviewWidget(input: PreviewWidgetInput): DashboardWidget {
     id: input.widgetId ?? input.draft?.widgetId ?? 'preview-widget',
     type: input.type,
     title: input.title || input.descriptor.defaultTitle,
+    subtitle: input.subtitle ?? input.draft?.subtitle,
     dataSource: input.dataSource,
     metricId: input.metricId,
     dimension: input.draft?.dimension,
+    chartVariant: input.chartVariant ?? input.draft?.chartVariant,
     layout: {
       x: 0,
       y: 0,

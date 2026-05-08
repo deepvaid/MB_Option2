@@ -12,6 +12,7 @@ import {
 } from './widgetSizePresets'
 import DashboardChartWidget from './widgets/DashboardChartWidget.vue'
 import DashboardKpiWidget from './widgets/DashboardKpiWidget.vue'
+import DashboardPieWidget from './widgets/DashboardPieWidget.vue'
 import DashboardActivityWidget from './widgets/DashboardActivityWidget.vue'
 import DashboardTableWidget from './widgets/DashboardTableWidget.vue'
 import DashboardWidgetActionMenu from './DashboardWidgetActionMenu.vue'
@@ -85,6 +86,7 @@ const kpiComparisonLabel = computed(() => {
   return 'vs previous period'
 })
 const widgetSubtitle = computed(() => {
+  if (props.widget.subtitle) return props.widget.subtitle
   if (isKpiWidget.value) {
     if (props.widget.metricId === 'contacts_total') return 'All time'
     return rangeLabels[props.filters.rangePreset]
@@ -151,6 +153,13 @@ function openSettings() {
       <div class="dashboard-widget-card__header-copy">
         <div class="dashboard-widget-card__title-row">
           <v-icon v-if="editable" size="18" class="dashboard-widget-card__drag-handle">grip-vertical</v-icon>
+          <v-tooltip v-if="widget.aiProvenance" location="top" text="Made by Da Vinci">
+            <template #activator="{ props: tipProps }">
+              <span v-bind="tipProps" class="dashboard-widget-card__davinci-icon">
+                <v-icon size="13" color="secondary">sparkles</v-icon>
+              </span>
+            </template>
+          </v-tooltip>
           <div class="dashboard-widget-card__title">{{ widget.title }}</div>
         </div>
         <div class="dashboard-widget-card__subtitle">{{ widgetSubtitle }}</div>
@@ -239,11 +248,18 @@ function openSettings() {
         :subtitle="widgetSubtitle"
         :comparison-label="kpiComparisonLabel"
         :icon="metricIcon"
+        :ai-generated="!!widget.aiProvenance"
+      />
+      <DashboardPieWidget
+        v-else-if="data.kind === 'series' && widget.type === 'pie'"
+        :data="data"
+        :height="bodySize.height"
       />
       <DashboardChartWidget
         v-else-if="data.kind === 'series'"
         :data="data"
         :widget-type="widget.type as 'timeseries' | 'bar'"
+        :chart-variant="widget.chartVariant"
         :height="bodySize.height"
       />
       <DashboardActivityWidget
@@ -303,6 +319,12 @@ function openSettings() {
   line-height: 1.25;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+
+.dashboard-widget-card__davinci-icon {
+  display: inline-flex;
+  align-items: center;
+  flex-shrink: 0;
 }
 
 .dashboard-widget-card__subtitle {

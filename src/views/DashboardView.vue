@@ -25,7 +25,7 @@ const accountsStore = useAccountsStore()
 const dashboardsStore = useDashboardsStore()
 
 const widgetWizardOpen = ref(false)
-const wizardDefaultMode = ref<'choose' | 'manual' | 'davinci'>('choose')
+const wizardDefaultMode = ref<'library' | 'davinci'>('library')
 const editMode = ref(false)
 const renderError = ref<string | null>(null)
 const dateMenuOpen = ref(false)
@@ -236,7 +236,7 @@ watch(
     if (draft.aiProvenance && !draft.widgetId) {
       wizardDefaultMode.value = 'davinci'
     } else {
-      wizardDefaultMode.value = 'manual'
+      wizardDefaultMode.value = 'library'
     }
     widgetWizardOpen.value = true
   },
@@ -246,7 +246,7 @@ watch(
 watch(widgetWizardOpen, (isOpen) => {
   if (!isOpen) {
     dashboardsStore.closeWidgetEditor()
-    wizardDefaultMode.value = 'choose'
+    wizardDefaultMode.value = 'library'
   }
 })
 
@@ -297,7 +297,7 @@ function openSetupTask(task: SetupTask) {
   router.push(task.route)
 }
 
-function openWidgetBuilder(mode: 'choose' | 'manual' | 'davinci' = 'choose') {
+function openWidgetBuilder(mode: 'library' | 'davinci' = 'library') {
   dashboardsStore.closeWidgetEditor()
   wizardDefaultMode.value = mode
   widgetWizardOpen.value = true
@@ -699,11 +699,6 @@ function performConfirm() {
           </template>
           <v-list density="compact" min-width="280">
             <v-list-item
-              prepend-icon="plus"
-              title="Add manual widget"
-              @click="openWidgetBuilder('manual')"
-            />
-            <v-list-item
               prepend-icon="sparkles"
               @click="openWidgetBuilder('davinci')"
             >
@@ -712,10 +707,10 @@ function performConfirm() {
             </v-list-item>
             <v-list-item
               prepend-icon="layout-grid"
-              @click="openWidgetBuilder('choose')"
+              @click="openWidgetBuilder('library')"
             >
-              <v-list-item-title>Choose content type</v-list-item-title>
-              <v-list-item-subtitle>KPI, chart, table, or activity</v-list-item-subtitle>
+              <v-list-item-title>Choose existing widget</v-list-item-title>
+              <v-list-item-subtitle>Pick from prebuilt KPIs, charts, tables, and activity</v-list-item-subtitle>
             </v-list-item>
           </v-list>
         </v-menu>

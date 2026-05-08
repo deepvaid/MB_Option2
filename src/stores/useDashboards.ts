@@ -758,9 +758,11 @@ export const useDashboardsStore = defineStore('dashboards', () => {
       id: createWidgetId(),
       type: draft.type,
       title: draft.title,
+      subtitle: draft.subtitle,
       dataSource: draft.dataSource,
       metricId: draft.metricId,
       dimension: draft.dimension,
+      chartVariant: draft.chartVariant,
       layout: {
         ...getNextLayout(draft.type, dashboard.widgets),
         ...draft.layout,
@@ -787,9 +789,11 @@ export const useDashboardsStore = defineStore('dashboards', () => {
 
     widget.type = draft.type
     widget.title = draft.title
+    widget.subtitle = draft.subtitle
     widget.dataSource = draft.dataSource
     widget.metricId = draft.metricId
     widget.dimension = draft.dimension
+    widget.chartVariant = draft.chartVariant
     widget.filters = draft.filters
     widget.drilldown = draft.drilldown ?? metric.drilldown
     widget.aiProvenance = draft.aiProvenance
@@ -877,9 +881,11 @@ export const useDashboardsStore = defineStore('dashboards', () => {
       widgetId: widget.id,
       type: widget.type,
       title: widget.title,
+      subtitle: widget.subtitle,
       dataSource: widget.dataSource,
       metricId: widget.metricId,
       dimension: widget.dimension,
+      chartVariant: widget.chartVariant,
       filters: widget.filters,
       drilldown: widget.drilldown,
       layout: widget.layout,

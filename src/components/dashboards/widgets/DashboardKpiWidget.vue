@@ -9,12 +9,14 @@ const props = withDefaults(defineProps<{
   subtitle?: string
   comparisonLabel?: string
   icon?: string
+  aiGenerated?: boolean
 }>(), {
   compact: false,
   title: '',
   subtitle: '',
   comparisonLabel: '',
   icon: '',
+  aiGenerated: false,
 })
 
 const trendPositive = computed(() => props.data.delta == null || props.data.delta >= 0)
@@ -59,7 +61,16 @@ const sparklinePoints = computed(() => {
             <v-icon :size="compact ? 13 : 14">{{ icon }}</v-icon>
           </div>
           <div class="dashboard-kpi-widget__header-text">
-            <div v-if="title" class="dashboard-kpi-widget__title" :title="title">{{ title }}</div>
+            <div v-if="title" class="dashboard-kpi-widget__title-row">
+              <v-tooltip v-if="aiGenerated" location="top" text="Made by Da Vinci">
+                <template #activator="{ props: tipProps }">
+                  <span v-bind="tipProps" class="dashboard-kpi-widget__davinci-icon">
+                    <v-icon size="12" color="secondary">sparkles</v-icon>
+                  </span>
+                </template>
+              </v-tooltip>
+              <div class="dashboard-kpi-widget__title" :title="title">{{ title }}</div>
+            </div>
             <div class="dashboard-kpi-widget__period" v-if="subtitle">{{ subtitle }}</div>
           </div>
         </div>
@@ -164,12 +175,26 @@ const sparklinePoints = computed(() => {
   color: var(--accent-ink);
 }
 
+.dashboard-kpi-widget__title-row {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  min-width: 0;
+}
+
+.dashboard-kpi-widget__davinci-icon {
+  display: inline-flex;
+  align-items: center;
+  flex-shrink: 0;
+}
+
 .dashboard-kpi-widget__title {
   display: -webkit-box;
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
-  width: 100%;
+  flex: 1 1 auto;
+  min-width: 0;
   color: var(--ink);
   font-size: 13px;
   font-weight: 600;

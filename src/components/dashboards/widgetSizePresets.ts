@@ -28,6 +28,12 @@ export const SIZE_PRESETS: Record<DashboardWidgetType, Record<WidgetSize, Widget
     L: { w: 9, h: 8, minW: 2, minH: 3 },
     XL: { w: 12, h: 9, minW: 2, minH: 3 },
   },
+  pie: {
+    S: { w: 4, h: 6, minW: 3, minH: 4 },
+    M: { w: 5, h: 7, minW: 3, minH: 4 },
+    L: { w: 6, h: 8, minW: 3, minH: 4 },
+    XL: { w: 8, h: 9, minW: 3, minH: 4 },
+  },
   table: {
     S: { w: 5, h: 6, minW: 2, minH: 3 },
     M: { w: 6, h: 7, minW: 2, minH: 3 },

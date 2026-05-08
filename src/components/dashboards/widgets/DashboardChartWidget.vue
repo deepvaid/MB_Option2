@@ -1,15 +1,17 @@
 <script setup lang="ts">
 import { computed, defineAsyncComponent, onBeforeUnmount, onMounted, ref } from 'vue'
 import type { ApexOptions } from 'apexcharts'
-import type { DashboardSeriesData, DashboardWidgetType } from '@/stores/dashboards/types'
+import type { DashboardChartVariant, DashboardSeriesData, DashboardWidgetType } from '@/stores/dashboards/types'
 import { applyChartTheme, chartPalette } from '@/plugins/chartPalette'
 import { useAppTheme } from '@/composables/useAppTheme'
 
 const props = withDefaults(defineProps<{
   data: DashboardSeriesData
   widgetType: Extract<DashboardWidgetType, 'timeseries' | 'bar'>
+  chartVariant?: DashboardChartVariant
   height?: number
 }>(), {
+  chartVariant: undefined,
   height: 0,
 })
 
@@ -73,6 +75,17 @@ const isDistributedBar = computed(
   () => props.widgetType === 'bar' && props.data.series.length <= 1,
 )
 
+const isHorizontalBar = computed(
+  () => props.widgetType === 'bar' && props.chartVariant === 'horizontal',
+)
+
+const apexChartType = computed<'area' | 'line' | 'bar'>(() => {
+  if (props.widgetType === 'bar') return 'bar'
+  // timeseries
+  if (props.chartVariant === 'line') return 'line'
+  return 'area'
+})
+
 // Show a synthetic "Previous" dashed-gray overlay for single-series timeseries charts.
 const showPreviousOverlay = computed(
   () => props.widgetType === 'timeseries' && props.data.series.length === 1,
@@ -117,6 +130,7 @@ const chartOptions = computed<ApexOptions>(() => {
         borderRadius: 8,
         columnWidth: '46%',
         distributed: isDistributedBar.value,
+        horizontal: isHorizontalBar.value,
       },
     },
     fill: isPrev
@@ -130,7 +144,7 @@ const chartOptions = computed<ApexOptions>(() => {
           },
         }
       : {
-          type: props.widgetType === 'timeseries' ? 'gradient' : 'solid',
+          type: apexChartType.value === 'area' ? 'gradient' : 'solid',
           gradient: {
             shadeIntensity: 0.18,
             opacityFrom: 0.36,
@@ -193,7 +207,7 @@ const chartOptions = computed<ApexOptions>(() => {
       v-if="chartReady"
       :height="chartHeight"
       width="100%"
-      :type="widgetType === 'timeseries' ? 'area' : 'bar'"
+      :type="apexChartType"
       :options="chartOptions"
       :series="chartSeries"
     />
