@@ -300,6 +300,7 @@ function newChat() {
     <div ref="chatContainer" class="davinci-body">
       <!-- ─── EMPTY STATE (suggestions) ─── -->
       <template v-if="!chatMode">
+        <!-- Dashboard: widget-creation prompts only -->
         <div v-if="isDashboardRoute" class="davinci-suggestions">
           <button
             v-for="suggestion in dashboardSuggestions"
@@ -313,7 +314,8 @@ function newChat() {
           </button>
         </div>
 
-        <div class="davinci-suggestions">
+        <!-- Non-dashboard: analytical questions only -->
+        <div v-else class="davinci-suggestions">
           <button
             class="davinci-pill"
             aria-label="Run suggestion: Top 10 products by revenue"
@@ -329,38 +331,6 @@ function newChat() {
             @keydown="onSuggestionKeydown($event, 'Compare this month vs last month')"
           >
             Compare this month vs last month
-          </button>
-          <button
-            class="davinci-pill"
-            aria-label="Run suggestion: Create a flash sale campaign"
-            @click="sendSuggestion('Create a flash sale campaign')"
-            @keydown="onSuggestionKeydown($event, 'Create a flash sale campaign')"
-          >
-            Create a flash sale campaign
-          </button>
-          <button
-            class="davinci-pill"
-            aria-label="Run suggestion: Write an email for our spring sale"
-            @click="sendSuggestion('Write an email for our spring sale')"
-            @keydown="onSuggestionKeydown($event, 'Write an email for our spring sale')"
-          >
-            Write an email for our spring sale
-          </button>
-          <button
-            class="davinci-pill"
-            aria-label="Run suggestion: Set up abandoned cart recovery"
-            @click="sendSuggestion('Set up abandoned cart recovery')"
-            @keydown="onSuggestionKeydown($event, 'Set up abandoned cart recovery')"
-          >
-            Set up abandoned cart recovery
-          </button>
-          <button
-            class="davinci-pill"
-            aria-label="Run suggestion: Find high-value customers who have not ordered in 90 days"
-            @click="sendSuggestion('Find high-value customers who haven\'t ordered in 90 days')"
-            @keydown="onSuggestionKeydown($event, 'Find high-value customers who haven\'t ordered in 90 days')"
-          >
-            Find lapsed high-value customers
           </button>
         </div>
       </template>

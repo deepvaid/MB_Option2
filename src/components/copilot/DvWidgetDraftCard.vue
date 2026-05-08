@@ -116,12 +116,14 @@ function editBeforeAdding() {
         </v-chip>
       </div>
 
-      <DashboardWidgetCard
-        :account-id="effectiveAccountId"
-        :widget="previewWidget"
-        :filters="effectiveFilters"
-        preview
-      />
+      <div class="dv-widget-draft-card__preview" :class="`dv-widget-draft-card__preview--${draft.type}`">
+        <DashboardWidgetCard
+          :account-id="effectiveAccountId"
+          :widget="previewWidget"
+          :filters="effectiveFilters"
+          preview
+        />
+      </div>
 
       <div class="d-flex align-center justify-space-between flex-wrap ga-3 mt-4">
         <div class="text-caption text-medium-emphasis">
@@ -153,6 +155,27 @@ function editBeforeAdding() {
   background:
     radial-gradient(circle at top right, rgba(var(--v-theme-primary), 0.08), transparent 28%),
     rgb(var(--v-theme-surface));
+}
+
+.dv-widget-draft-card__preview {
+  border-radius: 12px;
+  overflow: hidden;
+  margin: 0 -4px;
+}
+
+.dv-widget-draft-card__preview--kpi {
+  height: 120px;
+}
+
+.dv-widget-draft-card__preview--timeseries,
+.dv-widget-draft-card__preview--bar,
+.dv-widget-draft-card__preview--pie {
+  height: 240px;
+}
+
+.dv-widget-draft-card__preview--table,
+.dv-widget-draft-card__preview--activity {
+  height: 220px;
 }
 
 .dv-widget-draft-card__eyebrow {
