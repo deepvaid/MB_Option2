@@ -6,6 +6,7 @@ import AppSidebar from '@/components/layout/AppSidebar.vue'
 import AppBar from '@/components/layout/AppBar.vue'
 import MpDaVinciBot from '@/components/MpDaVinciBot.vue'
 import { useAppTheme } from '@/composables/useAppTheme'
+import { useCopilotStore } from '@/stores/useCopilot'
 
 // Apply stored accent to Vuetify theme on initial mount
 const { accent, setAccent } = useAppTheme()
@@ -14,8 +15,7 @@ setAccent(accent.value)
 const route = useRoute()
 const drawer = ref(true)
 const rail = ref(false)
-const copilotOpen = ref(false)
-const copilotExpanded = ref(false)
+const copilot = useCopilotStore()
 const { smAndDown } = useDisplay()
 
 const isFullPage = computed(() => !!route.meta?.fullPage)
@@ -33,7 +33,7 @@ const sidebarRail = computed(() => smAndDown.value || rail.value)
       @update:rail="rail = $event"
     />
 
-    <AppBar v-if="!isFullPage" v-model:copilot-open="copilotOpen" />
+    <AppBar v-if="!isFullPage" />
 
     <v-main
       id="main-content"
@@ -50,14 +50,14 @@ const sidebarRail = computed(() => smAndDown.value || rail.value)
     <!-- Da Vinci Copilot Drawer -->
     <v-navigation-drawer
       v-if="!isFullPage"
-      v-model="copilotOpen"
+      v-model="copilot.isOpen"
       location="right"
-      :width="copilotExpanded ? 800 : 430"
+      :width="copilot.isExpanded ? 800 : 430"
       class="copilot-drawer"
     >
       <MpDaVinciBot
-        @close="copilotOpen = false"
-        @expand="copilotExpanded = !copilotExpanded"
+        @close="copilot.close()"
+        @expand="copilot.toggleExpanded()"
       />
     </v-navigation-drawer>
   </v-app>

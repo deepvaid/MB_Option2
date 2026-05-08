@@ -10,9 +10,7 @@ import type {
 import { useDashboardsStore } from '@/stores/useDashboards'
 import WidgetLibraryStep from './wizard/WidgetLibraryStep.vue'
 import WidgetEditStep from './wizard/WidgetEditStep.vue'
-import WidgetWizardDaVinciStep from './wizard/WidgetWizardDaVinciStep.vue'
 
-type WizardEntryMode = 'library' | 'davinci'
 type WizardStage = 'pick' | 'edit'
 
 const model = defineModel<boolean>({ default: false })
@@ -22,12 +20,10 @@ const props = defineProps<{
   dashboardId: string
   dashboardFilters: DashboardFilterState
   initialDraft?: DashboardWidgetDraft | null
-  defaultMode?: WizardEntryMode
 }>()
 
 const dashboardsStore = useDashboardsStore()
 
-const entryMode = ref<WizardEntryMode>('library')
 const stage = ref<WizardStage>('pick')
 const draft = ref<DashboardWidgetDraft | null>(null)
 
@@ -36,17 +32,13 @@ const isEditing = computed(() => Boolean(props.initialDraft?.widgetId))
 const drawerTitle = computed(() => {
   if (isEditing.value) return 'Edit widget'
   if (stage.value === 'edit') return 'Edit widget'
-  if (entryMode.value === 'davinci') return 'Shape Home with Da Vinci'
   return 'Add widget'
 })
 
 const drawerSubtitle = computed(() => {
   if (isEditing.value) return 'Update your widget and save the changes.'
   if (stage.value === 'edit') return 'Refine the title, subtitle, and visualization before adding.'
-  if (entryMode.value === 'davinci') {
-    return 'Ask for a KPI, trend, comparison, or table widget and I will draft it for the active dashboard.'
-  }
-  return 'Choose what to monitor or generate a widget with Da Vinci.'
+  return 'Choose what to monitor and refine before adding.'
 })
 
 function libraryEntryToDraft(entry: DashboardWidgetLibraryEntry): DashboardWidgetDraft {
@@ -63,7 +55,6 @@ function libraryEntryToDraft(entry: DashboardWidgetLibraryEntry): DashboardWidge
 }
 
 function reset() {
-  entryMode.value = props.defaultMode ?? 'library'
   stage.value = 'pick'
   draft.value = null
 }
@@ -80,15 +71,15 @@ function initializeFromProps() {
     return
   }
 
-  // Da Vinci-generated draft — start in davinci entry, draft already shown by step component
+  // Da Vinci-generated draft routed to Edit (e.g. via "Edit before adding" in copilot)
   if (incoming.aiProvenance) {
-    entryMode.value = 'davinci'
-    return
+    draft.value = { ...incoming }
+    stage.value = 'edit'
   }
 }
 
 watch(
-  [model, () => props.initialDraft, () => props.defaultMode],
+  [model, () => props.initialDraft],
   ([isOpen]) => {
     if (isOpen) initializeFromProps()
   },
@@ -101,28 +92,13 @@ watch(model, (isOpen) => {
   }
 })
 
-const stageItems = computed(() => {
-  if (entryMode.value === 'davinci' && stage.value === 'pick') {
-    return [{ label: 'Describe', state: 'active' as const }]
-  }
-  return [
-    { label: entryMode.value === 'davinci' ? 'Describe' : 'Pick', state: stage.value === 'pick' ? 'active' as const : 'complete' as const },
-    { label: 'Edit', state: stage.value === 'edit' ? 'active' as const : 'pending' as const },
-  ]
-})
+const stageItems = computed(() => [
+  { label: 'Pick', state: stage.value === 'pick' ? 'active' as const : 'complete' as const },
+  { label: 'Edit', state: stage.value === 'edit' ? 'active' as const : 'pending' as const },
+])
 
 function handleLibrarySelect(entry: DashboardWidgetLibraryEntry) {
   draft.value = libraryEntryToDraft(entry)
-  stage.value = 'edit'
-}
-
-function handleDavinciAdd(value: DashboardWidgetDraft) {
-  draft.value = { ...value }
-  persist()
-}
-
-function handleDavinciEdit(value: DashboardWidgetDraft) {
-  draft.value = { ...value, subtitle: value.subtitle ?? value.aiProvenance?.summary }
   stage.value = 'edit'
 }
 
@@ -193,21 +169,10 @@ const showFooterPrimary = computed(() => stage.value === 'edit')
         </div>
       </div>
 
-      <template v-if="stage === 'pick'">
-        <WidgetLibraryStep
-          v-if="entryMode === 'library'"
-          @select="handleLibrarySelect"
-        />
-        <WidgetWizardDaVinciStep
-          v-else
-          :account-id="accountId"
-          :dashboard-id="dashboardId"
-          :filters="dashboardFilters"
-          :initial-draft="initialDraft && initialDraft.aiProvenance ? initialDraft : null"
-          @add="handleDavinciAdd"
-          @edit="handleDavinciEdit"
-        />
-      </template>
+      <WidgetLibraryStep
+        v-if="stage === 'pick'"
+        @select="handleLibrarySelect"
+      />
 
       <WidgetEditStep
         v-else-if="stage === 'edit' && draft"

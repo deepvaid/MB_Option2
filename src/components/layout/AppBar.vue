@@ -3,8 +3,9 @@ import { computed, onMounted, onUnmounted, ref, watch } from 'vue'
 import { useTheme } from 'vuetify'
 import { useRouter } from 'vue-router'
 import { useAccountsStore } from '@/stores/useAccounts'
+import { useCopilotStore } from '@/stores/useCopilot'
 
-const copilotOpen = defineModel<boolean>('copilotOpen', { default: false })
+const copilot = useCopilotStore()
 
 const theme = useTheme()
 const router = useRouter()
@@ -121,7 +122,7 @@ function navigateToRoute(routeLocation: object) {
 
 function askDaVinciFromSearch() {
   searchOpen.value = false
-  copilotOpen.value = true
+  copilot.open()
 }
 
 function openStub(label: string) {
@@ -202,7 +203,7 @@ function openStub(label: string) {
       <div class="appbar-utilities">
         <v-tooltip text="Da Vinci AI" location="bottom">
           <template #activator="{ props }">
-            <v-btn v-bind="props" icon variant="text" class="appbar-action-btn" aria-label="Da Vinci AI" @click="copilotOpen = !copilotOpen">
+            <v-btn v-bind="props" icon variant="text" class="appbar-action-btn" aria-label="Da Vinci AI" @click="copilot.toggle()">
               <v-icon>sparkles</v-icon>
             </v-btn>
           </template>

@@ -17,15 +17,16 @@ import type {
   DashboardWidgetDraft,
 } from '@/stores/dashboards/types'
 import { useAccountsStore } from '@/stores/useAccounts'
+import { useCopilotStore } from '@/stores/useCopilot'
 import { useDashboardsStore } from '@/stores/useDashboards'
 
 const route = useRoute()
 const router = useRouter()
 const accountsStore = useAccountsStore()
 const dashboardsStore = useDashboardsStore()
+const copilot = useCopilotStore()
 
 const widgetWizardOpen = ref(false)
-const wizardDefaultMode = ref<'library' | 'davinci'>('library')
 const editMode = ref(false)
 const renderError = ref<string | null>(null)
 const dateMenuOpen = ref(false)
@@ -233,11 +234,6 @@ watch(
   activeWidgetDraft,
   (draft) => {
     if (!draft) return
-    if (draft.aiProvenance && !draft.widgetId) {
-      wizardDefaultMode.value = 'davinci'
-    } else {
-      wizardDefaultMode.value = 'library'
-    }
     widgetWizardOpen.value = true
   },
   { immediate: true },
@@ -246,7 +242,6 @@ watch(
 watch(widgetWizardOpen, (isOpen) => {
   if (!isOpen) {
     dashboardsStore.closeWidgetEditor()
-    wizardDefaultMode.value = 'library'
   }
 })
 
@@ -297,10 +292,13 @@ function openSetupTask(task: SetupTask) {
   router.push(task.route)
 }
 
-function openWidgetBuilder(mode: 'library' | 'davinci' = 'library') {
+function openWidgetBuilder() {
   dashboardsStore.closeWidgetEditor()
-  wizardDefaultMode.value = mode
   widgetWizardOpen.value = true
+}
+
+function openCopilotForWidget() {
+  copilot.open()
 }
 
 function handleLayoutUpdate(layout: Array<{ i: string; x: number; y: number; w: number; h: number }>) {
@@ -700,14 +698,14 @@ function performConfirm() {
           <v-list density="compact" min-width="280">
             <v-list-item
               prepend-icon="sparkles"
-              @click="openWidgetBuilder('davinci')"
+              @click="openCopilotForWidget"
             >
               <v-list-item-title>Create with Da Vinci</v-list-item-title>
               <v-list-item-subtitle>Generate a widget from a prompt</v-list-item-subtitle>
             </v-list-item>
             <v-list-item
               prepend-icon="layout-grid"
-              @click="openWidgetBuilder('library')"
+              @click="openWidgetBuilder()"
             >
               <v-list-item-title>Choose existing widget</v-list-item-title>
               <v-list-item-subtitle>Pick from prebuilt KPIs, charts, tables, and activity</v-list-item-subtitle>
@@ -784,7 +782,6 @@ function performConfirm() {
       :dashboard-id="activeDashboardId ?? ''"
       :dashboard-filters="activeDashboard?.filters ?? defaultDashboardFilters"
       :initial-draft="activeWidgetDraft"
-      :default-mode="wizardDefaultMode"
     />
 
     <CreateDashboardDialog

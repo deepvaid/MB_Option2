@@ -153,14 +153,19 @@ function openSettings() {
       <div class="dashboard-widget-card__header-copy">
         <div class="dashboard-widget-card__title-row">
           <v-icon v-if="editable" size="18" class="dashboard-widget-card__drag-handle">grip-vertical</v-icon>
-          <v-tooltip v-if="widget.aiProvenance" location="top" text="Made by Da Vinci">
+          <div class="dashboard-widget-card__title">{{ widget.title }}</div>
+          <v-tooltip
+            v-if="widget.aiProvenance"
+            location="top"
+            :text="widget.aiProvenance.prompt ? `Made by Da Vinci · From prompt: “${widget.aiProvenance.prompt}”` : 'Made by Da Vinci'"
+          >
             <template #activator="{ props: tipProps }">
-              <span v-bind="tipProps" class="dashboard-widget-card__davinci-icon">
-                <v-icon size="13" color="secondary">sparkles</v-icon>
+              <span v-bind="tipProps" class="dashboard-widget-card__davinci-chip">
+                <v-icon size="11">sparkles</v-icon>
+                Da Vinci
               </span>
             </template>
           </v-tooltip>
-          <div class="dashboard-widget-card__title">{{ widget.title }}</div>
         </div>
         <div class="dashboard-widget-card__subtitle">{{ widgetSubtitle }}</div>
       </div>
@@ -321,10 +326,25 @@ function openSettings() {
   white-space: nowrap;
 }
 
-.dashboard-widget-card__davinci-icon {
+.dashboard-widget-card__davinci-chip {
   display: inline-flex;
   align-items: center;
+  gap: 4px;
   flex-shrink: 0;
+  height: 20px;
+  padding: 0 8px;
+  border-radius: 999px;
+  background: linear-gradient(135deg, rgba(124, 58, 237, 0.14), rgba(99, 102, 241, 0.18));
+  color: rgb(99, 79, 218);
+  font-size: 10.5px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+  cursor: default;
+}
+
+.dashboard-widget-card__davinci-chip :deep(.v-icon) {
+  color: rgb(124, 58, 237);
 }
 
 .dashboard-widget-card__subtitle {

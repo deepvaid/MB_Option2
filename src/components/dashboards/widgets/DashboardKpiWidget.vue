@@ -62,14 +62,15 @@ const sparklinePoints = computed(() => {
           </div>
           <div class="dashboard-kpi-widget__header-text">
             <div v-if="title" class="dashboard-kpi-widget__title-row">
+              <div class="dashboard-kpi-widget__title" :title="title">{{ title }}</div>
               <v-tooltip v-if="aiGenerated" location="top" text="Made by Da Vinci">
                 <template #activator="{ props: tipProps }">
-                  <span v-bind="tipProps" class="dashboard-kpi-widget__davinci-icon">
-                    <v-icon size="12" color="secondary">sparkles</v-icon>
+                  <span v-bind="tipProps" class="dashboard-kpi-widget__davinci-chip">
+                    <v-icon size="10">sparkles</v-icon>
+                    Da Vinci
                   </span>
                 </template>
               </v-tooltip>
-              <div class="dashboard-kpi-widget__title" :title="title">{{ title }}</div>
             </div>
             <div class="dashboard-kpi-widget__period" v-if="subtitle">{{ subtitle }}</div>
           </div>
@@ -182,10 +183,25 @@ const sparklinePoints = computed(() => {
   min-width: 0;
 }
 
-.dashboard-kpi-widget__davinci-icon {
+.dashboard-kpi-widget__davinci-chip {
   display: inline-flex;
   align-items: center;
+  gap: 3px;
   flex-shrink: 0;
+  height: 18px;
+  padding: 0 7px;
+  border-radius: 999px;
+  background: linear-gradient(135deg, rgba(124, 58, 237, 0.14), rgba(99, 102, 241, 0.18));
+  color: rgb(99, 79, 218);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+  cursor: default;
+}
+
+.dashboard-kpi-widget__davinci-chip :deep(.v-icon) {
+  color: rgb(124, 58, 237);
 }
 
 .dashboard-kpi-widget__title {
