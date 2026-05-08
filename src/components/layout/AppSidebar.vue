@@ -61,7 +61,6 @@ function buildNavGroups(accountId: string): NavGroup[] {
       icon: 'layout-dashboard',
       singleRoute: `/accounts/${accountId}/dashboard`,
       items: [
-        { title: 'Home', route: `/accounts/${accountId}/dashboard` },
         { title: 'Manage', route: `/accounts/${accountId}/dashboards` },
         { title: 'Live', route: `/accounts/${accountId}/analytics/live_view` },
       ],
@@ -230,32 +229,10 @@ function buildNavGroups(accountId: string): NavGroup[] {
 
 const localDrawer = ref(props.modelValue)
 const localRail = ref(props.rail)
-const openedGroups = ref<string[]>([])
 const railHoveredSubGroup = ref<string | null>(null)
-const expandedHoveredGroup = ref<string | null>(null)
 const appsExpanded = ref(false)
-
-// Enforce single-expand invariant: only one level-2 sub-group open per parent.
-// We watch the opened-array Vuetify maintains and prune siblings whenever a new
-// sub-group joins.
-watch(openedGroups, (next, prev) => {
-  const subKeys = next.filter((k) => k.includes('-'))
-  const byParent: Record<string, string[]> = {}
-  for (const k of subKeys) {
-    const parent = k.split('-')[0]
-    if (!parent) continue
-    ;(byParent[parent] = byParent[parent] || []).push(k)
-  }
-  let pruned = next
-  let changed = false
-  for (const [, subs] of Object.entries(byParent)) {
-    if (subs.length <= 1) continue
-    const justOpened = subs.find((s) => !prev.includes(s)) ?? subs[subs.length - 1]
-    pruned = pruned.filter((v) => !subs.includes(v) || v === justOpened)
-    changed = true
-  }
-  if (changed) openedGroups.value = pruned
-})
+const expandedParentKey = ref<string | null>(null)
+const expandedSubKey = ref<string | null>(null)
 const router = useRouter()
 const route = useRoute()
 const resolvedAccountId = computed(() => {
@@ -340,12 +317,24 @@ function isAppsGroup(group: NavGroup) {
   return group.title === 'Apps'
 }
 
+function isSubGroup(item: NavItem | NavSubGroup): item is NavSubGroup {
+  return 'isSubGroup' in item && item.isSubGroup
+}
+
 // ─── Module-active prefix matching ─────────────────────────
+function routeMatches(target: string): boolean {
+  return route.path === target || route.path.startsWith(`${target}/`)
+}
+
+function flatGroupItems(group: NavGroup): NavItem[] {
+  return group.items.flatMap((item) => isSubGroup(item) ? item.items : [item])
+}
+
 function collectGroupRoutes(group: NavGroup): string[] {
   const routes: string[] = []
   if (group.singleRoute) routes.push(group.singleRoute)
   for (const item of group.items) {
-    if ('isSubGroup' in item && item.isSubGroup) {
+    if (isSubGroup(item)) {
       for (const sub of item.items) routes.push(sub.route)
     } else if ('route' in item) {
       routes.push(item.route)
@@ -355,38 +344,88 @@ function collectGroupRoutes(group: NavGroup): string[] {
 }
 
 function isModuleActive(group: NavGroup): boolean {
-  const path = route.path
-  return collectGroupRoutes(group).some((r) => path === r || path.startsWith(r + '/'))
+  return collectGroupRoutes(group).some((r) => routeMatches(r))
 }
 
 // ─── Manual expand/collapse tracking (split label/chevron) ──
-const expandedKeys = ref<Set<string>>(new Set())
-
-function isExpanded(group: NavGroup) {
-  return expandedKeys.value.has(group.title)
+function subGroupKey(group: NavGroup, subgroup: NavSubGroup): string {
+  return `${group.title}:${subgroup.title}`
 }
 
-function toggleExpanded(group: NavGroup) {
-  const next = new Set(expandedKeys.value)
-  if (next.has(group.title)) next.delete(group.title)
-  else next.add(group.title)
-  expandedKeys.value = next
+function activeItemForGroup(group: NavGroup): NavItem | null {
+  return flatGroupItems(group)
+    .filter((item) => routeMatches(item.route))
+    .sort((a, b) => b.route.length - a.route.length)[0] ?? null
 }
 
-// Auto-expand the group whose route is currently active
+function isItemActive(group: NavGroup, item: NavItem): boolean {
+  return activeItemForGroup(group)?.route === item.route
+}
+
+function activeSubGroupForGroup(group: NavGroup): NavSubGroup | null {
+  const activeItem = activeItemForGroup(group)
+  if (!activeItem) return null
+  return railSubGroups(group).find((subgroup) =>
+    subgroup.items.some((item) => item.route === activeItem.route),
+  ) ?? null
+}
+
+function isParentExpanded(group: NavGroup): boolean {
+  return expandedParentKey.value === group.title
+}
+
+function isSubGroupExpanded(group: NavGroup, subgroup: NavSubGroup): boolean {
+  return expandedSubKey.value === subGroupKey(group, subgroup)
+}
+
+function isSubGroupActive(group: NavGroup, subgroup: NavSubGroup): boolean {
+  return activeSubGroupForGroup(group)?.title === subgroup.title
+}
+
+function setExpandedParent(group: NavGroup) {
+  const activeSubGroup = activeSubGroupForGroup(group)
+  expandedParentKey.value = group.title
+  expandedSubKey.value = activeSubGroup ? subGroupKey(group, activeSubGroup) : null
+}
+
+function toggleParent(group: NavGroup) {
+  if (isParentExpanded(group)) {
+    expandedParentKey.value = null
+    expandedSubKey.value = null
+    return
+  }
+
+  setExpandedParent(group)
+}
+
+function toggleSubGroup(group: NavGroup, subgroup: NavSubGroup) {
+  expandedParentKey.value = group.title
+  expandedSubKey.value = isSubGroupExpanded(group, subgroup)
+    ? null
+    : subGroupKey(group, subgroup)
+}
+
+function keepParentExpanded(group: NavGroup, subgroup?: NavSubGroup) {
+  expandedParentKey.value = group.title
+  expandedSubKey.value = subgroup ? subGroupKey(group, subgroup) : null
+}
+
+function syncExpansionWithRoute() {
+  const activeGroup = navGroups.value.find((group) => group.items.length && isModuleActive(group))
+  if (!activeGroup) {
+    expandedParentKey.value = null
+    expandedSubKey.value = null
+    return
+  }
+
+  expandedParentKey.value = activeGroup.title
+  const activeSubGroup = activeSubGroupForGroup(activeGroup)
+  expandedSubKey.value = activeSubGroup ? subGroupKey(activeGroup, activeSubGroup) : null
+}
+
 watch(
-  () => route.path,
-  () => {
-    for (const g of navGroups.value) {
-      if (g.items.length && isModuleActive(g)) {
-        if (!expandedKeys.value.has(g.title)) {
-          const next = new Set(expandedKeys.value)
-          next.add(g.title)
-          expandedKeys.value = next
-        }
-      }
-    }
-  },
+  () => [route.path, resolvedAccountId.value] as const,
+  syncExpansionWithRoute,
   { immediate: true },
 )
 </script>
@@ -435,7 +474,7 @@ watch(
     </div>
 
     <!-- Navigation List -->
-    <v-list v-model:opened="openedGroups" density="compact" nav class="px-2 py-1 sidebar-scroll">
+    <v-list density="compact" nav class="px-2 py-1 sidebar-scroll">
       <template v-for="group in navGroups" :key="group.title">
         <template v-if="isAppsGroup(group) && !localRail">
           <v-list-item
@@ -522,11 +561,12 @@ watch(
           <div class="sidebar-parent-row">
             <v-list-item
               :to="group.singleRoute"
+              @click="setExpandedParent(group)"
               :prepend-icon="group.icon"
               :title="group.title"
               rounded="lg"
               class="sidebar-text sidebar-parent-row__label"
-              :class="{ 'expanded-icon-hovered': expandedHoveredGroup === group.title }"
+              :class="{ 'sidebar-parent-row__label--expanded': isParentExpanded(group) }"
             >
               <template #append>
                 <v-tooltip v-if="isLocked(group)" location="end" text="Upgrade to unlock">
@@ -535,119 +575,79 @@ watch(
                   </template>
                 </v-tooltip>
               </template>
-
-              <v-menu
-                activator="parent"
-                location="end"
-                open-on-hover
-                :open-delay="0"
-                :close-delay="120"
-                offset="8"
-                :close-on-content-click="false"
-                @update:model-value="(v: boolean) => {
-                  if (v) expandedHoveredGroup = group.title;
-                  else { expandedHoveredGroup = null; railHoveredSubGroup = null; }
-                }"
-              >
-                <!-- Single-column flyout card (groups without sub-groups) -->
-                <div v-if="!hasSubGroups(group)" class="rail-flyout-card">
-                  <div class="rail-flyout-card__header">{{ group.title }}</div>
-                  <div
-                    v-for="item in group.items"
-                    :key="item.title"
-                    class="rail-flyout-item"
-                    :class="{ 'rail-flyout-item--active': ('route' in item) && $route.path.startsWith(item.route) }"
-                    @click="('route' in item) && goTo(item.route)"
-                  >{{ ('route' in item) ? item.title : '' }}</div>
-                </div>
-
-                <!-- Two separate flyout cards (cascade — groups with sub-groups) -->
-                <div v-else class="rail-cascade-wrap">
-                  <div class="rail-flyout-card">
-                    <div class="rail-flyout-card__header">{{ group.title }}</div>
-                    <div
-                      v-for="flat in railFlatItems(group)"
-                      :key="flat.title"
-                      class="rail-flyout-item"
-                      :class="{ 'rail-flyout-item--active': $route.path.startsWith(flat.route) }"
-                      @click="goTo(flat.route)"
-                    >{{ flat.title }}</div>
-                    <div
-                      v-for="sub in railSubGroups(group)"
-                      :key="sub.title"
-                      class="rail-flyout-item rail-flyout-item--has-sub"
-                      :class="{ 'rail-flyout-item--active': railHoveredSubGroup === sub.title }"
-                      @mouseenter="railHoveredSubGroup = sub.title"
-                    >
-                      <span>{{ sub.title }}</span>
-                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m9 6 6 6-6 6"/></svg>
-                    </div>
-                  </div>
-                  <div v-if="railHoveredSubGroup && activeRailSubGroupItems(group).length" class="rail-flyout-card">
-                    <div class="rail-flyout-card__header">{{ railHoveredSubGroup }}</div>
-                    <div
-                      v-for="child in activeRailSubGroupItems(group)"
-                      :key="child.title"
-                      class="rail-flyout-item"
-                      :class="{ 'rail-flyout-item--active': $route.path.startsWith(child.route) }"
-                      @click="goTo(child.route)"
-                    >{{ child.title }}</div>
-                  </div>
-                </div>
-              </v-menu>
             </v-list-item>
 
             <button
               type="button"
               class="sidebar-parent-row__chevron"
-              :aria-expanded="isExpanded(group)"
-              :aria-label="`${isExpanded(group) ? 'Collapse' : 'Expand'} ${group.title}`"
-              @click.stop.prevent="toggleExpanded(group)"
-              @keydown.enter.stop.prevent="toggleExpanded(group)"
-              @keydown.space.stop.prevent="toggleExpanded(group)"
+              :aria-expanded="isParentExpanded(group)"
+              :aria-label="`${isParentExpanded(group) ? 'Collapse' : 'Expand'} ${group.title}`"
+              @click.stop.prevent="toggleParent(group)"
+              @keydown.enter.stop.prevent="toggleParent(group)"
+              @keydown.space.stop.prevent="toggleParent(group)"
             >
-              <v-icon size="14">{{ isExpanded(group) ? 'chevron-up' : 'chevron-down' }}</v-icon>
+              <v-icon size="14">{{ isParentExpanded(group) ? 'chevron-up' : 'chevron-down' }}</v-icon>
             </button>
           </div>
 
           <v-expand-transition>
-            <div v-show="isExpanded(group)" class="sidebar-parent__children">
+            <div v-show="isParentExpanded(group)" class="sidebar-parent__children">
               <template v-for="item in group.items" :key="item.title">
-                <v-list-group
-                  v-if="'isSubGroup' in item && item.isSubGroup"
-                  :value="`${group.title}-${item.title}`"
-                  class="sidebar-expanded-subgroup"
+                <div
+                  v-if="isSubGroup(item)"
+                  class="sidebar-tree-branch"
+                  :class="{
+                    'sidebar-tree-branch--active': isSubGroupActive(group, item),
+                    'sidebar-tree-branch--expanded': isSubGroupExpanded(group, item),
+                  }"
                 >
-                  <template #activator="{ props: subgroupProps }">
-                    <v-list-item
-                      v-bind="subgroupProps"
-                      :title="item.title"
-                      class="sidebar-text sidebar-subgroup-item"
-                      rounded="lg"
-                    />
-                  </template>
+                  <button
+                    type="button"
+                    class="sidebar-subgroup-row"
+                    :aria-expanded="isSubGroupExpanded(group, item)"
+                    @click="toggleSubGroup(group, item)"
+                  >
+                    <span class="sidebar-subgroup-row__title">{{ item.title }}</span>
+                    <v-icon size="15">{{ isSubGroupExpanded(group, item) ? 'chevron-up' : 'chevron-down' }}</v-icon>
+                  </button>
 
+                  <v-expand-transition>
+                    <div v-show="isSubGroupExpanded(group, item)" class="sidebar-subgroup__children">
+                      <div
+                        v-for="subItem in item.items"
+                        :key="subItem.title"
+                        class="sidebar-tree-row sidebar-tree-row--grandchild"
+                        :class="{ 'sidebar-tree-row--active': isItemActive(group, subItem) }"
+                      >
+                        <v-list-item
+                          :title="subItem.title"
+                          :to="subItem.route"
+                          :active="isItemActive(group, subItem)"
+                          @click="keepParentExpanded(group, item)"
+                          class="sidebar-text sidebar-grandchild-item sidebar-tree-link"
+                          rounded="lg"
+                          exact
+                        />
+                      </div>
+                    </div>
+                  </v-expand-transition>
+                </div>
+
+                <div
+                  v-else
+                  class="sidebar-tree-row sidebar-tree-row--child"
+                  :class="{ 'sidebar-tree-row--active': isItemActive(group, item) }"
+                >
                   <v-list-item
-                    v-for="subItem in item.items"
-                    :key="subItem.title"
-                    :title="subItem.title"
-                    :to="subItem.route"
-                    @click="goTo(subItem.route)"
-                    class="sidebar-text sidebar-grandchild-item"
+                    :title="item.title"
+                    :to="item.route"
+                    :active="isItemActive(group, item)"
+                    @click="keepParentExpanded(group)"
+                    class="sidebar-text sidebar-child-item sidebar-tree-link"
                     rounded="lg"
                     exact
                   />
-                </v-list-group>
-
-                <v-list-item
-                  v-else-if="!('isSubGroup' in item)"
-                  :title="item.title"
-                  :to="item.route"
-                  @click="goTo(item.route)"
-                  class="sidebar-text sidebar-child-item"
-                  rounded="lg"
-                  exact
-                />
+                </div>
               </template>
             </div>
           </v-expand-transition>
@@ -807,8 +807,27 @@ watch(
 
 <style scoped lang="scss">
 .mp-sidebar {
-  background: var(--surface-1) !important;
-  border-right: 1px solid var(--hairline) !important;
+  --sidebar-bg: var(--mp-color-sidebar-surface, var(--surface-1));
+  --sidebar-border: var(--mp-color-sidebar-border, var(--hairline));
+  --sidebar-line: var(--sidebar-border);
+  --sidebar-text: var(--mp-color-sidebar-text, var(--ink));
+  --sidebar-muted: var(--mp-color-sidebar-textMuted, var(--muted));
+  --sidebar-hover-bg: color-mix(in oklch, var(--sidebar-text) 5%, transparent);
+  --sidebar-active-bg: color-mix(in oklch, var(--sidebar-text) 9%, transparent);
+  --sidebar-active-text: var(--sidebar-text);
+  --sidebar-focus-ring: color-mix(in oklch, var(--sidebar-text) 22%, transparent);
+  --sidebar-radius: 12px;
+  --sidebar-radius-sm: 10px;
+  --sidebar-transition: background 120ms ease, color 120ms ease, border-color 120ms ease;
+  background: var(--sidebar-bg) !important;
+  border-right: 1px solid var(--sidebar-border) !important;
+  color: var(--sidebar-text);
+}
+
+.mp-sidebar :deep(.v-navigation-drawer__content) {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
 }
 
 .sidebar-header {
@@ -817,7 +836,7 @@ watch(
   gap: 10px;
   padding: 14px 14px 14px 14px;
   margin-bottom: 6px;
-  border-bottom: 1px solid var(--hairline);
+  border-bottom: 1px solid var(--sidebar-border);
 }
 
 .sidebar-header--rail {
@@ -832,21 +851,22 @@ watch(
   width: 32px;
   height: 32px;
   border: 0;
-  border-radius: 8px;
+  border-radius: var(--sidebar-radius-sm);
   background: transparent;
-  color: var(--ink);
+  color: var(--sidebar-muted);
   cursor: pointer;
   flex-shrink: 0;
-  transition: background 120ms ease;
+  transition: var(--sidebar-transition);
 }
 
 .sidebar-menu-btn:hover {
-  background: var(--surface-2);
+  background: var(--sidebar-hover-bg);
+  color: var(--sidebar-active-text);
 }
 
 .sidebar-menu-btn:focus-visible {
   outline: none;
-  box-shadow: 0 0 0 3px color-mix(in oklch, var(--accent) 18%, transparent);
+  box-shadow: 0 0 0 3px var(--sidebar-focus-ring);
 }
 
 .sidebar-brand {
@@ -863,8 +883,8 @@ watch(
 
 .sidebar-brand:focus-visible {
   outline: none;
-  border-radius: 8px;
-  box-shadow: 0 0 0 3px color-mix(in oklch, var(--accent) 18%, transparent);
+  border-radius: var(--sidebar-radius-sm);
+  box-shadow: 0 0 0 3px var(--sidebar-focus-ring);
 }
 
 .sidebar-brand__mark-simple {
@@ -873,7 +893,7 @@ watch(
   justify-content: center;
   width: 22px;
   height: 22px;
-  color: var(--ink);
+  color: var(--sidebar-text);
   font-size: 18px;
   font-weight: 800;
   transition: opacity 120ms ease;
@@ -890,9 +910,9 @@ watch(
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: 8px;
-  background: var(--ink);
-  color: var(--surface-1);
+  border-radius: var(--sidebar-radius-sm);
+  background: var(--sidebar-text);
+  color: var(--sidebar-bg);
   font-size: 15px;
   font-weight: 700;
   letter-spacing: -0.5px;
@@ -908,17 +928,23 @@ watch(
   font-weight: 700;
   letter-spacing: 1.1px;
   text-transform: uppercase;
-  color: var(--ink);
+  color: var(--sidebar-text);
 }
 
 .sidebar-apps-toggle {
   width: 24px !important;
   height: 24px !important;
-  color: var(--muted) !important;
+  color: var(--sidebar-muted) !important;
 }
 
 .sidebar-apps-toggle:hover {
-  color: var(--accent-ink) !important;
+  background: var(--sidebar-hover-bg) !important;
+  color: var(--sidebar-active-text) !important;
+}
+
+.sidebar-apps-toggle:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 2px var(--sidebar-focus-ring);
 }
 
 .sidebar-installed-apps {
@@ -931,11 +957,11 @@ watch(
 
 .sidebar-app-item :deep(.v-list-item__prepend > .v-icon) {
   margin-inline-end: 8px;
-  color: var(--muted);
+  color: var(--sidebar-muted);
 }
 
 .sidebar-app-item__status {
-  color: var(--muted);
+  color: var(--sidebar-muted);
   font-size: 10.5px;
   font-weight: 600;
   text-transform: uppercase;
@@ -943,13 +969,15 @@ watch(
 }
 
 .sidebar-scroll {
+  flex: 1 1 auto;
+  min-height: 0;
   overflow-y: auto;
   padding: 4px 14px 12px;
 }
 
 .sidebar-controls {
   padding: 10px 14px;
-  border-top: 1px solid var(--hairline);
+  border-top: 1px solid var(--sidebar-border);
 }
 
 .sidebar-controls--rail {
@@ -974,7 +1002,7 @@ watch(
 .sidebar-controls__label {
   font-size: 12.5px;
   font-weight: 500;
-  color: var(--muted);
+  color: var(--sidebar-muted);
   flex: 1;
   white-space: nowrap;
 }
@@ -1025,7 +1053,7 @@ watch(
 }
 
 .accent-swatch--active {
-  box-shadow: 0 0 0 2px var(--surface-1), 0 0 0 3.5px currentColor;
+  box-shadow: 0 0 0 2px var(--sidebar-bg), 0 0 0 3.5px currentColor;
 }
 
 .accent-swatch--lg {
@@ -1039,17 +1067,24 @@ watch(
   justify-content: center;
   width: 34px;
   height: 34px;
-  border-radius: 10px;
+  border-radius: var(--sidebar-radius-sm);
   border: none;
   background: transparent;
   cursor: pointer;
   appearance: none;
   padding: 0;
-  transition: background-color 0.15s ease;
+  color: var(--sidebar-muted);
+  transition: var(--sidebar-transition);
 }
 
 .sidebar-rail-btn:hover {
-  background: color-mix(in oklch, var(--ink) 8%, transparent);
+  background: var(--sidebar-hover-bg);
+  color: var(--sidebar-active-text);
+}
+
+.sidebar-rail-btn:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 2px var(--sidebar-focus-ring);
 }
 
 .accent-popover {
@@ -1065,13 +1100,13 @@ watch(
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.06em;
-  color: var(--muted);
+  color: var(--sidebar-muted);
   margin-bottom: 10px;
 }
 
 
 .sidebar-divider {
-  border-color: var(--hairline) !important;
+  border-color: var(--sidebar-border) !important;
   opacity: 1;
   margin: 4px 0 !important;
 }
@@ -1079,19 +1114,22 @@ watch(
 .sidebar-badge {
   height: 18px !important;
   padding-inline: 6px;
+  border-radius: var(--sidebar-radius) !important;
+  background: var(--sidebar-active-bg) !important;
+  color: var(--sidebar-muted) !important;
   font-size: 10px !important;
   letter-spacing: 0.04em;
 }
 
-:deep(.active-nav-item) {
+.mp-sidebar :deep(.active-nav-item) {
   position: relative;
-  background: color-mix(in oklch, var(--accent) 10%, transparent) !important;
+  background: var(--sidebar-active-bg) !important;
   box-shadow: none;
-  color: var(--accent-ink) !important;
+  color: var(--sidebar-active-text) !important;
   font-weight: 600;
 }
 
-/* ─── Split parent row: clickable label + chevron toggle ─── */
+/* ─── Expanded sidebar tree: parent, level-2, level-3 ─── */
 .sidebar-parent {
   margin-bottom: 1px;
 }
@@ -1105,6 +1143,8 @@ watch(
 .sidebar-parent-row__label {
   flex: 1;
   min-width: 0;
+  padding-right: 36px !important;
+  cursor: pointer;
 }
 
 .sidebar-parent-row__chevron {
@@ -1119,27 +1159,27 @@ watch(
   justify-content: center;
   background: transparent;
   border: none;
-  border-radius: 6px;
-  color: var(--muted);
+  border-radius: var(--sidebar-radius-sm);
+  color: var(--sidebar-muted);
   cursor: pointer;
   z-index: 2;
   padding: 0;
-  transition: background 120ms ease, color 120ms ease;
+  transition: var(--sidebar-transition);
 }
 
 .sidebar-parent-row__chevron:hover {
-  background: color-mix(in oklch, var(--accent) 14%, transparent);
-  color: var(--accent-ink);
+  background: var(--sidebar-hover-bg);
+  color: var(--sidebar-active-text);
 }
 
 .sidebar-parent-row__chevron:focus-visible {
   outline: none;
-  box-shadow: 0 0 0 2px color-mix(in oklch, var(--accent) 35%, transparent);
+  box-shadow: 0 0 0 2px var(--sidebar-focus-ring);
 }
 
 .sidebar-parent--active .sidebar-parent-row__label {
-  background: color-mix(in oklch, var(--accent) 10%, transparent) !important;
-  color: var(--accent-ink) !important;
+  background: var(--sidebar-active-bg) !important;
+  color: var(--sidebar-active-text) !important;
   font-weight: 600;
 }
 
@@ -1149,156 +1189,319 @@ watch(
 
 .sidebar-parent--active .sidebar-parent-row__label :deep(.v-list-item__prepend > .v-icon),
 .sidebar-parent--active .sidebar-parent-row__label :deep(.v-list-item-title) {
-  color: var(--accent-ink) !important;
+  color: var(--sidebar-active-text) !important;
+}
+
+.sidebar-parent--active .sidebar-parent-row__label :deep(.v-list-item-title) {
+  font-weight: 600;
 }
 
 .sidebar-parent--active .sidebar-parent-row__chevron {
-  color: var(--accent-ink);
+  color: var(--sidebar-muted);
 }
 
 .sidebar-parent__children {
-  padding-left: 0;
+  position: relative;
+  margin: 3px 0 8px 18px;
+  padding-left: 16px;
 }
 
-:deep(.sidebar-child-item.v-list-item--active) {
-  background: rgb(var(--v-theme-primary-container)) !important;
-  color: rgb(var(--v-theme-on-primary-container)) !important;
-  font-weight: 600;
+.sidebar-parent__children::before {
+  content: '';
+  position: absolute;
+  left: 6px;
+  top: 1px;
+  bottom: 12px;
+  width: 1px;
+  background: var(--sidebar-line);
 }
 
-:deep(.sidebar-child-item.v-list-item--active .v-list-item-title) {
-  color: rgb(var(--v-theme-on-primary-container)) !important;
-  font-weight: 600;
+.sidebar-tree-row,
+.sidebar-tree-branch {
+  position: relative;
 }
 
-:deep(.active-nav-item::before) {
-  display: none;
+.sidebar-tree-row {
+  --sidebar-elbow-left: -10px;
+  --sidebar-elbow-width: 10px;
 }
 
-:deep(.active-nav-item > .v-list-item__overlay) {
-  opacity: 0 !important;
+.sidebar-tree-row::before {
+  content: '';
+  position: absolute;
+  left: var(--sidebar-elbow-left);
+  top: 0;
+  width: var(--sidebar-elbow-width);
+  height: 17px;
+  border-left: 1px solid var(--sidebar-line);
+  border-bottom: 1px solid var(--sidebar-line);
+  border-bottom-left-radius: 8px;
+  background: transparent;
+  opacity: 0;
+  z-index: 0;
+  transition: opacity 120ms ease, border-color 120ms ease;
 }
 
-:deep(.active-nav-item .v-list-item__prepend > .v-icon),
-:deep(.active-nav-item .v-list-item-title) {
-  color: var(--accent-ink) !important;
+.sidebar-tree-row--active::before {
+  opacity: 1;
 }
 
-:deep(.v-list-item__prepend .v-icon),
-:deep(.v-list-item-title) {
-  color: var(--ink);
+.sidebar-subgroup-row {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  width: 100%;
+  min-height: 34px;
+  margin: 1px 0;
+  padding: 8px 9px;
+  border: 0;
+  border-radius: var(--sidebar-radius);
+  appearance: none;
+  background: transparent;
+  color: var(--sidebar-text);
+  cursor: pointer;
+  font: inherit;
+  text-align: left;
+  transition: var(--sidebar-transition);
 }
 
-/* Rail icon & Expanded icon hover state when flyout menu is open */
-:deep(.rail-icon-hovered),
-:deep(.expanded-icon-hovered) {
-  background: color-mix(in oklch, var(--accent) 10%, transparent) !important;
+.sidebar-subgroup-row:hover {
+  background: var(--sidebar-hover-bg);
 }
 
-:deep(.rail-icon-hovered > .v-list-item__overlay),
-:deep(.expanded-icon-hovered > .v-list-item__overlay) {
-  opacity: 0 !important;
+.sidebar-subgroup-row:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 2px var(--sidebar-focus-ring);
 }
 
-:deep(.rail-icon-hovered .v-list-item__prepend > .v-icon),
-:deep(.expanded-icon-hovered .v-list-item__prepend > .v-icon),
-:deep(.expanded-icon-hovered .v-list-item-title) {
-  color: var(--accent-ink) !important;
-}
-
-:deep(.v-list-item-subtitle) {
-  color: var(--muted);
-}
-
-:deep(.v-list-item) {
-  min-height: 36px;
-  margin-bottom: 1px;
-  padding: 9px 10px;
-  border-radius: 10px !important;
-}
-
-:deep(.v-list-item-title) {
+.sidebar-subgroup-row__title {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
   font-size: 13.5px;
   font-weight: 500;
   line-height: 1.2;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
-:deep(.v-list-item__prepend > .v-icon) {
-  font-size: 18px;
-  margin-inline-end: 10px;
+.sidebar-subgroup-row .v-icon {
+  flex: none;
+  color: var(--sidebar-muted) !important;
 }
 
-:deep(.v-list-item:hover > .v-list-item__overlay) {
-  opacity: 0.03;
+.sidebar-tree-branch--active > .sidebar-subgroup-row,
+.sidebar-tree-branch--expanded > .sidebar-subgroup-row {
+  color: var(--sidebar-active-text);
+  font-weight: 600;
 }
 
-/* Expanded sidebar group activator — accent-tinted hover */
-:deep(.sidebar-expanded-group > .v-list-group__header:hover) {
-  background: color-mix(in oklch, var(--accent) 8%, transparent) !important;
+.sidebar-tree-branch--active > .sidebar-subgroup-row .sidebar-subgroup-row__title,
+.sidebar-tree-branch--expanded > .sidebar-subgroup-row .sidebar-subgroup-row__title {
+  font-weight: 600;
 }
 
-:deep(.sidebar-expanded-group > .v-list-group__header:hover .v-list-item__prepend > .v-icon) {
-  color: var(--accent-ink) !important;
+.sidebar-tree-branch--active > .sidebar-subgroup-row .v-icon,
+.sidebar-tree-branch--expanded > .sidebar-subgroup-row .v-icon {
+  color: var(--sidebar-active-text) !important;
 }
 
-:deep(.sidebar-expanded-group > .v-list-group__header:hover .v-list-item-title) {
-  color: var(--accent-ink) !important;
+.sidebar-subgroup__children {
+  position: relative;
+  margin-left: 22px;
+  padding-left: 14px;
 }
 
-:deep(.sidebar-expanded-group > .v-list-group__header:hover > .v-list-item__overlay) {
+.sidebar-subgroup__children::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 10px;
+  width: 1px;
+  background: var(--sidebar-line);
+}
+
+.sidebar-tree-row--grandchild::before {
+  --sidebar-elbow-left: -14px;
+  --sidebar-elbow-width: 14px;
+}
+
+.sidebar-tree-link {
+  position: relative;
+  z-index: 1;
+  min-height: 34px !important;
+  border-radius: var(--sidebar-radius) !important;
+  overflow: visible !important;
+}
+
+.sidebar-tree-link :deep(.v-list-item__overlay) {
   opacity: 0 !important;
 }
 
-/* Level-2 flat child items — override Vuetify's logical indent (was 64px → now 28px) */
-:deep(.sidebar-child-item) {
-  --indent-padding: 20px;
-  min-height: 32px !important;
-  border-radius: 8px !important;
+.sidebar-child-item {
+  --indent-padding: 0;
 }
 
-:deep(.sidebar-child-item .v-list-item-title) {
+.sidebar-grandchild-item {
+  --indent-padding: 0;
+}
+
+.sidebar-tree-row--grandchild .sidebar-tree-link :deep(.v-list-item-title) {
+  color: var(--sidebar-muted);
   font-size: 13.5px;
-  font-weight: 500;
-}
-
-.sidebar-subgroup-item {
-  color: var(--muted);
-}
-
-/* Level-2 subgroup headers — reduce Vuetify's stacked indent via CSS variable */
-:deep(.sidebar-subgroup-item) {
-  --indent-padding: 20px;
-}
-
-/* Level-3 grandchild items — override --indent-padding so calc(16px + var(--indent-padding)) gives ~44px */
-:deep(.sidebar-grandchild-item) {
-  --indent-padding: 28px;
-  min-height: 32px !important;
-  border-radius: 8px !important;
-}
-
-:deep(.sidebar-grandchild-item .v-list-item-title) {
-  font-size: 13px;
-  color: rgb(var(--v-theme-on-surface-variant));
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 
-:deep(.sidebar-grandchild-item.v-list-item--active) {
-  background: rgb(var(--v-theme-primary-container)) !important;
+.sidebar-tree-row--active .sidebar-tree-link {
+  background: var(--sidebar-active-bg) !important;
+  color: var(--sidebar-active-text) !important;
+  font-weight: 600;
 }
 
-:deep(.sidebar-grandchild-item.v-list-item--active .v-list-item-title) {
-  color: rgb(var(--v-theme-on-primary-container)) !important;
+.sidebar-tree-row--active .sidebar-tree-link :deep(.v-list-item-title) {
+  color: var(--sidebar-active-text) !important;
+  font-weight: 600;
+}
+
+.mp-sidebar :deep(.sidebar-child-item.v-list-item--active) {
+  background: var(--sidebar-active-bg) !important;
+  color: var(--sidebar-active-text) !important;
+  font-weight: 600;
+}
+
+.mp-sidebar :deep(.sidebar-child-item.v-list-item--active .v-list-item-title) {
+  color: var(--sidebar-active-text) !important;
+  font-weight: 600;
+}
+
+.mp-sidebar :deep(.active-nav-item::before) {
+  display: none;
+}
+
+.mp-sidebar :deep(.active-nav-item > .v-list-item__overlay) {
+  opacity: 0 !important;
+}
+
+.mp-sidebar :deep(.active-nav-item .v-list-item__prepend > .v-icon),
+.mp-sidebar :deep(.active-nav-item .v-list-item-title) {
+  color: var(--sidebar-active-text) !important;
+}
+
+.mp-sidebar :deep(.active-nav-item .v-list-item-title),
+.mp-sidebar :deep(.v-list-item--active .v-list-item-title) {
+  font-weight: 600;
+}
+
+.mp-sidebar :deep(.v-list-item__prepend .v-icon),
+.mp-sidebar :deep(.v-list-item-title) {
+  color: var(--sidebar-text);
+}
+
+/* Rail icon hover state when flyout menu is open */
+.mp-sidebar :deep(.rail-icon-hovered) {
+  background: var(--sidebar-active-bg) !important;
+}
+
+.mp-sidebar :deep(.rail-icon-hovered > .v-list-item__overlay) {
+  opacity: 0 !important;
+}
+
+.mp-sidebar :deep(.rail-icon-hovered .v-list-item__prepend > .v-icon) {
+  color: var(--sidebar-active-text) !important;
+}
+
+.mp-sidebar :deep(.v-list-item-subtitle) {
+  color: var(--sidebar-muted);
+}
+
+.mp-sidebar :deep(.v-list-item) {
+  min-height: 36px;
+  margin-bottom: 1px;
+  padding: 9px 10px;
+  border-radius: var(--sidebar-radius) !important;
+  color: var(--sidebar-text);
+}
+
+.mp-sidebar :deep(.v-list-item:hover:not(.v-list-item--active):not(.active-nav-item)) {
+  background: var(--sidebar-hover-bg) !important;
+}
+
+.mp-sidebar :deep(.v-list-item:focus-visible),
+.mp-sidebar :deep(.v-list-item--focus-visible) {
+  outline: none;
+  box-shadow: 0 0 0 2px var(--sidebar-focus-ring);
+}
+
+.mp-sidebar :deep(.v-list-item--active) {
+  background: var(--sidebar-active-bg) !important;
+  color: var(--sidebar-active-text) !important;
+  border-radius: var(--sidebar-radius) !important;
+}
+
+.mp-sidebar :deep(.v-list-item-title) {
+  font-size: 13.5px;
+  font-weight: 500;
+  line-height: 1.2;
+}
+
+.mp-sidebar :deep(.v-list-item__prepend > .v-icon) {
+  font-size: 18px;
+  margin-inline-end: 10px;
+}
+
+.mp-sidebar :deep(.v-list-item:hover > .v-list-item__overlay) {
+  opacity: 0 !important;
+}
+
+.mp-sidebar :deep(.sidebar-child-item) {
+  min-height: 32px !important;
+  border-radius: var(--sidebar-radius) !important;
+}
+
+.mp-sidebar :deep(.sidebar-child-item .v-list-item-title) {
+  font-size: 13.5px;
+  font-weight: 500;
+}
+
+.mp-sidebar :deep(.sidebar-grandchild-item) {
+  min-height: 32px !important;
+  border-radius: var(--sidebar-radius) !important;
+}
+
+.mp-sidebar :deep(.sidebar-grandchild-item .v-list-item-title) {
+  font-size: 13.5px;
+  color: var(--sidebar-muted);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.mp-sidebar :deep(.sidebar-grandchild-item.v-list-item--active) {
+  background: var(--sidebar-active-bg) !important;
+}
+
+.mp-sidebar :deep(.sidebar-grandchild-item.v-list-item--active .v-list-item-title) {
+  color: var(--sidebar-active-text) !important;
   font-weight: 600;
 }
 
 /* Rail flyout — single card */
 .rail-flyout-card {
+  --sidebar-border: var(--hairline);
+  --sidebar-text: var(--ink);
+  --sidebar-muted: var(--muted);
+  --sidebar-hover-bg: color-mix(in oklch, var(--sidebar-text) 5%, transparent);
+  --sidebar-active-bg: color-mix(in oklch, var(--sidebar-text) 9%, transparent);
+  --sidebar-active-text: var(--sidebar-text);
+  --sidebar-radius: 12px;
   background: var(--surface-1);
-  border: 1px solid var(--hairline);
-  border-radius: 12px;
+  border: 1px solid var(--sidebar-border);
+  border-radius: var(--sidebar-radius);
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.10), 0 1px 4px rgba(0, 0, 0, 0.06);
   padding: 8px;
   min-width: 220px;
@@ -1309,7 +1512,7 @@ watch(
   font-size: 11px;
   font-weight: 600;
   line-height: 1;
-  color: rgb(var(--v-theme-on-surface-variant));
+  color: var(--sidebar-muted);
   text-transform: uppercase;
   letter-spacing: 1px;
 }
@@ -1319,22 +1522,22 @@ watch(
   align-items: center;
   justify-content: space-between;
   padding: 9px 12px;
-  border-radius: 8px;
+  border-radius: var(--sidebar-radius);
   font-size: 13.5px;
   font-weight: 500;
-  color: rgb(var(--v-theme-on-surface));
+  color: var(--sidebar-text);
   cursor: pointer;
   transition: background 100ms ease;
   user-select: none;
 }
 
 .rail-flyout-item:hover {
-  background: rgb(var(--v-theme-surface-variant));
+  background: var(--sidebar-hover-bg);
 }
 
 .rail-flyout-item--active {
-  background: rgb(var(--v-theme-primary-container));
-  color: rgb(var(--v-theme-on-primary-container));
+  background: var(--sidebar-active-bg);
+  color: var(--sidebar-active-text);
   font-weight: 600;
 }
 
@@ -1348,19 +1551,5 @@ watch(
   display: flex;
   gap: 8px;
   align-items: flex-start;
-}
-
-.sidebar-expanded-group :deep(.v-list-group__items) {
-  position: relative;
-}
-
-.sidebar-expanded-group :deep(.v-list-group__items::before) {
-  content: '';
-  position: absolute;
-  left: 24px;
-  top: 0;
-  bottom: 8px;
-  width: 1px;
-  background: var(--hairline);
 }
 </style>
