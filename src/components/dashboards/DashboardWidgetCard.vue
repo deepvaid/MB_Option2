@@ -14,6 +14,7 @@ import DashboardChartWidget from './widgets/DashboardChartWidget.vue'
 import DashboardKpiWidget from './widgets/DashboardKpiWidget.vue'
 import DashboardActivityWidget from './widgets/DashboardActivityWidget.vue'
 import DashboardTableWidget from './widgets/DashboardTableWidget.vue'
+import DashboardWidgetActionMenu from './DashboardWidgetActionMenu.vue'
 
 const props = withDefaults(defineProps<{
   accountId: string
@@ -21,13 +22,17 @@ const props = withDefaults(defineProps<{
   filters: DashboardFilterState
   editable?: boolean
   preview?: boolean
+  showActions?: boolean
 }>(), {
   editable: false,
   preview: false,
+  showActions: true,
 })
 
 const emit = defineEmits<{
+  expand: [widgetId: string]
   edit: [widgetId: string]
+  refresh: [widgetId: string]
   remove: [widgetId: string]
   resize: [payload: { widgetId: string; size: WidgetSize }]
 }>()
@@ -40,6 +45,7 @@ const { size: bodySize } = useElementSize(bodyEl)
 const currentSize = computed<WidgetSize | null>(() => detectSize(props.widget.type, props.widget.layout.w, props.widget.layout.h))
 const isCompactHeight = computed(() => bodySize.value.height > 0 && bodySize.value.height < 128)
 const isKpiWidget = computed(() => data.value.kind === 'kpi')
+const usesCommonActions = computed(() => data.value.kind === 'kpi' || data.value.kind === 'series')
 const metricIcon = computed(() => getMetricDescriptor(props.widget.metricId)?.icon ?? '')
 const rangeLabels: Record<DashboardFilterState['rangePreset'], string> = {
   today: 'Today',
@@ -129,50 +135,16 @@ function openSettings() {
       'dashboard-widget-card--kpi': isKpiWidget,
     }"
   >
-    <div v-if="isKpiWidget && !preview" class="dashboard-widget-card__kpi-actions">
+    <div v-if="isKpiWidget && !preview && showActions" class="dashboard-widget-card__kpi-actions">
       <v-icon v-if="editable" size="18" class="dashboard-widget-card__drag-handle">grip-vertical</v-icon>
-      <v-menu location="bottom end">
-        <template #activator="{ props: menuProps }">
-          <v-btn
-            v-bind="menuProps"
-            icon="more-vertical"
-            variant="text"
-            size="small"
-            :aria-label="`Actions for ${widget.title}`"
-          />
-        </template>
-        <v-list density="compact" min-width="180">
-          <v-list-item
-            v-if="editable"
-            prepend-icon="pencil"
-            title="Edit"
-            @click="emit('edit', widget.id)"
-          />
-          <v-list-item
-            prepend-icon="arrow-up-right"
-            title="View report"
-            @click="openDrilldown"
-          />
-          <template v-if="editable">
-            <v-divider class="my-1" />
-            <v-list-item
-              v-for="size in WIDGET_SIZES"
-              :key="size"
-              :prepend-icon="currentSize === size ? 'check' : undefined"
-              :title="`Size ${size}`"
-              :active="currentSize === size"
-              @click="chooseSize(size)"
-            />
-            <v-divider class="my-1" />
-            <v-list-item
-              prepend-icon="trash-2"
-              title="Remove"
-              base-color="error"
-              @click="emit('remove', widget.id)"
-            />
-          </template>
-        </v-list>
-      </v-menu>
+      <DashboardWidgetActionMenu
+        :widget-title="widget.title"
+        :editable="editable"
+        @expand="emit('expand', widget.id)"
+        @edit="emit('edit', widget.id)"
+        @refresh="emit('refresh', widget.id)"
+        @remove="emit('remove', widget.id)"
+      />
     </div>
 
     <div v-if="!isKpiWidget" class="dashboard-widget-card__header">
@@ -185,7 +157,17 @@ function openSettings() {
       </div>
 
       <div class="dashboard-widget-card__actions">
-        <v-menu v-if="!preview" location="bottom end">
+        <DashboardWidgetActionMenu
+          v-if="!preview && showActions && usesCommonActions"
+          :widget-title="widget.title"
+          :editable="editable"
+          @expand="emit('expand', widget.id)"
+          @edit="emit('edit', widget.id)"
+          @refresh="emit('refresh', widget.id)"
+          @remove="emit('remove', widget.id)"
+        />
+
+        <v-menu v-else-if="!preview && showActions" location="bottom end">
           <template #activator="{ props: menuProps }">
             <v-btn
               v-bind="menuProps"

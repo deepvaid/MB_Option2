@@ -16,7 +16,9 @@ const props = defineProps<{
 }>()
 
 const emit = defineEmits<{
+  expandWidget: [widgetId: string]
   editWidget: [widgetId: string]
+  refreshWidget: [widgetId: string]
   removeWidget: [widgetId: string]
   resizeWidget: [payload: { widgetId: string; size: WidgetSize }]
   updateLayout: [layout: Array<{ i: string; x: number; y: number; w: number; h: number }>]
@@ -156,7 +158,9 @@ function handleLayoutUpdate(nextLayout: Array<{ i: string; x: number; y: number;
           :widget="widgetsById.get(item.i)!"
           :filters="filters"
           :editable="editMode"
+          @expand="emit('expandWidget', $event)"
           @edit="emit('editWidget', $event)"
+          @refresh="emit('refreshWidget', $event)"
           @remove="emit('removeWidget', $event)"
           @resize="emit('resizeWidget', $event)"
         />
@@ -178,7 +182,9 @@ function handleLayoutUpdate(nextLayout: Array<{ i: string; x: number; y: number;
           :widget="widget"
           :filters="filters"
           :editable="editMode"
+          @expand="emit('expandWidget', $event)"
           @edit="emit('editWidget', $event)"
+          @refresh="emit('refreshWidget', $event)"
           @remove="emit('removeWidget', $event)"
           @resize="emit('resizeWidget', $event)"
         />

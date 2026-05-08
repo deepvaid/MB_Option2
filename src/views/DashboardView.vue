@@ -2,6 +2,7 @@
 import { computed, onErrorCaptured, ref, watch } from 'vue'
 import { useRoute, useRouter, type RouteLocationRaw } from 'vue-router'
 import DashboardGrid from '@/components/dashboards/DashboardGrid.vue'
+import DashboardWidgetCard from '@/components/dashboards/DashboardWidgetCard.vue'
 import WidgetWizardDrawer from '@/components/dashboards/WidgetWizardDrawer.vue'
 import CreateDashboardDialog from '@/components/dashboards/CreateDashboardDialog.vue'
 import EditDashboardDialog from '@/components/dashboards/EditDashboardDialog.vue'
@@ -31,6 +32,7 @@ const dateMenuOpen = ref(false)
 const advancedFiltersOpen = ref(false)
 const dashboardNotice = ref('')
 const dashboardNoticeVisible = ref(false)
+const expandedWidgetId = ref<string | null>(null)
 
 onErrorCaptured((err) => {
   const message = err instanceof Error ? `${err.message}\n${err.stack ?? ''}` : String(err)
@@ -119,6 +121,15 @@ watch(
 const dashboards = computed(() => dashboardsStore.getDashboardsForAccount(accountId.value))
 const activeDashboard = computed(() => dashboardsStore.getDashboardById(accountId.value, dashboardIdParam.value))
 const activeDashboardId = computed(() => activeDashboard.value?.id)
+const expandedWidget = computed(() =>
+  activeDashboard.value?.widgets.find((widget) => widget.id === expandedWidgetId.value) ?? null,
+)
+const expandedWidgetOpen = computed({
+  get: () => Boolean(expandedWidget.value),
+  set: (isOpen: boolean) => {
+    if (!isOpen) expandedWidgetId.value = null
+  },
+})
 const activeWidgetDraft = computed<DashboardWidgetDraft | null>(() => {
   const draft = dashboardsStore.widgetEditorDraft
   if (!draft || draft.dashboardId !== activeDashboardId.value) return null
@@ -241,6 +252,7 @@ watch(widgetWizardOpen, (isOpen) => {
 
 watch(activeDashboardId, () => {
   editMode.value = false
+  expandedWidgetId.value = null
 })
 
 const activeFilters = computed<DashboardFilterState>(() => activeDashboard.value?.filters ?? defaultDashboardFilters)
@@ -304,6 +316,17 @@ function handleRemoveWidget(widgetId: string) {
 function handleResizeWidget(payload: { widgetId: string; size: WidgetSize }) {
   if (!activeDashboard.value) return
   dashboardsStore.resizeWidget(accountId.value, activeDashboard.value.id, payload.widgetId, payload.size)
+}
+
+function handleExpandWidget(widgetId: string) {
+  const widget = activeDashboard.value?.widgets.find((candidate) => candidate.id === widgetId)
+  if (!widget) return
+  expandedWidgetId.value = widget.id
+}
+
+function handleRefreshWidget(widgetId: string) {
+  const widget = activeDashboard.value?.widgets.find((candidate) => candidate.id === widgetId)
+  showDashboardNotice(`${widget?.title ?? 'Widget'} refreshed for this prototype session.`)
 }
 
 function handleEditWidget(widgetId: string) {
@@ -751,7 +774,9 @@ function performConfirm() {
       :widgets="activeDashboard.widgets"
       :filters="activeDashboard.filters"
       :edit-mode="editMode"
+      @expand-widget="handleExpandWidget"
       @edit-widget="handleEditWidget"
+      @refresh-widget="handleRefreshWidget"
       @remove-widget="handleRemoveWidget"
       @resize-widget="handleResizeWidget"
       @update-layout="handleLayoutUpdate"
@@ -778,6 +803,33 @@ function performConfirm() {
       :account-id="accountId"
       :dashboard="editDashboardTarget"
     />
+
+    <v-dialog v-model="expandedWidgetOpen" max-width="1120" width="calc(100vw - 32px)">
+      <v-card v-if="expandedWidget" rounded="xl" flat border class="dashboard-widget-expand">
+        <div class="dashboard-widget-expand__header">
+          <div class="dashboard-widget-expand__copy">
+            <div class="dashboard-widget-expand__eyebrow">Expanded widget</div>
+            <div class="dashboard-widget-expand__title">{{ expandedWidget.title }}</div>
+          </div>
+          <v-btn
+            icon="x"
+            variant="text"
+            size="small"
+            :aria-label="`Close ${expandedWidget.title}`"
+            @click="expandedWidgetOpen = false"
+          />
+        </div>
+        <div class="dashboard-widget-expand__body">
+          <DashboardWidgetCard
+            :account-id="accountId"
+            :widget="expandedWidget"
+            :filters="activeDashboard?.filters ?? defaultDashboardFilters"
+            :editable="false"
+            :show-actions="false"
+          />
+        </div>
+      </v-card>
+    </v-dialog>
 
     <v-dialog :model-value="!!confirmAction" max-width="440" persistent @update:model-value="confirmAction = null">
       <v-card v-if="confirmAction" rounded="xl">
@@ -809,6 +861,55 @@ function performConfirm() {
   display: flex;
   flex-direction: column;
   gap: 24px;
+}
+
+.dashboard-widget-expand {
+  overflow: hidden;
+  background: var(--surface-1) !important;
+}
+
+.dashboard-widget-expand__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 18px 20px;
+  border-bottom: 1px solid var(--hairline);
+}
+
+.dashboard-widget-expand__copy {
+  min-width: 0;
+}
+
+.dashboard-widget-expand__eyebrow {
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  line-height: 1.2;
+  text-transform: uppercase;
+}
+
+.dashboard-widget-expand__title {
+  overflow: hidden;
+  margin-top: 3px;
+  color: var(--ink);
+  font-size: 18px;
+  font-weight: 700;
+  line-height: 1.25;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.dashboard-widget-expand__body {
+  height: min(68vh, 620px);
+  min-height: 360px;
+  padding: 16px;
+  background: var(--surface-2);
+}
+
+.dashboard-widget-expand__body :deep(.dashboard-widget-card) {
+  min-height: 100%;
 }
 
 .dashboard-page-bar {

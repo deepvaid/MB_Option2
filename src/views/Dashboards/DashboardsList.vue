@@ -3,34 +3,26 @@ import { computed, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { MbPageHeader } from '@marobase/ui'
 import MpEmptyState from '@/components/MpEmptyState.vue'
+import MpDataTableToolbar from '@/components/MpDataTableToolbar.vue'
 import CreateDashboardDialog from '@/components/dashboards/CreateDashboardDialog.vue'
 import EditDashboardDialog from '@/components/dashboards/EditDashboardDialog.vue'
-import DashboardListCard from '@/components/dashboards/DashboardListCard.vue'
-import DashboardListTable from '@/components/dashboards/DashboardListTable.vue'
+import { accentToVuetifyColor, relativeTime } from '@/components/dashboards/dashboardOptions'
 import type { Dashboard } from '@/stores/dashboards/types'
 import { useAccountsStore } from '@/stores/useAccounts'
 import { useDashboardsStore } from '@/stores/useDashboards'
 
-type FilterChip = 'all' | 'system' | 'custom' | 'favorites' | 'default'
-type SortKey = 'recent' | 'name' | 'widgets' | 'updated'
-type ViewMode = 'cards' | 'table'
+type DashboardTableItem = Dashboard & {
+  widgetCount: number
+}
 
-const FILTER_CHIPS: Array<{ value: FilterChip; label: string }> = [
-  { value: 'all', label: 'All' },
-  { value: 'system', label: 'System' },
-  { value: 'custom', label: 'Custom' },
-  { value: 'favorites', label: 'Favorites' },
-  { value: 'default', label: 'Default' },
+const headers = [
+  { title: 'Dashboard', key: 'name', sortable: true, minWidth: '320px' },
+  { title: 'Type', key: 'kind', sortable: true, width: '120px' },
+  { title: 'Widgets', key: 'widgetCount', align: 'end' as const, sortable: true, width: '120px' },
+  { title: 'Updated', key: 'updatedAt', sortable: true, width: '140px' },
+  { title: 'Last Viewed', key: 'lastViewedAt', sortable: true, width: '150px' },
+  { title: '', key: 'actions', align: 'end' as const, sortable: false, width: '132px' },
 ]
-
-const SORT_OPTIONS: Array<{ value: SortKey; label: string }> = [
-  { value: 'recent', label: 'Recently viewed' },
-  { value: 'name', label: 'Name' },
-  { value: 'widgets', label: 'Most widgets' },
-  { value: 'updated', label: 'Last updated' },
-]
-
-const PAGE_SIZE_OPTIONS = [12, 24, 48, 96]
 
 const route = useRoute()
 const router = useRouter()
@@ -59,12 +51,8 @@ const account = computed(() => accountsStore.accounts.find((entry) => entry.id =
 const dashboards = computed(() => dashboardsStore.getDashboardsForAccount(accountId.value))
 
 const search = ref('')
-const filterChip = ref<FilterChip>('all')
-const sortKey = ref<SortKey>('recent')
-const viewMode = ref<ViewMode>('table')
-const pageSize = ref<number>(24)
-const currentPage = ref(1)
 const selectedIds = ref<string[]>([])
+const hiddenColumns = ref<string[]>([])
 
 const createDialogOpen = ref(false)
 const editingDashboard = ref<Dashboard | null>(null)
@@ -77,91 +65,54 @@ const confirmAction = ref<{
   perform: () => void
 } | null>(null)
 
-const stats = computed(() => {
-  const total = dashboards.value.length
-  const system = dashboards.value.filter((dashboard) => dashboard.kind === 'system').length
-  const custom = dashboards.value.filter((dashboard) => dashboard.kind === 'custom').length
-  const favorites = dashboards.value.filter((dashboard) => dashboard.favorite).length
-  return { total, system, custom, favorites }
-})
+const visibleHeaders = computed(() =>
+  headers.filter((header) => !hiddenColumns.value.includes(header.key)),
+)
 
-const summaryTiles = computed<Array<{ key: string; label: string; value: number; icon: string; chip: FilterChip }>>(() => [
-  { key: 'total', label: 'Total', value: stats.value.total, icon: 'layout-dashboard', chip: 'all' },
-  { key: 'system', label: 'System', value: stats.value.system, icon: 'shield-check', chip: 'system' },
-  { key: 'custom', label: 'Custom', value: stats.value.custom, icon: 'grid-2x2-plus', chip: 'custom' },
-  { key: 'favorites', label: 'Favorites', value: stats.value.favorites, icon: 'star', chip: 'favorites' },
-])
+const dashboardRows = computed<DashboardTableItem[]>(() =>
+  dashboards.value.map((dashboard) => ({
+    ...dashboard,
+    widgetCount: dashboard.widgets.length,
+  })),
+)
 
 const filteredDashboards = computed(() => {
   const query = search.value.trim().toLowerCase()
-  const matchesQuery = (dashboard: Dashboard) => {
-    if (!query) return true
-    return (
+  const rows = query
+    ? dashboardRows.value.filter((dashboard) => (
       dashboard.name.toLowerCase().includes(query)
       || (dashboard.description ?? '').toLowerCase().includes(query)
-    )
+    ))
+    : [...dashboardRows.value]
+
+  rows.sort((a, b) => {
+    const left = a.lastViewedAt ?? a.updatedAt
+    const right = b.lastViewedAt ?? b.updatedAt
+    return new Date(right).getTime() - new Date(left).getTime()
+  })
+
+  return rows
+})
+
+const totalCount = computed(() => filteredDashboards.value.length)
+
+watch(search, () => {
+  const visibleIds = new Set(filteredDashboards.value.map((dashboard) => dashboard.id))
+  selectedIds.value = selectedIds.value.filter((id) => visibleIds.has(id))
+})
+
+function selectAll() {
+  selectedIds.value = filteredDashboards.value.map((dashboard) => dashboard.id)
+}
+
+function handleDashboardRowClick(event: MouseEvent, payload: { item: DashboardTableItem }) {
+  const target = event.target as HTMLElement | null
+  if (target?.closest('button, a, input, [role="button"], .v-selection-control, .v-overlay')) {
+    return
   }
 
-  const matchesChip = (dashboard: Dashboard) => {
-    switch (filterChip.value) {
-      case 'system':
-        return dashboard.kind === 'system'
-      case 'custom':
-        return dashboard.kind === 'custom'
-      case 'favorites':
-        return Boolean(dashboard.favorite)
-      case 'default':
-        return dashboard.isDefault
-      default:
-        return true
-    }
-  }
-
-  return dashboards.value.filter((dashboard) => matchesQuery(dashboard) && matchesChip(dashboard))
-})
-
-const sortedDashboards = computed(() => {
-  const list = [...filteredDashboards.value]
-  switch (sortKey.value) {
-    case 'name':
-      list.sort((a, b) => a.name.localeCompare(b.name))
-      break
-    case 'widgets':
-      list.sort((a, b) => b.widgets.length - a.widgets.length)
-      break
-    case 'updated':
-      list.sort((a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime())
-      break
-    case 'recent':
-    default:
-      list.sort((a, b) => {
-        const left = a.lastViewedAt ?? a.updatedAt
-        const right = b.lastViewedAt ?? b.updatedAt
-        return new Date(right).getTime() - new Date(left).getTime()
-      })
-      break
-  }
-  return list
-})
-
-const totalCount = computed(() => sortedDashboards.value.length)
-const totalPages = computed(() => Math.max(1, Math.ceil(totalCount.value / pageSize.value)))
-
-watch(totalPages, (next) => {
-  if (currentPage.value > next) currentPage.value = next
-})
-
-watch([search, filterChip, sortKey, pageSize], () => {
-  currentPage.value = 1
-})
-
-const pagedDashboards = computed(() => {
-  const start = (currentPage.value - 1) * pageSize.value
-  return sortedDashboards.value.slice(start, start + pageSize.value)
-})
-
-const rangeStart = computed(() => (totalCount.value === 0 ? 0 : (currentPage.value - 1) * pageSize.value + 1))
-const rangeEnd = computed(() => Math.min(totalCount.value, currentPage.value * pageSize.value))
+  openDashboard(payload.item.id)
+}
 
 const selectedSet = computed(() => new Set(selectedIds.value))
 const selectedDashboards = computed(() =>
@@ -170,11 +121,6 @@ const selectedDashboards = computed(() =>
 const hasSelection = computed(() => selectedIds.value.length > 0)
 const selectedHasCustom = computed(() => selectedDashboards.value.some((dashboard) => dashboard.kind === 'custom'))
 const selectedAllFavorited = computed(() => selectedDashboards.value.length > 0 && selectedDashboards.value.every((dashboard) => dashboard.favorite))
-
-watch(filteredDashboards, (next) => {
-  const visibleIds = new Set(next.map((dashboard) => dashboard.id))
-  selectedIds.value = selectedIds.value.filter((id) => visibleIds.has(id))
-})
 
 function dashboardRoute(dashboard: Dashboard) {
   if (dashboard.isDefault) {
@@ -189,31 +135,12 @@ function openDashboard(dashboardId: string) {
   router.push(dashboardRoute(dashboard))
 }
 
-function toggleSelect(dashboardId: string) {
-  const set = new Set(selectedIds.value)
-  if (set.has(dashboardId)) set.delete(dashboardId)
-  else set.add(dashboardId)
-  selectedIds.value = [...set]
-}
-
-function toggleSelectAll(select: boolean) {
-  if (!select) {
-    const visibleIds = new Set(pagedDashboards.value.map((dashboard) => dashboard.id))
-    selectedIds.value = selectedIds.value.filter((id) => !visibleIds.has(id))
-    return
-  }
-  const set = new Set(selectedIds.value)
-  pagedDashboards.value.forEach((dashboard) => set.add(dashboard.id))
-  selectedIds.value = [...set]
-}
-
 function clearSelection() {
   selectedIds.value = []
 }
 
 function clearFilters() {
   search.value = ''
-  filterChip.value = 'all'
 }
 
 function openEdit(dashboardId: string) {
@@ -313,9 +240,6 @@ function performConfirm() {
 function handleDashboardCreated(dashboardId: string) {
   selectedIds.value = []
   search.value = ''
-  filterChip.value = 'all'
-  sortKey.value = 'recent'
-  currentPage.value = 1
   const dashboard = dashboards.value.find((entry) => entry.id === dashboardId)
   if (dashboard) router.push(dashboardRoute(dashboard))
 }
@@ -357,196 +281,205 @@ function handleDashboardCreated(dashboardId: string) {
       </template>
     </MbPageHeader>
 
-    <div class="dashboards-list__summary mb-4">
-      <button
-        v-for="tile in summaryTiles"
-        :key="tile.key"
-        type="button"
-        class="summary-tile"
-        :class="{ 'summary-tile--active': filterChip === tile.chip }"
-        :aria-pressed="filterChip === tile.chip"
-        @click="filterChip = tile.chip"
+    <v-card variant="flat" border rounded="xl" class="flex-grow-1 d-flex flex-column overflow-hidden">
+      <MpDataTableToolbar
+        v-model:search="search"
+        v-model:hidden-columns="hiddenColumns"
+        title="All Dashboards"
+        search-placeholder="Search dashboards"
+        :headers="headers"
+        :selected-count="selectedIds.length"
+        :total-count="totalCount"
+        @clear-selection="clearSelection"
+        @select-all="selectAll"
       >
-        <span class="summary-tile__icon">
-          <v-icon size="16">{{ tile.icon }}</v-icon>
-        </span>
-        <span class="summary-tile__text">
-          <span class="summary-tile__label">{{ tile.label }}</span>
-          <span class="summary-tile__value">{{ tile.value }}</span>
-        </span>
-      </button>
-    </div>
-
-    <div class="dashboards-list__toolbar">
-      <v-text-field
-        v-model="search"
-        prepend-inner-icon="search"
-        placeholder="Search dashboards"
-        density="comfortable"
-        variant="outlined"
-        hide-details
-        clearable
-        class="dashboards-list__search"
-      />
-
-      <div class="dashboards-list__chips">
-        <v-chip
-          v-for="chip in FILTER_CHIPS"
-          :key="chip.value"
-          size="small"
-          :variant="filterChip === chip.value ? 'flat' : 'tonal'"
-          :color="filterChip === chip.value ? 'primary' : undefined"
-          class="text-none"
-          @click="filterChip = chip.value"
-        >
-          {{ chip.label }}
-        </v-chip>
-      </div>
-
-      <div class="d-flex align-center ga-2 ml-auto">
-        <v-menu location="bottom end">
-          <template #activator="{ props: menuProps }">
-            <v-btn
-              v-bind="menuProps"
-              variant="outlined"
-              prepend-icon="arrow-up-down"
-              append-icon="chevron-down"
-              class="text-none"
-            >
-              {{ SORT_OPTIONS.find((option) => option.value === sortKey)?.label ?? 'Sort' }}
-            </v-btn>
-          </template>
-          <v-list density="compact" min-width="200">
-            <v-list-item
-              v-for="option in SORT_OPTIONS"
-              :key="option.value"
-              :title="option.label"
-              :active="sortKey === option.value"
-              @click="sortKey = option.value"
-            />
-          </v-list>
-        </v-menu>
-
-        <v-btn-toggle
-          v-model="viewMode"
-          mandatory
-          divided
-          density="comfortable"
-          class="dashboards-list__view-toggle"
-        >
-          <v-btn value="cards" size="small" icon="grid-2x2" aria-label="Card view" />
-          <v-btn value="table" size="small" icon="table-2" aria-label="Table view" />
-        </v-btn-toggle>
-      </div>
-    </div>
-
-    <div v-if="hasSelection" class="dashboards-list__bulk-bar">
-      <div class="d-flex align-center ga-3">
-        <v-btn icon="x" variant="text" size="small" aria-label="Clear selection" @click="clearSelection" />
-        <span class="text-body-2 font-weight-medium">{{ selectedIds.length }} selected</span>
-      </div>
-      <div class="d-flex align-center ga-2 flex-wrap">
-        <v-btn
-          variant="outlined"
-          size="small"
-          class="text-none"
-          :prepend-icon="selectedAllFavorited ? 'star-off' : 'star'"
-          @click="bulkFavorite"
-        >
-          {{ selectedAllFavorited ? 'Unfavorite' : 'Favorite' }}
-        </v-btn>
-        <v-btn
-          variant="outlined"
-          size="small"
-          class="text-none"
-          prepend-icon="copy"
-          @click="bulkDuplicate"
-        >
-          Duplicate
-        </v-btn>
-        <v-btn
-          variant="outlined"
-          size="small"
-          color="error"
-          class="text-none"
-          prepend-icon="trash-2"
-          :disabled="!selectedHasCustom"
-          @click="bulkDelete"
-        >
-          Delete
-        </v-btn>
-      </div>
-    </div>
-
-    <MpEmptyState
-      v-if="totalCount === 0"
-      :icon="search || filterChip !== 'all' ? 'list-x' : 'grid-2x2-plus'"
-      :title="search || filterChip !== 'all' ? 'No dashboards match your filters' : 'No dashboards yet'"
-      :description="search || filterChip !== 'all' ? 'Try a different search term or clear the active filters.' : 'Create the first custom dashboard for this workspace to get started.'"
-      :action-label="search || filterChip !== 'all' ? 'Clear filters' : 'Create dashboard'"
-      action-icon="plus"
-      @action="search || filterChip !== 'all' ? clearFilters() : (createDialogOpen = true)"
-    />
-
-    <template v-else>
-      <div v-if="viewMode === 'cards'" class="dashboards-list__grid">
-        <DashboardListCard
-          v-for="dashboard in pagedDashboards"
-          :key="dashboard.id"
-          :dashboard="dashboard"
-          :selected="selectedSet.has(dashboard.id)"
-          @open="openDashboard"
-          @edit="openEdit"
-          @duplicate="handleDuplicate"
-          @delete="handleDelete"
-          @reset="handleReset"
-          @set-default="handleSetDefault"
-          @toggle-favorite="handleToggleFavorite"
-          @toggle-select="toggleSelect"
-        />
-      </div>
-      <DashboardListTable
-        v-else
-        :dashboards="pagedDashboards"
-        :selected-ids="selectedIds"
-        @open="openDashboard"
-        @edit="openEdit"
-        @duplicate="handleDuplicate"
-        @delete="handleDelete"
-        @reset="handleReset"
-        @set-default="handleSetDefault"
-        @toggle-favorite="handleToggleFavorite"
-        @toggle-select="toggleSelect"
-        @toggle-select-all="toggleSelectAll"
-      />
-
-      <div class="dashboards-list__footer">
-        <div class="text-body-2 text-medium-emphasis">
-          Showing {{ rangeStart }}–{{ rangeEnd }} of {{ totalCount }}
-        </div>
-        <div class="d-flex align-center ga-3">
-          <div class="d-flex align-center ga-2">
-            <span class="text-body-2 text-medium-emphasis">Per page</span>
-            <v-select
-              v-model="pageSize"
-              :items="PAGE_SIZE_OPTIONS"
-              density="compact"
-              variant="outlined"
-              hide-details
-              style="max-width: 96px"
-            />
-          </div>
-          <v-pagination
-            v-if="totalPages > 1"
-            v-model="currentPage"
-            :length="totalPages"
-            :total-visible="5"
-            density="comfortable"
+        <template #bulk-actions>
+          <v-btn
+            variant="outlined"
+            size="small"
+            class="text-none"
             rounded="lg"
+            :prepend-icon="selectedAllFavorited ? 'star-off' : 'star'"
+            @click="bulkFavorite"
+          >
+            {{ selectedAllFavorited ? 'Unfavorite' : 'Favorite' }}
+          </v-btn>
+          <v-btn
+            variant="outlined"
+            size="small"
+            class="text-none"
+            rounded="lg"
+            prepend-icon="copy"
+            @click="bulkDuplicate"
+          >
+            Duplicate
+          </v-btn>
+          <v-btn
+            variant="outlined"
+            size="small"
+            color="error"
+            class="text-none"
+            rounded="lg"
+            prepend-icon="trash-2"
+            :disabled="!selectedHasCustom"
+            @click="bulkDelete"
+          >
+            Delete
+          </v-btn>
+        </template>
+      </MpDataTableToolbar>
+
+      <v-data-table
+        v-model="selectedIds"
+        :headers="visibleHeaders"
+        :items="filteredDashboards"
+        item-value="id"
+        show-select
+        hover
+        density="comfortable"
+        :items-per-page="15"
+        fixed-header
+        class="flex-grow-1 dashboards-table"
+        @click:row="handleDashboardRowClick"
+      >
+        <template #item.name="{ item }">
+          <div class="d-flex align-center ga-3 py-2 min-width-0">
+            <v-avatar size="36" variant="tonal" :color="accentToVuetifyColor(item.accent)" class="flex-shrink-0">
+              <v-icon size="18">{{ item.icon ?? 'layout-dashboard' }}</v-icon>
+            </v-avatar>
+            <div class="min-width-0">
+              <div class="d-flex align-center ga-2 min-width-0">
+                <button
+                  type="button"
+                  class="dashboard-link"
+                  :aria-label="`Open ${item.name}`"
+                  @click.stop="openDashboard(item.id)"
+                >
+                  {{ item.name }}
+                </button>
+                <v-icon
+                  v-if="item.favorite"
+                  size="14"
+                  color="warning"
+                  aria-label="Favorite"
+                  class="flex-shrink-0"
+                >
+                  star
+                </v-icon>
+                <v-chip v-if="item.isDefault" size="x-small" variant="tonal" color="success" class="flex-shrink-0">
+                  Default
+                </v-chip>
+              </div>
+              <div class="text-caption text-medium-emphasis dashboard-description">
+                {{ item.description || 'No description' }}
+              </div>
+            </div>
+          </div>
+        </template>
+
+        <template #item.kind="{ item }">
+          <v-chip
+            size="x-small"
+            variant="tonal"
+            :color="item.kind === 'system' ? 'secondary' : 'primary'"
+          >
+            {{ item.kind === 'system' ? 'System' : 'Custom' }}
+          </v-chip>
+        </template>
+
+        <template #item.widgetCount="{ item }">
+          <span class="text-body-2">{{ item.widgetCount }}</span>
+        </template>
+
+        <template #item.updatedAt="{ item }">
+          <span class="text-body-2">{{ relativeTime(item.updatedAt) }}</span>
+        </template>
+
+        <template #item.lastViewedAt="{ item }">
+          <span class="text-body-2">{{ relativeTime(item.lastViewedAt) }}</span>
+        </template>
+
+        <template #item.actions="{ item }">
+          <div class="d-flex align-center justify-end ga-1" @click.stop>
+            <v-tooltip
+              :text="item.isDefault ? 'Currently default' : 'Set as default'"
+              location="top"
+            >
+              <template #activator="{ props: tipProps }">
+                <v-btn
+                  v-bind="tipProps"
+                  :icon="item.isDefault ? 'bookmark-check' : 'bookmark'"
+                  :color="item.isDefault ? 'success' : undefined"
+                  variant="text"
+                  size="small"
+                  density="comfortable"
+                  :disabled="item.isDefault"
+                  :aria-label="item.isDefault ? `${item.name} is the default dashboard` : `Set ${item.name} as default`"
+                  @click="handleSetDefault(item.id)"
+                />
+              </template>
+            </v-tooltip>
+            <v-btn
+              :icon="item.favorite ? 'star' : 'star'"
+              :color="item.favorite ? 'warning' : undefined"
+              variant="text"
+              size="small"
+              density="comfortable"
+              :aria-label="item.favorite ? `Unfavorite ${item.name}` : `Favorite ${item.name}`"
+              @click="handleToggleFavorite(item.id)"
+            />
+            <v-menu location="bottom end">
+              <template #activator="{ props: menuProps }">
+                <v-btn
+                  v-bind="menuProps"
+                  icon="more-vertical"
+                  variant="text"
+                  size="small"
+                  density="comfortable"
+                  :aria-label="`More actions for ${item.name}`"
+                />
+              </template>
+              <v-list density="compact" min-width="200" rounded="lg" elevation="3" class="py-1">
+                <v-list-item prepend-icon="arrow-up-right" title="Open" @click="openDashboard(item.id)" />
+                <v-list-item prepend-icon="pencil" title="Edit" @click="openEdit(item.id)" />
+                <v-list-item prepend-icon="copy" title="Duplicate" @click="handleDuplicate(item.id)" />
+                <v-list-item
+                  v-if="!item.isDefault"
+                  prepend-icon="bookmark-check"
+                  title="Set as default"
+                  @click="handleSetDefault(item.id)"
+                />
+                <v-list-item
+                  v-if="item.kind === 'system'"
+                  prepend-icon="rotate-ccw"
+                  title="Reset to defaults"
+                  @click="handleReset(item.id)"
+                />
+                <v-divider v-if="item.kind === 'custom'" class="my-1" style="opacity: 0.4" />
+                <v-list-item
+                  v-if="item.kind === 'custom'"
+                  prepend-icon="trash-2"
+                  title="Delete"
+                  class="text-error"
+                  @click="handleDelete(item.id)"
+                />
+              </v-list>
+            </v-menu>
+          </div>
+        </template>
+
+        <template #no-data>
+          <MpEmptyState
+            :icon="search ? 'list-x' : 'grid-2x2-plus'"
+            :title="search ? 'No dashboards match your search' : 'No dashboards yet'"
+            :description="search ? 'Try a different search term.' : 'Create the first custom dashboard for this workspace to get started.'"
+            :action-label="search ? 'Clear search' : 'Create dashboard'"
+            :action-icon="search ? 'x' : 'plus'"
+            @action="search ? clearFilters() : (createDialogOpen = true)"
           />
-        </div>
-      </div>
-    </template>
+        </template>
+      </v-data-table>
+    </v-card>
 
     <CreateDashboardDialog
       v-model="createDialogOpen"
@@ -593,156 +526,44 @@ function handleDashboardCreated(dashboardId: string) {
   margin-bottom: 8px;
 }
 
-.dashboards-list__summary {
-  display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 12px;
+.dashboards-table {
+  background: transparent;
 }
 
-.summary-tile {
-  appearance: none;
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 10px 14px;
-  min-height: 56px;
-  background: rgb(var(--v-theme-surface));
-  border: 1px solid var(--mp-border-subtle);
-  border-radius: 12px;
+.dashboards-table :deep(tbody tr) {
   cursor: pointer;
-  text-align: left;
+}
+
+.dashboard-link {
+  appearance: none;
+  border: 0;
+  background: transparent;
+  padding: 0;
+  color: rgb(var(--v-theme-on-surface));
+  cursor: pointer;
   font: inherit;
-  color: inherit;
-  transition: border-color 160ms ease, background 160ms ease, box-shadow 160ms ease;
+  font-weight: 700;
+  max-width: 28ch;
+  overflow: hidden;
+  text-align: left;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
-.summary-tile:hover {
-  border-color: rgba(var(--v-theme-primary), 0.32);
-  background: rgba(var(--v-theme-primary), 0.03);
+.dashboard-link:hover {
+  color: rgb(var(--v-theme-primary));
 }
 
-.summary-tile:focus-visible {
+.dashboard-link:focus-visible {
   outline: none;
+  border-radius: 6px;
   box-shadow: 0 0 0 3px rgba(var(--v-theme-primary), 0.2);
 }
 
-.summary-tile--active {
-  border-color: rgb(var(--v-theme-primary));
-  background: rgba(var(--v-theme-primary), 0.06);
-}
-
-.summary-tile__icon {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 32px;
-  height: 32px;
-  border-radius: 999px;
-  background: rgba(var(--v-theme-primary), 0.1);
-  color: rgb(var(--v-theme-primary));
-  flex-shrink: 0;
-}
-
-.summary-tile__text {
-  display: flex;
-  flex-direction: column;
-  min-width: 0;
-}
-
-.summary-tile__label {
-  font-size: var(--mp-typography-fontSize-xs);
-  font-weight: 600;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
-  color: rgba(var(--v-theme-on-surface), 0.6);
-  line-height: 1.2;
-}
-
-.summary-tile__value {
-  font-size: var(--mp-typography-fontSize-lg);
-  font-weight: 700;
-  color: rgb(var(--v-theme-on-surface));
-  line-height: 1.2;
-}
-
-@media (max-width: 720px) {
-  .dashboards-list__summary {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-}
-
-@media (max-width: 420px) {
-  .dashboards-list__summary {
-    grid-template-columns: 1fr;
-  }
-}
-
-.dashboards-list__toolbar {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-  flex-wrap: wrap;
-  padding: 16px;
-  border: 1px solid var(--mp-border-subtle);
-  border-radius: 16px;
-  background: rgb(var(--v-theme-surface));
-  margin-bottom: 16px;
-}
-
-.dashboards-list__search {
-  flex: 1 1 280px;
-  max-width: 360px;
-}
-
-.dashboards-list__chips {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  flex-wrap: wrap;
-}
-
-.dashboards-list__view-toggle {
-  border: 1px solid var(--mp-border-subtle);
-  border-radius: 999px;
-  background: rgb(var(--v-theme-surface));
-}
-
-.dashboards-list__bulk-bar {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-  padding: 12px 16px;
-  margin-bottom: 16px;
-  border: 1px solid rgba(var(--v-theme-primary), 0.32);
-  border-radius: 12px;
-  background: rgba(var(--v-theme-primary), 0.06);
-}
-
-.dashboards-list__grid {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 16px;
-}
-
-@media (max-width: 1280px) {
-  .dashboards-list__grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-}
-
-@media (max-width: 720px) {
-  .dashboards-list__grid {
-    grid-template-columns: 1fr;
-  }
-}
-
-.dashboards-list__footer {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  flex-wrap: wrap;
-  gap: 12px;
-  margin-top: 24px;
+.dashboard-description {
+  max-width: 48ch;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 </style>
