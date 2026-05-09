@@ -50,6 +50,10 @@ interface ChatMessage {
 
 const messages = ref<ChatMessage[]>([])
 const chatContainer = ref<HTMLElement | null>(null)
+const composerInput = ref<HTMLInputElement | null>(null)
+
+const snackbarVisible = ref(false)
+const snackbarMessage = ref('')
 
 const routeAccountId = computed(() => {
   const accountId = Array.isArray(route.params.accountId)
@@ -261,6 +265,17 @@ function newChat() {
   messages.value = []
   inputText.value = ''
 }
+
+function onWidgetSaved(payload: { title: string; dashboardName: string }) {
+  snackbarMessage.value = `Saved "${payload.title}" to ${payload.dashboardName}`
+  snackbarVisible.value = true
+}
+
+function focusComposer() {
+  nextTick(() => {
+    composerInput.value?.focus()
+  })
+}
 </script>
 
 <template>
@@ -272,18 +287,20 @@ function newChat() {
           <v-icon color="white" size="20">sparkles</v-icon>
         </div>
         <div style="flex: 1" />
-        <v-btn icon size="28" variant="text" aria-label="Start a new chat" @click="newChat">
-          <v-icon size="16">plus</v-icon>
-          <v-tooltip activator="parent" location="bottom">New chat</v-tooltip>
-        </v-btn>
-        <v-btn icon size="28" variant="text" :aria-label="isExpanded ? 'Collapse Da Vinci drawer' : 'Expand Da Vinci drawer'" @click="onExpand">
-          <v-icon size="16">{{ isExpanded ? 'minimize-2' : 'maximize-2' }}</v-icon>
-          <v-tooltip activator="parent" location="bottom">{{ isExpanded ? 'Collapse' : 'Expand' }}</v-tooltip>
-        </v-btn>
-        <v-btn icon size="28" variant="text" aria-label="Close Da Vinci drawer" @click="emit('close')">
-          <v-icon size="16">x</v-icon>
-          <v-tooltip activator="parent" location="bottom">Close</v-tooltip>
-        </v-btn>
+        <div class="davinci-header__actions d-flex align-center ga-1">
+          <v-btn icon size="36" variant="text" aria-label="Start a new chat" @click="newChat">
+            <v-icon size="18">plus</v-icon>
+            <v-tooltip activator="parent" location="bottom">New chat</v-tooltip>
+          </v-btn>
+          <v-btn icon size="36" variant="text" :aria-label="isExpanded ? 'Collapse Da Vinci drawer' : 'Expand Da Vinci drawer'" @click="onExpand">
+            <v-icon size="18">{{ isExpanded ? 'minimize-2' : 'maximize-2' }}</v-icon>
+            <v-tooltip activator="parent" location="bottom">{{ isExpanded ? 'Collapse' : 'Expand' }}</v-tooltip>
+          </v-btn>
+          <v-btn icon size="36" variant="text" aria-label="Close Da Vinci drawer" @click="emit('close')">
+            <v-icon size="18">x</v-icon>
+            <v-tooltip activator="parent" location="bottom">Close</v-tooltip>
+          </v-btn>
+        </div>
       </div>
 
       <template v-if="!chatMode">
@@ -338,7 +355,12 @@ function newChat() {
                 <DvSegmentCard v-else-if="comp.type === 'segment'" v-bind="comp.props" />
                 <DvActionCard v-else-if="comp.type === 'action'" v-bind="comp.props" />
                 <DvInsightCard v-else-if="comp.type === 'insight'" v-bind="comp.props" />
-                <DvWidgetDraftCard v-else-if="comp.type === 'widgetDraft'" v-bind="comp.props" />
+                <DvWidgetDraftCard
+                  v-else-if="comp.type === 'widgetDraft'"
+                  v-bind="comp.props"
+                  @saved="onWidgetSaved"
+                  @try-new-prompt="focusComposer"
+                />
               </template>
             </div>
           </div>
@@ -356,6 +378,7 @@ function newChat() {
     <!-- ═══ COMPOSER ═══ -->
     <div class="davinci-composer">
       <input
+        ref="composerInput"
         v-model="inputText"
         class="davinci-composer__input"
         placeholder="Ask Da Vinci..."
@@ -370,6 +393,18 @@ function newChat() {
         <v-icon size="16">arrow-up</v-icon>
       </button>
     </div>
+
+    <v-snackbar
+      v-model="snackbarVisible"
+      :timeout="2400"
+      color="surface"
+      location="bottom"
+      attach="body"
+      class="davinci-snackbar"
+    >
+      <v-icon size="18" color="success" class="me-2">circle-check</v-icon>
+      {{ snackbarMessage }}
+    </v-snackbar>
   </div>
 </template>
 

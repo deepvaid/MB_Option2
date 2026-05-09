@@ -364,6 +364,11 @@ tr:focus-within .action-btns {
   text-transform: uppercase;
 }
 
+/* Dialog/modal scrim — Vuetify default 0.32 is too light; use 0.56 for legible contrast */
+.v-overlay__scrim {
+  opacity: 0.56 !important;
+}
+
 /* Teleported overlays are outside .v-application — use theme class + raw token vars */
 .v-overlay__content .v-divider {
   opacity: 1;
