@@ -437,11 +437,11 @@ function focusComposer() {
   width: 40px;
   height: 40px;
   border-radius: 50%;
-  background: linear-gradient(135deg, #5b8def 0%, #2dd4bf 100%);
+  background: linear-gradient(135deg, rgb(var(--v-theme-primary)) 0%, rgb(var(--v-theme-blue-700)) 100%);
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #fff;
+  color: rgb(var(--v-theme-on-primary));
 }
 
 .davinci-hero {

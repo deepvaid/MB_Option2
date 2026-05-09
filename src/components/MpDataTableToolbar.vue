@@ -1,13 +1,16 @@
 <script setup lang="ts">
 import { computed } from 'vue'
+import MpFormDrawer from './MpFormDrawer.vue'
 
 const search = defineModel<string>('search', { default: '' })
-const filterMenu = defineModel<boolean>('filterOpen', { default: false })
+const filterDrawer = defineModel<boolean>('filterOpen', { default: false })
 const hiddenColumns = defineModel<string[]>('hiddenColumns', { default: () => [] })
 
 const props = defineProps<{
   searchPlaceholder?: string
   title?: string
+  filterTitle?: string
+  filterSubtitle?: string
   activeFilters?: Array<{ key: string; label: string }>
   selectedCount?: number
   totalCount?: number
@@ -66,40 +69,24 @@ function hiddenCount(filters: Array<{ key: string; label: string }>) {
 
       <div class="d-flex align-center ga-2 flex-wrap justify-end">
         <!-- Filter button — only rendered if #filter-content slot is provided -->
-        <v-menu
+        <v-btn
           v-if="$slots['filter-content']"
-          v-model="filterMenu"
-          :close-on-content-click="false"
-          location="bottom end"
+          variant="outlined"
+          aria-label="Open table filters"
+          class="text-none text-medium-emphasis mp-filter-btn"
+          prepend-icon="list-filter"
+          rounded="xl"
+          @click="filterDrawer = true"
         >
-          <template v-slot:activator="{ props: menuProps }">
-            <v-btn
-              v-bind="menuProps"
-              variant="outlined"
-              aria-label="Open table filters"
-              class="text-none text-medium-emphasis mp-filter-btn"
-              prepend-icon="list-filter"
-              rounded="xl"
-            >
-              Filter
-              <v-badge
-                v-if="activeFilters?.length"
-                :content="activeFilters.length"
-                color="primary"
-                floating
-                class="ml-1"
-              />
-            </v-btn>
-          </template>
-          <v-card min-width="280" max-width="320" flat border rounded="xl" class="mt-1 mp-toolbar-panel">
-            <slot name="filter-content" />
-            <v-divider class="mp-divider-muted" />
-            <div class="d-flex justify-end ga-2 pa-3">
-              <v-btn variant="text" size="small" class="text-none" @click="$emit('clearFilters')">Clear all</v-btn>
-              <v-btn color="primary" variant="flat" size="small" class="text-none" @click="filterMenu = false">Done</v-btn>
-            </div>
-          </v-card>
-        </v-menu>
+          Filter
+          <v-badge
+            v-if="activeFilters?.length"
+            :content="activeFilters.length"
+            color="primary"
+            floating
+            class="ml-1"
+          />
+        </v-btn>
 
         <!-- Column visibility toggle -->
         <v-menu
@@ -246,6 +233,20 @@ function hiddenCount(filters: Array<{ key: string; label: string }>) {
 
   <!-- Separator between toolbar and data table header row -->
   <v-divider class="mp-divider-toolbar" />
+
+  <!-- Filter drawer — renders the same #filter-content slot as before -->
+  <MpFormDrawer
+    v-if="$slots['filter-content']"
+    v-model="filterDrawer"
+    :title="filterTitle ?? 'Filters'"
+    :subtitle="filterSubtitle"
+  >
+    <slot name="filter-content" />
+    <template #footer>
+      <v-btn variant="text" size="small" class="text-none" @click="$emit('clearFilters')">Clear all</v-btn>
+      <v-btn color="primary" variant="flat" size="small" class="text-none" rounded="pill" @click="filterDrawer = false">Done</v-btn>
+    </template>
+  </MpFormDrawer>
 </template>
 
 <style scoped lang="scss">
