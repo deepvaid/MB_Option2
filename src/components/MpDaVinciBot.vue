@@ -77,6 +77,15 @@ const activeDashboard = computed(() => {
   return dashboardsStore.getDashboardById(routeAccountId.value, routeDashboardId.value) ?? null
 })
 
+// Target account/dashboard for widget drafting — works on any route by falling back
+// to the active account's default dashboard when not on a dashboard route.
+const targetAccountId = computed(() => routeAccountId.value ?? activeAccount.value?.id ?? null)
+const targetDashboard = computed(() => {
+  if (activeDashboard.value) return activeDashboard.value
+  if (!targetAccountId.value) return null
+  return dashboardsStore.getDefaultDashboard(targetAccountId.value) ?? null
+})
+
 const emptyStateGreeting = computed(() => (
   isDashboardRoute.value && activeDashboard.value
     ? `Shape ${activeDashboard.value.name} with Da Vinci`
@@ -105,16 +114,16 @@ const heroInsight = computed(() => (
       }
 ))
 
-const dashboardSuggestions = computed(() => {
+const widgetSuggestions = computed(() => {
   const suggestions = ['Show open rate trend for last 30 days']
 
-  if (activeAccount.value.subscriptions.includes('commerce')) {
+  if (activeAccount.value?.subscriptions.includes('commerce')) {
     suggestions.push('Create a revenue by channel widget', 'Add a recent orders table')
   } else {
     suggestions.push('Add a top campaigns table', 'Show contact growth trend')
   }
 
-  if (activeAccount.value.subscriptions.includes('service')) {
+  if (activeAccount.value?.subscriptions.includes('service')) {
     suggestions.push('Show ticket volume over time')
   }
 
@@ -166,31 +175,37 @@ function processQuery(text: string) {
   isTyping.value = true
   scrollToBottom()
 
-  // Find simulated response or fallback
-  let responseData = useCaseSimulations[text]
+  let responseData: ChatMessage['componentData'] | undefined
   let responseText = ''
 
-  if (!responseData && routeAccountId.value && activeDashboard.value) {
+  // Try widget drafting first so chart-producing prompts get save/edit buttons.
+  // Works on any route: route dashboard if available, otherwise the account's default dashboard.
+  if (targetAccountId.value && targetDashboard.value) {
     const widgetDraft: DashboardWidgetDraft | null = dashboardsStore.buildAiWidgetDraft(
-      routeAccountId.value,
-      activeDashboard.value.id,
+      targetAccountId.value,
+      targetDashboard.value.id,
       text,
     )
 
     if (widgetDraft) {
-      responseText = `I drafted a ${widgetDraft.type} widget for ${activeDashboard.value.name}. You can add it directly or refine it first.`
+      responseText = `I drafted a ${widgetDraft.type} widget for ${targetDashboard.value.name}. You can add it directly or refine it first.`
       responseData = [
         {
           type: 'widgetDraft',
           props: {
-            accountId: routeAccountId.value,
-            dashboardId: activeDashboard.value.id,
+            accountId: targetAccountId.value,
+            dashboardId: targetDashboard.value.id,
             draft: widgetDraft,
-            filters: activeDashboard.value.filters,
+            filters: targetDashboard.value.filters,
           },
         },
       ]
     }
+  }
+
+  // Fall back to simulated responses for prompts that don't map to a widget metric.
+  if (!responseData) {
+    responseData = useCaseSimulations[text]
   }
 
   if (!responseData) {
@@ -199,30 +214,17 @@ function processQuery(text: string) {
     if (match) {
       responseData = useCaseSimulations[match]
     } else {
-      responseText = isDashboardRoute.value
-        ? "I couldn't map that to a supported widget yet. Try asking for revenue, orders, open rate, campaigns, contact growth, or ticket volume."
-        : "I've analyzed your request. Here is what I found based on your store's recent activity."
-      responseData = isDashboardRoute.value
-        ? [
-            {
-              type: 'insight',
-              props: {
-                headline: 'Try a widget-ready prompt',
-                description: 'Use prompts like “Create a revenue by channel widget”, “Show open rate trend for last 30 days”, or “Add a recent orders table”.',
-                severity: 'info',
-              },
-            },
-          ]
-        : [
-            {
-              type: 'insight',
-              props: {
-                headline: 'Custom Query Processed',
-                description: 'This is a simulated response. Try asking about "Top 10 products" or "Create a flash sale".',
-                severity: 'info',
-              },
-            },
-          ]
+      responseText = "I couldn't map that to a supported widget yet. Try asking for revenue, orders, open rate, campaigns, contact growth, or ticket volume."
+      responseData = [
+        {
+          type: 'insight',
+          props: {
+            headline: 'Try a widget-ready prompt',
+            description: 'Use prompts like “Create a revenue by channel widget”, “Show open rate trend for last 30 days”, or “Add a recent orders table”.',
+            severity: 'info',
+          },
+        },
+      ]
     }
   }
 
@@ -300,10 +302,10 @@ function newChat() {
     <div ref="chatContainer" class="davinci-body">
       <!-- ─── EMPTY STATE (suggestions) ─── -->
       <template v-if="!chatMode">
-        <!-- Dashboard: widget-creation prompts only -->
-        <div v-if="isDashboardRoute" class="davinci-suggestions">
+        <!-- Widget-creation prompts that map to real metrics on any route. -->
+        <div class="davinci-suggestions">
           <button
-            v-for="suggestion in dashboardSuggestions"
+            v-for="suggestion in widgetSuggestions"
             :key="suggestion"
             class="davinci-pill"
             :aria-label="`Run suggestion: ${suggestion}`"
@@ -311,26 +313,6 @@ function newChat() {
             @keydown="onSuggestionKeydown($event, suggestion)"
           >
             {{ suggestion }}
-          </button>
-        </div>
-
-        <!-- Non-dashboard: analytical questions only -->
-        <div v-else class="davinci-suggestions">
-          <button
-            class="davinci-pill"
-            aria-label="Run suggestion: Top 10 products by revenue"
-            @click="sendSuggestion('Top 10 products by revenue')"
-            @keydown="onSuggestionKeydown($event, 'Top 10 products by revenue')"
-          >
-            Top 10 products by revenue
-          </button>
-          <button
-            class="davinci-pill"
-            aria-label="Run suggestion: Compare this month vs last month"
-            @click="sendSuggestion('Compare this month vs last month')"
-            @keydown="onSuggestionKeydown($event, 'Compare this month vs last month')"
-          >
-            Compare this month vs last month
           </button>
         </div>
       </template>
