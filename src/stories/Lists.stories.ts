@@ -10,7 +10,7 @@ interface ListsArgs {
 }
 
 const meta: Meta<ListsArgs> = {
-  title: 'Base/Lists',
+  title: 'Archive/Legacy Base/Lists',
   component: VList,
   tags: ['autodocs'],
   argTypes: {

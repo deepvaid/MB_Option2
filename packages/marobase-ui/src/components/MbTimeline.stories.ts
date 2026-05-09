@@ -4,7 +4,7 @@ import MbTimeline from './MbTimeline.vue';
 import type { MbTimelineProps } from './MbTimeline.types';
 
 const meta: Meta<MbTimelineProps> = {
-  title: 'Marobase/MbTimeline',
+  title: 'Components/MbTimeline',
   component: MbTimeline,
   tags: ['autodocs'],
   args: {

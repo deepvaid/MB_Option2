@@ -14,7 +14,7 @@ interface SnackbarsArgs {
 }
 
 const meta: Meta<SnackbarsArgs> = {
-  title: 'Base/Snackbars',
+  title: 'Archive/Legacy Base/Snackbars',
   component: VSnackbar,
   tags: ['autodocs'],
   argTypes: {

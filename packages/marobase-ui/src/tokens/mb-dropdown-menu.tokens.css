@@ -8,9 +8,9 @@ html.theme-light {
   --mb-dm-padding-x: 16px;
   --mb-dm-radius: 6px;
   --mb-dm-bg: #ffffff;
-  --mb-dm-border: #e6e8eb;
+  --mb-dm-border: #e6dfd1;
   --mb-dm-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.08);
-  --mb-dm-focus-ring: 0 0 0 3px #cde6fe;
+  --mb-dm-focus-ring: 0 0 0 3px #a8ddf1;
 
   --mb-dm-header-padding-y: 16px;
   --mb-dm-header-size: 14px;
@@ -31,7 +31,7 @@ html.theme-light {
   --mb-dm-option-selected-color: #0065cc;
 
   --mb-dm-footer-bg: #f9fafb;
-  --mb-dm-footer-border: #e6e8eb;
+  --mb-dm-footer-border: #e6dfd1;
   --mb-dm-footer-padding-y: 8px;
   --mb-dm-footer-size: 14px;
   --mb-dm-footer-line-height: 20px;

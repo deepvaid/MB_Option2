@@ -13,11 +13,11 @@ html.theme-light {
   --mb-wy-required-color: #e54d2e;
 
   --mb-wy-radius: 6px;
-  --mb-wy-border: #c1c8cd;
-  --mb-wy-border-hover: #aeb8bf;
-  --mb-wy-border-focus: #0091ff;
+  --mb-wy-border: #c9bfa6;
+  --mb-wy-border-hover: #a39880;
+  --mb-wy-border-focus: #1ab7ea;
   --mb-wy-border-error: #e54d2e;
-  --mb-wy-focus-ring: 0 0 0 3px #cde6fe;
+  --mb-wy-focus-ring: 0 0 0 3px #a8ddf1;
   --mb-wy-bg: #ffffff;
   --mb-wy-bg-disabled: #f5f7f9;
   --mb-wy-toolbar-bg: #ffffff;
@@ -29,10 +29,10 @@ html.theme-light {
   --mb-wy-toolbar-btn-radius: 4px;
   --mb-wy-toolbar-btn-bg-selected: #ebf4ff;
   --mb-wy-toolbar-btn-color: #7d868c;
-  --mb-wy-toolbar-btn-color-selected: #0091ff;
+  --mb-wy-toolbar-btn-color-selected: #1ab7ea;
 
   --mb-wy-select-bg: #ffffff;
-  --mb-wy-select-border: #c1c8cd;
+  --mb-wy-select-border: #c9bfa6;
   --mb-wy-select-color: #11181c;
   --mb-wy-select-padding-x: 12px;
   --mb-wy-select-padding-y: 6px;

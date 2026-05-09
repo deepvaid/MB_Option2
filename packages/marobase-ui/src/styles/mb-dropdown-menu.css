@@ -1,3 +1,43 @@
+:where(.mb-dm) {
+  --mb-dm-header-size: 11px;
+  --mb-dm-header-weight: 600;
+  --mb-dm-header-line-height: 1.4;
+  --mb-dm-header-color: #7a7466;
+  --mb-dm-letter-spacing: 0.04em;
+  --mb-dm-option-size: 14px;
+  --mb-dm-option-weight: 500;
+  --mb-dm-option-line-height: 1.4;
+  --mb-dm-option-height: 36px;
+  --mb-dm-text-color: #1a1814;
+  --mb-dm-meta-color: #7a7466;
+  --mb-dm-option-selected-bg: #ebf8fe;
+  --mb-dm-option-selected-color: #0a4f6c;
+  --mb-dm-option-hover-bg: #f1ece2;
+  --mb-dm-footer-size: 12px;
+  --mb-dm-footer-weight: 500;
+  --mb-dm-footer-line-height: 1.4;
+  --mb-dm-footer-color: #7a7466;
+  --mb-dm-footer-bg: #faf6ef;
+  --mb-dm-footer-border: #e6dfd1;
+  --mb-dm-disabled-text: #b0a78f;
+  --mb-dm-bg: #fdfbf7;
+  --mb-dm-border: #e6dfd1;
+  --mb-dm-radius: 12px;
+  --mb-dm-shadow: 0 8px 24px -12px rgba(26, 24, 20, 0.14);
+  --mb-dm-focus-ring: 0 0 0 3px rgba(26, 183, 234, 0.25);
+  --mb-dm-font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  --mb-dm-padding-x: 14px;
+  --mb-dm-header-padding-y: 12px;
+  --mb-dm-options-padding-y: 4px;
+  --mb-dm-option-padding-y: 8px;
+  --mb-dm-footer-padding-y: 10px;
+}
+
+.mb-dm__header {
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
 .mb-dm {
   background: var(--mb-dm-bg);
   border: 1px solid var(--mb-dm-border);

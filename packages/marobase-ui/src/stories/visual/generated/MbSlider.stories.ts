@@ -5,7 +5,7 @@ import { visualParameters } from '../../../visual-meta';
 type Args = Record<string, never>;
 
 const meta = {
-  title: 'Visual Parity/MbSlider',
+  title: 'Archive/Visual Parity/MbSlider',
   tags: ['autodocs'],
   render: () => ({
     components: { MbSlider },

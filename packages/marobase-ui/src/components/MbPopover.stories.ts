@@ -4,7 +4,7 @@ import MbPopover from './MbPopover.vue';
 import type { MbPopoverProps } from './MbPopover.types';
 
 const meta: Meta<MbPopoverProps> = {
-  title: 'Marobase/MbPopover',
+  title: 'Overlays/MbPopover',
   component: MbPopover,
   tags: ['autodocs'],
   args: {

@@ -12,7 +12,7 @@ interface AvatarArgs {
 }
 
 const meta = {
-  title: 'Base/Avatars',
+  title: 'Archive/Legacy Base/Avatars',
   component: VAvatar,
   tags: ['autodocs'],
 

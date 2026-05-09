@@ -11,7 +11,7 @@ const stateOptions: MbCheckboxState[] = ['default', 'hover', 'focus', 'pressed',
 const sizeOptions: MbCheckboxSize[] = ['lg', 'md', 'sm'];
 
 const meta: Meta<MbCheckboxProps> = {
-  title: 'Marobase/MbCheckbox',
+  title: 'Forms/MbCheckbox',
   component: MbCheckbox,
   tags: ['autodocs'],
   args: {

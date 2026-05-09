@@ -6,7 +6,7 @@ import type { MbSliderProps, MbSliderState } from './MbSlider.types';
 const stateOptions: MbSliderState[] = ['default', 'hover', 'focus', 'pressed', 'disabled'];
 
 const meta: Meta<MbSliderProps> = {
-  title: 'Marobase/MbSlider',
+  title: 'Forms/MbSlider',
   component: MbSlider,
   tags: ['autodocs'],
   args: {

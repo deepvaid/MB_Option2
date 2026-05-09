@@ -6,7 +6,7 @@ type Args = {
 };
 
 const meta = {
-  title: 'Visual Parity/MbWysiwygEditor',
+  title: 'Archive/Visual Parity/MbWysiwygEditor',
   tags: ['autodocs'],
   render: (args: Args) => ({
     setup() {

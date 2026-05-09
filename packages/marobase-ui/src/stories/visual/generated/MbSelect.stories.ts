@@ -37,7 +37,7 @@ function helperForState(state: SelectState) {
 const options = ['United States', 'Canada', 'Japan', 'Germany'];
 
 const meta = {
-  title: 'Visual Parity/MbSelect',
+  title: 'Archive/Visual Parity/MbSelect',
   tags: ['autodocs'],
   render: () => ({
     setup() {

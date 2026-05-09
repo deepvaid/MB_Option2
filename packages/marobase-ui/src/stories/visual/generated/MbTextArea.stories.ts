@@ -6,7 +6,7 @@ type Args = {
 };
 
 const meta = {
-  title: 'Visual Parity/MbTextArea',
+  title: 'Archive/Visual Parity/MbTextArea',
   tags: ['autodocs'],
   render: (args: Args) => ({
     setup() {

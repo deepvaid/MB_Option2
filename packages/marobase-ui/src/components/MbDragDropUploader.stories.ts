@@ -8,7 +8,7 @@ import type {
 const stateOptions: MbDragDropUploaderState[] = ['default', 'hover', 'focus', 'disabled', 'error'];
 
 const meta: Meta<MbDragDropUploaderProps> = {
-  title: 'Marobase/MbDragDropUploader',
+  title: 'Forms/MbDragDropUploader',
   component: MbDragDropUploader,
   tags: ['autodocs'],
   args: {

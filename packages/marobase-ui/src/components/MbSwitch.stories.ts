@@ -11,7 +11,7 @@ const stateOptions: MbSwitchState[] = ['default', 'hover', 'focus', 'pressed', '
 const sizeOptions: MbSwitchSize[] = ['md', 'sm'];
 
 const meta: Meta<MbSwitchProps> = {
-  title: 'Marobase/MbSwitch',
+  title: 'Forms/MbSwitch',
   component: MbSwitch,
   tags: ['autodocs'],
   args: {

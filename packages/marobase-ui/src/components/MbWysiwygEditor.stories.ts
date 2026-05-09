@@ -9,7 +9,7 @@ import type {
 const stateOptions: MbWysiwygEditorState[] = ['default', 'hover', 'focus', 'disabled', 'error'];
 
 const meta: Meta<MbWysiwygEditorProps> = {
-  title: 'Marobase/MbWysiwygEditor',
+  title: 'Forms/MbWysiwygEditor',
   component: MbWysiwygEditor,
   tags: ['autodocs'],
   args: {

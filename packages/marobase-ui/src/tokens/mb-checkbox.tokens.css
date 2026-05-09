@@ -12,21 +12,21 @@ html.theme-light {
 
   --mb-ch-control-bg: #ffffff;
   --mb-ch-control-bg-disabled: #f5f7f9;
-  --mb-ch-control-border: #c1c8cd;
-  --mb-ch-control-border-hover: #aeb8bf;
-  --mb-ch-control-border-focus: #0091ff;
+  --mb-ch-control-border: #c9bfa6;
+  --mb-ch-control-border-hover: #a39880;
+  --mb-ch-control-border-focus: #1ab7ea;
   --mb-ch-control-border-pressed: #7d868c;
   --mb-ch-control-border-error: #e54d2e;
   --mb-ch-control-border-disabled: #d7dbdf;
 
-  --mb-ch-control-fill: #0091ff;
+  --mb-ch-control-fill: #1ab7ea;
   --mb-ch-control-fill-hover: #0081f1;
   --mb-ch-control-fill-pressed: #006adc;
   --mb-ch-control-fill-error: #e54d2e;
   --mb-ch-control-fill-disabled: #b9d9fb;
   --mb-ch-checkmark-color: #ffffff;
 
-  --mb-ch-focus-ring: 0 0 0 3px #cde6fe;
+  --mb-ch-focus-ring: 0 0 0 3px #a8ddf1;
 
   --mb-ch-label-size: 16px;
   --mb-ch-label-line-height: 24px;

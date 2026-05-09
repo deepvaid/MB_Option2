@@ -11,7 +11,7 @@ interface BreadcrumbArgs {
 }
 
 const meta = {
-  title: 'Base/Breadcrumbs',
+  title: 'Archive/Legacy Base/Breadcrumbs',
   component: VBreadcrumbs,
   tags: ['autodocs'],
 

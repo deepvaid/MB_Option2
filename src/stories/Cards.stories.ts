@@ -14,7 +14,7 @@ interface CardArgs {
 }
 
 const meta = {
-  title: 'Base/Cards',
+  title: 'Archive/Legacy Base/Cards',
   component: VCard,
   tags: ['autodocs'],
 

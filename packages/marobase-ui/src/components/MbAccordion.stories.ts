@@ -18,7 +18,7 @@ const items: MbAccordionItem[] = [
 ];
 
 const meta: Meta<MbAccordionProps> = {
-  title: 'Marobase/MbAccordion',
+  title: 'Components/MbAccordion',
   component: MbAccordion,
   tags: ['autodocs'],
   args: {

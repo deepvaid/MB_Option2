@@ -38,7 +38,7 @@ const statusColors: Record<string, string> = {
 }
 
 const meta = {
-  title: 'Base/Data Table',
+  title: 'Archive/Legacy Base/Data Table',
   component: VDataTable,
   tags: ['autodocs'],
 

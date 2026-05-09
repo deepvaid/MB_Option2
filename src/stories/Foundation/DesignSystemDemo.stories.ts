@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from '@storybook/vue3'
 import DesignSystemDemo from '@/views/Settings/DesignSystemDemo.vue'
 
 const meta = {
-  title: 'Foundation/Design System Demo',
+  title: 'Archive/Legacy Foundation/Design System Demo',
   component: DesignSystemDemo,
   tags: ['autodocs'],
   parameters: {

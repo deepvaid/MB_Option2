@@ -18,14 +18,14 @@ html.theme-light {
 
   --mb-acc-bg: #ffffff;
   --mb-acc-bg-disabled: #f9fafb;
-  --mb-acc-border: #e6e8eb;
-  --mb-acc-border-hover: #c1c8cd;
-  --mb-acc-border-disabled: #e6e8eb;
+  --mb-acc-border: #e6dfd1;
+  --mb-acc-border-hover: #c9bfa6;
+  --mb-acc-border-disabled: #e6dfd1;
   --mb-acc-text: #11181c;
   --mb-acc-description: #11181c;
   --mb-acc-icon: #7d868c;
   --mb-acc-text-disabled: #9aa3aa;
-  --mb-acc-focus-ring: 0 0 0 3px #cde6fe;
+  --mb-acc-focus-ring: 0 0 0 3px #a8ddf1;
 }
 
 :root[data-theme='dark'],

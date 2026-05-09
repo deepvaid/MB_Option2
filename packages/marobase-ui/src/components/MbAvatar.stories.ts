@@ -10,7 +10,7 @@ const sizeOptions: MbAvatarSize[] = ['sm', 'md', 'lg', 'xl'];
 const toneOptions: MbAvatarTone[] = ['neutral', 'brand', 'danger'];
 
 const meta: Meta<MbAvatarProps> = {
-  title: 'Marobase/MbAvatar',
+  title: 'Components/MbAvatar',
   component: MbAvatar,
   tags: ['autodocs'],
   args: {

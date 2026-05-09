@@ -9,7 +9,7 @@ import type {
 const stateOptions: MbPaginationState[] = ['default', 'hover', 'focus', 'disabled'];
 
 const meta: Meta<MbPaginationProps> = {
-  title: 'Marobase/MbPagination',
+  title: 'Components/MbPagination',
   component: MbPagination,
   tags: ['autodocs'],
   args: {

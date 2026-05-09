@@ -12,7 +12,7 @@ const variantOptions: MbBadgeVariant[] = ['outline', 'soft', 'solid'];
 const iconOptions: MbBadgeIcon[] = ['star', 'alert', 'none'];
 
 const meta: Meta<MbBadgeProps> = {
-  title: 'Marobase/MbBadge',
+  title: 'Components/MbBadge',
   component: MbBadge,
   tags: ['autodocs'],
   args: {

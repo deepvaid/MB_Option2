@@ -4,7 +4,7 @@ import MbButton from './MbButton.vue';
 import type { MbPageHeaderProps } from './MbPageHeader.types';
 
 const meta: Meta<MbPageHeaderProps> = {
-  title: 'Marobase/MbPageHeader',
+  title: 'Navigation/MbPageHeader',
   component: MbPageHeader,
   tags: ['autodocs'],
   args: {

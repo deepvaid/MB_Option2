@@ -19,7 +19,7 @@ const defaultOptions: MbInputDropdownOption[] = [
 const stateOptions: MbInputDropdownState[] = ['default', 'hover', 'focus', 'disabled', 'error'];
 
 const meta: Meta<MbInputDropdownProps> = {
-  title: 'Marobase/MbInputDropdown',
+  title: 'Forms/MbInputDropdown',
   component: MbInputDropdown,
   tags: ['autodocs'],
   args: {

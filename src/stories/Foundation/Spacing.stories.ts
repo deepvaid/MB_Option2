@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from '@storybook/vue3'
 import { VContainer, VRow, VCol, VCard, VCardText } from 'vuetify/components'
 
 const meta = {
-  title: 'Foundation/Spacing & Layout',
+  title: 'Foundations/Spacing',
   component: VContainer,
   tags: ['autodocs'],
   parameters: {

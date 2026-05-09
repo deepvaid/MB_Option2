@@ -16,8 +16,8 @@ html.theme-light {
   --mb-bc-link-hover-color: #11181c;
   --mb-bc-current-color: #11181c;
   --mb-bc-icon-color: #7d868c;
-  --mb-bc-disabled-color: #c1c8cd;
-  --mb-bc-focus-ring: 0 0 0 3px #cde6fe;
+  --mb-bc-disabled-color: #c9bfa6;
+  --mb-bc-focus-ring: 0 0 0 3px #a8ddf1;
 }
 
 :root[data-theme='dark'],

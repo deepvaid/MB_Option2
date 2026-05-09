@@ -18,7 +18,7 @@ const options: MbDropdownMenuOption[] = [
 const stateOptions: MbDropdownMenuState[] = ['default', 'hover', 'focus', 'disabled'];
 
 const meta: Meta<MbDropdownMenuProps> = {
-  title: 'Marobase/MbDropdownMenu',
+  title: 'Overlays/MbDropdownMenu',
   component: MbDropdownMenu,
   tags: ['autodocs'],
   args: {

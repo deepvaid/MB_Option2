@@ -15,7 +15,7 @@ interface TabsArgs {
 }
 
 const meta: Meta<TabsArgs> = {
-  title: 'Base/Tabs',
+  title: 'Archive/Legacy Base/Tabs',
   component: VTabs,
   tags: ['autodocs'],
   argTypes: {

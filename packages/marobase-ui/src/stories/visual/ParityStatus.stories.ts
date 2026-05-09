@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from '@storybook/vue3';
 import manifest from '../../visual-manifest.json';
 
 const meta = {
-  title: 'Visual Parity/Status',
+  title: 'Archive/Visual Parity/Status',
   tags: ['autodocs'],
   render: () => ({
     setup() {

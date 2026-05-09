@@ -26,7 +26,7 @@ const modes = [
 ];
 
 const meta = {
-  title: 'Visual Parity/MbSplitButton',
+  title: 'Archive/Visual Parity/MbSplitButton',
   tags: ['autodocs'],
   components: { MbButtonGroup },
   render: () => ({

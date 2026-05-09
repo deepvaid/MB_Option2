@@ -20,7 +20,7 @@ interface FormFieldsArgs {
 }
 
 const meta: Meta<FormFieldsArgs> = {
-  title: 'Base/FormFields',
+  title: 'Archive/Legacy Base/FormFields',
   component: VTextField,
   tags: ['autodocs'],
   argTypes: {

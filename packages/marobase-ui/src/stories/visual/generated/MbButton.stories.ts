@@ -38,7 +38,7 @@ const iconModes: Array<{ id: MbButtonIconMode; label: string }> = [
 ];
 
 const meta = {
-  title: 'Visual Parity/MbButton',
+  title: 'Archive/Visual Parity/MbButton',
   tags: ['autodocs'],
   components: { MbButton },
   render: () => ({

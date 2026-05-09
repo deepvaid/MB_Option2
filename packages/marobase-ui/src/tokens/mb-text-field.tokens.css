@@ -39,11 +39,11 @@ html.theme-light {
   --mb-tf-bg-disabled: #f9fafb;
   --mb-tf-floating-bg: #ffffff;
 
-  --mb-tf-border: #c1c8cd;
+  --mb-tf-border: #c9bfa6;
   --mb-tf-border-hover: #889096;
-  --mb-tf-border-focus: #0091ff;
+  --mb-tf-border-focus: #1ab7ea;
   --mb-tf-border-error: #e54d2e;
-  --mb-tf-focus-ring: 0 0 0 3px #cde6fe;
+  --mb-tf-focus-ring: 0 0 0 3px #a8ddf1;
 
   --mb-tf-label-color: #11181c;
   --mb-tf-prefix-color: #7d868c;

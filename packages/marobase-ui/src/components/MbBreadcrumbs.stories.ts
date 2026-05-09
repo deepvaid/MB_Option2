@@ -19,7 +19,7 @@ const figmaItems: MbBreadcrumbItem[] = [
 ];
 
 const meta: Meta<MbBreadcrumbsProps> = {
-  title: 'Marobase/MbBreadcrumbs',
+  title: 'Navigation/MbBreadcrumbs',
   component: MbBreadcrumbs,
   tags: ['autodocs'],
   args: {

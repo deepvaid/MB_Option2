@@ -5,7 +5,7 @@ import { visualParameters } from '../../../visual-meta';
 type Args = Record<string, never>;
 
 const meta = {
-  title: 'Visual Parity/MbInputDropdown',
+  title: 'Archive/Visual Parity/MbInputDropdown',
   tags: ['autodocs'],
   render: () => ({
     components: { MbInputDropdown },

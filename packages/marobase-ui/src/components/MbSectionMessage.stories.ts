@@ -8,7 +8,7 @@ import type {
 const toneOptions: MbSectionMessageTone[] = ['additional', 'info', 'success', 'warning', 'danger'];
 
 const meta: Meta<MbSectionMessageProps> = {
-  title: 'Marobase/MbSectionMessage',
+  title: 'Patterns/MbSectionMessage',
   component: MbSectionMessage,
   tags: ['autodocs'],
   args: {

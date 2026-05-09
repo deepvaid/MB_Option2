@@ -17,7 +17,7 @@ const figmaItems: MbStepperItem[] = [
 ];
 
 const meta: Meta<MbStepperProps> = {
-  title: 'Marobase/MbStepper',
+  title: 'Components/MbStepper',
   component: MbStepper,
   tags: ['autodocs'],
   args: {

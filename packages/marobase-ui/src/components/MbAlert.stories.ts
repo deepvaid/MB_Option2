@@ -6,7 +6,7 @@ import type { MbAlertProps, MbAlertTone } from './MbAlert.types';
 const toneOptions: MbAlertTone[] = ['info', 'success', 'warning', 'danger', 'additional'];
 
 const meta: Meta<MbAlertProps> = {
-  title: 'Marobase/MbAlert',
+  title: 'Patterns/MbAlert',
   component: MbAlert,
   tags: ['autodocs'],
   args: {

@@ -18,7 +18,7 @@ interface ButtonArgs {
 }
 
 const meta = {
-  title: 'Base/Buttons',
+  title: 'Archive/Legacy Base/Buttons',
   component: VBtn,
   tags: ['autodocs'],
 

@@ -10,21 +10,21 @@ html.theme-light {
   --mb-sr-thumb-size: 16px;
   --mb-sr-thumb-shadow: 0 1px 2px rgba(0, 0, 0, 0.12);
 
-  --mb-sr-track-bg: #ebedef;
+  --mb-sr-track-bg: #f1ece2;
   --mb-sr-track-hover-bg: #d7dbdf;
-  --mb-sr-track-disabled-bg: #ebedef;
+  --mb-sr-track-disabled-bg: #f1ece2;
 
-  --mb-sr-range-bg: #0091ff;
+  --mb-sr-range-bg: #1ab7ea;
   --mb-sr-range-hover-bg: #0081f1;
   --mb-sr-range-pressed-bg: #006adc;
   --mb-sr-range-disabled-bg: #b9d9fb;
 
-  --mb-sr-thumb-bg: #0091ff;
-  --mb-sr-thumb-border: #0091ff;
-  --mb-sr-thumb-disabled-bg: #c1c8cd;
-  --mb-sr-thumb-disabled-border: #c1c8cd;
+  --mb-sr-thumb-bg: #1ab7ea;
+  --mb-sr-thumb-border: #1ab7ea;
+  --mb-sr-thumb-disabled-bg: #c9bfa6;
+  --mb-sr-thumb-disabled-border: #c9bfa6;
 
-  --mb-sr-focus-ring: 0 0 0 3px #cde6fe;
+  --mb-sr-focus-ring: 0 0 0 3px #a8ddf1;
 
   --mb-sr-label-size: 16px;
   --mb-sr-label-line-height: 24px;

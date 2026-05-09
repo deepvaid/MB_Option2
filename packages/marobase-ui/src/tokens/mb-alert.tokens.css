@@ -11,7 +11,7 @@ html.theme-light {
   --mb-alert-shadow: 0px 10px 15px -3px rgba(0, 0, 0, 0.04);
 
   --mb-alert-bg: #ffffff;
-  --mb-alert-border: #e6e8eb;
+  --mb-alert-border: #e6dfd1;
   --mb-alert-title: #11181c;
   --mb-alert-description: #2f363d;
   --mb-alert-close: #7d868c;
@@ -24,8 +24,8 @@ html.theme-light {
   --mb-alert-description-line-height: 20px;
   --mb-alert-description-weight: 400;
 
-  --mb-alert-accent: #0091ff;
-  --mb-alert-icon: #0091ff;
+  --mb-alert-accent: #1ab7ea;
+  --mb-alert-icon: #1ab7ea;
   --mb-alert-accent-success: #2d9f4d;
   --mb-alert-icon-success: #2d9f4d;
   --mb-alert-accent-warning: #f5a524;
@@ -35,15 +35,15 @@ html.theme-light {
   --mb-alert-accent-additional: #8e4ec6;
   --mb-alert-icon-additional: #8e4ec6;
 
-  --mb-alert-primary-bg: #0091ff;
+  --mb-alert-primary-bg: #1ab7ea;
   --mb-alert-primary-bg-hover: #0081f1;
   --mb-alert-primary-text: #ffffff;
   --mb-alert-secondary-bg: #ffffff;
   --mb-alert-secondary-bg-hover: #f5f7f9;
-  --mb-alert-secondary-border: #c1c8cd;
+  --mb-alert-secondary-border: #c9bfa6;
   --mb-alert-secondary-text: #7d868c;
 
-  --mb-alert-focus-ring: 0 0 0 3px #cde6fe;
+  --mb-alert-focus-ring: 0 0 0 3px #a8ddf1;
 }
 
 :root[data-theme='dark'],

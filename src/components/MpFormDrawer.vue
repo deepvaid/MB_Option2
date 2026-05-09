@@ -28,20 +28,19 @@ const titleId = useId()
     class="mp-form-drawer"
   >
     <div class="d-flex flex-column h-100">
-      <div class="mp-form-drawer__header pa-5 d-flex align-center justify-space-between">
+      <div class="mp-form-drawer__header d-flex align-center justify-space-between">
         <div class="mp-form-drawer__title-wrap">
-          <div class="mp-form-drawer__eyebrow mb-1">Form workspace</div>
-          <div :id="titleId" class="text-h6 font-weight-bold">{{ title }}</div>
-          <div v-if="subtitle" class="text-caption text-medium-emphasis mt-1">{{ subtitle }}</div>
+          <div :id="titleId" class="mp-form-drawer__title">{{ title }}</div>
+          <div v-if="subtitle" class="mp-form-drawer__subtitle">{{ subtitle }}</div>
         </div>
-        <v-btn icon="x" variant="tonal" color="surface-variant" size="small" aria-label="Close form drawer" @click="model = false" />
+        <v-btn icon="x" variant="tonal" color="surface-variant" size="small" rounded="pill" aria-label="Close form drawer" @click="model = false" />
       </div>
 
-      <div class="pa-5 flex-grow-1 overflow-y-auto">
+      <div class="mp-form-drawer__content flex-grow-1 overflow-y-auto">
         <slot />
       </div>
 
-      <div v-if="$slots.footer" class="mp-form-drawer__footer pa-5 d-flex justify-space-between">
+      <div v-if="$slots.footer" class="mp-form-drawer__footer d-flex align-center justify-end">
         <slot name="footer" />
       </div>
     </div>
@@ -52,27 +51,55 @@ const titleId = useId()
 .mp-form-drawer {
   border-left-color: var(--mp-border-subtle);
   background: rgb(var(--v-theme-surface));
+  border-radius: 16px 0 0 16px !important;
+  overflow: hidden !important;
 }
 
 .mp-form-drawer__header {
   border-bottom: 1px solid var(--mp-border-subtle);
-  background: linear-gradient(180deg, rgba(var(--v-theme-primary), 0.04), rgba(var(--v-theme-surface), 1));
+  padding: 32px 24px 20px;
+
+  :deep(.v-btn--icon) {
+    background: rgb(var(--v-theme-surface-variant)) !important;
+    height: 28px;
+    min-height: 28px;
+    width: 28px;
+  }
+
+  :deep(.v-btn--icon .v-icon) {
+    color: rgba(var(--v-theme-on-surface), 0.55);
+    font-size: 16px;
+  }
 }
 
-.mp-form-drawer__eyebrow {
-  font-size: var(--mp-typography-fontSize-xs);
-  font-weight: var(--mp-typography-fontWeight-bold);
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
+.mp-form-drawer__title {
+  color: rgb(var(--v-theme-on-surface));
+  font-size: 24px;
+  font-weight: 500;
+  letter-spacing: 0;
+  line-height: 32px;
+  margin: 0;
+}
+
+.mp-form-drawer__subtitle {
   color: rgba(var(--v-theme-on-surface), 0.55);
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 20px;
+  margin: 4px 0 0;
 }
 
 .mp-form-drawer__title-wrap {
   min-width: 0;
 }
 
+.mp-form-drawer__content {
+  padding: 16px 24px 20px;
+}
+
 .mp-form-drawer__footer {
   border-top: 1px solid var(--mp-border-subtle);
-  background: rgba(var(--v-theme-surface-variant), 0.28);
+  padding: 24px;
+  gap: 8px;
 }
 </style>

@@ -4,7 +4,7 @@ import MbTooltip from './MbTooltip.vue';
 import type { MbTooltipProps } from './MbTooltip.types';
 
 const meta: Meta<MbTooltipProps> = {
-  title: 'Marobase/MbTooltip',
+  title: 'Components/MbTooltip',
   component: MbTooltip,
   tags: ['autodocs'],
   args: {

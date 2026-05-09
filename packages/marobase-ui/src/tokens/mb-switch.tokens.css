@@ -15,22 +15,22 @@ html.theme-light {
   --mb-sw-caption-gap: 2px;
 
   --mb-sw-track-off-bg: #d7dbdf;
-  --mb-sw-track-off-hover-bg: #c1c8cd;
-  --mb-sw-track-off-pressed-bg: #aeb8bf;
-  --mb-sw-track-on-bg: #0091ff;
+  --mb-sw-track-off-hover-bg: #c9bfa6;
+  --mb-sw-track-off-pressed-bg: #a39880;
+  --mb-sw-track-on-bg: #1ab7ea;
   --mb-sw-track-on-hover-bg: #0081f1;
   --mb-sw-track-on-pressed-bg: #006adc;
-  --mb-sw-track-indeterminate-bg: #0091ff;
+  --mb-sw-track-indeterminate-bg: #1ab7ea;
   --mb-sw-track-error-bg: #e54d2e;
-  --mb-sw-track-disabled-bg: #ebedef;
+  --mb-sw-track-disabled-bg: #f1ece2;
   --mb-sw-track-on-disabled-bg: #b9d9fb;
 
   --mb-sw-thumb-bg: #ffffff;
   --mb-sw-thumb-disabled-bg: #f5f7f9;
-  --mb-sw-spinner-color: #0091ff;
-  --mb-sw-minus-color: #0091ff;
+  --mb-sw-spinner-color: #1ab7ea;
+  --mb-sw-minus-color: #1ab7ea;
 
-  --mb-sw-focus-ring: 0 0 0 3px #cde6fe;
+  --mb-sw-focus-ring: 0 0 0 3px #a8ddf1;
 
   --mb-sw-label-size: 16px;
   --mb-sw-label-line-height: 24px;

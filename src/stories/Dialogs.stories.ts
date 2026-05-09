@@ -14,7 +14,7 @@ interface DialogsArgs {
 }
 
 const meta: Meta<DialogsArgs> = {
-  title: 'Base/Dialogs',
+  title: 'Archive/Legacy Base/Dialogs',
   component: VDialog,
   tags: ['autodocs'],
   argTypes: {

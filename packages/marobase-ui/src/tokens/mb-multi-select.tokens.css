@@ -14,7 +14,7 @@ html.theme-light {
   --mb-ms-floating-label-size: 12px;
   --mb-ms-floating-label-line-height: 18px;
   --mb-ms-floating-label-color: #7d868c;
-  --mb-ms-floating-label-color-focus: #0091ff;
+  --mb-ms-floating-label-color-focus: #1ab7ea;
   --mb-ms-floating-label-bg: #ffffff;
 
   --mb-ms-required-size: 14px;
@@ -28,11 +28,11 @@ html.theme-light {
   --mb-ms-radius: 6px;
   --mb-ms-bg: #ffffff;
   --mb-ms-bg-disabled: #f5f7f9;
-  --mb-ms-border: #c1c8cd;
-  --mb-ms-border-hover: #aeb8bf;
-  --mb-ms-border-focus: #0091ff;
+  --mb-ms-border: #c9bfa6;
+  --mb-ms-border-hover: #a39880;
+  --mb-ms-border-focus: #1ab7ea;
   --mb-ms-border-error: #e54d2e;
-  --mb-ms-focus-ring: 0 0 0 3px #cde6fe;
+  --mb-ms-focus-ring: 0 0 0 3px #a8ddf1;
 
   --mb-ms-value-size: 16px;
   --mb-ms-value-line-height: 24px;
@@ -50,7 +50,7 @@ html.theme-light {
 
   --mb-ms-menu-offset: 8px;
   --mb-ms-menu-bg: #ffffff;
-  --mb-ms-menu-border: #e6e8eb;
+  --mb-ms-menu-border: #e6dfd1;
   --mb-ms-menu-radius: 6px;
   --mb-ms-menu-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.08);
   --mb-ms-menu-padding-y: 4px;

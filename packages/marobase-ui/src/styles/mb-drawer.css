@@ -14,7 +14,8 @@
 
 .mb-drawer__panel {
   background: var(--mb-drawer-surface);
-  border-left: 1px solid var(--mb-drawer-border-color);
+  border: 1px solid var(--mb-drawer-border-color, #e6dfd1);
+  border-radius: 16px 0 0 16px;
   display: flex;
   flex-direction: column;
   font-family: var(--mb-drawer-font-family);
@@ -137,14 +138,14 @@
   align-items: center;
   background: var(--mb-drawer-input-bg);
   border: 1px solid var(--mb-drawer-input-border);
-  border-radius: 6px;
+  border-radius: 16px;
   color: var(--mb-drawer-input-text);
   display: inline-flex;
   font-size: 14px;
   font-weight: 400;
   gap: 10px;
-  height: 40px;
-  padding: 0 12px;
+  height: 44px;
+  padding: 0 14px;
 }
 
 .mb-drawer__input {
@@ -213,7 +214,7 @@
 }
 
 .mb-drawer__check input {
-  accent-color: #0091ff;
+  accent-color: var(--mb-drawer-primary-bg, #1ab7ea);
   height: 14px;
   margin: 0;
   width: 14px;
@@ -282,16 +283,16 @@
 
 .mb-drawer__footer-btn {
   align-items: center;
-  border-radius: 6px;
+  border-radius: 9999px;
   cursor: pointer;
   display: inline-flex;
-  font-size: 16px;
-  font-weight: 500;
+  font-size: 14px;
+  font-weight: 600;
   height: 40px;
   justify-content: center;
-  line-height: 24px;
-  min-width: 60px;
-  padding: 0 12px;
+  line-height: 1;
+  min-width: 80px;
+  padding: 0 16px;
 }
 
 .mb-drawer__footer-btn--primary {

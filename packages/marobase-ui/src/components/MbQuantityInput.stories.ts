@@ -9,7 +9,7 @@ import type {
 const stateOptions: MbQuantityInputState[] = ['default', 'focus', 'disabled', 'error'];
 
 const meta: Meta<MbQuantityInputProps> = {
-  title: 'Marobase/MbQuantityInput',
+  title: 'Forms/MbQuantityInput',
   component: MbQuantityInput,
   tags: ['autodocs'],
   args: {

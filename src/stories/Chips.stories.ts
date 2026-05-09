@@ -16,7 +16,7 @@ interface ChipArgs {
 }
 
 const meta = {
-  title: 'Base/Chips',
+  title: 'Archive/Legacy Base/Chips',
   component: VChip,
   tags: ['autodocs'],
 

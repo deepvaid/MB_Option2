@@ -14,6 +14,7 @@ import { lucideIconSet } from '../src/plugins/lucideIcons'
 import '@marobase/ui/tokens/index.css'
 import '../src/design-tokens/generated/variables.css'
 import '../src/styles/mp-theme-aliases.css'
+import '../src/styles/marobase-tokens.css'
 import '../src/styles/global.scss'
 
 import { maropostDark, maropostDefaults, maropostLight } from '../src/plugins/maropostTheme'
@@ -134,17 +135,15 @@ const preview: Preview = {
     options: {
       storySort: {
         order: [
-          'Foundation', ['Colors', 'Typography', 'Spacing & Layout', 'Design System Demo'],
-          'Base',
-          'Layout',
-          'Data Display',
+          'Introduction',
+          'Foundations', ['Colors', 'Typography', 'Spacing', 'Elevation', 'Radius', 'Icons'],
+          'Components',
+          'Forms',
           'Navigation',
-          'Feedback',
           'Overlays',
-          'Copilot',
-          'AI',
-          'Marobase',
-          'Visual Parity',
+          'Data Display',
+          'Patterns',
+          'Archive',
           '*',
         ],
       },

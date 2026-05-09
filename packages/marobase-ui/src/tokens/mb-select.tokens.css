@@ -21,11 +21,11 @@ html.theme-light {
   --mb-sl-radius: 6px;
   --mb-sl-bg: #ffffff;
   --mb-sl-bg-disabled: #f5f7f9;
-  --mb-sl-border: #c1c8cd;
-  --mb-sl-border-hover: #aeb8bf;
-  --mb-sl-border-focus: #0091ff;
+  --mb-sl-border: #c9bfa6;
+  --mb-sl-border-hover: #a39880;
+  --mb-sl-border-focus: #1ab7ea;
   --mb-sl-border-error: #e54d2e;
-  --mb-sl-focus-ring: 0 0 0 3px #cde6fe;
+  --mb-sl-focus-ring: 0 0 0 3px #a8ddf1;
 
   --mb-sl-value-size: 16px;
   --mb-sl-value-line-height: 24px;
@@ -43,7 +43,7 @@ html.theme-light {
 
   --mb-sl-menu-offset: 8px;
   --mb-sl-menu-bg: #ffffff;
-  --mb-sl-menu-border: #e6e8eb;
+  --mb-sl-menu-border: #e6dfd1;
   --mb-sl-menu-radius: 6px;
   --mb-sl-menu-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.08);
   --mb-sl-menu-padding-y: 4px;

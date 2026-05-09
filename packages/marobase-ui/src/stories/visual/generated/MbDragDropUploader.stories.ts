@@ -6,7 +6,7 @@ type Args = {
 };
 
 const meta = {
-  title: 'Visual Parity/MbDragDropUploader',
+  title: 'Archive/Visual Parity/MbDragDropUploader',
   tags: ['autodocs'],
   render: (args: Args) => ({
     setup() {

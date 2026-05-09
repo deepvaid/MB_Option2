@@ -3,7 +3,7 @@ import { ref } from 'vue'
 import { VContainer, VRow, VCol, VCard, VCardText } from 'vuetify/components'
 
 const meta = {
-  title: 'Foundation/Typography',
+  title: 'Foundations/Typography',
   component: VContainer,
   tags: ['autodocs'],
   parameters: {

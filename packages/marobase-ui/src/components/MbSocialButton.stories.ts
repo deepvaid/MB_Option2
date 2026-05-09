@@ -8,7 +8,7 @@ import type {
 const stateOptions: MbSocialButtonState[] = ['default', 'hover', 'active', 'disabled'];
 
 const meta: Meta<MbSocialButtonProps> = {
-  title: 'Marobase/MbSocialButton',
+  title: 'Components/MbSocialButton',
   component: MbSocialButton,
   tags: ['autodocs'],
   args: {

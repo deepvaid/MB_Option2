@@ -9,7 +9,7 @@ import type {
 const stateOptions: MbInputFieldState[] = ['default', 'hover', 'focus', 'disabled', 'error'];
 
 const meta: Meta<MbInputFieldProps> = {
-  title: 'Marobase/MbTextField',
+  title: 'Forms/MbTextField',
   component: MbInputField,
   tags: ['autodocs'],
   parameters: {

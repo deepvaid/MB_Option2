@@ -19,9 +19,9 @@ html.theme-light {
   --mb-tip-text-color: #ffffff;
   --mb-tip-trigger-color: #7d868c;
   --mb-tip-trigger-hover-color: #11181c;
-  --mb-tip-disabled-color: #c1c8cd;
+  --mb-tip-disabled-color: #c9bfa6;
   --mb-tip-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-  --mb-tip-focus-ring: 0 0 0 3px #cde6fe;
+  --mb-tip-focus-ring: 0 0 0 3px #a8ddf1;
 }
 
 :root[data-theme='dark'],

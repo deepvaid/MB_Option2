@@ -24,19 +24,19 @@ html.theme-light {
   --mb-sb-label-line-height: 24px;
   --mb-sb-label-font-weight: 500;
 
-  --mb-sb-bg: #0091ff;
+  --mb-sb-bg: #1ab7ea;
   --mb-sb-bg-hover: #0080f0;
   --mb-sb-bg-active: #006adb;
   --mb-sb-text: #ffffff;
   --mb-sb-text-hover: #ffffff;
   --mb-sb-text-active: #ffffff;
-  --mb-sb-focus-ring: 0 0 0 3px #cde6fe;
+  --mb-sb-focus-ring: 0 0 0 3px #a8ddf1;
 
   --mb-sb-menu-width: 240px;
   --mb-sb-menu-offset-y: 4px;
   --mb-sb-menu-padding-y: 4px;
   --mb-sb-menu-bg: #ffffff;
-  --mb-sb-menu-border: #e6e8eb;
+  --mb-sb-menu-border: #e6dfd1;
   --mb-sb-menu-radius: 6px;
   --mb-sb-menu-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.08);
 

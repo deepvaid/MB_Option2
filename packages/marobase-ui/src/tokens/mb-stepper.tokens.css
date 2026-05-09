@@ -21,23 +21,23 @@ html.theme-light {
   --mb-stepper-focus-radius: 6px;
 
   --mb-stepper-indicator-bg: #ffffff;
-  --mb-stepper-indicator-border: #c1c8cd;
+  --mb-stepper-indicator-border: #c9bfa6;
   --mb-stepper-indicator-text: #11181c;
   --mb-stepper-title-color: #11181c;
-  --mb-stepper-title-hover-color: #0091ff;
+  --mb-stepper-title-hover-color: #1ab7ea;
   --mb-stepper-description-color: #7d868c;
-  --mb-stepper-track-color: #c1c8cd;
+  --mb-stepper-track-color: #c9bfa6;
   --mb-stepper-complete-bg: #41a35f;
   --mb-stepper-complete-text: #ffffff;
   --mb-stepper-active-bg: #ffffff;
-  --mb-stepper-active-border: #0091ff;
-  --mb-stepper-active-text: #0091ff;
+  --mb-stepper-active-border: #1ab7ea;
+  --mb-stepper-active-text: #1ab7ea;
   --mb-stepper-active-title-color: #11181c;
   --mb-stepper-upcoming-title-color: #7d868c;
   --mb-stepper-disabled-bg: #f0f2f4;
   --mb-stepper-disabled-border: #d7dde4;
   --mb-stepper-disabled-text: #9aa3aa;
-  --mb-stepper-focus-ring: 0 0 0 3px #cde6fe;
+  --mb-stepper-focus-ring: 0 0 0 3px #a8ddf1;
 }
 
 :root[data-theme='dark'],

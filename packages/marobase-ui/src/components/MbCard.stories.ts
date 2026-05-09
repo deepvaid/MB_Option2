@@ -3,7 +3,7 @@ import MbCard from './MbCard.vue';
 import type { MbCardProps } from './MbCard.types';
 
 const meta: Meta<MbCardProps> = {
-  title: 'Marobase/MbCard',
+  title: 'Components/MbCard',
   component: MbCard,
   tags: ['autodocs'],
   args: {

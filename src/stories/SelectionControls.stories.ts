@@ -14,7 +14,7 @@ interface SelectionControlsArgs {
 }
 
 const meta: Meta<SelectionControlsArgs> = {
-  title: 'Base/SelectionControls',
+  title: 'Archive/Legacy Base/SelectionControls',
   component: VCheckbox,
   tags: ['autodocs'],
   argTypes: {

@@ -16,7 +16,7 @@ interface AlertArgs {
 }
 
 const meta = {
-  title: 'Base/Alerts',
+  title: 'Archive/Legacy Base/Alerts',
   component: VAlert,
   tags: ['autodocs'],
 

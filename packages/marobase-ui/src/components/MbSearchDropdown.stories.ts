@@ -18,7 +18,7 @@ const defaultOptions: MbSearchDropdownOption[] = [
 const stateOptions: MbSearchDropdownState[] = ['default', 'hover', 'focus', 'disabled', 'error'];
 
 const meta: Meta<MbSearchDropdownProps> = {
-  title: 'Marobase/MbSearchDropdown',
+  title: 'Forms/MbSearchDropdown',
   component: MbSearchDropdown,
   tags: ['autodocs'],
   args: {

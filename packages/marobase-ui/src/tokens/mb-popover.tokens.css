@@ -37,13 +37,13 @@ html.theme-light {
   --mb-pop-title-color: #11181c;
   --mb-pop-description-color: #11181c;
   --mb-pop-close-color: #7d868c;
-  --mb-pop-primary-bg: #0091ff;
+  --mb-pop-primary-bg: #1ab7ea;
   --mb-pop-primary-text: #ffffff;
   --mb-pop-secondary-bg: #ffffff;
-  --mb-pop-secondary-border: #c1c8cd;
+  --mb-pop-secondary-border: #c9bfa6;
   --mb-pop-secondary-text: #7d868c;
   --mb-pop-arrow-border: rgba(193, 200, 205, 0.55);
-  --mb-pop-focus-ring: 0 0 0 3px #cde6fe;
+  --mb-pop-focus-ring: 0 0 0 3px #a8ddf1;
 }
 
 :root[data-theme='dark'],

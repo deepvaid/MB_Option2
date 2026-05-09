@@ -4,7 +4,7 @@ import MbDrawer from './MbDrawer.vue';
 import type { MbDrawerProps } from './MbDrawer.types';
 
 const meta: Meta<MbDrawerProps> = {
-  title: 'Marobase/MbDrawer',
+  title: 'Overlays/MbDrawer',
   component: MbDrawer,
   tags: ['autodocs'],
   args: {

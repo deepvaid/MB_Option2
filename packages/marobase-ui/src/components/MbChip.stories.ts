@@ -5,7 +5,7 @@ import type { MbChipProps, MbChipTone } from './MbChip.types';
 const toneOptions: MbChipTone[] = ['neutral', 'brand', 'danger'];
 
 const meta: Meta<MbChipProps> = {
-  title: 'Marobase/MbChip',
+  title: 'Components/MbChip',
   component: MbChip,
   tags: ['autodocs'],
   args: {

@@ -9,7 +9,7 @@ import type {
 const stateOptions: MbTextAreaState[] = ['default', 'hover', 'focus', 'disabled', 'error'];
 
 const meta: Meta<MbTextAreaProps> = {
-  title: 'Marobase/MbTextArea',
+  title: 'Forms/MbTextArea',
   component: MbTextArea,
   tags: ['autodocs'],
   args: {

@@ -16,7 +16,7 @@ const defaultOptions: MbSplitButtonOption[] = [
 ];
 
 const meta: Meta<MbSplitButtonProps> = {
-  title: 'Marobase/MbSplitButton',
+  title: 'Components/MbSplitButton',
   component: MbSplitButton,
   tags: ['autodocs'],
   args: {

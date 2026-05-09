@@ -8,14 +8,14 @@ html.theme-light {
   --mb-av-font-weight: 600;
   --mb-av-letter-spacing: 0px;
 
-  --mb-av-bg: #ebedef;
+  --mb-av-bg: #f1ece2;
   --mb-av-text: #11181c;
-  --mb-av-bg-brand: #0091ff;
+  --mb-av-bg-brand: #1ab7ea;
   --mb-av-text-brand: #ffffff;
   --mb-av-bg-danger: #fff1f0;
   --mb-av-text-danger: #e54d2e;
 
-  --mb-av-focus-ring: 0 0 0 3px #cde6fe;
+  --mb-av-focus-ring: 0 0 0 3px #a8ddf1;
   --mb-av-hover-ring: 0 0 0 2px #d6dade;
 }
 

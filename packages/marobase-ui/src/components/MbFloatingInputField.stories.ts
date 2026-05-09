@@ -16,7 +16,7 @@ const stateOptions: MbFloatingInputFieldState[] = [
 ];
 
 const meta: Meta<MbFloatingInputFieldProps> = {
-  title: 'Marobase/MbFloatingInputField',
+  title: 'Forms/MbFloatingInputField',
   component: MbFloatingInputField,
   tags: ['autodocs'],
   args: {

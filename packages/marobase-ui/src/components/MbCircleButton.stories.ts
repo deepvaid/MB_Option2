@@ -17,7 +17,7 @@ type StoryArgs = MbCircleButtonProps & {
 type Story = StoryObj<typeof meta>;
 
 const meta: Meta<StoryArgs> = {
-  title: 'Marobase/MbCircleButton',
+  title: 'Components/MbCircleButton',
   component: MbCircleButton,
   tags: ['autodocs'],
   args: {

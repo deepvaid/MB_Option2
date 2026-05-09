@@ -10,7 +10,7 @@ interface TooltipsArgs {
 }
 
 const meta: Meta<TooltipsArgs> = {
-  title: 'Base/Tooltips',
+  title: 'Archive/Legacy Base/Tooltips',
   component: VTooltip,
   tags: ['autodocs'],
   argTypes: {

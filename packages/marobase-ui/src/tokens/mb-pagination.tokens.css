@@ -17,14 +17,14 @@ html.theme-light {
   --mb-pg-chevron-size: 22px;
 
   --mb-pg-surface: #ffffff;
-  --mb-pg-border: #c1c8cd;
-  --mb-pg-border-hover: #aeb8bf;
+  --mb-pg-border: #c9bfa6;
+  --mb-pg-border-hover: #a39880;
   --mb-pg-text: #11181c;
   --mb-pg-muted: #7d868c;
   --mb-pg-active-bg: #f0f2f4;
   --mb-pg-active-text: #11181c;
   --mb-pg-disabled-text: #9aa3aa;
-  --mb-pg-focus-ring: 0 0 0 3px #cde6fe;
+  --mb-pg-focus-ring: 0 0 0 3px #a8ddf1;
 }
 
 :root[data-theme='dark'],

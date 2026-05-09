@@ -24,7 +24,7 @@ const states: Array<{ id: MbCheckboxState; label: string }> = [
 ];
 
 const meta = {
-  title: 'Visual Parity/MbCheckbox',
+  title: 'Archive/Visual Parity/MbCheckbox',
   tags: ['autodocs'],
   render: () => ({
     components: { MbCheckbox },

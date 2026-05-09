@@ -23,7 +23,7 @@ const states: Array<{ id: MbSwitchState; label: string }> = [
 ];
 
 const meta = {
-  title: 'Visual Parity/MbSwitch',
+  title: 'Archive/Visual Parity/MbSwitch',
   tags: ['autodocs'],
   render: () => ({
     components: { MbSwitch },

@@ -17,7 +17,7 @@ const defaultOptions: MbComboBoxOption[] = [
 const stateOptions: MbComboBoxState[] = ['default', 'hover', 'focus', 'disabled', 'error'];
 
 const meta: Meta<MbComboBoxProps> = {
-  title: 'Marobase/MbComboBox',
+  title: 'Forms/MbComboBox',
   component: MbComboBox,
   tags: ['autodocs'],
   args: {

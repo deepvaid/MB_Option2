@@ -5,28 +5,28 @@ html.theme-light {
   --mb-drawer-font-family: Inter, 'Noto Sans', 'Segoe UI', sans-serif;
   --mb-drawer-backdrop-bg: rgba(0, 0, 0, 0.26);
   --mb-drawer-surface: #ffffff;
-  --mb-drawer-border-color: #e6e8eb;
-  --mb-drawer-divider-color: #e6e8eb;
+  --mb-drawer-border-color: #e6dfd1;
+  --mb-drawer-divider-color: #e6dfd1;
   --mb-drawer-title-color: #11181c;
   --mb-drawer-subtitle-color: #7d868c;
   --mb-drawer-label-color: #11181c;
   --mb-drawer-input-bg: #ffffff;
-  --mb-drawer-input-border: #c1c8cd;
-  --mb-drawer-input-border-hover: #aeb8bf;
+  --mb-drawer-input-border: #c9bfa6;
+  --mb-drawer-input-border-hover: #a39880;
   --mb-drawer-input-text: #11181c;
   --mb-drawer-placeholder-color: #9aa3aa;
-  --mb-drawer-icon-bg: #e0f0ff;
-  --mb-drawer-icon-border: #cde6fe;
-  --mb-drawer-icon-color: #0091ff;
-  --mb-drawer-close-bg: #ebedef;
+  --mb-drawer-icon-bg: #d6eefb;
+  --mb-drawer-icon-border: #a8ddf1;
+  --mb-drawer-icon-color: #1ab7ea;
+  --mb-drawer-close-bg: #f1ece2;
   --mb-drawer-close-color: #7d868c;
-  --mb-drawer-note-bg: #f2f8ff;
-  --mb-drawer-note-border: #cde6fe;
-  --mb-drawer-note-accent: #0091ff;
-  --mb-drawer-note-link: #0091ff;
-  --mb-drawer-primary-bg: #0091ff;
+  --mb-drawer-note-bg: #ebf8fe;
+  --mb-drawer-note-border: #a8ddf1;
+  --mb-drawer-note-accent: #1ab7ea;
+  --mb-drawer-note-link: #1ab7ea;
+  --mb-drawer-primary-bg: #1ab7ea;
   --mb-drawer-primary-text: #ffffff;
-  --mb-drawer-focus-ring: 0 0 0 3px #cde6fe;
+  --mb-drawer-focus-ring: 0 0 0 3px #a8ddf1;
 }
 
 :root[data-theme='dark'],

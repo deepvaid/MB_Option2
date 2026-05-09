@@ -9,7 +9,9 @@
 
 .mb-modal__panel {
   background: var(--mb-modal-surface);
+  border: 1px solid var(--mb-modal-border, #e6dfd1);
   border-radius: var(--mb-modal-radius);
+  box-shadow: var(--mb-modal-shadow, 0 16px 40px -12px rgba(26, 24, 20, 0.18));
   font-family: var(--mb-modal-font-family);
   overflow: hidden;
 }

@@ -16,7 +16,7 @@ const defaultItems: MbButtonGroupItem[] = [
 ];
 
 const meta: Meta<MbButtonGroupProps> = {
-  title: 'Marobase/MbButtonGroup',
+  title: 'Components/MbButtonGroup',
   component: MbButtonGroup,
   tags: ['autodocs'],
   args: {

@@ -17,7 +17,7 @@ const figmaItems: MbTabItem[] = [
 ];
 
 const meta: Meta<MbTabsProps> = {
-  title: 'Marobase/MbTabs',
+  title: 'Components/MbTabs',
   component: MbTabs,
   tags: ['autodocs'],
   args: {

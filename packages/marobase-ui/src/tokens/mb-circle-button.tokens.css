@@ -16,9 +16,9 @@ html.theme-light {
   --mb-circle-btn-with-label-padding-x: 12px;
   --mb-circle-btn-with-label-padding-y: 8px;
   --mb-circle-btn-fallback-dot-size: 6px;
-  --mb-circle-btn-focus-ring: 0 0 0 3px #cde6fe;
+  --mb-circle-btn-focus-ring: 0 0 0 3px #a8ddf1;
 
-  --mb-circle-btn-neutral-bg-default: #e6e8eb;
+  --mb-circle-btn-neutral-bg-default: #e6dfd1;
   --mb-circle-btn-neutral-text-default: #7d868c;
   --mb-circle-btn-neutral-border-default: transparent;
   --mb-circle-btn-neutral-bg-hover: #dde1e6;
@@ -27,7 +27,7 @@ html.theme-light {
   --mb-circle-btn-neutral-bg-active: #d2d8df;
   --mb-circle-btn-neutral-text-active: #6f7783;
   --mb-circle-btn-neutral-border-active: transparent;
-  --mb-circle-btn-neutral-bg-focus: #e6e8eb;
+  --mb-circle-btn-neutral-bg-focus: #e6dfd1;
   --mb-circle-btn-neutral-text-focus: #7d868c;
   --mb-circle-btn-neutral-border-focus: transparent;
   --mb-circle-btn-neutral-bg-disabled: #eef0f3;
@@ -55,7 +55,7 @@ html.theme-light {
   --mb-circle-btn-brand-outline-border-default: #5db0ef;
   --mb-circle-btn-brand-outline-bg-hover: #f5faff;
   --mb-circle-btn-brand-outline-text-hover: #0080f0;
-  --mb-circle-btn-brand-outline-border-hover: #0091ff;
+  --mb-circle-btn-brand-outline-border-hover: #1ab7ea;
   --mb-circle-btn-brand-outline-bg-active: #eaf4ff;
   --mb-circle-btn-brand-outline-text-active: #006adb;
   --mb-circle-btn-brand-outline-border-active: #0080f0;

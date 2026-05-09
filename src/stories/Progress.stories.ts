@@ -17,7 +17,7 @@ interface ProgressArgs {
 }
 
 const meta: Meta<ProgressArgs> = {
-  title: 'Base/Progress',
+  title: 'Archive/Legacy Base/Progress',
   component: VProgressLinear,
   tags: ['autodocs'],
   argTypes: {

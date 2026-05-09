@@ -10,7 +10,7 @@ const orientationOptions: MbDividerOrientation[] = ['horizontal', 'vertical'];
 const alignOptions: MbDividerTextAlign[] = ['start', 'center', 'end'];
 
 const meta: Meta<MbDividerProps> = {
-  title: 'Marobase/MbDivider',
+  title: 'Components/MbDivider',
   component: MbDivider,
   tags: ['autodocs'],
   args: {

@@ -19,7 +19,7 @@ const defaultOptions: MbMultiSelectOption[] = [
 const stateOptions: MbMultiSelectState[] = ['default', 'hover', 'focus', 'disabled', 'error'];
 
 const meta: Meta<MbMultiSelectProps> = {
-  title: 'Marobase/MbMultiSelect',
+  title: 'Forms/MbMultiSelect',
   component: MbMultiSelect,
   tags: ['autodocs'],
   args: {

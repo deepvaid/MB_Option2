@@ -4,7 +4,7 @@ import MbModal from './MbModal.vue';
 import type { MbModalProps } from './MbModal.types';
 
 const meta: Meta<MbModalProps> = {
-  title: 'Marobase/MbModal',
+  title: 'Overlays/MbModal',
   component: MbModal,
   tags: ['autodocs'],
   args: {

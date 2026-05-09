@@ -5,7 +5,7 @@ import type { MbButtonProps } from './MbButton.types';
 type Story = StoryObj<typeof meta>;
 
 const meta: Meta<MbButtonProps> = {
-  title: 'Marobase/MbButton',
+  title: 'Components/MbButton',
   component: MbButton,
   tags: ['autodocs'],
   args: {

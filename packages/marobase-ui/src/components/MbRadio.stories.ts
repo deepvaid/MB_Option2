@@ -11,7 +11,7 @@ const stateOptions: MbRadioState[] = ['default', 'hover', 'focus', 'pressed', 'd
 const sizeOptions: MbRadioSize[] = ['lg', 'md', 'sm'];
 
 const meta: Meta<MbRadioProps> = {
-  title: 'Marobase/MbRadio',
+  title: 'Forms/MbRadio',
   component: MbRadio,
   tags: ['autodocs'],
   args: {

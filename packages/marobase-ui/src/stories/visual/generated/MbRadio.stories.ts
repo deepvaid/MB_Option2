@@ -24,7 +24,7 @@ const states: Array<{ id: MbRadioState; label: string }> = [
 ];
 
 const meta = {
-  title: 'Visual Parity/MbRadio',
+  title: 'Archive/Visual Parity/MbRadio',
   tags: ['autodocs'],
   render: () => ({
     components: { MbRadio },

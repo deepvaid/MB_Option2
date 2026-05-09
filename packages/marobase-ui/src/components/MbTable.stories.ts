@@ -4,7 +4,7 @@ import MbTable from './MbTable.vue';
 import type { MbTableProps } from './MbTable.types';
 
 const meta: Meta<MbTableProps> = {
-  title: 'Marobase/MbTable',
+  title: 'Data Display/MbTable',
   component: MbTable,
   tags: ['autodocs'],
   args: {

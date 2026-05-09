@@ -16,7 +16,7 @@ import {
 } from '@/design-tokens/generated/tokens'
 
 const meta = {
-  title: 'Foundation/Colors',
+  title: 'Foundations/Colors',
   component: VContainer,
   tags: ['autodocs'],
   parameters: {
@@ -30,7 +30,7 @@ The Maropost Design System color palette is built on Material Design 3 principle
 ## Overview
 
 The color system provides:
-- **Brand Colors**: Primary (#0091FF) and Secondary (#7E3AF2) for core identity
+- **Brand Colors**: Primary (#1ab7ea cyan) and Secondary (warm ink #1a1814) for core identity
 - **Semantic Colors**: Success, Warning, Error, and Info for status and messaging
 - **Surface Colors**: Background, Surface, and Border for layout structure
 - **On-Colors**: Text colors specifically designed to render on colored backgrounds

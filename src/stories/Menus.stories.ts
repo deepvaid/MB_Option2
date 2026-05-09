@@ -11,7 +11,7 @@ interface MenusArgs {
 }
 
 const meta: Meta<MenusArgs> = {
-  title: 'Base/Menus',
+  title: 'Archive/Legacy Base/Menus',
   component: VMenu,
   tags: ['autodocs'],
   argTypes: {
