@@ -67,7 +67,7 @@ function selectAll() {
       :subtitle="`${store.fulfillments.filter(f => f.status !== 'Shipped').length} orders awaiting fulfillment`"
     >
       <template #actions>
-        <v-btn class="text-none mp-btn-dark" variant="flat" prepend-icon="printer">Print Packing Slips</v-btn>
+        <v-btn variant="outlined" prepend-icon="printer" class="text-none">Print Packing Slips</v-btn>
         <v-btn color="primary" variant="flat" prepend-icon="truck" class="text-none" :disabled="selected.length === 0">Mark Shipped{{ selected.length > 0 ? ` (${selected.length})` : '' }}</v-btn>
       </template>
     </MpPageHeader>
@@ -159,13 +159,6 @@ function selectAll() {
 </template>
 
 <style scoped>
-.mp-btn-dark {
-  background: rgb(var(--v-theme-on-surface));
-  color: rgb(var(--v-theme-surface));
-}
-.mp-btn-dark:hover {
-  opacity: 0.88;
-}
 .ActionButtons { opacity: 0; transition: opacity 0.2s ease; }
 tr:hover .ActionButtons { opacity: 1; }
 </style>

@@ -797,7 +797,7 @@ function performConfirm() {
     />
 
     <v-dialog v-model="expandedWidgetOpen" max-width="1120" width="calc(100vw - 32px)">
-      <v-card v-if="expandedWidget" rounded="xl" flat border class="dashboard-widget-expand">
+      <v-card v-if="expandedWidget" rounded="xl" flat border color="surface" class="dashboard-widget-expand">
         <div class="dashboard-widget-expand__header">
           <div class="dashboard-widget-expand__copy">
             <div class="dashboard-widget-expand__eyebrow">Expanded widget</div>
@@ -824,7 +824,7 @@ function performConfirm() {
     </v-dialog>
 
     <v-dialog :model-value="!!confirmAction" max-width="440" persistent @update:model-value="confirmAction = null">
-      <v-card v-if="confirmAction" rounded="xl">
+      <v-card v-if="confirmAction" rounded="xl" color="surface">
         <v-card-title class="pa-5 text-h6 font-weight-bold">{{ confirmAction.title }}</v-card-title>
         <v-card-text class="pb-2 text-body-2 text-medium-emphasis">{{ confirmAction.body }}</v-card-text>
         <v-card-actions class="pa-4">

@@ -95,7 +95,7 @@ const statusColor = (s: string) => ({ Active:'success', Expired:'error', 'Maxed 
       :subtitle="`${store.coupons.filter(c => c.status==='Active').length} active codes · ${store.coupons.reduce((a,c)=>a+c.usage,0).toLocaleString()} total uses`"
     >
       <template #actions>
-        <v-btn class="text-none mp-btn-dark" variant="flat" prepend-icon="download">Export</v-btn>
+        <v-btn variant="outlined" prepend-icon="download" class="text-none">Export</v-btn>
         <v-btn color="primary" variant="flat" prepend-icon="plus" class="text-none" @click="createDialog=true;step=1">Create Coupon</v-btn>
       </template>
     </MpPageHeader>
@@ -295,13 +295,6 @@ const statusColor = (s: string) => ({ Active:'success', Expired:'error', 'Maxed 
 </template>
 
 <style scoped>
-.mp-btn-dark {
-  background: rgb(var(--v-theme-on-surface));
-  color: rgb(var(--v-theme-surface));
-}
-.mp-btn-dark:hover {
-  opacity: 0.88;
-}
 .ActionButtons { opacity: 0; transition: opacity 0.2s; }
 tr:hover .ActionButtons { opacity: 1; }
 .font-mono { font-family: monospace; }

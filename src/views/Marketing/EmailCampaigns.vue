@@ -76,7 +76,7 @@ const submitCampaign = () => {
       :subtitle="`${store.campaigns.length} campaigns · $${totalRevenue.toLocaleString('en-US', {minimumFractionDigits: 0})} total attributed revenue`"
     >
       <template #actions>
-        <v-btn class="text-none mp-btn-dark" variant="flat" prepend-icon="folder">Manage Folders</v-btn>
+        <v-btn variant="outlined" prepend-icon="folder" class="text-none">Manage Folders</v-btn>
         <v-btn color="primary" variant="flat" prepend-icon="plus" class="text-none" @click="openCreator">New Campaign</v-btn>
       </template>
     </MpPageHeader>
@@ -225,13 +225,3 @@ const submitCampaign = () => {
     </MpFormDrawer>
   </div>
 </template>
-
-<style scoped>
-.mp-btn-dark {
-  background: rgb(var(--v-theme-on-surface));
-  color: rgb(var(--v-theme-surface));
-}
-.mp-btn-dark:hover {
-  opacity: 0.88;
-}
-</style>

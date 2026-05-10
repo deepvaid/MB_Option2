@@ -100,7 +100,7 @@ function selectAll() {
       :subtitle="`${store.orders.length} orders total · $${store.orders.reduce((a,o) => a + parseFloat(o.total), 0).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} lifetime revenue`"
     >
       <template #actions>
-        <v-btn class="text-none mp-btn-dark" variant="flat" prepend-icon="download">Export</v-btn>
+        <v-btn variant="outlined" prepend-icon="download" class="text-none">Export</v-btn>
         <v-btn color="primary" variant="flat" prepend-icon="plus" class="text-none">Create Draft Order</v-btn>
       </template>
       <template #tabs>
@@ -313,13 +313,6 @@ function selectAll() {
 </template>
 
 <style scoped>
-.mp-btn-dark {
-  background: rgb(var(--v-theme-on-surface));
-  color: rgb(var(--v-theme-surface));
-}
-.mp-btn-dark:hover {
-  opacity: 0.88;
-}
 .table-card {
   background: rgba(var(--v-theme-surface-variant), 0.2);
 }

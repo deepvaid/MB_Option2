@@ -203,12 +203,5 @@ function toggleStatus(journey: typeof store.journeys[0]) {
 </template>
 
 <style scoped>
-.mp-btn-dark {
-  background: rgb(var(--v-theme-on-surface));
-  color: rgb(var(--v-theme-surface));
-}
-.mp-btn-dark:hover {
-  opacity: 0.88;
-}
 .text-primary-hover:hover { color: rgb(var(--v-theme-primary)) !important; }
 </style>

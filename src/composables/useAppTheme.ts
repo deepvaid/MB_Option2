@@ -19,11 +19,11 @@ interface AccentDef {
 
 const ACCENT_DEFS: Record<AccentKey, AccentDef> = {
   cyan: {
-    hex: '#1ab7ea',
-    rgb: '26, 183, 234',
+    hex: '#00B7F4',
+    rgb: '0, 183, 244',
     onPrimary: '255, 255, 255',
-    container: '214, 238, 251',   // #d6eefb
-    onContainer: '10, 79, 108',   // #0a4f6c
+    container: '204, 240, 253',   // #ccf0fd
+    onContainer: '0, 72, 105',    // #004869
   },
   blue: {
     hex: '#2D63E8',

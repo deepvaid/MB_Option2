@@ -127,7 +127,7 @@ function handleContactRowClick(event: MouseEvent, payload: { item: unknown }) {
     >
       <template #actions>
         <v-btn variant="outlined" prepend-icon="upload" class="text-none" @click="startImport">Import</v-btn>
-        <v-btn class="text-none mp-btn-dark" variant="flat" prepend-icon="share" @click="startImport">Export</v-btn>
+        <v-btn variant="outlined" prepend-icon="share" class="text-none" @click="startImport">Export</v-btn>
         <v-btn color="primary" variant="flat" prepend-icon="plus" class="text-none" @click="addDrawer=true;addStep=1">Add Contact</v-btn>
       </template>
     </MpPageHeader>
@@ -304,7 +304,7 @@ function handleContactRowClick(event: MouseEvent, payload: { item: unknown }) {
 
     <!-- Import Wizard Dialog -->
     <v-dialog v-model="importDialog" max-width="680" rounded="xl" persistent>
-      <v-card rounded="xl">
+      <v-card rounded="xl" color="surface">
         <v-stepper v-model="importStep" :items="['Upload File','Map Fields','Review & Import']" flat>
           <template v-slot:item.1>
             <div class="pa-6">
@@ -375,14 +375,6 @@ function handleContactRowClick(event: MouseEvent, payload: { item: unknown }) {
 </template>
 
 <style scoped>
-.mp-btn-dark {
-  background: rgb(var(--v-theme-on-surface));
-  color: rgb(var(--v-theme-surface));
-}
-.mp-btn-dark:hover {
-  opacity: 0.88;
-}
-
 :deep(.v-data-table thead tr) {
   border-bottom: 1px solid rgba(var(--v-border-color), 0.15);
 }

@@ -25,7 +25,7 @@ interface AccentSwatch {
 }
 
 const accentSwatches: AccentSwatch[] = [
-  { key: 'cyan',   label: 'Cyan',   color: '#0EA5E9' },
+  { key: 'cyan',   label: 'Cyan',   color: '#00B7F4' },
   { key: 'blue',   label: 'Blue',   color: '#2D63E8' },
   { key: 'amber',  label: 'Amber',  color: '#B45309' },
   { key: 'gray',   label: 'Gray',   color: '#4B5563' },

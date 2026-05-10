@@ -159,7 +159,7 @@ function tryNewPrompt() {
     </v-card-text>
 
     <v-dialog v-model="expandOpen" max-width="1120" width="calc(100vw - 32px)">
-      <v-card flat rounded="xl" border class="dv-widget-draft-card__dialog">
+      <v-card flat rounded="xl" border color="surface" class="dv-widget-draft-card__dialog">
         <div class="dv-widget-draft-card__dialog-header">
           <div>
             <div class="dv-widget-draft-card__eyebrow">Expanded preview</div>

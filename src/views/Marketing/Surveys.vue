@@ -111,13 +111,3 @@ function clearAllFilters() {
     </v-card>
   </div>
 </template>
-
-<style scoped>
-.mp-btn-dark {
-  background: rgb(var(--v-theme-on-surface));
-  color: rgb(var(--v-theme-surface));
-}
-.mp-btn-dark:hover {
-  opacity: 0.88;
-}
-</style>

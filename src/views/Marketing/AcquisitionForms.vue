@@ -259,7 +259,7 @@ function clearAllFilters() {
     </v-card>
 
     <v-dialog v-model="chooseDialog" max-width="820" rounded="xl">
-      <v-card rounded="xl" border flat class="template-dialog-card">
+      <v-card rounded="xl" border flat color="surface" class="template-dialog-card">
         <div class="pa-5 pb-3 d-flex align-center justify-space-between">
           <div>
             <div class="text-h6 font-weight-bold">Choose a Template</div>

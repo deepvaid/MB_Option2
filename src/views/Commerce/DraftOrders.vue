@@ -114,7 +114,7 @@ const statusColor = (s: string) => ({Open:'primary','Invoice Sent':'success'})[s
       :subtitle="`${store.draftOrders?.length ?? 0} drafts · Create manual orders on behalf of customers`"
     >
       <template #actions>
-        <v-btn class="text-none mp-btn-dark" variant="flat" prepend-icon="download">Export</v-btn>
+        <v-btn variant="outlined" prepend-icon="download" class="text-none">Export</v-btn>
         <v-btn color="primary" variant="flat" prepend-icon="plus" class="text-none" @click="createDrawer=true;draftStep=1">Create Draft Order</v-btn>
       </template>
     </MpPageHeader>
@@ -342,13 +342,6 @@ const statusColor = (s: string) => ({Open:'primary','Invoice Sent':'success'})[s
 </template>
 
 <style scoped>
-.mp-btn-dark {
-  background: rgb(var(--v-theme-on-surface));
-  color: rgb(var(--v-theme-surface));
-}
-.mp-btn-dark:hover {
-  opacity: 0.88;
-}
 .border-b { border-bottom: 1px solid rgba(var(--v-border-color), var(--v-border-opacity)) !important; }
 .border-t { border-top: 1px solid rgba(var(--v-border-color), var(--v-border-opacity)) !important; }
 .ActionButtons { opacity: 0; transition: opacity 0.2s ease; }
