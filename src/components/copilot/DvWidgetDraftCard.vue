@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import { computed, ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
-import DashboardWidgetCard from '@/components/dashboards/DashboardWidgetCard.vue'
-import WidgetEditStep from '@/components/dashboards/wizard/WidgetEditStep.vue'
-import type { DashboardFilterState, DashboardWidgetDraft } from '@/stores/dashboards/types'
-import { getMetricDescriptor } from '@/stores/dashboards/metricCatalog'
+import DvDraftPreview from '@/components/copilot/DvDraftPreview.vue'
+import DvRefineDialog from '@/components/copilot/DvRefineDialog.vue'
+import DvExpandDialog from '@/components/copilot/DvExpandDialog.vue'
+import type { DashboardFilterState, DashboardWidgetDraft, DashboardWidgetType, DashboardChartVariant } from '@/stores/dashboards/types'
 import { useDashboardsStore } from '@/stores/useDashboards'
 
 const props = withDefaults(defineProps<{
@@ -12,32 +12,43 @@ const props = withDefaults(defineProps<{
   dashboardId: string
   draft: DashboardWidgetDraft
   filters?: DashboardFilterState
+  rationale?: string
+  showRationale?: boolean
 }>(), {
   filters: () => ({
     rangePreset: 'last_30_days',
     grain: 'daily',
     comparison: 'previous_period',
   }),
+  rationale: '',
+  showRationale: true,
 })
 
 const emit = defineEmits<{
   saved: [payload: { title: string; dashboardName: string }]
-  'try-new-prompt': []
+  refined: [payload: { title: string }]
 }>()
 
 const route = useRoute()
 const dashboardsStore = useDashboardsStore()
 const isAdded = ref(false)
 const localDraft = ref<DashboardWidgetDraft>({ ...props.draft })
+const refineOpen = ref(false)
 const expandOpen = ref(false)
-const editDialogOpen = ref(false)
 
-const metric = computed(() => getMetricDescriptor(localDraft.value.metricId))
+watch(
+  () => props.draft,
+  (next) => {
+    localDraft.value = { ...next }
+    isAdded.value = false
+  },
+  { deep: true },
+)
+
 const currentAccountId = computed(() => {
   const routeAccountId = Array.isArray(route.params.accountId)
     ? route.params.accountId[0]
     : route.params.accountId
-
   return routeAccountId ?? props.accountId
 })
 
@@ -45,51 +56,47 @@ const currentDashboard = computed(() => {
   const routeDashboardId = Array.isArray(route.params.dashboardId)
     ? route.params.dashboardId[0]
     : route.params.dashboardId
-
   return dashboardsStore.getDashboardById(currentAccountId.value, routeDashboardId)
     ?? dashboardsStore.getDashboardById(props.accountId, props.dashboardId)
 })
 
 const effectiveAccountId = computed(() => currentDashboard.value?.accountId ?? currentAccountId.value)
 const effectiveDashboardId = computed(() => currentDashboard.value?.id ?? props.dashboardId)
-const effectiveFilters = computed(() => currentDashboard.value?.filters ?? props.filters)
 
-const previewWidget = computed(() => ({
-  id: localDraft.value.widgetId ?? 'dv-widget-preview',
-  type: localDraft.value.type,
-  title: localDraft.value.title || metric.value?.defaultTitle || 'Widget Draft',
-  subtitle: localDraft.value.subtitle,
-  dataSource: localDraft.value.dataSource,
-  metricId: localDraft.value.metricId,
-  dimension: localDraft.value.dimension,
-  chartVariant: localDraft.value.chartVariant,
-  layout: {
-    x: 0,
-    y: 0,
-    w: localDraft.value.type === 'kpi' ? 4 : 6,
-    h: localDraft.value.type === 'kpi' ? 2 : 5,
-  },
-  filters: localDraft.value.filters,
-  drilldown: localDraft.value.drilldown,
-  aiProvenance: localDraft.value.aiProvenance,
-}))
-
-watch(
-  () => props.draft,
-  (next) => {
-    localDraft.value = { ...next }
-    isAdded.value = false
-    editDialogOpen.value = false
-  },
-  { deep: true },
-)
-
-function openEditDialog() {
-  if (isAdded.value) return
-  editDialogOpen.value = true
+const TYPE_META: Record<DashboardWidgetType, { label: string; icon: string }> = {
+  kpi: { label: 'KPI summary', icon: 'layout-grid' },
+  bar: { label: 'Bar chart', icon: 'bar-chart-3' },
+  timeseries: { label: 'Time series', icon: 'line-chart' },
+  pie: { label: 'Donut chart', icon: 'pie-chart' },
+  table: { label: 'Table', icon: 'table' },
+  activity: { label: 'Activity feed', icon: 'list' },
 }
 
-function saveToDashboard() {
+const typeMeta = computed(() => {
+  const meta = TYPE_META[localDraft.value.type] ?? TYPE_META.kpi
+  if (localDraft.value.type === 'timeseries') {
+    if (localDraft.value.chartVariant === 'area') return { label: 'Area chart', icon: 'area-chart' }
+    return { label: 'Line chart', icon: 'line-chart' }
+  }
+  return meta
+})
+
+const draftTitle = computed(() => localDraft.value.title || 'Widget draft')
+const draftSubtitle = computed(() => localDraft.value.subtitle || 'Sourced from your account data')
+
+const sourceLabel = computed(() => {
+  const sourceMap: Record<string, string> = {
+    marketing: 'Marketing → Email Campaigns',
+    commerce: 'Commerce → Orders',
+    contacts: 'Contacts → All contacts',
+    service: 'Service → Tickets',
+    products: 'Products → Catalogue',
+  }
+  const key = localDraft.value.dataSource as string
+  return `${sourceMap[key] ?? 'Workspace data'} · Last 30 days`
+})
+
+function handleAdd() {
   if (isAdded.value) return
   if (!currentDashboard.value) return
 
@@ -99,7 +106,6 @@ function saveToDashboard() {
   })
   if (widget) {
     isAdded.value = true
-    editDialogOpen.value = false
     emit('saved', {
       title: widget.title || localDraft.value.title || 'Widget',
       dashboardName: currentDashboard.value.name,
@@ -107,193 +113,233 @@ function saveToDashboard() {
   }
 }
 
-function tryNewPrompt() {
-  emit('try-new-prompt')
+function handleRefineApply(payload: { title: string; type: DashboardWidgetType; chartVariant?: DashboardChartVariant }) {
+  localDraft.value = {
+    ...localDraft.value,
+    title: payload.title,
+    type: payload.type,
+    chartVariant: payload.chartVariant,
+  }
+  refineOpen.value = false
+  emit('refined', { title: payload.title })
+}
+
+function handleExpandAdd() {
+  expandOpen.value = false
+  handleAdd()
 }
 </script>
 
 <template>
-  <v-card flat border rounded="xl" class="dv-widget-draft-card">
-    <v-card-text class="pa-4 pa-sm-5">
-      <div class="dv-widget-draft-card__preview" :class="`dv-widget-draft-card__preview--${localDraft.type}`">
-        <DashboardWidgetCard
-          :account-id="effectiveAccountId"
-          :widget="previewWidget"
-          :filters="effectiveFilters"
-          preview
-        />
+  <article class="dv-draft" :class="{ 'is-selected': false, 'is-added': isAdded }">
+    <header class="dv-draft__top">
+      <span class="dv-draft__type">
+        <v-icon size="14">{{ typeMeta.icon }}</v-icon>
+        {{ typeMeta.label }}
+      </span>
+      <span class="dv-draft__badge">
+        <v-icon size="11">sparkles</v-icon>
+        Draft
+      </span>
+    </header>
 
-        <v-btn
-          icon="maximize-2"
-          size="x-small"
-          variant="flat"
-          class="dv-widget-draft-card__expand"
-          aria-label="Enlarge preview"
-          @click="expandOpen = true"
-        >
-          <v-icon size="14">maximize-2</v-icon>
-          <v-tooltip activator="parent" location="left">Enlarge preview</v-tooltip>
-        </v-btn>
-      </div>
+    <div class="dv-draft__title-block">
+      <h3 class="dv-draft__title">{{ draftTitle }}</h3>
+      <div class="dv-draft__sub">{{ draftSubtitle }}</div>
+    </div>
 
-      <div class="d-flex align-center justify-space-between flex-wrap ga-3 mt-4">
-        <v-btn
-          variant="text"
-          class="text-none"
-          prepend-icon="plus"
-          :disabled="isAdded"
-          @click="tryNewPrompt"
-        >
-          Try new prompt
-        </v-btn>
-        <v-btn
-          color="primary"
-          variant="flat"
-          class="text-none"
-          :disabled="isAdded"
-          @click="openEditDialog"
-        >
-          {{ isAdded ? 'Saved to Dashboard' : 'Save to dashboard' }}
-        </v-btn>
-      </div>
-    </v-card-text>
+    <div class="dv-draft__preview">
+      <DvDraftPreview :draft="localDraft" />
+    </div>
 
-    <v-dialog v-model="expandOpen" max-width="1120" width="calc(100vw - 32px)">
-      <v-card flat rounded="xl" border color="surface" class="dv-widget-draft-card__dialog">
-        <div class="dv-widget-draft-card__dialog-header">
-          <div>
-            <div class="dv-widget-draft-card__eyebrow">Expanded preview</div>
-            <div class="text-subtitle-1 font-weight-bold">{{ previewWidget.title }}</div>
-          </div>
-          <v-btn icon="x" variant="text" size="small" aria-label="Close enlarged preview" @click="expandOpen = false" />
-        </div>
-        <div class="dv-widget-draft-card__dialog-body">
-          <DashboardWidgetCard
-            :account-id="effectiveAccountId"
-            :widget="previewWidget"
-            :filters="effectiveFilters"
-            :show-actions="false"
-            :editable="false"
-            preview
-          />
-        </div>
-      </v-card>
-    </v-dialog>
+    <div v-if="showRationale && rationale" class="dv-draft__rationale">
+      <v-icon size="14" color="primary">lightbulb</v-icon>
+      <div>{{ rationale }}</div>
+    </div>
 
-    <v-dialog
-      v-model="editDialogOpen"
-      max-width="880"
-      width="calc(100vw - 32px)"
-      scrollable
-    >
-      <v-card flat rounded="xl" border class="dv-widget-draft-card__edit-dialog">
-        <div class="dv-widget-draft-card__dialog-header">
-          <div>
-            <div class="dv-widget-draft-card__eyebrow">Edit widget</div>
-            <div class="text-subtitle-1 font-weight-bold">Tweak the title or chart type</div>
-          </div>
-          <v-btn icon="x" variant="text" size="small" aria-label="Close edit dialog" @click="editDialogOpen = false" />
-        </div>
-        <v-card-text class="dv-widget-draft-card__edit-dialog-body pa-5">
-          <WidgetEditStep
-            :draft="localDraft"
-            :account-id="effectiveAccountId"
-            :filters="effectiveFilters"
-            @update:draft="localDraft = $event"
-          />
-        </v-card-text>
-        <v-divider />
-        <v-card-actions class="d-flex align-center justify-end ga-2 px-5 py-3">
-          <v-btn variant="text" class="text-none" @click="editDialogOpen = false">Cancel</v-btn>
-          <v-btn
-            color="primary"
-            variant="flat"
-            class="text-none"
-            :disabled="isAdded"
-            @click="saveToDashboard"
-          >
-            {{ isAdded ? 'Saved to Dashboard' : 'Save to dashboard' }}
-          </v-btn>
-        </v-card-actions>
-      </v-card>
-    </v-dialog>
-  </v-card>
+    <footer class="dv-draft__actions">
+      <v-btn
+        class="dv-draft__btn dv-draft__btn--primary text-none"
+        variant="flat"
+        color="primary"
+        :disabled="isAdded"
+        density="comfortable"
+        @click="handleAdd"
+      >
+        <v-icon size="15" start>{{ isAdded ? 'check' : 'plus' }}</v-icon>
+        {{ isAdded ? 'Added' : 'Add widget' }}
+      </v-btn>
+      <v-btn
+        class="dv-draft__btn dv-draft__btn--ghost text-none"
+        variant="text"
+        density="comfortable"
+        :disabled="isAdded"
+        @click="refineOpen = true"
+      >
+        <v-icon size="15" start>sliders-horizontal</v-icon>
+        Refine
+      </v-btn>
+      <div class="dv-draft__actions-spacer"></div>
+      <v-btn
+        icon
+        size="32"
+        variant="text"
+        aria-label="Preview at full size"
+        @click="expandOpen = true"
+      >
+        <v-icon size="16">maximize-2</v-icon>
+        <v-tooltip activator="parent" location="left">Preview at full size</v-tooltip>
+      </v-btn>
+    </footer>
+
+    <DvRefineDialog
+      v-model="refineOpen"
+      :draft="localDraft"
+      :source-label="sourceLabel"
+      @apply="handleRefineApply"
+    />
+
+    <DvExpandDialog
+      v-model="expandOpen"
+      :draft="localDraft"
+      :type-label="typeMeta.label"
+      :is-added="isAdded"
+      @add="handleExpandAdd"
+    />
+  </article>
 </template>
 
 <style scoped lang="scss">
-.dv-widget-draft-card {
-  border-color: rgba(var(--v-theme-primary), 0.14);
-  background:
-    radial-gradient(circle at top right, rgba(var(--v-theme-primary), 0.08), transparent 28%),
-    rgb(var(--v-theme-surface));
-}
-
-.dv-widget-draft-card__preview {
-  position: relative;
+.dv-draft {
+  border: 1px solid rgb(var(--v-theme-outline-variant));
   border-radius: 12px;
+  background: rgb(var(--v-theme-surface));
   overflow: hidden;
-  margin: 0 -4px;
+  position: relative;
+  transition: border-color 120ms ease, box-shadow 120ms ease, opacity 220ms ease, transform 220ms ease;
 }
 
-.dv-widget-draft-card__preview--kpi {
-  height: 120px;
+.dv-draft:hover {
+  border-color: rgb(var(--v-theme-outline));
 }
 
-.dv-widget-draft-card__preview--timeseries,
-.dv-widget-draft-card__preview--bar,
-.dv-widget-draft-card__preview--pie {
-  height: 240px;
+.dv-draft.is-selected {
+  border-color: rgb(var(--v-theme-primary));
+  box-shadow: 0 0 0 2px color-mix(in oklch, rgb(var(--v-theme-primary)) 18%, transparent);
 }
 
-.dv-widget-draft-card__preview--table,
-.dv-widget-draft-card__preview--activity {
-  height: 220px;
+.dv-draft.is-added {
+  opacity: 0.55;
 }
 
-.dv-widget-draft-card__expand {
-  position: absolute;
-  top: 8px;
-  right: 8px;
-  background: rgba(var(--v-theme-surface), 0.92) !important;
-  border: 1px solid rgba(var(--v-theme-on-surface), 0.12);
-  backdrop-filter: blur(2px);
+.dv-draft__top {
+  padding: 12px 14px 0;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 10px;
 }
 
-.dv-widget-draft-card__expand:hover {
-  background: rgb(var(--v-theme-surface)) !important;
-}
-
-.dv-widget-draft-card__edit-dialog-body {
-  max-height: calc(100vh - 220px);
-  overflow-y: auto;
-}
-
-.dv-widget-draft-card__eyebrow {
-  margin-bottom: 6px;
-  font-size: var(--mp-typography-fontSize-xs);
-  font-weight: 700;
-  letter-spacing: 0.08em;
+.dv-draft__type {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 1.5px;
   text-transform: uppercase;
-  color: rgba(var(--v-theme-on-surface), 0.54);
+  color: rgb(var(--v-theme-on-surface-variant));
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
 }
 
-.dv-widget-draft-card__dialog-header {
+.dv-draft__type :deep(.v-icon) {
+  color: rgb(var(--v-theme-primary));
+}
+
+.dv-draft__badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 8px 3px 6px;
+  border-radius: 9999px;
+  font-size: 10.5px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  background: linear-gradient(120deg, #eef0ff 0%, #f3eafc 60%, #fde8ef 100%);
+  color: #5b4dbf;
+  border: 1px solid color-mix(in oklch, #5b4dbf 25%, transparent);
+}
+
+:global([data-theme='dark']) .dv-draft__badge,
+:deep([data-theme='dark']) .dv-draft__badge {
+  background: linear-gradient(120deg, #2d3550 0%, #382a44 60%, #44293c 100%);
+  color: #c4b8ff;
+}
+
+.dv-draft__title-block {
+  padding: 8px 14px 12px;
+}
+
+.dv-draft__title {
+  font-size: 15px;
+  font-weight: 600;
+  line-height: 1.25;
+  letter-spacing: -0.1px;
+  color: rgb(var(--v-theme-on-surface));
+  margin: 0 0 2px;
+}
+
+.dv-draft__sub {
+  font-size: 12.5px;
+  font-weight: 400;
+  color: rgb(var(--v-theme-on-surface-variant));
+  line-height: 1.35;
+}
+
+.dv-draft__preview {
+  padding: 0 14px 14px;
+}
+
+.dv-draft__rationale {
+  padding: 10px 14px;
+  background: rgb(var(--v-theme-surface-light, var(--v-theme-surface)));
+  border-top: 1px solid rgb(var(--v-theme-outline-variant));
+  font-size: 12.5px;
+  line-height: 1.45;
+  color: rgb(var(--v-theme-on-surface-variant));
+  display: flex;
+  gap: 8px;
+}
+
+.dv-draft__rationale :deep(.v-icon) {
+  margin-top: 2px;
+  flex-shrink: 0;
+}
+
+.dv-draft__actions {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  gap: 16px;
-  padding: 20px 24px;
-  border-bottom: 1px solid rgb(var(--v-theme-outline-variant));
+  gap: 6px;
+  padding: 10px 12px;
+  background: rgb(var(--v-theme-surface));
+  border-top: 1px solid rgb(var(--v-theme-outline-variant));
 }
 
-.dv-widget-draft-card__dialog-body {
-  padding: 24px;
-  height: 480px;
-  overflow: hidden;
+.dv-draft__btn {
+  height: 32px !important;
+  min-height: 32px !important;
+  border-radius: 9999px !important;
+  font-size: 12.5px !important;
+  font-weight: 600 !important;
+  letter-spacing: 0;
 }
 
-.dv-widget-draft-card__dialog-body :deep(.dashboard-widget-card) {
-  height: 100%;
-  max-height: 432px;
+.dv-draft__btn--ghost {
+  color: rgb(var(--v-theme-on-surface-variant)) !important;
+  font-weight: 500 !important;
+}
+
+.dv-draft__actions-spacer {
+  flex: 1;
 }
 </style>

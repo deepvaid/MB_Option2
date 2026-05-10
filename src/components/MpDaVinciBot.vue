@@ -1,46 +1,48 @@
 <script setup lang="ts">
 import { computed, nextTick, ref } from 'vue'
-import { useRoute } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 
-// Import rich components
-import DvChartCard from './copilot/DvChartCard.vue'
-import DvKpiRow from './copilot/DvKpiRow.vue'
-import DvDataTable from './copilot/DvDataTable.vue'
-import DvCampaignCard from './copilot/DvCampaignCard.vue'
-import DvJourneyCard from './copilot/DvJourneyCard.vue'
-import DvContentCard from './copilot/DvContentCard.vue'
-import DvSegmentCard from './copilot/DvSegmentCard.vue'
-import DvActionCard from './copilot/DvActionCard.vue'
-import DvInsightCard from './copilot/DvInsightCard.vue'
 import DvWidgetDraftCard from './copilot/DvWidgetDraftCard.vue'
+import DvHistoryDrawer from './copilot/DvHistoryDrawer.vue'
+import DvToastStack from './copilot/DvToastStack.vue'
+import DvInsightCard from './copilot/DvInsightCard.vue'
 import { useAccountsStore } from '@/stores/useAccounts'
 import { useDashboardsStore } from '@/stores/useDashboards'
-import type { DashboardWidgetDraft } from '@/stores/dashboards/types'
+import { getMetricDescriptor } from '@/stores/dashboards/metricCatalog'
+import type {
+  DashboardWidgetDraft,
+  DashboardWidgetType,
+} from '@/stores/dashboards/types'
+import { useDaVinciHistory } from '@/composables/useDaVinciHistory'
+import { useDaVinciToasts } from '@/composables/useDaVinciToasts'
+
+interface DraftSetProps {
+  drafts: DashboardWidgetDraft[]
+  rationale: string
+  conversationId: string
+}
+
+interface ChatComponent {
+  type: 'widgetDraftSet' | 'insight'
+  props: DraftSetProps | { headline: string; description: string; severity?: string }
+}
 
 interface ChatMessage {
   id: string
   role: 'user' | 'assistant'
-  text?: string
-  time?: string
-  componentData?: {
-    type: 'chart' | 'kpi' | 'table' | 'campaign' | 'journey' | 'content' | 'segment' | 'action' | 'insight' | 'widgetDraft'
-    props: any
-  }[]
+  text: string
+  componentData?: ChatComponent[]
 }
 
 interface MpDaVinciBotProps {
   initialChatMode?: boolean
   initialMessages?: ChatMessage[]
-  attachmentName?: string
-  attachmentMeta?: string
   subtitle?: string
 }
 
 const props = withDefaults(defineProps<MpDaVinciBotProps>(), {
   initialChatMode: false,
   initialMessages: () => [],
-  attachmentName: '',
-  attachmentMeta: 'CSV, image, or PDF - max 25 MB',
   subtitle: 'Intelligent AI assistant',
 })
 
@@ -50,216 +52,254 @@ const emit = defineEmits<{
 }>()
 
 const route = useRoute()
+const router = useRouter()
 const accountsStore = useAccountsStore()
 const dashboardsStore = useDashboardsStore()
-const isExpanded = ref(false)
+const { addItem, incrementAdded, clearAll } = useDaVinciHistory()
+const { pushToast } = useDaVinciToasts()
 
-function onExpand() {
-  isExpanded.value = !isExpanded.value
-  emit('expand')
-}
-
-/* ── State ─────────────────────────────────────────────────────── */
 const inputText = ref('')
 const chatMode = ref(props.initialChatMode || props.initialMessages.length > 0)
 const isTyping = ref(false)
-
-const messages = ref<ChatMessage[]>(props.initialMessages.map((message) => ({
-  ...message,
-  componentData: message.componentData ? [...message.componentData] : undefined,
-})))
-const chatContainer = ref<HTMLElement | null>(null)
-const composerInput = ref<HTMLInputElement | null>(null)
-
-const snackbarVisible = ref(false)
-const snackbarMessage = ref('')
+const generatingStatus = ref('')
+const messages = ref<ChatMessage[]>([...props.initialMessages])
+const bodyEl = ref<HTMLElement | null>(null)
+const historyOpen = ref(false)
+const currentConversationId = ref<string | null>(null)
 
 const routeAccountId = computed(() => {
-  const accountId = Array.isArray(route.params.accountId)
-    ? route.params.accountId[0]
-    : route.params.accountId
-
+  const accountId = Array.isArray(route.params.accountId) ? route.params.accountId[0] : route.params.accountId
   return accountId
 })
 
 const routeDashboardId = computed(() => {
-  const dashboardId = Array.isArray(route.params.dashboardId)
-    ? route.params.dashboardId[0]
-    : route.params.dashboardId
-
+  const dashboardId = Array.isArray(route.params.dashboardId) ? route.params.dashboardId[0] : route.params.dashboardId
   return dashboardId
 })
 
 const isDashboardRoute = computed(() => route.name === 'Dashboard' || route.name === 'DashboardDetail')
+
 const activeAccount = computed(() => {
   if (!routeAccountId.value) return accountsStore.activeAccount
   return accountsStore.accounts.find((account) => account.id === routeAccountId.value) ?? accountsStore.activeAccount
 })
+
 const activeDashboard = computed(() => {
   if (!isDashboardRoute.value || !routeAccountId.value) return null
   return dashboardsStore.getDashboardById(routeAccountId.value, routeDashboardId.value) ?? null
 })
 
-// Target account/dashboard for widget drafting — works on any route by falling back
-// to the active account's default dashboard when not on a dashboard route.
 const targetAccountId = computed(() => routeAccountId.value ?? activeAccount.value?.id ?? null)
+
 const targetDashboard = computed(() => {
   if (activeDashboard.value) return activeDashboard.value
   if (!targetAccountId.value) return null
   return dashboardsStore.getDefaultDashboard(targetAccountId.value) ?? null
 })
 
-const emptyStateGreeting = computed(() => (
-  isDashboardRoute.value && activeDashboard.value
-    ? `Shape ${activeDashboard.value.name} with Da Vinci`
-    : 'Hi, Admin'
-))
-
-const emptyStateDescription = computed(() => (
-  isDashboardRoute.value && activeDashboard.value
-    ? 'Ask for a KPI, trend, comparison, or table widget and I will draft it for the active dashboard.'
-    : 'Ask me anything about your store, or try a suggestion below.'
-))
-
-const heroInsight = computed(() => (
-  isDashboardRoute.value && activeDashboard.value
-    ? {
-        headline: 'Turn prompts into widgets',
-        description: `Da Vinci can draft widgets for ${activeDashboard.value.name} using the workspace data sources already available on this account.`,
-        severity: 'info' as const,
-        actionLabel: 'Try a dashboard prompt',
-      }
-    : {
-        headline: 'Revenue dropped 15% this week',
-        description: 'Your abandoned cart rate increased to 72%. I suggest enabling the Abandoned Cart Recovery journey.',
-        severity: 'warning' as const,
-        actionLabel: 'View Report',
-      }
-))
-
-const widgetSuggestions = computed(() => {
-  const suggestions = ['Show open rate trend for last 30 days']
-
-  if (activeAccount.value?.subscriptions.includes('commerce')) {
-    suggestions.push('Create a revenue by channel widget', 'Add a recent orders table')
-  } else {
-    suggestions.push('Add a top campaigns table', 'Show contact growth trend')
-  }
-
-  if (activeAccount.value?.subscriptions.includes('service')) {
-    suggestions.push('Show ticket volume over time')
-  }
-
-  return suggestions.slice(0, 4)
+const headerStatus = computed(() => {
+  if (!chatMode.value) return props.subtitle
+  if (isTyping.value) return generatingStatus.value || 'Drafting widgets…'
+  return 'Intelligent AI assistant'
 })
 
-/* ── Pre-configured Use Cases (Simulated AI) ──────────────────── */
-const useCaseSimulations: Record<string, ChatMessage['componentData']> = {
-  'Top 10 products by revenue': [
-    { type: 'kpi', props: { kpis: [{ label: 'Total Revenue (Top 10)', value: '$842K', trend: '12%', trendUp: true }] } },
-    { type: 'chart', props: { title: 'Revenue Share (Top 10)', subtitle: 'Last 30 Days', bars: [[400],[350],[300],[250],[200],[150],[100],[80],[60],[40]], labels: ['Prod A','Prod B','Prod C','Prod D','Prod E','Prod F','Prod G','Prod H','Prod I','Prod J'] } },
-    { type: 'table', props: { headers: ['Product', 'Revenue', 'Orders'], rows: [['Prod A', '$120K', '842'], ['Prod B', '$95K', '412']] } }
-  ],
-  'Create a flash sale campaign': [
-    { type: 'campaign', props: { name: 'Spring Flash Sale', subject: '⚡ 40% Off Everything - Today Only!', audience: 'VIP Customers', audienceSize: 12500, sendTime: 'Send Now', channel: 'Email' } }
-  ],
-  'Set up abandoned cart recovery': [
-    { type: 'journey', props: { name: 'Abandoned Cart (High Value)', steps: [{type:'trigger', label:'Cart Abandoned'}, {type:'condition', label:'Value > $100'}, {type:'wait', label:'1 Hour'}, {type:'email', label:'Reminder 1'}] } }
-  ],
-  'Write an email for our spring sale': [
-    { type: 'content', props: { type: 'email', title: 'Spring Sale Announcement', content: "Hi {{first_name}},\n\nSpring is finally here, and so is our biggest sale of the year!\n\nGet up to 30% off our new collection." } }
-  ],
-  'Find high-value customers who haven\'t ordered in 90 days': [
-    { type: 'segment', props: { name: 'Lapsed High Value', rules: ['Lifetime Value > $500', 'Last Order Date > 90 days ago'], estimatedSize: 4200 } }
-  ],
-  'Compare this month vs last month': [
-    { type: 'chart', props: { title: 'Revenue Comparison', subtitle: 'This Month vs Last Month', seriesNames: ['This Month', 'Last Month'], bars: [[500, 450],[520, 480],[480, 500],[600, 550]], labels: ['Week 1', 'Week 2', 'Week 3', 'Week 4'] } }
+const suggestionPills = computed(() => {
+  const pills = [
+    { text: 'Try a different angle', icon: 'refresh-cw' },
+    { text: 'Compare to YoY', icon: 'calendar-range' },
+    { text: 'Segment by region', icon: 'align-left' },
   ]
+  return pills
+})
+
+const landingSuggestions = computed(() => {
+  const items: string[] = []
+  if (isDashboardRoute.value) {
+    items.push('Show me email campaign performance over the last 30 days')
+    items.push('Revenue by channel for last 90 days')
+    items.push('Top campaigns by conversion')
+  } else {
+    items.push('Show open rate trend for last 30 days')
+    if (activeAccount.value?.subscriptions.includes('commerce')) {
+      items.push('Create a revenue by channel widget')
+      items.push('Add a recent orders table')
+    } else {
+      items.push('Add a top campaigns table')
+      items.push('Show contact growth trend')
+    }
+    if (activeAccount.value?.subscriptions.includes('service')) {
+      items.push('Show ticket volume over time')
+    }
+  }
+  return items.slice(0, 4)
+})
+
+function makeId(prefix = 'm') {
+  return `${prefix}_${Date.now().toString(36)}_${Math.random().toString(36).slice(2, 6)}`
 }
 
-/* ── Actions ───────────────────────────────────────────────────── */
 function scrollToBottom() {
   nextTick(() => {
-    if (chatContainer.value) {
-      chatContainer.value.scrollTo({ top: chatContainer.value.scrollHeight, behavior: 'smooth' })
+    if (bodyEl.value) {
+      bodyEl.value.scrollTo({ top: bodyEl.value.scrollHeight, behavior: 'smooth' })
     }
   })
 }
 
+function expandToThreeDrafts(base: DashboardWidgetDraft, prompt: string): DashboardWidgetDraft[] {
+  const metric = getMetricDescriptor(base.metricId)
+  const metricLabel = metric?.label ?? base.title ?? 'data'
+  const dimensionGuess = guessDimension(prompt)
+
+  const kpiVariant: DashboardWidgetDraft = {
+    ...base,
+    type: 'kpi',
+    chartVariant: undefined,
+    title: `${metricLabel} · last 30 days`,
+    subtitle: `4 KPIs sourced from ${metric?.dataSource ?? base.dataSource}`,
+  }
+
+  const chartType: DashboardWidgetType = base.type === 'bar' || base.type === 'pie' ? base.type : 'bar'
+  const dimNoun = dimensionGuess.toLowerCase()
+  const baseTitleNoun = stripBy(metricLabel)
+  const chartVariant: DashboardWidgetDraft = {
+    ...base,
+    type: chartType,
+    title: `${baseTitleNoun} by ${dimNoun}`,
+    subtitle: `Grouped by ${dimNoun}`,
+  }
+
+  const tableVariant: DashboardWidgetDraft = {
+    ...base,
+    type: 'table',
+    chartVariant: undefined,
+    title: `Top ${dimNoun}s`,
+    subtitle: 'By revenue · last 30 days · top 5',
+  }
+
+  return [kpiVariant, chartVariant, tableVariant]
+}
+
+function stripBy(label: string): string {
+  // Drop trailing "by X" / "by X over time" so we can recompose without redundancy
+  return label.replace(/\s+by\s+\w+(\s+over\s+time)?$/i, '').replace(/\s+over\s+time$/i, '').trim()
+}
+
+function guessDimension(prompt: string): string {
+  const lower = prompt.toLowerCase()
+  if (lower.includes('channel')) return 'channel'
+  if (lower.includes('region') || lower.includes('country')) return 'region'
+  if (lower.includes('segment')) return 'segment'
+  if (lower.includes('campaign')) return 'campaign'
+  if (lower.includes('product')) return 'product'
+  return 'campaign'
+}
+
+function buildRationale(prompt: string, base: DashboardWidgetDraft): string {
+  const metric = getMetricDescriptor(base.metricId)
+  const metricLabel = metric?.label ?? 'these metrics'
+  const sourceLabel = metric?.dataSource ?? base.dataSource
+  const dim = guessDimension(prompt)
+  return `You asked about ${metricLabel.toLowerCase()} · last 30 days. I pulled from ${capitalize(sourceLabel)}, then drafted a KPI summary, a ${dim} breakdown, and a top-${dim} table so you can see headline numbers, where they came from, and which sends drove them.`
+}
+
+function buildIntro(count: number): string {
+  const dashName = targetDashboard.value?.name ?? 'this dashboard'
+  return `Here are <strong>${count} widgets</strong> I drafted for <strong>${dashName}</strong>. Add the ones you want, or refine a draft to adjust the metric, window, or grouping.`
+}
+
+function rationaleFor(draft: DashboardWidgetDraft): string {
+  switch (draft.type) {
+    case 'kpi':
+      return 'Replaces the headline KPI strip with metric-specific numbers. Comparing to the previous 30-day window.'
+    case 'bar':
+      return 'Grouped to surface the cleanest split between channels and campaign types.'
+    case 'pie':
+      return 'Donut shows share rather than absolute numbers — useful when totals matter less than mix.'
+    case 'table':
+      return 'Sorted by revenue rather than open rate — your existing dashboards lean on revenue as the primary KPI.'
+    case 'timeseries':
+      return draft.chartVariant === 'area'
+        ? 'Area emphasises cumulative volume — useful when you want to see where the curve bends.'
+        : 'A line keeps the focus on slope and momentum across the window.'
+    default:
+      return 'Drafted to match the request. Refine to swap chart type, window, or grouping.'
+  }
+}
+
+function capitalize(s: string) {
+  return s.charAt(0).toUpperCase() + s.slice(1)
+}
+
 function processQuery(text: string) {
   if (!text) return
+  const conversationId = currentConversationId.value ?? makeId('c')
+  const isFirstPrompt = !currentConversationId.value
+  currentConversationId.value = conversationId
 
-  const now = new Date()
-  const time = `${now.getHours()}:${String(now.getMinutes()).padStart(2, '0')}`
-
-  messages.value.push({ id: Date.now().toString(), role: 'user', text, time })
+  messages.value.push({ id: makeId('u'), role: 'user', text })
   chatMode.value = true
   inputText.value = ''
   isTyping.value = true
+  generatingStatus.value = 'Working on it…'
   scrollToBottom()
 
-  let responseData: ChatMessage['componentData'] | undefined
-  let responseText = ''
+  let drafts: DashboardWidgetDraft[] | null = null
+  let rationale = ''
 
-  // Try widget drafting first so chart-producing prompts get save/edit buttons.
-  // Works on any route: route dashboard if available, otherwise the account's default dashboard.
   if (targetAccountId.value && targetDashboard.value) {
-    const widgetDraft: DashboardWidgetDraft | null = dashboardsStore.buildAiWidgetDraft(
-      targetAccountId.value,
-      targetDashboard.value.id,
-      text,
-    )
-
-    if (widgetDraft) {
-      responseText = `I drafted a ${widgetDraft.type} widget for ${targetDashboard.value.name}. You can add it directly or refine it first.`
-      responseData = [
-        {
-          type: 'widgetDraft',
-          props: {
-            accountId: targetAccountId.value,
-            dashboardId: targetDashboard.value.id,
-            draft: widgetDraft,
-            filters: targetDashboard.value.filters,
-          },
-        },
-      ]
+    const base = dashboardsStore.buildAiWidgetDraft(targetAccountId.value, targetDashboard.value.id, text)
+    if (base) {
+      drafts = expandToThreeDrafts(base, text)
+      rationale = buildRationale(text, base)
+      const metricLabel = getMetricDescriptor(base.metricId)?.label ?? base.title ?? 'data'
+      generatingStatus.value = `Pulling ${metricLabel.toLowerCase()} from the last 30 days`
     }
   }
 
-  // Fall back to simulated responses for prompts that don't map to a widget metric.
-  if (!responseData) {
-    responseData = useCaseSimulations[text]
-  }
-
-  if (!responseData) {
-    // Check for partial matches
-    const match = Object.keys(useCaseSimulations).find(k => k.toLowerCase().includes(text.toLowerCase()) || text.toLowerCase().includes(k.toLowerCase()))
-    if (match) {
-      responseData = useCaseSimulations[match]
-    } else {
-      responseText = "I couldn't map that to a supported widget yet. Try asking for revenue, orders, open rate, campaigns, contact growth, or ticket volume."
-      responseData = [
-        {
-          type: 'insight',
-          props: {
-            headline: 'Try a widget-ready prompt',
-            description: 'Use prompts like “Create a revenue by channel widget”, “Show open rate trend for last 30 days”, or “Add a recent orders table”.',
-            severity: 'info',
-          },
-        },
-      ]
-    }
-  }
-
-  // Simulate AI delay
   setTimeout(() => {
     isTyping.value = false
-    messages.value.push({
-      id: (Date.now() + 1).toString(),
-      role: 'assistant',
-      text: responseText || 'Here are the results you requested:',
-      componentData: responseData
-    })
+    if (drafts && drafts.length > 0) {
+      messages.value.push({
+        id: makeId('a'),
+        role: 'assistant',
+        text: buildIntro(drafts.length),
+        componentData: [
+          {
+            type: 'widgetDraftSet',
+            props: {
+              drafts,
+              rationale,
+              conversationId,
+            },
+          },
+        ],
+      })
+
+      if (isFirstPrompt) {
+        addItem({
+          title: text,
+          draftedCount: drafts.length,
+        })
+      }
+    } else {
+      messages.value.push({
+        id: makeId('a'),
+        role: 'assistant',
+        text: "I couldn't map that to a supported widget yet. Try asking for revenue, orders, open rate, campaigns, contact growth, or ticket volume.",
+        componentData: [
+          {
+            type: 'insight',
+            props: {
+              headline: 'Try a widget-ready prompt',
+              description:
+                'Use prompts like “Create a revenue by channel widget”, “Show open rate trend for last 30 days”, or “Add a recent orders table”.',
+              severity: 'info',
+            },
+          },
+        ],
+      })
+    }
     scrollToBottom()
   }, 1200)
 }
@@ -272,477 +312,679 @@ function sendSuggestion(text: string) {
   processQuery(text)
 }
 
-function onSuggestionKeydown(event: KeyboardEvent, text: string) {
-  if (event.key === 'Enter' || event.key === ' ') {
-    event.preventDefault()
-    sendSuggestion(text)
-  }
-}
-
 function newChat() {
   chatMode.value = false
   messages.value = []
   inputText.value = ''
+  generatingStatus.value = ''
+  currentConversationId.value = null
+  historyOpen.value = false
+  pushToast({ title: 'New chat started' })
 }
 
-function onWidgetSaved(payload: { title: string; dashboardName: string }) {
-  snackbarMessage.value = `Saved "${payload.title}" to ${payload.dashboardName}`
-  snackbarVisible.value = true
-}
-
-function focusComposer() {
-  nextTick(() => {
-    composerInput.value?.focus()
+function onWidgetSaved(payload: { title: string; dashboardName: string }, msg: ChatMessage) {
+  const comp = msg.componentData?.[0]
+  if (comp && comp.type === 'widgetDraftSet') {
+    incrementAdded((comp.props as DraftSetProps).conversationId)
+  }
+  const dashId = targetDashboard.value?.id
+  const accountId = targetAccountId.value
+  pushToast({
+    title: `Widget added to ${payload.dashboardName}`,
+    sub: payload.title,
+    action: dashId && accountId ? 'View' : undefined,
+    onAction: () => {
+      if (dashId && accountId) {
+        router.push({ name: 'DashboardDetail', params: { accountId, dashboardId: dashId } })
+      }
+    },
   })
+}
+
+function onWidgetRefined() {
+  pushToast({ title: 'Draft updated', sub: 'Da Vinci re-rendered with your changes' })
+}
+
+function isDraftSetMessage(msg: ChatMessage): msg is ChatMessage & { componentData: [{ type: 'widgetDraftSet'; props: DraftSetProps }] } {
+  const comp = msg.componentData?.[0]
+  return !!comp && comp.type === 'widgetDraftSet'
+}
+
+function isInsightMessage(msg: ChatMessage): boolean {
+  const comp = msg.componentData?.[0]
+  return !!comp && comp.type === 'insight'
+}
+
+function getDraftSetProps(msg: ChatMessage): DraftSetProps | null {
+  const comp = msg.componentData?.[0]
+  if (!comp || comp.type !== 'widgetDraftSet') return null
+  return comp.props as DraftSetProps
+}
+
+function getInsightProps(msg: ChatMessage): { headline: string; description: string; severity?: string } | null {
+  const comp = msg.componentData?.[0]
+  if (!comp || comp.type !== 'insight') return null
+  return comp.props as { headline: string; description: string; severity?: string }
+}
+
+function handleOpenInTab() {
+  pushToast({ title: 'Da Vinci opened in new tab' })
+}
+
+function handlePin() {
+  pushToast({ title: 'Pinned to dashboard' })
+}
+
+function handleClearAll() {
+  const confirmed = window.confirm('Delete all Da Vinci conversations? This cannot be undone.')
+  if (!confirmed) return
+  clearAll()
+  pushToast({ title: 'All conversations deleted' })
+}
+
+function onComposerKeydown(event: KeyboardEvent) {
+  if (event.key === 'Enter' && !event.shiftKey) {
+    event.preventDefault()
+    sendQuery()
+  }
 }
 </script>
 
 <template>
-  <div class="davinci-panel">
+  <div class="dv-panel">
     <!-- ═══ HEADER ═══ -->
-    <div class="davinci-header">
-      <div class="davinci-header__top">
-        <div class="davinci-brand">
-          <div class="davinci-avatar">
-            <v-icon color="white" size="20">sparkles</v-icon>
-          </div>
-          <div class="davinci-brand__text">
-            <div class="davinci-brand__title">Da Vinci Bot</div>
-            <div class="davinci-brand__subtitle">{{ subtitle }}</div>
-          </div>
+    <header class="dv-panel__header">
+      <div class="dv-panel__avatar">
+        <v-icon color="white" size="22">sparkles</v-icon>
+      </div>
+      <div class="dv-panel__title">
+        <div class="dv-panel__title-name">Da Vinci</div>
+        <div class="dv-panel__title-sub">{{ headerStatus }}</div>
+      </div>
+      <v-btn icon size="34" variant="text" aria-label="Start a new chat" class="dv-panel__icon-btn" @click="newChat">
+        <v-icon size="18">square-pen</v-icon>
+        <v-tooltip activator="parent" location="bottom">New chat</v-tooltip>
+      </v-btn>
+      <v-btn
+        icon
+        size="34"
+        variant="text"
+        aria-label="Conversation history"
+        class="dv-panel__icon-btn"
+        @click="historyOpen = !historyOpen"
+      >
+        <v-icon size="18">history</v-icon>
+        <v-tooltip activator="parent" location="bottom">Conversation history</v-tooltip>
+      </v-btn>
+      <v-menu offset="6" location="bottom end">
+        <template #activator="{ props: menuProps }">
+          <v-btn icon size="34" variant="text" aria-label="More" class="dv-panel__icon-btn" v-bind="menuProps">
+            <v-icon size="18">more-vertical</v-icon>
+          </v-btn>
+        </template>
+        <v-list density="compact" class="dv-panel__menu">
+          <v-list-item @click="handleOpenInTab">
+            <template #prepend><v-icon size="18">external-link</v-icon></template>
+            <v-list-item-title>Open in new tab</v-list-item-title>
+          </v-list-item>
+          <v-list-item @click="handlePin">
+            <template #prepend><v-icon size="18">pin</v-icon></template>
+            <v-list-item-title>Pin to dashboard</v-list-item-title>
+          </v-list-item>
+          <v-divider />
+          <v-list-item class="dv-panel__menu-danger" @click="handleClearAll">
+            <template #prepend><v-icon size="18" color="error">trash-2</v-icon></template>
+            <v-list-item-title>Delete all conversations</v-list-item-title>
+          </v-list-item>
+        </v-list>
+      </v-menu>
+      <v-btn icon size="34" variant="text" aria-label="Close" class="dv-panel__icon-btn" @click="emit('close')">
+        <v-icon size="18">x</v-icon>
+      </v-btn>
+    </header>
+
+    <DvHistoryDrawer
+      :open="historyOpen"
+      :active-id="currentConversationId ?? undefined"
+      @close="historyOpen = false"
+      @select="(_id) => (historyOpen = false)"
+      @new-chat="newChat"
+    />
+
+    <!-- ═══ BODY ═══ -->
+    <div ref="bodyEl" class="dv-panel__body">
+      <!-- Landing state -->
+      <div v-if="!chatMode" class="dv-landing">
+        <div class="dv-landing__avatar">
+          <v-icon size="28" color="white">sparkles</v-icon>
         </div>
-        <div class="davinci-header__actions d-flex align-center ga-1">
-          <v-btn icon size="36" variant="text" aria-label="Start a new chat" @click="newChat">
-            <v-icon size="18">plus</v-icon>
-            <v-tooltip activator="parent" location="bottom">New chat</v-tooltip>
-          </v-btn>
-          <v-btn icon size="36" variant="text" :aria-label="isExpanded ? 'Collapse Da Vinci drawer' : 'Expand Da Vinci drawer'" @click="onExpand">
-            <v-icon size="18">{{ isExpanded ? 'minimize-2' : 'maximize-2' }}</v-icon>
-            <v-tooltip activator="parent" location="bottom">{{ isExpanded ? 'Collapse' : 'Expand' }}</v-tooltip>
-          </v-btn>
-          <v-btn icon size="36" variant="text" aria-label="Close Da Vinci drawer" @click="emit('close')">
-            <v-icon size="18">x</v-icon>
-            <v-tooltip activator="parent" location="bottom">Close</v-tooltip>
-          </v-btn>
+        <h2 class="dv-landing__title">What can I help you build?</h2>
+        <p class="dv-landing__sub">
+          Ask Da Vinci for a metric, trend, comparison, or table. I'll draft widgets you can review and add to the active dashboard.
+        </p>
+        <div class="dv-landing__suggestions">
+          <button
+            v-for="text in landingSuggestions"
+            :key="text"
+            type="button"
+            class="dv-landing__pill"
+            @click="sendSuggestion(text)"
+          >
+            <v-icon size="14" color="primary">sparkles</v-icon>
+            {{ text }}
+          </button>
         </div>
       </div>
 
-      <template v-if="!chatMode">
-        <div class="davinci-hero">{{ emptyStateGreeting }}</div>
-        <div class="davinci-subhero">{{ emptyStateDescription }}</div>
-        <div class="davinci-callout">
-          <strong>{{ heroInsight.headline }}</strong> - {{ heroInsight.description }}
+      <!-- Conversation -->
+      <template v-for="msg in messages" :key="msg.id">
+        <div v-if="msg.role === 'user'" class="dv-msg-user">
+          <div class="dv-msg-user__bubble">{{ msg.text }}</div>
         </div>
-      </template>
-    </div>
-
-    <!-- ═══ BODY ═══ -->
-    <div ref="chatContainer" class="davinci-body">
-      <!-- ─── EMPTY STATE (suggestions) ─── -->
-      <template v-if="!chatMode">
-        <!-- Widget-creation prompts that map to real metrics on any route. -->
-        <div class="davinci-suggestion-label">Dashboard widgets</div>
-        <div class="davinci-suggestions">
-          <button
-            v-for="suggestion in widgetSuggestions"
-            :key="suggestion"
-            class="davinci-pill"
-            :aria-label="`Run suggestion: ${suggestion}`"
-            @click="sendSuggestion(suggestion)"
-            @keydown="onSuggestionKeydown($event, suggestion)"
-          >
-            {{ suggestion }}
-          </button>
-        </div>
-        <div class="davinci-attachment-tip">
-          <v-icon size="14">paperclip</v-icon>
-          Attach a CSV, image, or PDF - max 25 MB
-        </div>
-      </template>
-
-      <!-- ─── CHAT STATE ─── -->
-      <div v-else class="davinci-messages">
-        <div v-if="attachmentName" class="davinci-attachment-chip">
-          <v-icon size="14">paperclip</v-icon>
-          <span>{{ attachmentName }}</span>
-          <small>{{ attachmentMeta }}</small>
-        </div>
-
-        <template v-for="msg in messages" :key="msg.id">
-          <div v-if="msg.role === 'user'" class="davinci-msg--user">
-            {{ msg.text }}
+        <div v-else class="dv-msg-bot">
+          <div class="dv-msg-bot__avatar">
+            <v-icon color="white" size="14">sparkles</v-icon>
           </div>
+          <div class="dv-msg-bot__body">
+            <div v-if="msg.text" class="dv-msg-bot__intro" v-html="msg.text"></div>
 
-          <div v-else class="davinci-msg--bot-wrapper">
-            <div class="davinci-msg-row">
-              <div class="davinci-avatar davinci-avatar--small">
-                <v-icon color="white" size="14">sparkles</v-icon>
+            <template v-if="isDraftSetMessage(msg)">
+              <div v-if="getDraftSetProps(msg)?.rationale" class="dv-msg-bot__rationale">
+                <span class="dv-eyebrow">Why these</span>
+                {{ getDraftSetProps(msg)?.rationale }}
               </div>
-              <div class="davinci-msg--bot">{{ msg.text }}</div>
-            </div>
 
-            <div v-if="msg.componentData" class="davinci-widgets">
-              <template v-for="(comp, ci) in msg.componentData" :key="ci">
-                <DvChartCard v-if="comp.type === 'chart'" v-bind="comp.props" />
-                <DvKpiRow v-else-if="comp.type === 'kpi'" v-bind="comp.props" />
-                <DvDataTable v-else-if="comp.type === 'table'" v-bind="comp.props" />
-                <DvCampaignCard v-else-if="comp.type === 'campaign'" v-bind="comp.props" />
-                <DvJourneyCard v-else-if="comp.type === 'journey'" v-bind="comp.props" />
-                <DvContentCard v-else-if="comp.type === 'content'" v-bind="comp.props" />
-                <DvSegmentCard v-else-if="comp.type === 'segment'" v-bind="comp.props" />
-                <DvActionCard v-else-if="comp.type === 'action'" v-bind="comp.props" />
-                <DvInsightCard v-else-if="comp.type === 'insight'" v-bind="comp.props" />
+              <div class="dv-drafts">
+                <div class="dv-drafts__meta">
+                  <span class="dv-drafts__count">
+                    <v-icon size="14" color="primary">sparkles</v-icon>
+                    {{ getDraftSetProps(msg)?.drafts.length }} drafts
+                  </span>
+                </div>
+
                 <DvWidgetDraftCard
-                  v-else-if="comp.type === 'widgetDraft'"
-                  v-bind="comp.props"
-                  @saved="onWidgetSaved"
-                  @try-new-prompt="newChat"
+                  v-for="(draft, idx) in getDraftSetProps(msg)?.drafts ?? []"
+                  :key="`${msg.id}-${idx}`"
+                  :account-id="targetAccountId ?? ''"
+                  :dashboard-id="targetDashboard?.id ?? ''"
+                  :draft="draft"
+                  :filters="targetDashboard?.filters"
+                  :rationale="rationaleFor(draft)"
+                  @saved="onWidgetSaved($event, msg)"
+                  @refined="onWidgetRefined"
                 />
-              </template>
+              </div>
+            </template>
+
+            <DvInsightCard
+              v-if="isInsightMessage(msg)"
+              :headline="getInsightProps(msg)?.headline ?? ''"
+              :description="getInsightProps(msg)?.description ?? ''"
+              :severity="(getInsightProps(msg)?.severity as 'info' | 'success' | 'warning' | 'error' | undefined)"
+            />
+          </div>
+        </div>
+      </template>
+
+      <!-- Generating skeleton -->
+      <div v-if="isTyping" class="dv-msg-bot">
+        <div class="dv-msg-bot__avatar">
+          <v-icon color="white" size="14">sparkles</v-icon>
+        </div>
+        <div class="dv-msg-bot__body">
+          <div class="dv-status">
+            <span class="dv-status__dot" aria-hidden="true"></span>
+            {{ generatingStatus }}
+          </div>
+          <div class="dv-skeleton">
+            <div class="dv-skeleton__top">
+              <span class="dv-eyebrow">Drafting · last 30 days</span>
+            </div>
+            <div class="dv-skeleton__bars">
+              <div class="dv-skeleton__bar"></div>
+              <div class="dv-skeleton__bar dv-skeleton__bar--mid"></div>
+              <div class="dv-skeleton__bar dv-skeleton__bar--narrow"></div>
             </div>
           </div>
-        </template>
-
-        <!-- Typing Indicator -->
-        <div v-if="isTyping" class="davinci-msg--bot">
-          <span class="typing-indicator">
-            <span class="dot"></span><span class="dot"></span><span class="dot"></span>
-          </span>
         </div>
       </div>
     </div>
 
     <!-- ═══ COMPOSER ═══ -->
-    <div class="davinci-composer">
-      <button class="davinci-composer__attach" type="button" aria-label="Attach file">
-        <v-icon size="16">paperclip</v-icon>
-      </button>
-      <div class="davinci-composer__field">
-        <input
-          ref="composerInput"
-          v-model="inputText"
-          class="davinci-composer__input"
-          placeholder="Ask Da Vinci..."
-          aria-label="Ask Da Vinci"
-          @keydown.enter.exact.prevent="sendQuery"
-        />
+    <footer class="dv-panel__composer">
+      <div v-if="chatMode" class="dv-composer__pills">
+        <button
+          v-for="pill in suggestionPills"
+          :key="pill.text"
+          type="button"
+          class="dv-composer__pill"
+          @click="sendSuggestion(pill.text)"
+        >
+          <v-icon size="13">{{ pill.icon }}</v-icon>
+          {{ pill.text }}
+        </button>
       </div>
-      <button
-        class="davinci-composer__send"
-        :aria-label="inputText.trim() ? 'Send message' : 'Type a message to enable send'"
-        @click="sendQuery"
-      >
-        <v-icon size="16">send</v-icon>
-      </button>
-    </div>
+      <div class="dv-composer__field">
+        <v-btn icon size="32" variant="text" aria-label="Attach">
+          <v-icon size="16">paperclip</v-icon>
+        </v-btn>
+        <input
+          v-model="inputText"
+          type="text"
+          placeholder="Ask Da Vinci…"
+          class="dv-composer__input"
+          @keydown="onComposerKeydown"
+        />
+        <button
+          type="button"
+          class="dv-composer__send"
+          aria-label="Send"
+          :disabled="!inputText.trim() || isTyping"
+          @click="sendQuery"
+        >
+          <v-icon size="16" color="white">arrow-up</v-icon>
+        </button>
+      </div>
+    </footer>
 
-    <v-snackbar
-      v-model="snackbarVisible"
-      :timeout="2400"
-      color="surface"
-      location="bottom"
-      attach="body"
-      class="davinci-snackbar"
-    >
-      <v-icon size="18" color="success" class="me-2">circle-check</v-icon>
-      {{ snackbarMessage }}
-    </v-snackbar>
+    <DvToastStack />
   </div>
 </template>
 
-<style scoped>
-.davinci-panel {
+<style scoped lang="scss">
+.dv-panel {
   position: relative;
-  width: 100%;
-  height: 100%;
   display: flex;
   flex-direction: column;
+  width: 100%;
+  height: 100%;
   background: rgb(var(--v-theme-surface));
-  border: 1px solid rgb(var(--v-theme-outline-variant));
+  min-height: 0;
   overflow: hidden;
 }
 
-.davinci-header {
+/* ─── Header ───────────────────────────────────────────────────────── */
+.dv-panel__header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 14px;
+  height: 60px;
   background: linear-gradient(120deg, #eef0ff 0%, #f3eafc 60%, #fde8ef 100%);
   border-bottom: 1px solid rgb(var(--v-theme-outline-variant));
-  padding: 14px 16px 18px;
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
+  flex-shrink: 0;
 }
 
-.davinci-header__top {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
+:global([data-theme='dark']) .dv-panel__header,
+.v-theme--maropostDark .dv-panel__header {
+  background: linear-gradient(120deg, #232a3d 0%, #2d2538 60%, #3a2530 100%);
 }
 
-.davinci-brand {
-  align-items: center;
-  display: flex;
-  gap: 12px;
-  min-width: 0;
-}
-
-.davinci-brand__text {
-  display: grid;
-  gap: 2px;
-  min-width: 0;
-}
-
-.davinci-brand__title {
-  color: rgb(var(--v-theme-on-surface));
-  font-size: 15px;
-  font-weight: 600;
-  line-height: 18px;
-}
-
-.davinci-brand__subtitle {
-  color: rgb(var(--v-theme-on-surface-variant));
-  font-size: 12.5px;
-  line-height: 16px;
-}
-
-.davinci-avatar {
+.dv-panel__avatar {
   width: 40px;
   height: 40px;
-  border-radius: 50%;
+  border-radius: 9999px;
   background: linear-gradient(135deg, #5b8def 0%, #2dd4bf 100%);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: rgb(var(--v-theme-on-primary));
-  flex: 0 0 auto;
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
 }
 
-.davinci-avatar--small {
-  height: 28px;
-  width: 28px;
+.dv-panel__title {
+  flex: 1;
+  min-width: 0;
 }
 
-.davinci-hero {
-  font-size: 22px;
-  font-weight: 700;
-  line-height: 1.15;
-  letter-spacing: 0;
+.dv-panel__title-name {
+  font-size: 15px;
+  font-weight: 600;
+  line-height: 1.2;
   color: rgb(var(--v-theme-on-surface));
 }
 
-.davinci-subhero {
-  font-size: 13.5px;
-  line-height: 1.5;
+.dv-panel__title-sub {
+  font-size: 12.5px;
+  font-weight: 400;
   color: rgb(var(--v-theme-on-surface-variant));
-  margin-top: -8px;
+  margin-top: 2px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
-.davinci-callout {
-  background: rgb(var(--v-theme-primary-container));
-  color: rgb(var(--v-theme-on-primary-container));
-  border-radius: 12px;
-  padding: 12px 16px;
-  font-size: 13px;
-  line-height: 1.5;
+.dv-panel__icon-btn {
+  flex-shrink: 0;
 }
 
-.davinci-body {
+.dv-panel__menu {
+  min-width: 220px;
+  border-radius: 12px !important;
+  background: rgb(var(--v-theme-surface)) !important;
+  border: 1px solid rgb(var(--v-theme-outline-variant));
+}
+
+.dv-panel__menu-danger :deep(.v-list-item-title) {
+  color: rgb(var(--v-theme-error));
+}
+
+/* ─── Body ─────────────────────────────────────────────────────────── */
+.dv-panel__body {
   flex: 1;
   overflow-y: auto;
-  padding: 18px 20px;
+  padding: 18px 18px 20px;
   display: flex;
   flex-direction: column;
   gap: 16px;
+  min-height: 0;
 }
 
-.davinci-suggestion-label {
+.dv-panel__body::-webkit-scrollbar {
+  width: 6px;
+}
+
+.dv-panel__body::-webkit-scrollbar-thumb {
+  background: rgb(var(--v-theme-outline-variant));
+  border-radius: 9999px;
+}
+
+/* Landing */
+.dv-landing {
+  text-align: center;
+  padding: 24px 8px 8px;
+}
+
+.dv-landing__avatar {
+  width: 56px;
+  height: 56px;
+  border-radius: 9999px;
+  background: linear-gradient(135deg, #5b8def 0%, #2dd4bf 100%);
+  display: grid;
+  place-items: center;
+  margin: 0 auto 16px;
+}
+
+.dv-landing__title {
+  font-size: 20px;
+  font-weight: 700;
+  line-height: 1.2;
+  letter-spacing: -0.3px;
   color: rgb(var(--v-theme-on-surface));
-  font-size: 11.5px;
-  font-weight: 600;
-  letter-spacing: 1px;
-  line-height: 1;
-  margin-bottom: 10px;
-  text-transform: uppercase;
+  margin: 0 0 8px;
 }
 
-.davinci-suggestions {
+.dv-landing__sub {
+  font-size: 13.5px;
+  line-height: 1.45;
+  color: rgb(var(--v-theme-on-surface-variant));
+  max-width: 340px;
+  margin: 0 auto 20px;
+}
+
+.dv-landing__suggestions {
   display: flex;
   flex-direction: column;
   gap: 8px;
+  align-items: stretch;
+  text-align: left;
 }
 
-.davinci-pill {
+.dv-landing__pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 14px;
+  border-radius: 12px;
   border: 1px solid rgb(var(--v-theme-outline-variant));
-  border-radius: 999px;
-  padding: 8px 16px;
-  font-size: 14px;
+  background: rgb(var(--v-theme-surface));
+  font-size: 13px;
   font-weight: 500;
-  background: rgb(var(--v-theme-surface-bright, var(--v-theme-surface)));
   color: rgb(var(--v-theme-on-surface));
   cursor: pointer;
-  justify-content: flex-start;
+  transition: background 120ms ease, border-color 120ms ease;
   text-align: left;
-  width: 100%;
-  transition: background 0.15s, border-color 0.15s;
 }
 
-.davinci-pill:hover {
+.dv-landing__pill:hover {
   background: rgb(var(--v-theme-surface-variant));
   border-color: rgb(var(--v-theme-outline));
 }
 
-.davinci-pill:focus-visible {
-  outline: 2px solid rgb(var(--v-theme-primary));
-  outline-offset: 2px;
-}
-
-.davinci-attachment-tip {
-  align-items: center;
-  color: rgb(var(--v-theme-on-surface-variant));
+/* User bubble */
+.dv-msg-user {
   display: flex;
-  font-size: 12.5px;
-  gap: 6px;
-  margin-top: 14px;
+  justify-content: flex-end;
 }
 
-.davinci-composer {
-  border-top: 1px solid rgb(var(--v-theme-outline-variant));
-  padding: 12px 16px;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  background: rgb(var(--v-theme-background));
-}
-
-.davinci-composer__field {
-  flex: 1;
-  border: 1px solid rgb(var(--v-theme-outline-variant));
-  border-radius: 999px;
-  background: rgb(var(--v-theme-surface));
-  min-width: 0;
-  padding: 0 14px;
-}
-
-.davinci-composer__input {
-  background: transparent;
-  border: 0;
-  color: rgb(var(--v-theme-on-surface));
-  font-size: 14px;
-  height: 36px;
-  outline: none;
-  width: 100%;
-}
-
-.davinci-composer__field:focus-within {
-  border-color: rgb(var(--v-theme-primary));
-}
-
-.davinci-composer__attach,
-.davinci-composer__send {
-  width: 32px;
-  height: 32px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: rgb(var(--v-theme-surface-variant));
-  color: rgb(var(--v-theme-on-surface));
-  border: none;
-  cursor: pointer;
-  transition: background 0.15s;
-}
-
-.davinci-composer__attach:hover,
-.davinci-composer__send:hover {
-  background: rgb(var(--v-theme-primary));
-  color: rgb(var(--v-theme-on-primary));
-}
-
-.davinci-messages {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
-
-.davinci-attachment-chip {
-  align-items: center;
-  align-self: flex-end;
-  background: rgb(var(--v-theme-surface-variant));
-  border: 1px solid rgb(var(--v-theme-outline-variant));
-  border-radius: 999px;
-  color: rgb(var(--v-theme-on-surface));
-  display: inline-flex;
-  gap: 8px;
-  max-width: 100%;
-  padding: 7px 12px;
-}
-
-.davinci-attachment-chip small {
-  color: rgb(var(--v-theme-on-surface-variant));
-  font-size: 11.5px;
-}
-
-.davinci-msg--user {
-  align-self: flex-end;
+.dv-msg-user__bubble {
+  max-width: 88%;
+  padding: 10px 14px;
   background: rgb(var(--v-theme-primary));
   color: rgb(var(--v-theme-on-primary));
   border-radius: 16px 16px 4px 16px;
-  padding: 10px 16px;
-  font-size: 14px;
-  max-width: 85%;
-  white-space: pre-wrap;
+  font-size: 13.5px;
+  font-weight: 500;
+  line-height: 1.45;
 }
 
-.davinci-msg--bot-wrapper {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  align-self: flex-start;
-  max-width: 100%;
-}
-
-.davinci-msg-row {
-  align-items: flex-start;
+/* Bot reply */
+.dv-msg-bot {
   display: flex;
   gap: 10px;
 }
 
-.davinci-msg--bot {
-  align-self: flex-start;
-  background: transparent;
-  color: rgb(var(--v-theme-on-surface));
-  font-size: 14px;
-  line-height: 1.45;
-  max-width: 100%;
-  padding-top: 4px;
+.dv-msg-bot__avatar {
+  width: 28px;
+  height: 28px;
+  border-radius: 9999px;
+  background: linear-gradient(135deg, #5b8def 0%, #2dd4bf 100%);
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  margin-top: 2px;
 }
 
-.davinci-widgets {
+.dv-msg-bot__body {
+  flex: 1;
+  min-width: 0;
   display: flex;
   flex-direction: column;
   gap: 12px;
-  padding-left: 38px;
 }
 
-/* Typing indicator */
-.typing-indicator {
+.dv-msg-bot__intro {
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 1.5;
+  color: rgb(var(--v-theme-on-surface));
+}
+
+.dv-msg-bot__intro :deep(strong) {
+  font-weight: 600;
+}
+
+.dv-msg-bot__rationale {
+  font-size: 13px;
+  font-weight: 400;
+  line-height: 1.5;
+  color: rgb(var(--v-theme-on-surface-variant));
+  padding: 10px 12px;
+  background: rgb(var(--v-theme-surface-variant));
+  border-radius: 8px;
+  border-left: 2px solid rgb(var(--v-theme-primary));
+}
+
+.dv-eyebrow {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: rgb(var(--v-theme-on-surface));
+  display: block;
+  margin-bottom: 4px;
+}
+
+/* Drafts row */
+.dv-drafts {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.dv-drafts__meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 12px;
+  font-weight: 500;
+  color: rgb(var(--v-theme-on-surface-variant));
+}
+
+.dv-drafts__count {
   display: inline-flex;
   align-items: center;
-  gap: 4px;
+  gap: 6px;
 }
 
-.typing-indicator .dot {
-  width: 6px;
-  height: 6px;
-  background: rgba(var(--v-theme-on-surface), 0.4);
-  border-radius: 50%;
-  animation: typing 1.4s infinite ease-in-out both;
+/* Generating status + skeleton */
+.dv-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  color: rgb(var(--v-theme-on-surface-variant));
 }
 
-.typing-indicator .dot:nth-child(1) { animation-delay: -0.32s; }
-.typing-indicator .dot:nth-child(2) { animation-delay: -0.16s; }
+.dv-status__dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 9999px;
+  background: rgb(var(--v-theme-primary));
+  animation: dvPulse 1.4s ease-in-out infinite;
+}
 
-@keyframes typing {
-  0%, 80%, 100% { transform: scale(0); opacity: 0.4; }
-  40% { transform: scale(1); opacity: 1; }
+.dv-skeleton {
+  border: 1px solid rgb(var(--v-theme-outline-variant));
+  border-radius: 12px;
+  background: rgb(var(--v-theme-surface));
+  padding: 14px;
+}
+
+.dv-skeleton__top {
+  margin-bottom: 12px;
+}
+
+.dv-skeleton__bars {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.dv-skeleton__bar {
+  height: 14px;
+  border-radius: 6px;
+  background: rgb(var(--v-theme-surface-variant));
+  width: 100%;
+  animation: dvShimmer 1.4s ease-in-out infinite;
+}
+
+.dv-skeleton__bar--mid { width: 80%; }
+.dv-skeleton__bar--narrow { width: 55%; }
+
+@keyframes dvPulse {
+  0%, 100% { opacity: 0.55; transform: scale(0.92); }
+  50% { opacity: 1; transform: scale(1.08); }
+}
+
+@keyframes dvShimmer {
+  0%, 100% { opacity: 0.65; }
+  50% { opacity: 1; }
+}
+
+/* ─── Composer ─────────────────────────────────────────────────────── */
+.dv-panel__composer {
+  flex-shrink: 0;
+  padding: 14px 16px 16px;
+  background: rgb(var(--v-theme-background));
+  border-top: 1px solid rgb(var(--v-theme-outline-variant));
+}
+
+.dv-composer__pills {
+  display: flex;
+  gap: 6px;
+  margin-bottom: 10px;
+  flex-wrap: wrap;
+}
+
+.dv-composer__pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 6px 12px;
+  border-radius: 9999px;
+  border: 1px solid rgb(var(--v-theme-outline-variant));
+  background: rgb(var(--v-theme-surface));
+  font-size: 12px;
+  font-weight: 500;
+  color: rgb(var(--v-theme-on-surface-variant));
+  cursor: pointer;
+  transition: background 120ms ease, border-color 120ms ease, color 120ms ease;
+}
+
+.dv-composer__pill:hover {
+  background: rgb(var(--v-theme-surface-variant));
+  border-color: rgb(var(--v-theme-outline));
+  color: rgb(var(--v-theme-on-surface));
+}
+
+.dv-composer__field {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 8px 6px 12px;
+  background: rgb(var(--v-theme-surface));
+  border: 1px solid rgb(var(--v-theme-outline-variant));
+  border-radius: 12px;
+  transition: border-color 120ms ease;
+}
+
+.dv-composer__field:focus-within {
+  border-color: rgb(var(--v-theme-primary));
+}
+
+.dv-composer__input {
+  flex: 1;
+  border: none;
+  outline: none;
+  background: transparent;
+  font-size: 14px;
+  line-height: 1.4;
+  color: rgb(var(--v-theme-on-surface));
+  padding: 8px 0;
+  font-family: inherit;
+}
+
+.dv-composer__input::placeholder {
+  color: rgb(var(--v-theme-on-surface-variant));
+}
+
+.dv-composer__send {
+  width: 32px;
+  height: 32px;
+  border-radius: 9999px;
+  border: none;
+  background: linear-gradient(135deg, #5b8def 0%, #2dd4bf 100%);
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  transition: filter 120ms ease, opacity 120ms ease;
+}
+
+.dv-composer__send:hover {
+  filter: brightness(1.05);
+}
+
+.dv-composer__send:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
 }
 </style>

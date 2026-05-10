@@ -52,7 +52,7 @@ const sidebarRail = computed(() => smAndDown.value || rail.value)
       v-if="!isFullPage"
       v-model="copilot.isOpen"
       location="right"
-      :width="copilot.isExpanded ? 800 : 430"
+      :width="copilot.isExpanded ? 880 : 480"
       class="copilot-drawer"
     >
       <MpDaVinciBot
