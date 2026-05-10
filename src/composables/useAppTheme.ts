@@ -1,4 +1,4 @@
-import { ref, watch } from 'vue'
+import { ref } from 'vue'
 import { useTheme } from 'vuetify'
 
 export type AccentKey = 'cyan' | 'blue' | 'amber' | 'gray' | 'purple'
@@ -101,11 +101,12 @@ export function useAppTheme() {
     const def = ACCENT_DEFS[key]
     const currentThemeName = vuetifyTheme.global.name.value
     const theme = vuetifyTheme.global.current.value
-    if (theme && theme.colors) {
-      vuetifyTheme.themes.value[currentThemeName].colors.primary = def.hex
-      vuetifyTheme.themes.value[currentThemeName].colors.info = def.hex
-      vuetifyTheme.themes.value[currentThemeName].colors['primary-container'] = `rgb(${def.container})`
-      vuetifyTheme.themes.value[currentThemeName].colors['on-primary-container'] = `rgb(${def.onContainer})`
+    const bucket = vuetifyTheme.themes.value[currentThemeName]
+    if (theme?.colors && bucket?.colors) {
+      bucket.colors.primary = def.hex
+      bucket.colors.info = def.hex
+      bucket.colors['primary-container'] = `rgb(${def.container})`
+      bucket.colors['on-primary-container'] = `rgb(${def.onContainer})`
     }
   }
 
@@ -119,8 +120,11 @@ export function useAppTheme() {
     // Re-apply accent to the new theme
     const def = ACCENT_DEFS[accent.value]
     const currentThemeName = vuetifyTheme.global.name.value
-    vuetifyTheme.themes.value[currentThemeName].colors.primary = def.hex
-    vuetifyTheme.themes.value[currentThemeName].colors.info = def.hex
+    const bucket = vuetifyTheme.themes.value[currentThemeName]
+    if (bucket?.colors) {
+      bucket.colors.primary = def.hex
+      bucket.colors.info = def.hex
+    }
   }
 
   function setDarkSidebar(val: boolean) {

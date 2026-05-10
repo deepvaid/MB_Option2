@@ -148,7 +148,7 @@ function selectFromKeyboard(index: number) {
   emit('update:modelValue', next);
 }
 
-function onItemKeydown(index: number, event: KeyboardEvent) {
+function onItemKeydown(_index: number, event: KeyboardEvent) {
   const target = event.currentTarget as HTMLButtonElement | null;
   const container = target?.closest('[data-mb-button-group]') as HTMLElement | null;
   if (!container) {

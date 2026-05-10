@@ -101,7 +101,9 @@ function onRootKeydown(event: KeyboardEvent) {
   >
     <div class="mb-pop__content" role="dialog" aria-modal="false">
       <header class="mb-pop__header">
-        <h3 class="mb-pop__title">{{ title }}</h3>
+        <slot name="header">
+          <h3 class="mb-pop__title">{{ title }}</h3>
+        </slot>
         <button
           v-if="dismissible"
           type="button"
@@ -121,16 +123,20 @@ function onRootKeydown(event: KeyboardEvent) {
       </header>
 
       <div class="mb-pop__body">
-        <p class="mb-pop__description">{{ description }}</p>
+        <slot>
+          <p class="mb-pop__description">{{ description }}</p>
+        </slot>
       </div>
 
       <footer class="mb-pop__footer">
-        <button type="button" class="mb-pop__button mb-pop__button--primary" @click="onPrimaryClick">
-          {{ primaryLabel }}
-        </button>
-        <button type="button" class="mb-pop__button mb-pop__button--secondary" @click="onSecondaryClick">
-          {{ secondaryLabel }}
-        </button>
+        <slot name="footer" :primary-click="onPrimaryClick" :secondary-click="onSecondaryClick">
+          <button type="button" class="mb-pop__button mb-pop__button--secondary" @click="onSecondaryClick">
+            {{ secondaryLabel }}
+          </button>
+          <button type="button" class="mb-pop__button mb-pop__button--primary" @click="onPrimaryClick">
+            {{ primaryLabel }}
+          </button>
+        </slot>
       </footer>
     </div>
 

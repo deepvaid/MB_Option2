@@ -1,6 +1,7 @@
 import type { Preview } from '@storybook/vue3'
 import { setup } from '@storybook/vue3'
 import { createPinia } from 'pinia'
+import { createMemoryHistory, createRouter } from 'vue-router'
 
 // Vuetify — full import to ensure all component styles are available in stories
 import '@mdi/font/css/materialdesignicons.css' // fallback for any residual mdi-* strings
@@ -35,10 +36,24 @@ const vuetify = createVuetify({
   defaults: maropostDefaults,
 })
 
+const storybookRouter = createRouter({
+  history: createMemoryHistory(),
+  routes: [
+    {
+      path: '/:pathMatch(.*)*',
+      name: 'StorybookRoute',
+      component: { template: '<div />' },
+    },
+  ],
+})
+
+void storybookRouter.push('/accounts/2000290/dashboard')
+
 // ── Register plugins globally for all stories ──────────────────────────────
 setup((app) => {
   app.use(vuetify)
   app.use(createPinia())
+  app.use(storybookRouter)
 })
 
 function normalizeTheme(theme: string) {
@@ -142,9 +157,10 @@ const preview: Preview = {
           'Navigation',
           'Overlays',
           'Data Display',
+          'Feedback',
           'Patterns',
-          'Archive',
           '*',
+          'Archive',
         ],
       },
     },
@@ -158,9 +174,9 @@ if (typeof document !== 'undefined' && !document.getElementById('mp-storybook-pr
   style.id = 'mp-storybook-preview-style'
   style.textContent = `
     :root {
-      --mp-visual-stage-bg: #f4f7fb;
-      --mp-visual-stage-border: #d5deea;
-      --mp-visual-stage-text: #122033;
+      --mp-visual-stage-bg: #f7f3ec;
+      --mp-visual-stage-border: #e6dfd1;
+      --mp-visual-stage-text: #1a1814;
     }
 
     html[data-theme='dark'],

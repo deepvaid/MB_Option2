@@ -36,7 +36,7 @@ function clearAllFilters() {
 }
 
 const filteredItems = computed(() =>
-  recurringItems.filter(r => filterFrequency.value.length === 0 || filterFrequency.value.includes(r.frequency))
+  recurringItems.filter(r => filterFrequency.value.length === 0 || (r.frequency != null && filterFrequency.value.includes(r.frequency)))
 )
 </script>
 

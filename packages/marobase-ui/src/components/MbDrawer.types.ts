@@ -8,6 +8,8 @@ export interface MbDrawerProps {
   showBackdrop?: boolean;
   closeOnBackdrop?: boolean;
   dismissible?: boolean;
+  /** When false, footer (default actions and #footer slot) is not rendered. */
+  showFooter?: boolean;
   ariaLabel?: string;
 }
 

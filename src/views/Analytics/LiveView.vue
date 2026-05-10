@@ -113,19 +113,19 @@ onMounted(() => {
     return
   }
   const reveal = () => { chartReady.value = true }
-  if ('requestIdleCallback' in window) {
-    deferredHandle = window.requestIdleCallback(reveal, { timeout: 500 }) as unknown as number
+  if (typeof requestIdleCallback === 'function') {
+    deferredHandle = requestIdleCallback(reveal, { timeout: 500 }) as unknown as number
     return
   }
-  deferredHandle = window.setTimeout(reveal, 0)
+  deferredHandle = setTimeout(reveal, 0) as unknown as number
 })
 onBeforeUnmount(() => {
-  if (typeof window === 'undefined' || deferredHandle == null) return
-  if ('cancelIdleCallback' in window) {
-    window.cancelIdleCallback(deferredHandle)
+  if (deferredHandle == null) return
+  if (typeof cancelIdleCallback === 'function') {
+    cancelIdleCallback(deferredHandle)
     return
   }
-  window.clearTimeout(deferredHandle)
+  clearTimeout(deferredHandle)
 })
 
 // ─── Derived display ───────────────────────────────────────────

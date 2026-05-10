@@ -46,8 +46,8 @@ export const useCommerceStore = defineStore('commerce', () => {
   }))
 
   const orders = ref(Array.from({ length: 30 }, (_, i) => {
-    const fName = customerFirstNames[i % customerFirstNames.length]
-    const lName = customerLastNames[i % customerLastNames.length]
+    const fName = customerFirstNames[i % customerFirstNames.length]!
+    const lName = customerLastNames[i % customerLastNames.length]!
     const itemCount = Math.floor(Math.random() * 5) + 1
     const subtotal = (Math.random() * 980 + 45).toFixed(2)
     const shipping = (Math.random() * 25 + 4.99).toFixed(2)
@@ -98,8 +98,8 @@ export const useCommerceStore = defineStore('commerce', () => {
   ])
 
   const fulfillments = ref(Array.from({ length: 18 }, (_, i) => {
-    const fName = customerFirstNames[(i + 5) % customerFirstNames.length]
-    const lName = customerLastNames[(i + 5) % customerLastNames.length]
+    const fName = customerFirstNames[(i + 5) % customerFirstNames.length]!
+    const lName = customerLastNames[(i + 5) % customerLastNames.length]!
     const statuses = ['Awaiting Fulfillment', 'Picking', 'Packed', 'Ready to Ship', 'Shipped']
     return {
       id: i + 1,
@@ -115,8 +115,8 @@ export const useCommerceStore = defineStore('commerce', () => {
   }))
 
   const draftOrders = ref(Array.from({ length: 8 }, (_, i) => {
-    const fName = customerFirstNames[(i + 15) % customerFirstNames.length]
-    const lName = customerLastNames[(i + 15) % customerLastNames.length]
+    const fName = customerFirstNames[(i + 15) % customerFirstNames.length]!
+    const lName = customerLastNames[(i + 15) % customerLastNames.length]!
     return {
       id: i + 1,
       draftNumber: `D-${500 + i}`,

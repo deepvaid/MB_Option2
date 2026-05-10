@@ -16,7 +16,7 @@ function toPascalCase(name: string): string {
  */
 function resolveLucideIcon(name: string): Component | null {
   const pascal = toPascalCase(name)
-  const icon = (LucideIcons as Record<string, Component>)[pascal]
+  const icon = (LucideIcons as unknown as Record<string, Component>)[pascal]
   return icon ?? null
 }
 
@@ -78,7 +78,10 @@ const MDI_TO_LUCIDE: Record<string, string> = {
  */
 export const lucideIconSet: IconSet = {
   component: (props: IconProps) => {
-    const { tag, icon, class: cls, style } = props
+    const { tag, icon } = props
+    const p = props as IconProps & { class?: unknown; style?: unknown }
+    const cls = p.class
+    const style = p.style
 
     // Vue component passed directly (e.g. via $aliases)
     if (icon && typeof icon === 'object' && !Array.isArray(icon)) {

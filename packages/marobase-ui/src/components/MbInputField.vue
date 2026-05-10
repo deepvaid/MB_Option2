@@ -12,10 +12,10 @@ const props = withDefaults(defineProps<MbInputFieldProps>(), {
   state: 'default',
   label: 'Label',
   required: false,
-  hint: 'Hint text',
+  hint: undefined,
   errorMessage: 'Error message',
   placeholder: 'Placeholder',
-  leftAddon: 'Text',
+  leftAddon: undefined,
   trailingIcon: 'rhombus',
   width: 320,
   disabled: false,
@@ -39,6 +39,12 @@ const trailingIcon = computed<MbInputFieldTrailingIcon>(() => props.trailingIcon
 const isError = computed(() => state.value === 'error');
 const messageId = `mb-if-msg-${Math.random().toString(36).slice(2, 10)}`;
 const inputWidthStyle = computed(() => ({ width: `${props.width}px` }));
+const describedBy = computed(() => {
+  if (isError.value || props.hint) {
+    return messageId;
+  }
+  return undefined;
+});
 
 function onInput(event: Event) {
   const target = event.target as HTMLInputElement | null;
@@ -73,7 +79,7 @@ function onBlur(event: FocusEvent) {
         :placeholder="placeholder"
         :disabled="state === 'disabled'"
         :aria-invalid="isError ? 'true' : 'false'"
-        :aria-describedby="messageId"
+        :aria-describedby="describedBy"
         @input="onInput"
         @focus="onFocus"
         @blur="onBlur"
@@ -84,7 +90,7 @@ function onBlur(event: FocusEvent) {
       </span>
     </div>
 
-    <p v-if="!isError" :id="messageId" class="mb-if__hint">{{ hint }}</p>
-    <p v-else :id="messageId" class="mb-if__error">{{ errorMessage }}</p>
+    <p v-if="!isError && hint" :id="messageId" class="mb-if__hint">{{ hint }}</p>
+    <p v-else-if="isError" :id="messageId" class="mb-if__error">{{ errorMessage }}</p>
   </div>
 </template>

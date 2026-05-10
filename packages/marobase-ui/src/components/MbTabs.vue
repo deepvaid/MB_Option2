@@ -20,7 +20,9 @@ const props = withDefaults(defineProps<MbTabsProps>(), {
   modelValue: undefined,
   state: 'default',
   disabled: false,
-  ariaLabel: 'Tabs'
+  ariaLabel: 'Tabs',
+  variant: 'pill',
+  orientation: 'horizontal'
 });
 
 const emit = defineEmits<{
@@ -144,13 +146,19 @@ function onTabKeydown(item: MbTabItem, index: number, event: KeyboardEvent) {
     return;
   }
 
-  if (event.key === 'ArrowRight') {
+  if (
+    (props.orientation === 'horizontal' && event.key === 'ArrowRight') ||
+    (props.orientation === 'vertical' && event.key === 'ArrowDown')
+  ) {
     event.preventDefault();
     moveFocus(target, 1);
     return;
   }
 
-  if (event.key === 'ArrowLeft') {
+  if (
+    (props.orientation === 'horizontal' && event.key === 'ArrowLeft') ||
+    (props.orientation === 'vertical' && event.key === 'ArrowUp')
+  ) {
     event.preventDefault();
     moveFocus(target, -1);
     return;
@@ -182,11 +190,13 @@ function onTabKeydown(item: MbTabItem, index: number, event: KeyboardEvent) {
     class="mb-tabs"
     data-mb-tabs
     :data-state="state"
+    :data-variant="variant"
+    :data-orientation="orientation"
     :aria-label="ariaLabel"
     @focusin="hasFocus = true"
     @focusout="hasFocus = false"
   >
-    <div class="mb-tabs__list" role="tablist">
+    <div class="mb-tabs__list" role="tablist" :aria-orientation="orientation">
       <button
         v-for="(item, index) in items"
         :id="`mb-tab-${item.id}`"

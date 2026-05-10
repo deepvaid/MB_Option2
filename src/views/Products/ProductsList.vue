@@ -50,9 +50,9 @@ function selectAll() {
 
 const filteredProducts = computed(() => {
   let items = store.products
-  if (filters.value.category.length) items = items.filter(p => filters.value.category.includes(p.category))
-  if (filters.value.status.length) items = items.filter(p => filters.value.status.includes(p.status))
-  if (filters.value.vendor.length) items = items.filter(p => filters.value.vendor.includes(p.vendor))
+  if (filters.value.category.length) items = items.filter(p => p.category != null && filters.value.category.includes(p.category))
+  if (filters.value.status.length) items = items.filter(p => p.status != null && filters.value.status.includes(p.status))
+  if (filters.value.vendor.length) items = items.filter(p => p.vendor != null && filters.value.vendor.includes(p.vendor))
   return items
 })
 

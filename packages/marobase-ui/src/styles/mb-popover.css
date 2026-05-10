@@ -8,6 +8,7 @@
 
 .mb-pop__content {
   background: var(--mb-pop-surface);
+  border: 1px solid var(--mb-pop-arrow-border, #e6dfd1);
   border-radius: var(--mb-pop-radius);
   box-shadow: var(--mb-pop-shadow);
   overflow: hidden;
@@ -57,6 +58,14 @@
     var(--mb-pop-body-padding-bottom);
 }
 
+.mb-pop__body > :first-child {
+  margin-top: 0;
+}
+
+.mb-pop__body > :last-child {
+  margin-bottom: 0;
+}
+
 .mb-pop__description {
   color: var(--mb-pop-description-color);
   font-size: var(--mb-pop-description-size);
@@ -70,6 +79,7 @@
   align-items: center;
   display: flex;
   gap: 8px;
+  justify-content: flex-end;
   padding: 0 var(--mb-pop-body-padding-x) var(--mb-pop-footer-padding-bottom);
 }
 

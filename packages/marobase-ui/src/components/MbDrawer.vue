@@ -17,6 +17,7 @@ const props = withDefaults(defineProps<MbDrawerProps>(), {
   showBackdrop: false,
   closeOnBackdrop: true,
   dismissible: true,
+  showFooter: true,
   ariaLabel: 'Drawer'
 });
 
@@ -105,16 +106,18 @@ function onRootKeydown(event: KeyboardEvent) {
 
     <aside class="mb-drawer__panel" :style="panelStyle" role="dialog" aria-modal="true" :aria-label="ariaLabel">
       <header class="mb-drawer__header">
-        <span class="mb-drawer__icon" aria-hidden="true">
-          <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <rect x="4.5" y="7" width="15" height="10" rx="2" stroke="currentColor" stroke-width="1.8" />
-            <path d="M4.8 10H19.2" stroke="currentColor" stroke-width="1.8" />
-          </svg>
-        </span>
+        <slot name="icon">
+          <span class="mb-drawer__icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <rect x="4.5" y="7" width="15" height="10" rx="2" stroke="currentColor" stroke-width="1.8" />
+              <path d="M4.8 10H19.2" stroke="currentColor" stroke-width="1.8" />
+            </svg>
+          </span>
+        </slot>
 
         <div class="mb-drawer__title-wrap">
           <h2 class="mb-drawer__title">{{ title }}</h2>
-          <p class="mb-drawer__subtitle">{{ subtitle }}</p>
+          <p v-if="subtitle" class="mb-drawer__subtitle">{{ subtitle }}</p>
         </div>
 
         <button
@@ -138,99 +141,20 @@ function onRootKeydown(event: KeyboardEvent) {
       <div class="mb-drawer__divider" />
 
       <div class="mb-drawer__content">
-        <form class="mb-drawer__form" @submit.prevent>
-          <div class="mb-drawer__row mb-drawer__row--3">
-            <label class="mb-drawer__field">
-              <span class="mb-drawer__field-label">Card number</span>
-              <span class="mb-drawer__input-wrap">
-                <input class="mb-drawer__input" type="text" placeholder="0000 0000 0000 0000" />
-                <span class="mb-drawer__input-chip" aria-hidden="true">mc</span>
-              </span>
-            </label>
-
-            <label class="mb-drawer__field">
-              <span class="mb-drawer__field-label">Expiry date</span>
-              <input class="mb-drawer__input" type="text" placeholder="01 / 02" />
-            </label>
-
-            <label class="mb-drawer__field">
-              <span class="mb-drawer__field-label">CVV</span>
-              <input class="mb-drawer__input" type="text" placeholder="" />
-            </label>
-          </div>
-
-          <label class="mb-drawer__field">
-            <span class="mb-drawer__field-label">Cardholder name</span>
-            <input class="mb-drawer__input" type="text" placeholder="Enter your name" />
-          </label>
-
-          <label class="mb-drawer__check">
-            <input type="checkbox" checked />
-            <span>Make default</span>
-          </label>
-
-          <section class="mb-drawer__note" aria-label="Section message">
-            <div class="mb-drawer__note-body">
-              <strong>Confirmation link sent</strong>
-              <p>Click the link in your email to approve this action</p>
-              <button type="button" class="mb-drawer__note-link">Resend</button>
-            </div>
-            <button type="button" class="mb-drawer__note-close" aria-label="Dismiss message">×</button>
-          </section>
-
-          <label class="mb-drawer__check">
-            <input type="checkbox" />
-            <span>Use my default address</span>
-          </label>
-
-          <label class="mb-drawer__field">
-            <span class="mb-drawer__field-label">Country</span>
-            <span class="mb-drawer__input-wrap mb-drawer__input-wrap--select">
-              <span class="mb-drawer__flag" aria-hidden="true">🇺🇸</span>
-              <span class="mb-drawer__select-value">United States</span>
-              <span class="mb-drawer__chevron" aria-hidden="true">⌄</span>
-            </span>
-          </label>
-
-          <label class="mb-drawer__field">
-            <span class="mb-drawer__field-label">City</span>
-            <input class="mb-drawer__input" type="text" placeholder="Enter your name" />
-          </label>
-
-          <label class="mb-drawer__field">
-            <span class="mb-drawer__field-label">Billing address</span>
-            <input class="mb-drawer__input" type="text" placeholder="Enter your name" />
-          </label>
-
-          <div class="mb-drawer__row mb-drawer__row--2">
-            <label class="mb-drawer__field">
-              <span class="mb-drawer__field-label">State</span>
-              <span class="mb-drawer__input-wrap mb-drawer__input-wrap--select">
-                <span class="mb-drawer__select-value">CA</span>
-                <span class="mb-drawer__chevron" aria-hidden="true">⌄</span>
-              </span>
-            </label>
-
-            <label class="mb-drawer__field">
-              <span class="mb-drawer__field-label">Postal code</span>
-              <input class="mb-drawer__input" type="text" placeholder="Enter your name" />
-            </label>
-          </div>
-
-          <label class="mb-drawer__check">
-            <input type="checkbox" checked />
-            <span>Make default</span>
-          </label>
-        </form>
+        <slot>
+          <p class="mb-drawer__empty">Add drawer content with the default slot.</p>
+        </slot>
       </div>
 
-      <footer class="mb-drawer__footer">
-        <button type="button" class="mb-drawer__footer-btn mb-drawer__footer-btn--secondary" @click="onSecondaryClick">
-          {{ secondaryLabel }}
-        </button>
-        <button type="button" class="mb-drawer__footer-btn mb-drawer__footer-btn--primary" @click="onPrimaryClick">
-          {{ primaryLabel }}
-        </button>
+      <footer v-if="showFooter" class="mb-drawer__footer">
+        <slot name="footer" :primary-click="onPrimaryClick" :secondary-click="onSecondaryClick">
+          <button type="button" class="mb-drawer__footer-btn mb-drawer__footer-btn--secondary" @click="onSecondaryClick">
+            {{ secondaryLabel }}
+          </button>
+          <button type="button" class="mb-drawer__footer-btn mb-drawer__footer-btn--primary" @click="onPrimaryClick">
+            {{ primaryLabel }}
+          </button>
+        </slot>
       </footer>
     </aside>
   </div>

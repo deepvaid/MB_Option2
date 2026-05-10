@@ -37,7 +37,7 @@ function clearAllFilters() {
 }
 
 const filteredTests = computed(() =>
-  abTests.filter(t => filterWinner.value.length === 0 || filterWinner.value.includes(t.winner))
+  abTests.filter(t => filterWinner.value.length === 0 || (t.winner != null && filterWinner.value.includes(t.winner)))
 )
 </script>
 

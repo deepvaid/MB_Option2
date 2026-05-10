@@ -48,7 +48,14 @@ const visualState = computed<MbWysiwygEditorState>(() => {
   return 'default';
 });
 
-const toolbarButtons = [
+type ToolbarButton = {
+  command: string;
+  label: string;
+  icon: string;
+  selected?: boolean;
+};
+
+const toolbarButtons: ToolbarButton[] = [
   { command: 'bold', label: 'Bold', icon: 'bold' },
   { command: 'italic', label: 'Italic', icon: 'italic' },
   { command: 'more', label: 'More', icon: 'more' },
@@ -59,7 +66,7 @@ const toolbarButtons = [
   { command: 'image', label: 'Insert image', icon: 'image' },
   { command: 'code', label: 'Code', icon: 'code' },
   { command: 'mention', label: 'Mention', icon: 'mention' }
-] as const;
+];
 
 const displayValue = computed(() => internalValue.value ?? '');
 
@@ -218,7 +225,7 @@ function onCommand(command: string, event: MouseEvent) {
 
       <div
         class="mb-wy__editor"
-        :contenteditable="(!isDisabled).toString()"
+        :contenteditable="!isDisabled"
         :aria-disabled="isDisabled ? 'true' : 'false'"
         :aria-label="ariaLabel ?? label"
         :aria-invalid="isError ? 'true' : 'false'"

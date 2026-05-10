@@ -9,6 +9,7 @@ export interface MbModalProps {
   closeOnAction?: boolean;
   width?: number;
   ariaLabel?: string;
+  tone?: 'default' | 'danger';
 }
 
 export type MbModalCloseReason = 'close' | 'escape' | 'overlay' | 'primary' | 'secondary';

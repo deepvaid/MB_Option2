@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { useCampaignsStore } from '@/stores/useCampaigns'
-import { useRouter } from 'vue-router'
 import { ref, computed } from 'vue'
 import MpPageHeader from '@/components/MpPageHeader.vue'
 import MpKpiCard from '@/components/MpKpiCard.vue'
@@ -9,7 +8,6 @@ import MpStatusChip from '@/components/MpStatusChip.vue'
 import MpFormDrawer from '@/components/MpFormDrawer.vue'
 
 const store = useCampaignsStore()
-const router = useRouter()
 
 const creatorDrawer = ref(false)
 const newCampaignName = ref('')
@@ -84,7 +82,7 @@ const submitCampaign = () => {
     >
       <template #actions>
         <v-btn class="text-none mp-btn-dark" variant="flat" prepend-icon="folder">Manage Folders</v-btn>
-        <v-btn color="primary" variant="flat" prepend-icon="plus" class="text-none" @click="router.push('/campaigns/new')">New Campaign</v-btn>
+        <v-btn color="primary" variant="flat" prepend-icon="plus" class="text-none" @click="openCreator">New Campaign</v-btn>
       </template>
     </MpPageHeader>
 

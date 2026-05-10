@@ -22,6 +22,7 @@
     "./tokens/mb-divider.css": "./src/tokens/mb-divider.tokens.css",
     "./tokens/mb-drag-drop-uploader.css": "./src/tokens/mb-drag-drop-uploader.tokens.css",
     "./tokens/mb-drawer.css": "./src/tokens/mb-drawer.tokens.css",
+    "./tokens/mb-empty-state.css": "./src/tokens/mb-empty-state.tokens.css",
     "./tokens/mb-dropdown-menu.css": "./src/tokens/mb-dropdown-menu.tokens.css",
     "./tokens/mb-input-field.css": "./src/tokens/mb-input-field.tokens.css",
     "./tokens/mb-input-dropdown.css": "./src/tokens/mb-input-dropdown.tokens.css",

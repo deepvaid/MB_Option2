@@ -33,7 +33,7 @@ function clearAllFilters() {
 }
 
 const filteredLogs = computed(() =>
-  logs.filter(l => filterLevel.value.length === 0 || filterLevel.value.includes(l.level))
+  logs.filter(l => filterLevel.value.length === 0 || (l.level != null && filterLevel.value.includes(l.level)))
 )
 </script>
 

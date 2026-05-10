@@ -31,7 +31,7 @@ function clearAllFilters() {
 }
 
 const filteredOrders = computed(() =>
-  store.orders.filter(o => filterStatus.value.length === 0 || filterStatus.value.includes(o.status))
+  store.orders.filter(o => filterStatus.value.length === 0 || (o.status != null && filterStatus.value.includes(o.status)))
 )
 </script>
 

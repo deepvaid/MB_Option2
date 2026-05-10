@@ -1,6 +1,7 @@
 export interface MbPageHeaderBreadcrumb {
   label: string;
   href?: string;
+  disabled?: boolean;
 }
 
 export interface MbPageHeaderProps {

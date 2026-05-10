@@ -1,17 +1,47 @@
 <script setup lang="ts">
+import { computed } from 'vue';
 import type { MbPageHeaderProps } from './MbPageHeader.types';
+import type { MbBreadcrumbItem } from './MbBreadcrumbs.types';
+import MbBreadcrumbs from './MbBreadcrumbs.vue';
 
-withDefaults(defineProps<MbPageHeaderProps>(), {
+const props = withDefaults(defineProps<MbPageHeaderProps>(), {
   size: 'sm',
   align: 'start',
   eyebrow: undefined,
   subtitle: undefined,
   breadcrumbs: () => [],
 });
+
+const breadcrumbItems = computed<MbBreadcrumbItem[]>(() =>
+  (props.breadcrumbs ?? []).map((crumb, index) => ({
+    id: `mb-page-header-crumb-${index}`,
+    label: crumb.label,
+    href: crumb.disabled ? undefined : crumb.href,
+    disabled: crumb.disabled,
+  }))
+);
+
+const activeCrumbId = computed(() => {
+  const items = breadcrumbItems.value;
+  if (!items.length) {
+    return '';
+  }
+
+  const lastInteractive = [...items].reverse().find((item) => !item.disabled);
+  const fallback = items[items.length - 1];
+  return (lastInteractive ?? fallback)?.id ?? '';
+});
 </script>
 
 <template>
   <header class="mb-page-header" :data-size="size" :data-align="align">
+    <MbBreadcrumbs
+      v-if="breadcrumbItems.length"
+      class="mb-page-header__breadcrumbs"
+      :items="breadcrumbItems"
+      :model-value="activeCrumbId"
+      aria-label="Breadcrumb"
+    />
     <div class="mb-page-header__row">
       <div class="mb-page-header__text">
         <span v-if="eyebrow" class="mb-page-header__eyebrow">{{ eyebrow }}</span>
@@ -141,5 +171,9 @@ withDefaults(defineProps<MbPageHeaderProps>(), {
 
 .mb-page-header__aside {
   margin-top: 8px;
+}
+
+.mb-page-header__breadcrumbs {
+  margin-bottom: 4px;
 }
 </style>

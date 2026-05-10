@@ -17,5 +17,13 @@
       "@marobase/ui": ["./packages/marobase-ui/src/index.ts"]
     }
   },
-  "include": ["src/**/*.ts", "src/**/*.tsx", "src/**/*.vue"]
+  "include": ["src/**/*.ts", "src/**/*.tsx", "src/**/*.vue"],
+  "exclude": [
+    "src/stories/**/*",
+    "src/**/*.stories.ts",
+    "src/**/*.stories.tsx",
+    "packages/marobase-ui/src/**/*.stories.ts",
+    "packages/marobase-ui/src/**/*.stories.tsx",
+    "packages/marobase-ui/src/stories/**/*"
+  ]
 }

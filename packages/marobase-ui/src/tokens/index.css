@@ -13,6 +13,7 @@
 @import './mb-divider.tokens.css';
 @import './mb-drag-drop-uploader.tokens.css';
 @import './mb-drawer.tokens.css';
+@import './mb-empty-state.tokens.css';
 @import './mb-dropdown-menu.tokens.css';
 @import './mb-input-dropdown.tokens.css';
 @import './mb-input-field.tokens.css';

@@ -32,9 +32,9 @@ const editForm = ref({ firstName: '', lastName: '', email: '', phone: '', compan
 function openEditDrawer() {
   if (!contact.value) return
   editForm.value = {
-    firstName: contact.value.firstName,
-    lastName: contact.value.lastName,
-    email: contact.value.email,
+    firstName: contact.value.firstName ?? '',
+    lastName: contact.value.lastName ?? '',
+    email: contact.value.email ?? '',
     phone: contact.value.phone,
     company: contact.value.company || '',
   }
@@ -43,7 +43,11 @@ function openEditDrawer() {
 
 // Computed helpers
 const fullName = computed(() => contact.value ? `${contact.value.firstName} ${contact.value.lastName}` : '')
-const initials = computed(() => contact.value ? `${contact.value.firstName[0]}${contact.value.lastName[0]}` : '')
+const initials = computed(() => {
+  if (!contact.value) return ''
+  const ln = contact.value.lastName ?? ''
+  return `${contact.value.firstName[0] ?? ''}${ln[0] ?? ''}`
+})
 
 const breadcrumbs = computed(() => [
   { title: 'Contacts', to: `/accounts/${route.params.accountId}/contacts` },
@@ -145,7 +149,7 @@ const cartHeaders = [
                 </template>
               </v-img>
             </v-avatar>
-            <MpStatusChip :status="contact.status" type="contact" size="x-small" variant="flat" class="profile-hero-avatar__status" />
+            <MpStatusChip :status="contact.status ?? ''" type="contact" size="x-small" variant="flat" class="profile-hero-avatar__status" />
           </div>
 
           <!-- Identity -->

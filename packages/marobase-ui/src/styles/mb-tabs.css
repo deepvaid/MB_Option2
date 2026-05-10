@@ -11,6 +11,18 @@
   gap: var(--mb-tabs-list-gap);
 }
 
+.mb-tabs[data-orientation='vertical'] {
+  border-bottom: 0;
+  border-right: 1px solid var(--mb-tabs-border-color);
+  padding-bottom: 0;
+  padding-right: 2px;
+}
+
+.mb-tabs[data-orientation='vertical'] .mb-tabs__list {
+  align-items: stretch;
+  flex-direction: column;
+}
+
 .mb-tabs__tab {
   align-items: center;
   background: transparent;
@@ -84,6 +96,64 @@
   color: var(--mb-tabs-tab-active-color);
 }
 
+.mb-tabs[data-variant='line'] {
+  padding-bottom: 0;
+}
+
+.mb-tabs[data-variant='line'] .mb-tabs__list {
+  gap: 4px;
+}
+
+.mb-tabs[data-variant='line'] .mb-tabs__tab {
+  border: 0;
+  border-radius: 0;
+  height: 42px;
+  margin-bottom: -1px;
+  padding: 0 14px;
+  position: relative;
+}
+
+.mb-tabs[data-variant='line'] .mb-tabs__tab::after {
+  background: transparent;
+  border-radius: var(--mb-radius-pill);
+  bottom: 0;
+  content: '';
+  height: 2px;
+  left: 12px;
+  position: absolute;
+  right: 12px;
+}
+
+.mb-tabs[data-variant='line'] .mb-tabs__tab[data-active='true'] {
+  background: transparent;
+  color: var(--mb-tabs-tab-active-color);
+}
+
+.mb-tabs[data-variant='line'] .mb-tabs__tab[data-active='true']::after {
+  background: var(--mb-color-primary);
+}
+
+.mb-tabs[data-variant='line'][data-orientation='vertical'] {
+  padding-right: 0;
+}
+
+.mb-tabs[data-variant='line'][data-orientation='vertical'] .mb-tabs__tab {
+  height: 38px;
+  justify-content: flex-start;
+  margin-bottom: 0;
+  margin-right: -1px;
+  padding: 0 16px;
+}
+
+.mb-tabs[data-variant='line'][data-orientation='vertical'] .mb-tabs__tab::after {
+  bottom: 8px;
+  height: auto;
+  left: auto;
+  right: 0;
+  top: 8px;
+  width: 2px;
+}
+
 .mb-tabs__tab:hover,
 .mb-tabs[data-state='hover'] .mb-tabs__tab {
   color: var(--mb-tabs-tab-hover-color);
@@ -98,6 +168,11 @@
 
 .mb-tabs__tab:hover:not(:disabled) {
   background: var(--mb-color-surface-subtle);
+}
+
+.mb-tabs[data-variant='line'] .mb-tabs__tab:hover:not(:disabled) {
+  background: transparent;
+  color: var(--mb-tabs-tab-hover-color);
 }
 
 .mb-tabs__tab:disabled,

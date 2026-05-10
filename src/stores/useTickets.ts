@@ -45,51 +45,53 @@ const categories = ['Shipping', 'Returns & Refunds', 'Account', 'Product', 'Bill
 const assignees = ['Sarah Connor', 'Mike Zhang', 'Priya Sharma', 'Tom Brady', 'Unassigned']
 
 export const useTicketsStore = defineStore('tickets', () => {
-  const tickets = ref<Ticket[]>(subjects.map((subject, i) => {
-    const cust = customerNames[i % customerNames.length]
+  const tickets = ref<Ticket[]>(subjects.map((subject, i): Ticket => {
+    const cust = customerNames[i % customerNames.length]!
     const parts = cust.split(' ')
+    const first = parts[0] ?? 'User'
+    const last = parts[1] ?? first
     const statuses: Ticket['status'][] = ['Open', 'In Progress', 'Awaiting Reply', 'Resolved']
     const priorities: Ticket['priority'][] = ['Urgent', 'High', 'Normal', 'Low', 'Normal', 'High']
-    const status = statuses[i % statuses.length]
+    const status = statuses[i % statuses.length]!
     return {
       id: i + 1,
       number: `TKT-${String(10000 + i).padStart(5, '0')}`,
       subject,
       customer: cust,
-      customerEmail: `${parts[0].toLowerCase()}@example.com`,
-      avatar: `${parts[0][0]}${parts[1][0]}`,
+      customerEmail: `${first.toLowerCase()}@example.com`,
+      avatar: `${first[0]}${last[0]}`,
       status,
-      priority: priorities[i % priorities.length],
-      category: categories[i % categories.length],
-      assignee: assignees[i % assignees.length],
+      priority: priorities[i % priorities.length]!,
+      category: categories[i % categories.length]!,
+      assignee: assignees[i % assignees.length]!,
       createdAt: new Date(Date.now() - ((i + 1) * 7200000)).toISOString(),
       updatedAt: new Date(Date.now() - (i * 1800000)).toISOString(),
       tags: i % 3 === 0 ? ['VIP'] : i % 5 === 0 ? ['Flagged'] : [],
       thread: [
         {
           author: cust,
-          avatar: `${parts[0][0]}${parts[1][0]}`,
+          avatar: `${first[0]}${last[0]}`,
           role: 'customer',
           body: `Hi, I have an issue with my recent order. ${subject}. Could you please help me resolve this as soon as possible? My order number is #${10000 + i}.`,
           time: new Date(Date.now() - ((i + 1) * 7200000)).toLocaleString(),
         },
         ...(status !== 'Open' ? [{
-          author: assignees[i % (assignees.length - 1)],
-          avatar: assignees[i % (assignees.length - 1)].split(' ').map(n => n[0]).join(''),
+          author: assignees[i % assignees.length]!,
+          avatar: assignees[i % assignees.length]!.split(' ').map(n => n[0]).join(''),
           role: 'agent' as const,
           body: `Thank you for reaching out! I've looked into your request and I'm on it. We'll get this sorted for you within 24 hours. Apologies for any inconvenience caused.`,
           time: new Date(Date.now() - (i * 3600000)).toLocaleString(),
         }] : []),
         ...(status === 'Awaiting Reply' ? [{
           author: cust,
-          avatar: `${parts[0][0]}${parts[1][0]}`,
+          avatar: `${first[0]}${last[0]}`,
           role: 'customer' as const,
           body: `Thank you for the update! Just to confirm — will the replacement be shipped to the same address?`,
           time: new Date(Date.now() - (i * 1800000)).toLocaleString(),
         }] : []),
       ],
     }
-  }))
+  }) as Ticket[])
 
   const activeTicketId = ref<number>(1)
 

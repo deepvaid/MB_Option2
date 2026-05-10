@@ -369,6 +369,10 @@ tr:focus-within .action-btns {
   opacity: 0.56 !important;
 }
 
+.v-overlay.v-tooltip {
+  background: transparent !important;
+}
+
 /* Teleported overlays are outside .v-application — use theme class + raw token vars */
 .v-overlay__content .v-divider {
   opacity: 1;

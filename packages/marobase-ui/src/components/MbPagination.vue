@@ -40,7 +40,6 @@ const items = computed<MbPaginationItem[]>(() => {
 const pages = computed(() => items.value.filter((item): item is number => typeof item === 'number'));
 
 const firstPage = computed(() => pages.value[0] ?? 1);
-const lastPage = computed(() => pages.value[pages.value.length - 1] ?? firstPage.value);
 
 const internalPage = ref(firstPage.value);
 const isControlled = computed(() => typeof props.modelValue === 'number' && Number.isFinite(props.modelValue));

@@ -48,8 +48,8 @@ function clearAllFilters() {
 
 const filteredInventory = computed(() => {
   let items = inventoryItems
-  if (filters.value.location.length) items = items.filter(p => filters.value.location.includes(p.location))
-  if (filters.value.status.length) items = items.filter(p => filters.value.status.includes(p.status))
+  if (filters.value.location.length) items = items.filter(p => p.location != null && filters.value.location.includes(p.location))
+  if (filters.value.status.length) items = items.filter(p => p.status != null && filters.value.status.includes(p.status))
   return items
 })
 

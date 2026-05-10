@@ -183,14 +183,16 @@ function buildSmoothPath(points: PlottedPoint[], yKey: 'revenueY' | 'engagementY
   }
 
   if (points.length === 1) {
-    return `M ${points[0].x} ${points[0][yKey]}`
+    const only = points[0]!
+    return `M ${only.x} ${only[yKey]}`
   }
 
-  let path = `M ${points[0].x} ${points[0][yKey]}`
+  const first = points[0]!
+  let path = `M ${first.x} ${first[yKey]}`
 
   for (let index = 1; index < points.length; index += 1) {
-    const previous = points[index - 1]
-    const current = points[index]
+    const previous = points[index - 1]!
+    const current = points[index]!
     const midpoint = (previous.x + current.x) / 2
 
     path += ` C ${midpoint} ${previous[yKey]} ${midpoint} ${current[yKey]} ${current.x} ${current[yKey]}`
@@ -205,8 +207,8 @@ function buildAreaPath(points: PlottedPoint[], yKey: 'revenueY' | 'engagementY')
   }
 
   const linePath = buildSmoothPath(points, yKey)
-  const firstPoint = points[0]
-  const lastPoint = points[points.length - 1]
+  const firstPoint = points[0]!
+  const lastPoint = points[points.length - 1]!
   const baseline = padding.top + innerHeight
 
   return `${linePath} L ${lastPoint.x} ${baseline} L ${firstPoint.x} ${baseline} Z`

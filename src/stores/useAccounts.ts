@@ -55,14 +55,14 @@ function readStoredId(fallback: string): string {
 
 export const useAccountsStore = defineStore('accounts', () => {
   const accounts = ref<Account[]>(DEFAULT_ACCOUNTS)
-  const activeId = ref<string>(readStoredId(DEFAULT_ACCOUNTS[0].id))
+  const activeId = ref<string>(readStoredId(DEFAULT_ACCOUNTS[0]!.id))
 
   const activeAccount = computed(
-    () => accounts.value.find(a => a.id === activeId.value) ?? accounts.value[0],
+    () => accounts.value.find(a => a.id === activeId.value) ?? accounts.value[0] ?? DEFAULT_ACCOUNTS[0]!,
   )
 
   function hasSubscription(key: SubscriptionKey): boolean {
-    return activeAccount.value.subscriptions.includes(key)
+    return activeAccount.value?.subscriptions.includes(key) ?? false
   }
 
   function switchTo(id: string) {

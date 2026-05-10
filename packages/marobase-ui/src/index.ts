@@ -11,6 +11,7 @@ export { default as MbCircleButton } from './components/MbCircleButton.vue';
 export { default as MbCheckbox } from './components/MbCheckbox.vue';
 export { default as MbComboBox } from './components/MbComboBox.vue';
 export { default as MbDivider } from './components/MbDivider.vue';
+export { default as MbEmptyState } from './components/MbEmptyState.vue';
 export { default as MbDragDropUploader } from './components/MbDragDropUploader.vue';
 export { default as MbDrawer } from './components/MbDrawer.vue';
 export { default as MbDropdownMenu } from './components/MbDropdownMenu.vue';
@@ -123,6 +124,7 @@ export type {
   MbDrawerCloseReason,
   MbDrawerProps
 } from './components/MbDrawer.types';
+export type { MbEmptyStateProps } from './components/MbEmptyState.types';
 export type {
   MbDropdownMenuOption,
   MbDropdownMenuProps,

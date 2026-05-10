@@ -7,7 +7,10 @@ function seededRandom(seed: number) {
   return () => { s = (s * 16807 + 0) % 2147483647; return (s - 1) / 2147483646 }
 }
 
-function pick<T>(arr: T[], rng: () => number): T { return arr[Math.floor(rng() * arr.length)] }
+function pick<T>(arr: T[], rng: () => number): T {
+  const ix = Math.floor(rng() * arr.length)
+  return arr[ix] as T
+}
 function pickN<T>(arr: T[], n: number, rng: () => number): T[] {
   const shuffled = [...arr].sort(() => rng() - 0.5)
   return shuffled.slice(0, n)
@@ -48,7 +51,7 @@ const tags = [['VIP', 'Loyal'], ['Newsletter'], ['Sale Buyer'], ['Referral'], ['
 
 export const useContactsStore = defineStore('contacts', () => {
   const contacts = ref(firstNames.map((fName, i) => {
-    const lName = lastNames[i % lastNames.length]
+    const lName = lastNames[i % lastNames.length]!
     const status = statuses[i % statuses.length]
     const company = companies[i % companies.length]
     return {
@@ -282,9 +285,9 @@ export const useContactsStore = defineStore('contacts', () => {
         type: tt.type,
         icon: tt.icon,
         color: tt.color,
-        title: pick(titles[tt.type], rng),
+        title: pick(titles[tt.type] ?? [''], rng),
         date: d.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: '2-digit' }) + ' at ' + d.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }),
-        statuses: pick(actStatuses[tt.type], rng),
+        statuses: pick(actStatuses[tt.type] ?? [[]], rng),
       }
     }).sort((a, b) => b.id - a.id)
 

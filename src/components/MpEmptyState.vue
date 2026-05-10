@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { MbButton, MbEmptyState } from '@marobase/ui'
+
 defineProps<{
   icon?: string
   title: string
@@ -13,17 +15,24 @@ defineEmits<{
 </script>
 
 <template>
-  <div class="d-flex flex-column align-center justify-center py-12 text-center">
-    <v-icon v-if="icon" size="56" color="medium-emphasis" class="mb-4">{{ icon }}</v-icon>
-    <div class="text-h6 font-weight-medium mb-1">{{ title }}</div>
-    <div v-if="description" class="text-body-2 text-medium-emphasis mb-4" style="max-width: var(--mp-layout-searchMaxWidth);">{{ description }}</div>
-    <v-btn
-      v-if="actionLabel"
-      color="primary"
-      variant="elevated"
-      class="text-none"
-      :prepend-icon="actionIcon"
-      @click="$emit('action')"
-    >{{ actionLabel }}</v-btn>
-  </div>
+  <MbEmptyState :title="title" :description="description">
+    <template v-if="icon" #icon>
+      <v-icon size="56" color="medium-emphasis">{{ icon }}</v-icon>
+    </template>
+    <template v-if="actionLabel" #actions>
+      <MbButton
+        style-type="filled"
+        size="md"
+        :label="actionLabel"
+        icon-mode="with-label"
+        :aria-label="actionLabel"
+        @click="$emit('action')"
+      >
+        <template v-if="actionIcon" #leading>
+          <v-icon size="18">{{ actionIcon }}</v-icon>
+        </template>
+        {{ actionLabel }}
+      </MbButton>
+    </template>
+  </MbEmptyState>
 </template>

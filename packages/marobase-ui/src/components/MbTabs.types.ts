@@ -11,6 +11,8 @@ export interface MbTabItem {
 }
 
 export type MbTabsState = 'default' | 'hover' | 'focus' | 'disabled';
+export type MbTabsVariant = 'pill' | 'line';
+export type MbTabsOrientation = 'horizontal' | 'vertical';
 
 export interface MbTabsProps {
   items: MbTabItem[];
@@ -18,6 +20,8 @@ export interface MbTabsProps {
   state?: MbTabsState;
   disabled?: boolean;
   ariaLabel?: string;
+  variant?: MbTabsVariant;
+  orientation?: MbTabsOrientation;
 }
 
 export interface MbTabsChangePayload {

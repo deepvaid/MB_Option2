@@ -1,105 +1,96 @@
+import { ref, watch } from 'vue'
 import type { Meta, StoryObj } from '@storybook/vue3'
 import MpFormDrawer from './MpFormDrawer.vue'
-import { ref } from 'vue'
 
 const meta = {
   title: 'Overlays/MpFormDrawer',
   component: MpFormDrawer,
   tags: ['autodocs'],
-  parameters: {
-    docs: {
-      description: {
-        component: `
-### Overview
-The \`MpFormDrawer\` is a standardized right-side sliding panel used primarily for data entry (creating new entities) or complex configurations that require more space than a standard dialog.
-
-### 🟢 Do's
-- **Do** specify both a clear \`title\` and a helpful \`subtitle\` to explain what the user is accomplishing.
-- **Do** use the \`#footer\` slot for your submission actions, typically a Cancel switch (outlined) and a Save/Create button (primary).
-- **Do** adjust the \`width\` prop (default 480px) if your form needs more horizontal breathing room (e.g., side-by-side columns).
-
-### 🔴 Don'ts
-- **Don't** put deeply nested navigation inside a drawer. Drawers should be single-purpose interactions.
-- **Don't** use a Drawer for simple confirmations (like "Are you sure you want to delete?"). Use a \`v-dialog\` for that.
-- **Don't** close the drawer immediately upon clicking "Save" if the API call is slow. Keep it open, show a loading state on the button, and close upon success.
-
-### 💡 Best Practices
-- **Layout:** Use standard Vuetify \`v-row\` and \`v-col\` inside the default slot to organize your form fields.
-- **Esc Key:** The drawer respects the escape key to close by default. Ensure your app state reflects this closure.
-        `,
-      },
-    },
+  args: {
+    title: 'Edit widget',
+    subtitle: 'Revenue Share (Top 10)',
+    width: 440,
   },
   argTypes: {
     title: { control: 'text' },
     subtitle: { control: 'text' },
     width: { control: { type: 'number', min: 320, max: 800, step: 40 } },
   },
+  render: (args) => ({
+    components: { MpFormDrawer },
+    setup() {
+      const open = ref(true)
+
+      watch(
+        () => args.title,
+        () => {
+          open.value = true
+        },
+      )
+
+      return { args, open }
+    },
+    template: `
+      <section style="min-height:720px;background:rgb(var(--v-theme-background));padding:24px;">
+        <v-btn variant="outlined" prepend-icon="panel-right" @click="open = true">Open flyout</v-btn>
+        <MpFormDrawer v-bind="args" v-model="open">
+          <div style="display:grid;gap:14px;">
+            <v-text-field label="Title" model-value="Revenue Share (Top 10)" />
+            <v-select label="Chart type" :items="['Bar', 'Line', 'Pie', 'Table', 'KPI']" model-value="Bar" />
+            <v-select label="Data source" :items="['Marketing Cloud', 'Commerce Cloud']" model-value="Commerce Cloud" />
+            <v-select label="Metric" :items="['Revenue', 'Orders', 'Customers']" model-value="Revenue" />
+            <v-select label="Group by" :items="['Product', 'Channel', 'Segment']" model-value="Product" />
+            <v-select label="Date range" :items="['Last 7 days', 'Last 30 days', 'Last 90 days']" model-value="Last 30 days" />
+            <v-switch label="Compare with previous period" color="primary" inset density="compact" hide-details :model-value="true" />
+          </div>
+          <template #footer>
+            <v-spacer />
+            <v-btn variant="text" @click="open = false">Cancel</v-btn>
+            <v-btn color="primary" @click="open = false">Save changes</v-btn>
+          </template>
+        </MpFormDrawer>
+      </section>
+    `,
+  }),
 } satisfies Meta<typeof MpFormDrawer>
 
 export default meta
 type Story = StoryObj<typeof meta>
 
-export const Default: Story = {
-  render: (args) => ({
-    components: { MpFormDrawer },
-    setup() {
-      const open = ref(false)
-      return { args, open }
-    },
-    template: `
-      <div>
-        <v-btn color="primary" @click="open = true">Open Drawer</v-btn>
-        <MpFormDrawer v-bind="args" v-model="open">
-          <v-text-field label="Campaign Name" class="mb-4" />
-          <v-select label="Type" :items="['Regular', 'A/B Test', 'Automated']" class="mb-4" />
-          <v-text-field label="Subject Line" class="mb-4" />
-          <v-textarea label="Preview Text" rows="3" />
-          <template #footer>
-            <v-spacer />
-            <v-btn variant="outlined" @click="open = false" class="mr-2">Cancel</v-btn>
-            <v-btn color="primary">Save Campaign</v-btn>
-          </template>
-        </MpFormDrawer>
-      </div>
-    `,
-  }),
-  args: {
-    title: 'New Campaign',
-    subtitle: 'Create a new email campaign',
-  },
-}
+export const WidgetEditFlyout: Story = {}
 
-export const ContactForm: Story = {
+export const DataSourceForm: Story = {
+  args: {
+    title: 'New data source',
+    subtitle: 'Connect a workspace data source',
+    width: 460,
+  },
   render: (args) => ({
     components: { MpFormDrawer },
     setup() {
-      const open = ref(false)
+      const open = ref(true)
       return { args, open }
     },
     template: `
-      <div>
-        <v-btn color="primary" @click="open = true">Add Contact</v-btn>
+      <section style="min-height:720px;background:rgb(var(--v-theme-background));padding:24px;">
+        <v-btn color="primary" prepend-icon="database" @click="open = true">Add data source</v-btn>
         <MpFormDrawer v-bind="args" v-model="open">
-          <v-row>
-            <v-col cols="6"><v-text-field label="First Name" /></v-col>
-            <v-col cols="6"><v-text-field label="Last Name" /></v-col>
-          </v-row>
-          <v-text-field label="Email" class="mt-4" />
-          <v-text-field label="Phone" class="mt-4" />
-          <v-combobox label="Tags" chips multiple class="mt-4" />
+          <div style="display:grid;gap:14px;">
+            <v-text-field label="Name" placeholder="Marketing Cloud - production" />
+            <v-select label="Type" :items="['Marketing Cloud', 'Commerce Cloud', 'Service Cloud', 'Snowflake', 'BigQuery']" model-value="Marketing Cloud" />
+            <v-text-field label="Endpoint" placeholder="https://..." />
+            <v-text-field label="API key" type="password" placeholder="sk-..." />
+            <v-alert type="info" variant="tonal" density="compact">
+              Da Vinci can only read metadata until the connection is approved.
+            </v-alert>
+          </div>
           <template #footer>
             <v-spacer />
-            <v-btn variant="outlined" @click="open = false" class="mr-2">Cancel</v-btn>
-            <v-btn color="primary">Add Contact</v-btn>
+            <v-btn variant="text" @click="open = false">Cancel</v-btn>
+            <v-btn color="primary" @click="open = false">Connect</v-btn>
           </template>
         </MpFormDrawer>
-      </div>
+      </section>
     `,
   }),
-  args: {
-    title: 'New Contact',
-    subtitle: 'Add a contact to your audience',
-    width: 520,
-  },
 }

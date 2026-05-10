@@ -1,6 +1,8 @@
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed, useId } from 'vue'
 import type { DashboardKpiData } from '@/stores/dashboards/types'
+
+const sparkFillId = useId()
 
 const props = withDefaults(defineProps<{
   data: DashboardKpiData
@@ -96,7 +98,7 @@ const sparklinePoints = computed(() => {
       <div class="dashboard-kpi-widget__sparkline-col" aria-hidden="true">
         <svg class="dashboard-kpi-widget__sparkline" viewBox="0 0 100 52" preserveAspectRatio="none">
           <defs>
-            <linearGradient :id="`sparkFill-${data.id ?? data.label}`" x1="0" y1="0" x2="0" y2="1">
+            <linearGradient :id="sparkFillId" x1="0" y1="0" x2="0" y2="1">
               <stop offset="0%" stop-color="currentColor" stop-opacity="0.18" />
               <stop offset="100%" stop-color="currentColor" stop-opacity="0" />
             </linearGradient>
@@ -104,7 +106,7 @@ const sparklinePoints = computed(() => {
           <polygon
             :points="`0,52 ${sparklinePoints} 100,52`"
             class="dashboard-kpi-widget__sparkline-fill"
-            :fill="`url(#sparkFill-${data.id ?? data.label})`"
+            :fill="`url(#${sparkFillId})`"
           />
           <polyline :points="sparklinePoints" class="dashboard-kpi-widget__sparkline-line" />
         </svg>

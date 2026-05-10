@@ -337,10 +337,15 @@ function openStub(label: string) {
                   <div class="um-item__title">Theme</div>
                   <div class="um-item__sub">Toggle light or dark mode</div>
                 </div>
-                <v-btn-toggle v-model="themeToggleValue" density="compact" mandatory class="theme-segment ml-auto">
-                  <v-btn size="x-small" value="light" icon="sun" variant="text" />
-                  <v-btn size="x-small" value="dark" icon="moon" variant="text" />
-                  <v-btn size="x-small" value="auto" icon="monitor" variant="text" />
+                <v-btn-toggle
+                  v-model="themeToggleValue"
+                  density="comfortable"
+                  mandatory
+                  class="theme-segment ml-auto"
+                >
+                  <v-btn value="light" icon="sun" variant="text" aria-label="Light theme" />
+                  <v-btn value="dark" icon="moon" variant="text" aria-label="Dark theme" />
+                  <v-btn value="auto" icon="monitor" variant="text" aria-label="Match system theme" />
                 </v-btn-toggle>
               </div>
             </div>
@@ -661,21 +666,47 @@ function openStub(label: string) {
   background: rgba(var(--v-theme-error), 0.06);
 }
 
-.theme-segment {
-  height: 26px !important;
+.theme-segment.v-btn-group {
+  flex-shrink: 0;
+  align-self: center;
+  align-items: center;
+  min-height: 36px;
+  height: auto !important;
+  padding: 3px;
   border: 1px solid var(--hairline);
   border-radius: var(--r-pill);
   background: var(--surface-2);
+  overflow-x: auto;
+  overflow-y: visible;
 }
+
 .theme-segment :deep(.v-btn) {
-  width: 26px !important;
-  height: 24px !important;
-  min-width: 26px !important;
-  border-radius: var(--r-pill) !important;
+  width: 32px !important;
+  min-width: 32px !important;
+  height: 30px !important;
+  min-height: 30px !important;
+  padding: 0 !important;
+  border-radius: 999px !important;
 }
+
+.theme-segment :deep(.v-btn .v-btn__content) {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  block-size: 100%;
+  inline-size: 100%;
+}
+
+.theme-segment :deep(.v-btn .v-icon) {
+  font-size: 18px;
+  line-height: 1;
+  block-size: 1em;
+  inline-size: 1em;
+}
+
 .theme-segment :deep(.v-btn--active) {
   background: var(--surface-1);
-  box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
 }
 .theme-toggle-item :deep(.v-list-item__append) {
   align-self: center;

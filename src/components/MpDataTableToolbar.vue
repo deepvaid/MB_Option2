@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { computed } from 'vue'
+import { MbButton, MbChip, MbInputField } from '@marobase/ui'
 import MpFormDrawer from './MpFormDrawer.vue'
 
 const search = defineModel<string>('search', { default: '' })
@@ -24,11 +25,10 @@ defineEmits<{
   selectAll: []
 }>()
 
-// Column visibility
 const NON_TOGGLEABLE = new Set(['actions', 'data-table-select', 'data-table-expand'])
 
 const toggleableHeaders = computed(() =>
-  (props.headers ?? []).filter(h => h.title && !NON_TOGGLEABLE.has(h.key))
+  (props.headers ?? []).filter(h => h.title && !NON_TOGGLEABLE.has(h.key)),
 )
 
 function isColumnVisible(key: string) {
@@ -57,7 +57,6 @@ function hiddenCount(filters: Array<{ key: string; label: string }>) {
 
 <template>
   <div class="mp-toolbar-shell">
-    <!-- Top row: title, counts, filters, search, and actions -->
     <div class="d-flex align-start justify-space-between ga-6 px-6 pt-6 pb-4 mp-toolbar-row">
       <div class="mp-toolbar-heading">
         <div v-if="title" class="text-subtitle-1 font-weight-bold">{{ title }}</div>
@@ -68,17 +67,21 @@ function hiddenCount(filters: Array<{ key: string; label: string }>) {
       </div>
 
       <div class="d-flex align-center ga-2 flex-wrap justify-end">
-        <!-- Filter button — only rendered if #filter-content slot is provided -->
-        <v-btn
-          v-if="$slots['filter-content']"
-          variant="outlined"
-          aria-label="Open table filters"
-          class="text-none text-medium-emphasis mp-filter-btn"
-          prepend-icon="list-filter"
-          rounded="xl"
-          @click="filterDrawer = true"
-        >
-          Filter
+        <span class="mp-filter-btn-wrap d-inline-flex align-center">
+          <MbButton
+            v-if="$slots['filter-content']"
+            style-type="outline"
+            size="md"
+            label="Filter"
+            icon-mode="with-label"
+            aria-label="Open table filters"
+            class="mp-filter-btn"
+            @click="filterDrawer = true"
+          >
+            <template #leading>
+              <v-icon size="18">list-filter</v-icon>
+            </template>
+          </MbButton>
           <v-badge
             v-if="activeFilters?.length"
             :content="activeFilters.length"
@@ -86,31 +89,33 @@ function hiddenCount(filters: Array<{ key: string; label: string }>) {
             floating
             class="ml-1"
           />
-        </v-btn>
+        </span>
 
-        <!-- Column visibility toggle -->
         <v-menu
           v-if="headers?.length"
           :close-on-content-click="false"
           location="bottom end"
         >
-          <template v-slot:activator="{ props: menuProps }">
-            <v-btn
+          <template #activator="{ props: menuProps }">
+            <MbButton
               v-bind="menuProps"
-              variant="outlined"
-              icon="columns-3"
+              style-type="outline"
+              size="md"
+              label="Columns"
+              icon-mode="icon-only"
               aria-label="Toggle visible columns"
-              rounded="xl"
-              class="text-medium-emphasis mp-filter-btn"
+              class="mp-filter-btn mp-filter-btn--icon"
             >
-              <v-icon>columns-3</v-icon>
+              <template #leading>
+                <v-icon size="18">columns-3</v-icon>
+              </template>
               <v-badge
                 v-if="hiddenColumns.length"
                 :content="hiddenColumns.length"
                 color="primary"
                 floating
               />
-            </v-btn>
+            </MbButton>
           </template>
           <v-card min-width="220" max-width="280" flat border rounded="xl" class="mt-1 mp-toolbar-panel">
             <div class="pa-3">
@@ -128,75 +133,65 @@ function hiddenCount(filters: Array<{ key: string; label: string }>) {
             </div>
             <v-divider class="mp-divider-muted" />
             <div class="d-flex justify-end pa-3">
-              <v-btn
-                variant="text"
-                size="small"
-                class="text-none"
+              <MbButton
+                style-type="plain"
+                size="sm"
+                label="Reset"
                 :disabled="!hiddenColumns.length"
                 @click="resetColumns"
-              >
-                Reset
-              </v-btn>
+              />
             </div>
           </v-card>
         </v-menu>
 
-        <!-- Extra action buttons (export, columns toggle, etc.) -->
         <slot name="actions" />
 
-        <!-- Search field -->
         <div class="mp-toolbar-search">
-          <v-text-field
-            v-model="search"
-            prepend-inner-icon="search"
+          <MbInputField
+            :model-value="search"
+            label="Search"
             :placeholder="searchPlaceholder ?? 'Search...'"
             :aria-label="searchPlaceholder ?? 'Search records'"
-            variant="outlined"
-            density="comfortable"
-            hide-details
-            clearable
-            rounded="xl"
+            trailing-icon="none"
+            :width="300"
+            state="default"
+            @update:model-value="search = $event"
           />
         </div>
       </div>
     </div>
   </div>
 
-  <!-- Active filter chips row -->
   <v-expand-transition>
     <div
       v-if="activeFilters?.length"
       class="px-4 pb-3 d-flex align-center ga-2 flex-wrap"
     >
       <span class="text-caption text-medium-emphasis font-weight-medium mr-1">Filter by:</span>
-      <v-chip
+      <MbChip
         v-for="f in visibleChips(activeFilters)"
         :key="f.key"
-        size="small"
-        closable
-        variant="outlined"
-        color="secondary"
-        rounded="xl"
-        @click:close="$emit('removeFilter', f.key)"
-      >
-        {{ f.label }}
-      </v-chip>
-      <v-chip
+        :label="f.label"
+        tone="brand"
+        :dismissible="true"
+        @dismiss="$emit('removeFilter', f.key)"
+      />
+      <MbChip
         v-if="hiddenCount(activeFilters) > 0"
-        size="small"
-        variant="outlined"
-        color="medium-emphasis"
-        rounded="xl"
-      >
-        + {{ hiddenCount(activeFilters) }} more
-      </v-chip>
-      <v-btn variant="text" size="x-small" class="text-none text-medium-emphasis" @click="$emit('clearFilters')">
-        Clear
-      </v-btn>
+        :label="`+ ${hiddenCount(activeFilters)} more`"
+        tone="neutral"
+        :dismissible="false"
+      />
+      <MbButton
+        style-type="plain"
+        size="sm"
+        label="Clear"
+        class="text-medium-emphasis"
+        @click="$emit('clearFilters')"
+      />
     </div>
   </v-expand-transition>
 
-  <!-- Inline bulk action bar -->
   <v-expand-transition>
     <div v-if="selectedCount && selectedCount > 0" class="px-4 pb-3">
       <div class="mp-toolbar-bulk d-flex align-center ga-3 pa-3 rounded-lg bg-surface-variant">
@@ -207,34 +202,35 @@ function hiddenCount(filters: Array<{ key: string; label: string }>) {
           </span>
           <span v-else class="font-weight-regular text-medium-emphasis">selected</span>
         </span>
-        <v-btn
+        <MbButton
           v-if="totalCount"
-          variant="text"
-          size="small"
-          class="text-none text-primary font-weight-medium"
+          style-type="plain"
+          size="sm"
+          label="Select All"
+          class="text-primary font-weight-medium"
           @click="$emit('selectAll')"
-        >
-          Select All
-        </v-btn>
+        />
         <v-divider v-if="$slots['bulk-actions']" vertical class="mx-1 mp-divider-vertical" />
         <slot name="bulk-actions" />
         <v-spacer />
-        <v-btn
-          icon="x"
-          variant="text"
-          size="small"
-          density="comfortable"
+        <MbButton
+          style-type="plain"
+          size="sm"
+          label=""
+          icon-mode="icon-only"
           aria-label="Clear selected rows"
           @click="$emit('clearSelection')"
-        />
+        >
+          <template #leading>
+            <v-icon size="18">x</v-icon>
+          </template>
+        </MbButton>
       </div>
     </div>
   </v-expand-transition>
 
-  <!-- Separator between toolbar and data table header row -->
   <v-divider class="mp-divider-toolbar" />
 
-  <!-- Filter drawer — renders the same #filter-content slot as before -->
   <MpFormDrawer
     v-if="$slots['filter-content']"
     v-model="filterDrawer"
@@ -243,14 +239,14 @@ function hiddenCount(filters: Array<{ key: string; label: string }>) {
   >
     <slot name="filter-content" />
     <template #footer>
-      <v-btn variant="text" size="small" class="text-none" @click="$emit('clearFilters')">Clear all</v-btn>
-      <v-btn color="primary" variant="flat" size="small" class="text-none" rounded="pill" @click="filterDrawer = false">Done</v-btn>
+      <MbButton style-type="plain" size="sm" label="Clear all" @click="$emit('clearFilters')" />
+      <MbButton style-type="filled" size="sm" label="Done" @click="filterDrawer = false" />
     </template>
   </MpFormDrawer>
 </template>
 
 <style scoped lang="scss">
-@import '@/design-tokens/generated/_variables.scss';
+@use '@/design-tokens/generated/_variables.scss' as *;
 
 .mp-toolbar-shell {
   background: transparent;
@@ -271,6 +267,19 @@ function hiddenCount(filters: Array<{ key: string; label: string }>) {
   width: 300px;
   min-width: 240px;
 }
+
+.mp-toolbar-search :deep(.mb-if__label) {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
 .mp-divider-vertical {
   height: $mp-spacing-6;
 }
@@ -296,15 +305,11 @@ function hiddenCount(filters: Array<{ key: string; label: string }>) {
   }
 }
 
-:deep(.mp-toolbar-search .v-field) {
+:deep(.mp-filter-btn .mb-btn) {
+  border-color: var(--mp-border-subtle);
+}
+
+:deep(.mp-toolbar-search .mb-if__control) {
   background: rgb(var(--v-theme-surface));
-}
-
-:deep(.mp-toolbar-search .v-field__outline) {
-  color: rgba(var(--v-theme-border), 1);
-}
-
-:deep(.mp-toolbar-search .v-field--focused .v-field__outline) {
-  color: rgba(var(--v-theme-secondary), 0.16);
 }
 </style>

@@ -17,6 +17,33 @@ import { useAccountsStore } from '@/stores/useAccounts'
 import { useDashboardsStore } from '@/stores/useDashboards'
 import type { DashboardWidgetDraft } from '@/stores/dashboards/types'
 
+interface ChatMessage {
+  id: string
+  role: 'user' | 'assistant'
+  text?: string
+  time?: string
+  componentData?: {
+    type: 'chart' | 'kpi' | 'table' | 'campaign' | 'journey' | 'content' | 'segment' | 'action' | 'insight' | 'widgetDraft'
+    props: any
+  }[]
+}
+
+interface MpDaVinciBotProps {
+  initialChatMode?: boolean
+  initialMessages?: ChatMessage[]
+  attachmentName?: string
+  attachmentMeta?: string
+  subtitle?: string
+}
+
+const props = withDefaults(defineProps<MpDaVinciBotProps>(), {
+  initialChatMode: false,
+  initialMessages: () => [],
+  attachmentName: '',
+  attachmentMeta: 'CSV, image, or PDF - max 25 MB',
+  subtitle: 'Intelligent AI assistant',
+})
+
 const emit = defineEmits<{
   close: []
   expand: []
@@ -34,21 +61,13 @@ function onExpand() {
 
 /* ── State ─────────────────────────────────────────────────────── */
 const inputText = ref('')
-const chatMode = ref(false)
+const chatMode = ref(props.initialChatMode || props.initialMessages.length > 0)
 const isTyping = ref(false)
 
-interface ChatMessage {
-  id: string
-  role: 'user' | 'assistant'
-  text?: string
-  time?: string
-  componentData?: {
-    type: 'chart' | 'kpi' | 'table' | 'campaign' | 'journey' | 'content' | 'segment' | 'action' | 'insight' | 'widgetDraft'
-    props: any
-  }[]
-}
-
-const messages = ref<ChatMessage[]>([])
+const messages = ref<ChatMessage[]>(props.initialMessages.map((message) => ({
+  ...message,
+  componentData: message.componentData ? [...message.componentData] : undefined,
+})))
 const chatContainer = ref<HTMLElement | null>(null)
 const composerInput = ref<HTMLInputElement | null>(null)
 
@@ -283,10 +302,15 @@ function focusComposer() {
     <!-- ═══ HEADER ═══ -->
     <div class="davinci-header">
       <div class="davinci-header__top">
-        <div class="davinci-avatar">
-          <v-icon color="white" size="20">sparkles</v-icon>
+        <div class="davinci-brand">
+          <div class="davinci-avatar">
+            <v-icon color="white" size="20">sparkles</v-icon>
+          </div>
+          <div class="davinci-brand__text">
+            <div class="davinci-brand__title">Da Vinci Bot</div>
+            <div class="davinci-brand__subtitle">{{ subtitle }}</div>
+          </div>
         </div>
-        <div style="flex: 1" />
         <div class="davinci-header__actions d-flex align-center ga-1">
           <v-btn icon size="36" variant="text" aria-label="Start a new chat" @click="newChat">
             <v-icon size="18">plus</v-icon>
@@ -307,11 +331,8 @@ function focusComposer() {
         <div class="davinci-hero">{{ emptyStateGreeting }}</div>
         <div class="davinci-subhero">{{ emptyStateDescription }}</div>
         <div class="davinci-callout">
-          <strong>{{ heroInsight.headline }}</strong> — {{ heroInsight.description }}
+          <strong>{{ heroInsight.headline }}</strong> - {{ heroInsight.description }}
         </div>
-      </template>
-      <template v-else>
-        <div class="davinci-hero" style="font-size: 18px;">Da Vinci Bot</div>
       </template>
     </div>
 
@@ -320,6 +341,7 @@ function focusComposer() {
       <!-- ─── EMPTY STATE (suggestions) ─── -->
       <template v-if="!chatMode">
         <!-- Widget-creation prompts that map to real metrics on any route. -->
+        <div class="davinci-suggestion-label">Dashboard widgets</div>
         <div class="davinci-suggestions">
           <button
             v-for="suggestion in widgetSuggestions"
@@ -332,17 +354,32 @@ function focusComposer() {
             {{ suggestion }}
           </button>
         </div>
+        <div class="davinci-attachment-tip">
+          <v-icon size="14">paperclip</v-icon>
+          Attach a CSV, image, or PDF - max 25 MB
+        </div>
       </template>
 
       <!-- ─── CHAT STATE ─── -->
       <div v-else class="davinci-messages">
+        <div v-if="attachmentName" class="davinci-attachment-chip">
+          <v-icon size="14">paperclip</v-icon>
+          <span>{{ attachmentName }}</span>
+          <small>{{ attachmentMeta }}</small>
+        </div>
+
         <template v-for="msg in messages" :key="msg.id">
           <div v-if="msg.role === 'user'" class="davinci-msg--user">
             {{ msg.text }}
           </div>
 
           <div v-else class="davinci-msg--bot-wrapper">
-            <div class="davinci-msg--bot">{{ msg.text }}</div>
+            <div class="davinci-msg-row">
+              <div class="davinci-avatar davinci-avatar--small">
+                <v-icon color="white" size="14">sparkles</v-icon>
+              </div>
+              <div class="davinci-msg--bot">{{ msg.text }}</div>
+            </div>
 
             <div v-if="msg.componentData" class="davinci-widgets">
               <template v-for="(comp, ci) in msg.componentData" :key="ci">
@@ -377,20 +414,25 @@ function focusComposer() {
 
     <!-- ═══ COMPOSER ═══ -->
     <div class="davinci-composer">
-      <input
-        ref="composerInput"
-        v-model="inputText"
-        class="davinci-composer__input"
-        placeholder="Ask Da Vinci..."
-        aria-label="Ask Da Vinci"
-        @keydown.enter.exact.prevent="sendQuery"
-      />
+      <button class="davinci-composer__attach" type="button" aria-label="Attach file">
+        <v-icon size="16">paperclip</v-icon>
+      </button>
+      <div class="davinci-composer__field">
+        <input
+          ref="composerInput"
+          v-model="inputText"
+          class="davinci-composer__input"
+          placeholder="Ask Da Vinci..."
+          aria-label="Ask Da Vinci"
+          @keydown.enter.exact.prevent="sendQuery"
+        />
+      </div>
       <button
         class="davinci-composer__send"
         :aria-label="inputText.trim() ? 'Send message' : 'Type a message to enable send'"
         @click="sendQuery"
       >
-        <v-icon size="16">arrow-up</v-icon>
+        <v-icon size="16">send</v-icon>
       </button>
     </div>
 
@@ -416,12 +458,14 @@ function focusComposer() {
   display: flex;
   flex-direction: column;
   background: rgb(var(--v-theme-surface));
+  border: 1px solid rgb(var(--v-theme-outline-variant));
   overflow: hidden;
 }
 
 .davinci-header {
   background: linear-gradient(120deg, #eef0ff 0%, #f3eafc 60%, #fde8ef 100%);
-  padding: 20px 24px 16px;
+  border-bottom: 1px solid rgb(var(--v-theme-outline-variant));
+  padding: 14px 16px 18px;
   display: flex;
   flex-direction: column;
   gap: 16px;
@@ -431,28 +475,63 @@ function focusComposer() {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  gap: 12px;
+}
+
+.davinci-brand {
+  align-items: center;
+  display: flex;
+  gap: 12px;
+  min-width: 0;
+}
+
+.davinci-brand__text {
+  display: grid;
+  gap: 2px;
+  min-width: 0;
+}
+
+.davinci-brand__title {
+  color: rgb(var(--v-theme-on-surface));
+  font-size: 15px;
+  font-weight: 600;
+  line-height: 18px;
+}
+
+.davinci-brand__subtitle {
+  color: rgb(var(--v-theme-on-surface-variant));
+  font-size: 12.5px;
+  line-height: 16px;
 }
 
 .davinci-avatar {
   width: 40px;
   height: 40px;
   border-radius: 50%;
-  background: linear-gradient(135deg, rgb(var(--v-theme-primary)) 0%, rgb(var(--v-theme-blue-700)) 100%);
+  background: linear-gradient(135deg, #5b8def 0%, #2dd4bf 100%);
   display: flex;
   align-items: center;
   justify-content: center;
   color: rgb(var(--v-theme-on-primary));
+  flex: 0 0 auto;
+}
+
+.davinci-avatar--small {
+  height: 28px;
+  width: 28px;
 }
 
 .davinci-hero {
-  font-size: 26px;
+  font-size: 22px;
   font-weight: 700;
   line-height: 1.15;
+  letter-spacing: 0;
   color: rgb(var(--v-theme-on-surface));
 }
 
 .davinci-subhero {
-  font-size: 14px;
+  font-size: 13.5px;
+  line-height: 1.5;
   color: rgb(var(--v-theme-on-surface-variant));
   margin-top: -8px;
 }
@@ -469,15 +548,25 @@ function focusComposer() {
 .davinci-body {
   flex: 1;
   overflow-y: auto;
-  padding: 16px 24px;
+  padding: 18px 20px;
   display: flex;
   flex-direction: column;
   gap: 16px;
 }
 
+.davinci-suggestion-label {
+  color: rgb(var(--v-theme-on-surface));
+  font-size: 11.5px;
+  font-weight: 600;
+  letter-spacing: 1px;
+  line-height: 1;
+  margin-bottom: 10px;
+  text-transform: uppercase;
+}
+
 .davinci-suggestions {
   display: flex;
-  flex-wrap: wrap;
+  flex-direction: column;
   gap: 8px;
 }
 
@@ -490,6 +579,9 @@ function focusComposer() {
   background: rgb(var(--v-theme-surface-bright, var(--v-theme-surface)));
   color: rgb(var(--v-theme-on-surface));
   cursor: pointer;
+  justify-content: flex-start;
+  text-align: left;
+  width: 100%;
   transition: background 0.15s, border-color 0.15s;
 }
 
@@ -503,30 +595,48 @@ function focusComposer() {
   outline-offset: 2px;
 }
 
+.davinci-attachment-tip {
+  align-items: center;
+  color: rgb(var(--v-theme-on-surface-variant));
+  display: flex;
+  font-size: 12.5px;
+  gap: 6px;
+  margin-top: 14px;
+}
+
 .davinci-composer {
   border-top: 1px solid rgb(var(--v-theme-outline-variant));
   padding: 12px 16px;
   display: flex;
   align-items: center;
   gap: 8px;
-  background: rgb(var(--v-theme-surface));
+  background: rgb(var(--v-theme-background));
 }
 
-.davinci-composer__input {
+.davinci-composer__field {
   flex: 1;
   border: 1px solid rgb(var(--v-theme-outline-variant));
   border-radius: 999px;
-  padding: 8px 16px;
-  font-size: 14px;
   background: rgb(var(--v-theme-surface));
-  color: rgb(var(--v-theme-on-surface));
-  outline: none;
+  min-width: 0;
+  padding: 0 14px;
 }
 
-.davinci-composer__input:focus {
+.davinci-composer__input {
+  background: transparent;
+  border: 0;
+  color: rgb(var(--v-theme-on-surface));
+  font-size: 14px;
+  height: 36px;
+  outline: none;
+  width: 100%;
+}
+
+.davinci-composer__field:focus-within {
   border-color: rgb(var(--v-theme-primary));
 }
 
+.davinci-composer__attach,
 .davinci-composer__send {
   width: 32px;
   height: 32px;
@@ -541,6 +651,7 @@ function focusComposer() {
   transition: background 0.15s;
 }
 
+.davinci-composer__attach:hover,
 .davinci-composer__send:hover {
   background: rgb(var(--v-theme-primary));
   color: rgb(var(--v-theme-on-primary));
@@ -550,6 +661,24 @@ function focusComposer() {
   display: flex;
   flex-direction: column;
   gap: 12px;
+}
+
+.davinci-attachment-chip {
+  align-items: center;
+  align-self: flex-end;
+  background: rgb(var(--v-theme-surface-variant));
+  border: 1px solid rgb(var(--v-theme-outline-variant));
+  border-radius: 999px;
+  color: rgb(var(--v-theme-on-surface));
+  display: inline-flex;
+  gap: 8px;
+  max-width: 100%;
+  padding: 7px 12px;
+}
+
+.davinci-attachment-chip small {
+  color: rgb(var(--v-theme-on-surface-variant));
+  font-size: 11.5px;
 }
 
 .davinci-msg--user {
@@ -571,21 +700,27 @@ function focusComposer() {
   max-width: 100%;
 }
 
+.davinci-msg-row {
+  align-items: flex-start;
+  display: flex;
+  gap: 10px;
+}
+
 .davinci-msg--bot {
   align-self: flex-start;
-  background: rgb(var(--v-theme-surface-variant));
+  background: transparent;
   color: rgb(var(--v-theme-on-surface));
-  border-radius: 16px 16px 16px 4px;
-  padding: 10px 16px;
   font-size: 14px;
-  max-width: 85%;
+  line-height: 1.45;
+  max-width: 100%;
+  padding-top: 4px;
 }
 
 .davinci-widgets {
   display: flex;
   flex-direction: column;
   gap: 12px;
-  padding-left: 8px;
+  padding-left: 38px;
 }
 
 /* Typing indicator */

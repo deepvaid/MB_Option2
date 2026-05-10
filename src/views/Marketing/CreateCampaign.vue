@@ -2,11 +2,9 @@
 import { ref, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { useCampaignsStore } from '@/stores/useCampaigns'
-import { useContactsStore } from '@/stores/useContacts'
 
 const router = useRouter()
 const store = useCampaignsStore()
-const contactsStore = useContactsStore()
 
 const step = ref(1)
 const totalSteps = 5
@@ -34,7 +32,6 @@ const templates = [
 
 // Step 3: Audience
 const selectedList = ref('Master Subscriber List')
-const excludeList = ref<string[]>([])
 const lists = ['Master Subscriber List', 'Newsletter Opt-in', 'VIP Customer Circle', 'Re-engagement 2024']
 const estimatedAudience = computed(() => {
   const base: Record<string, number> = {

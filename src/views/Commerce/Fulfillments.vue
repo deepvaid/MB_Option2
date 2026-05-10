@@ -20,8 +20,10 @@ const headers = [
   { title: 'Actions', key: 'actions', align: 'end' as const, sortable: false },
 ]
 
-const statusColor = (s: string): string => ({'Awaiting Fulfillment': 'warning', 'Picking': 'info', 'Packed': 'secondary', 'Ready to Ship': 'primary', 'Shipped': 'success'} as Record<string,string>)[s] ?? 'default'
-const priorityColor = (p: string): string => ({ 'High': 'error', 'Normal': 'info', 'Low': 'grey' } as Record<string,string>)[p] ?? 'default'
+const statusColor = (s: string | undefined): string =>
+  s ? ({ 'Awaiting Fulfillment': 'warning', 'Picking': 'info', 'Packed': 'secondary', 'Ready to Ship': 'primary', 'Shipped': 'success' } as Record<string, string>)[s] ?? 'default' : 'default'
+const priorityColor = (p: string | undefined): string =>
+  p ? ({ 'High': 'error', 'Normal': 'info', 'Low': 'grey' } as Record<string, string>)[p] ?? 'default' : 'default'
 
 // ─── Filters ──────────────────────────────────────────────────────────────────
 const filters = ref({

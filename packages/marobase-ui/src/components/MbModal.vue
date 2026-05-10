@@ -18,7 +18,8 @@ const props = withDefaults(defineProps<MbModalProps>(), {
   closeOnOverlay: true,
   closeOnAction: false,
   width: 400,
-  ariaLabel: 'Modal'
+  ariaLabel: 'Modal',
+  tone: 'default'
 });
 
 const emit = defineEmits<{
@@ -102,9 +103,18 @@ function onRootKeydown(event: KeyboardEvent) {
 
 <template>
   <div v-if="isOpen" class="mb-modal" role="presentation" @click="onOverlayClick" @keydown="onRootKeydown">
-    <section class="mb-modal__panel" :style="panelStyle" role="dialog" aria-modal="true" :aria-label="ariaLabel">
+    <section
+      class="mb-modal__panel"
+      :data-tone="tone"
+      :style="panelStyle"
+      role="dialog"
+      aria-modal="true"
+      :aria-label="ariaLabel"
+    >
       <header class="mb-modal__header">
-        <h2 class="mb-modal__title">{{ title }}</h2>
+        <slot name="header">
+          <h2 class="mb-modal__title">{{ title }}</h2>
+        </slot>
         <button
           v-if="dismissible"
           type="button"
@@ -124,16 +134,20 @@ function onRootKeydown(event: KeyboardEvent) {
       </header>
 
       <div class="mb-modal__body">
-        <p class="mb-modal__description">{{ description }}</p>
+        <slot>
+          <p class="mb-modal__description">{{ description }}</p>
+        </slot>
       </div>
 
       <footer class="mb-modal__footer">
-        <button type="button" class="mb-modal__button mb-modal__button--secondary" @click="onSecondaryClick">
-          {{ secondaryLabel }}
-        </button>
-        <button type="button" class="mb-modal__button mb-modal__button--primary" @click="onPrimaryClick">
-          {{ primaryLabel }}
-        </button>
+        <slot name="footer" :primary-click="onPrimaryClick" :secondary-click="onSecondaryClick">
+          <button type="button" class="mb-modal__button mb-modal__button--secondary" @click="onSecondaryClick">
+            {{ secondaryLabel }}
+          </button>
+          <button type="button" class="mb-modal__button mb-modal__button--primary" @click="onPrimaryClick">
+            {{ primaryLabel }}
+          </button>
+        </slot>
       </footer>
     </section>
   </div>

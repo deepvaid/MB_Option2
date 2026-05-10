@@ -455,7 +455,7 @@ watch(
           type="button"
           class="sidebar-brand"
           aria-label="Go to dashboard"
-          @click="$router.push(`/accounts/${resolvedAccountId}/dashboard`)"
+          @click="goTo(`/accounts/${resolvedAccountId}/dashboard`)"
         >
           <span class="sidebar-brand__wordmark">Maropost</span>
         </button>
@@ -673,7 +673,7 @@ watch(
               v-for="item in group.items"
               :key="item.title"
               class="rail-flyout-item"
-              :class="{ 'rail-flyout-item--active': ('route' in item) && $route.path.startsWith(item.route) }"
+              :class="{ 'rail-flyout-item--active': ('route' in item) && route.path.startsWith(item.route) }"
               @click="('route' in item) && goTo(item.route)"
             >{{ ('route' in item) ? item.title : '' }}</div>
           </div>
@@ -687,7 +687,7 @@ watch(
                 v-for="flat in railFlatItems(group)"
                 :key="flat.title"
                 class="rail-flyout-item"
-                :class="{ 'rail-flyout-item--active': $route.path.startsWith(flat.route) }"
+                :class="{ 'rail-flyout-item--active': route.path.startsWith(flat.route) }"
                 @click="goTo(flat.route)"
               >{{ flat.title }}</div>
               <div
@@ -708,7 +708,7 @@ watch(
                 v-for="child in activeRailSubGroupItems(group)"
                 :key="child.title"
                 class="rail-flyout-item"
-                :class="{ 'rail-flyout-item--active': $route.path.startsWith(child.route) }"
+                :class="{ 'rail-flyout-item--active': route.path.startsWith(child.route) }"
                 @click="goTo(child.route)"
               >{{ child.title }}</div>
             </div>

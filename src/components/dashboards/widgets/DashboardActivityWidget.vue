@@ -13,7 +13,9 @@ const tagColors: Record<string, { bg: string; color: string }> = {
 }
 
 function getTagStyle(tag: string) {
-  const colors = tagColors[tag] ?? tagColors.email
+  const fallback = tagColors.email
+  const picked = tag in tagColors ? tagColors[tag as keyof typeof tagColors] : undefined
+  const colors = (picked ?? fallback) as { bg: string; color: string }
   return { background: colors.bg, color: colors.color }
 }
 </script>

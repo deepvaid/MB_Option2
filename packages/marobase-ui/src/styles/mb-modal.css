@@ -10,7 +10,7 @@
 .mb-modal__panel {
   background: var(--mb-modal-surface);
   border: 1px solid var(--mb-modal-border, #e6dfd1);
-  border-radius: var(--mb-modal-radius);
+  border-radius: 12px;
   box-shadow: var(--mb-modal-shadow, 0 16px 40px -12px rgba(26, 24, 20, 0.18));
   font-family: var(--mb-modal-font-family);
   overflow: hidden;
@@ -58,6 +58,14 @@
   padding: 0 var(--mb-modal-body-padding-x) var(--mb-modal-body-padding-bottom);
 }
 
+.mb-modal__body > :first-child {
+  margin-top: 0;
+}
+
+.mb-modal__body > :last-child {
+  margin-bottom: 0;
+}
+
 .mb-modal__description {
   color: var(--mb-modal-description-color);
   font-size: var(--mb-modal-description-size);
@@ -93,6 +101,12 @@
   background: var(--mb-modal-primary-bg);
   border: 1px solid var(--mb-modal-primary-bg);
   color: var(--mb-modal-primary-text);
+}
+
+.mb-modal__panel[data-tone='danger'] .mb-modal__button--primary {
+  background: var(--mb-color-error, #c0392b);
+  border-color: var(--mb-color-error, #c0392b);
+  color: #ffffff;
 }
 
 .mb-modal__button--secondary {
