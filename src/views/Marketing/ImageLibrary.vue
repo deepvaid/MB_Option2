@@ -21,11 +21,6 @@ const filteredImages = () =>
     <MpPageHeader
       title="Image Library"
       :subtitle="`${images.length} images`"
-      :breadcrumbs="[
-        { title: 'Home', to: '/dashboard' },
-        { title: 'Marketing', disabled: true },
-        { title: 'Image Library', disabled: true },
-      ]"
     >
       <template #actions>
         <v-btn color="primary" variant="flat" prepend-icon="plus" class="text-none">Upload Images</v-btn>

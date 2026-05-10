@@ -40,11 +40,6 @@ const filteredOrders = computed(() =>
     <MpPageHeader
       title="Sales by Order"
       :subtitle="`${store.orders.length} orders`"
-      :breadcrumbs="[
-        { title: 'Home', to: '/dashboard' },
-        { title: 'Analytics', to: '/analytics/reports/monthly_totals' },
-        { title: 'Orders Report', disabled: true },
-      ]"
     >
       <template #actions>
         <v-btn variant="outlined" prepend-icon="download" class="text-none">Export CSV</v-btn>

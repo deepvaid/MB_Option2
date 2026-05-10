@@ -13,11 +13,6 @@ const metrics = [
     <MpPageHeader
       title="DaVinci Intelligence Dashboard"
       subtitle="AI-powered insights and performance metrics"
-      :breadcrumbs="[
-        { title: 'Home', to: '/dashboard' },
-        { title: 'DaVinci', disabled: true },
-        { title: 'Dashboard', disabled: true },
-      ]"
     />
 
     <v-row>

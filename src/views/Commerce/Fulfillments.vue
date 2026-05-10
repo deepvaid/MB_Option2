@@ -65,11 +65,6 @@ function selectAll() {
     <MpPageHeader
       title="Fulfillment Queue"
       :subtitle="`${store.fulfillments.filter(f => f.status !== 'Shipped').length} orders awaiting fulfillment`"
-      :breadcrumbs="[
-        { title: 'Home', to: '/dashboard' },
-        { title: 'Commerce', to: '/commerce/orders' },
-        { title: 'Fulfillments', disabled: true },
-      ]"
     >
       <template #actions>
         <v-btn class="text-none mp-btn-dark" variant="flat" prepend-icon="printer">Print Packing Slips</v-btn>

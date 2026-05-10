@@ -98,11 +98,6 @@ function selectAll() {
     <MpPageHeader
       title="Sales Orders"
       :subtitle="`${store.orders.length} orders total · $${store.orders.reduce((a,o) => a + parseFloat(o.total), 0).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} lifetime revenue`"
-      :breadcrumbs="[
-        { title: 'Home', to: '/dashboard' },
-        { title: 'Commerce', disabled: true },
-        { title: 'Sales Orders', disabled: true },
-      ]"
     >
       <template #actions>
         <v-btn class="text-none mp-btn-dark" variant="flat" prepend-icon="download">Export</v-btn>

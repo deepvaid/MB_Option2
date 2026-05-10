@@ -1,42 +1,12 @@
 <script setup lang="ts">
-import { computed } from 'vue'
-import { RouterLink, useRouter } from 'vue-router'
-import type { RouteLocationRaw } from 'vue-router'
-import { MbBreadcrumbs, MbPageHeader } from '@marobase/ui'
-import type { MbBreadcrumbItem } from '@marobase/ui'
+import { RouterLink } from 'vue-router'
+import { MbPageHeader } from '@marobase/ui'
 
-const props = defineProps<{
+defineProps<{
   title: string
   subtitle?: string
-  breadcrumbs?: Array<{ title: string; to?: string | Record<string, unknown>; disabled?: boolean }>
   backTo?: string | Record<string, unknown>
 }>()
-
-const router = useRouter()
-
-const crumbItems = computed<MbBreadcrumbItem[]>(() =>
-  (props.breadcrumbs ?? []).map((c, index) => ({
-    id: `mp-crumb-${index}`,
-    label: c.title,
-    disabled: c.disabled,
-  })),
-)
-
-const activeCrumbId = computed(() => {
-  const items = crumbItems.value
-  if (!items.length) {
-    return ''
-  }
-  return items[items.length - 1]?.id ?? ''
-})
-
-function onCrumbNavigate(payload: { item: MbBreadcrumbItem; index: number }) {
-  const raw = props.breadcrumbs?.[payload.index]
-  if (!raw || raw.disabled || raw.to == null) {
-    return
-  }
-  router.push(raw.to as RouteLocationRaw)
-}
 </script>
 
 <template>
@@ -61,14 +31,6 @@ function onCrumbNavigate(payload: { item: MbBreadcrumbItem; index: number }) {
       </RouterLink>
 
       <div class="mp-page-header__main min-width-0 flex-grow-1">
-        <MbBreadcrumbs
-          v-if="crumbItems.length"
-          class="mp-page-header__crumbs mb-2"
-          :items="crumbItems"
-          :model-value="activeCrumbId"
-          aria-label="Breadcrumb"
-          @navigate="onCrumbNavigate"
-        />
         <MbPageHeader :title="title" :subtitle="subtitle" size="sm">
           <template v-if="$slots.actions" #actions>
             <slot name="actions" />
@@ -97,9 +59,5 @@ function onCrumbNavigate(payload: { item: MbBreadcrumbItem; index: number }) {
 .mp-page-header__back:hover {
   background: var(--mb-color-surface-subtle, rgba(0, 0, 0, 0.06));
   color: var(--mb-color-text, inherit);
-}
-
-.mp-page-header__crumbs :deep(.mb-bc) {
-  font-size: var(--mb-font-size-sm, 0.875rem);
 }
 </style>

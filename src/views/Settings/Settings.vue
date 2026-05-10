@@ -173,10 +173,6 @@ function save() { saveSnack.value = true }
     <MpPageHeader
       title="Settings"
       subtitle="Manage your account, connections, and platform configuration."
-      :breadcrumbs="[
-        { title: 'Home', to: '/dashboard' },
-        { title: 'Settings', disabled: true },
-      ]"
     />
 
     <!-- Two-column layout: vertical nav + content -->

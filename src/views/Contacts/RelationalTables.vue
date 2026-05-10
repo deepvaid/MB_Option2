@@ -25,11 +25,6 @@ const tables = [
     <MpPageHeader
       title="Relational Tables"
       :subtitle="`${tables.length} tables`"
-      :breadcrumbs="[
-        { title: 'Home', to: '/dashboard' },
-        { title: 'Contacts', to: '/contacts' },
-        { title: 'Relational Tables', disabled: true },
-      ]"
     >
       <template #actions>
         <v-btn color="primary" variant="flat" prepend-icon="plus" class="text-none">New Table</v-btn>

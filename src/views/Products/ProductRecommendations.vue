@@ -44,11 +44,6 @@ const filteredRules = computed(() => {
     <MpPageHeader
       title="Product Recommendations"
       :subtitle="`${rules.length} active recommendation rules`"
-      :breadcrumbs="[
-        { title: 'Home', to: '/dashboard' },
-        { title: 'Products', to: '/commerce/products' },
-        { title: 'Recommendations', disabled: true },
-      ]"
     >
       <template #actions>
         <v-btn color="primary" variant="flat" prepend-icon="plus" class="text-none">Configure Rules</v-btn>

@@ -124,10 +124,6 @@ function handleContactRowClick(event: MouseEvent, payload: { item: unknown }) {
     <MpPageHeader
       title="Contacts"
       :subtitle="`${store.contacts.length.toLocaleString()} total contacts · ${store.contacts.filter(c => c.status === 'Active').length.toLocaleString()} active`"
-      :breadcrumbs="[
-        { title: 'Home', to: '/dashboard' },
-        { title: 'Contacts', disabled: true },
-      ]"
     >
       <template #actions>
         <v-btn variant="outlined" prepend-icon="upload" class="text-none" @click="startImport">Import</v-btn>

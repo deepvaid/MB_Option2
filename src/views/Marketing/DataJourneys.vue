@@ -54,11 +54,6 @@ function clearAllFilters() {
     <MpPageHeader
       title="Data Journeys"
       :subtitle="`${jobs.length} data sync automations`"
-      :breadcrumbs="[
-        { title: 'Home', to: '/dashboard' },
-        { title: 'Marketing', disabled: true },
-        { title: 'Data Journeys', disabled: true },
-      ]"
     >
       <template #actions>
         <v-btn color="primary" variant="flat" prepend-icon="plus" class="text-none">New Data Journey</v-btn>

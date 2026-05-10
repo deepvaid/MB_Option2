@@ -11,11 +11,6 @@ const timers = [
     <MpPageHeader
       title="Countdown Timers"
       :subtitle="`${timers.length} active timers`"
-      :breadcrumbs="[
-        { title: 'Home', to: '/dashboard' },
-        { title: 'Marketing', disabled: true },
-        { title: 'Countdown Timers', disabled: true },
-      ]"
     >
       <template #actions>
         <v-btn color="primary" variant="flat" prepend-icon="plus" class="text-none">Create Timer</v-btn>

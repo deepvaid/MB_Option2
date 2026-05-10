@@ -25,11 +25,6 @@ const webData = Array.from({ length: 15 }, (_, i) => ({
     <MpPageHeader
       title="Website Reports"
       subtitle="Page-level traffic and engagement analytics"
-      :breadcrumbs="[
-        { title: 'Home', to: '/dashboard' },
-        { title: 'Analytics', to: '/analytics/reports/monthly_totals' },
-        { title: 'Website Reports', disabled: true },
-      ]"
     >
       <template #actions>
         <v-btn variant="outlined" prepend-icon="download" class="text-none">Export CSV</v-btn>

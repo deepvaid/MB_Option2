@@ -79,11 +79,6 @@ function clearAllFilters() {
     <MpPageHeader
       title="Acquisition Forms"
       subtitle="Capture leads and grow your audience across your channels."
-      :breadcrumbs="[
-        { title: 'Home', to: '/dashboard' },
-        { title: 'Marketing', disabled: true },
-        { title: 'Acquisition Forms', disabled: true },
-      ]"
     >
       <template #actions>
         <v-btn color="primary" variant="flat" prepend-icon="plus" class="text-none" @click="chooseDialog = true">Create Form</v-btn>

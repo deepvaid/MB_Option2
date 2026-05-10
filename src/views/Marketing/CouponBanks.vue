@@ -13,11 +13,6 @@ const banks = [
     <MpPageHeader
       title="Coupon Banks"
       :subtitle="`${banks.length} coupon banks`"
-      :breadcrumbs="[
-        { title: 'Home', to: '/dashboard' },
-        { title: 'Marketing', disabled: true },
-        { title: 'Coupon Banks', disabled: true },
-      ]"
     >
       <template #actions>
         <v-btn variant="outlined" prepend-icon="upload" class="text-none">Upload CSV</v-btn>

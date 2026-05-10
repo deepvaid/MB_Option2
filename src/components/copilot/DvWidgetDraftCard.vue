@@ -28,9 +28,9 @@ const emit = defineEmits<{
 const route = useRoute()
 const dashboardsStore = useDashboardsStore()
 const isAdded = ref(false)
-const step = ref<'preview' | 'edit'>('preview')
 const localDraft = ref<DashboardWidgetDraft>({ ...props.draft })
 const expandOpen = ref(false)
+const editDialogOpen = ref(false)
 
 const metric = computed(() => getMetricDescriptor(localDraft.value.metricId))
 const currentAccountId = computed(() => {
@@ -79,18 +79,14 @@ watch(
   (next) => {
     localDraft.value = { ...next }
     isAdded.value = false
-    step.value = 'preview'
+    editDialogOpen.value = false
   },
   { deep: true },
 )
 
-function goToEdit() {
+function openEditDialog() {
   if (isAdded.value) return
-  step.value = 'edit'
-}
-
-function backToPreview() {
-  step.value = 'preview'
+  editDialogOpen.value = true
 }
 
 function saveToDashboard() {
@@ -103,6 +99,7 @@ function saveToDashboard() {
   })
   if (widget) {
     isAdded.value = true
+    editDialogOpen.value = false
     emit('saved', {
       title: widget.title || localDraft.value.title || 'Widget',
       dashboardName: currentDashboard.value.name,
@@ -118,103 +115,51 @@ function tryNewPrompt() {
 <template>
   <v-card flat border rounded="xl" class="dv-widget-draft-card">
     <v-card-text class="pa-4 pa-sm-5">
-      <div class="d-flex align-start justify-space-between ga-3 mb-4">
-        <div>
-          <div class="dv-widget-draft-card__eyebrow">
-            {{ step === 'edit' ? 'Step 2 — Edit widget' : 'Dashboard Widget Draft' }}
-          </div>
-          <div class="text-subtitle-1 font-weight-bold">
-            {{ step === 'edit' ? 'Tweak the title or chart type' : 'Ready to place on your active dashboard' }}
-          </div>
-          <div v-if="step === 'preview'" class="text-body-2 text-medium-emphasis mt-2">
-            {{ localDraft.aiProvenance?.summary ?? 'Da Vinci mapped your prompt into a widget configuration that fits the current workspace.' }}
-          </div>
-        </div>
+      <div class="dv-widget-draft-card__preview" :class="`dv-widget-draft-card__preview--${localDraft.type}`">
+        <DashboardWidgetCard
+          :account-id="effectiveAccountId"
+          :widget="previewWidget"
+          :filters="effectiveFilters"
+          preview
+        />
 
-        <v-chip
-          size="small"
-          color="secondary"
-          variant="tonal"
-          prepend-icon="sparkles"
-          class="font-weight-medium"
+        <v-btn
+          icon="maximize-2"
+          size="x-small"
+          variant="flat"
+          class="dv-widget-draft-card__expand"
+          aria-label="Enlarge preview"
+          @click="expandOpen = true"
         >
-          {{ localDraft.type }}
-        </v-chip>
+          <v-icon size="14">maximize-2</v-icon>
+          <v-tooltip activator="parent" location="left">Enlarge preview</v-tooltip>
+        </v-btn>
       </div>
 
-      <template v-if="step === 'preview'">
-        <div class="dv-widget-draft-card__preview" :class="`dv-widget-draft-card__preview--${localDraft.type}`">
-          <DashboardWidgetCard
-            :account-id="effectiveAccountId"
-            :widget="previewWidget"
-            :filters="effectiveFilters"
-            preview
-          />
-
-          <v-btn
-            icon="maximize-2"
-            size="x-small"
-            variant="flat"
-            class="dv-widget-draft-card__expand"
-            aria-label="Enlarge preview"
-            @click="expandOpen = true"
-          >
-            <v-icon size="14">maximize-2</v-icon>
-            <v-tooltip activator="parent" location="left">Enlarge preview</v-tooltip>
-          </v-btn>
-        </div>
-
-        <div class="d-flex align-center justify-space-between flex-wrap ga-3 mt-4">
-          <v-btn
-            variant="text"
-            class="text-none"
-            prepend-icon="plus"
-            :disabled="isAdded"
-            @click="tryNewPrompt"
-          >
-            Try new prompt
-          </v-btn>
-          <v-btn
-            color="primary"
-            variant="flat"
-            class="text-none"
-            :disabled="isAdded"
-            @click="goToEdit"
-          >
-            {{ isAdded ? 'Saved to Dashboard' : 'Save to dashboard' }}
-          </v-btn>
-        </div>
-      </template>
-
-      <template v-else>
-        <div class="dv-widget-draft-card__edit">
-          <WidgetEditStep
-            :draft="localDraft"
-            :account-id="effectiveAccountId"
-            :filters="effectiveFilters"
-            @update:draft="localDraft = $event"
-          />
-        </div>
-
-        <div class="d-flex align-center justify-space-between flex-wrap ga-3 mt-4">
-          <v-btn variant="text" class="text-none" prepend-icon="arrow-left" @click="backToPreview">
-            Back
-          </v-btn>
-          <v-btn
-            color="primary"
-            variant="flat"
-            class="text-none"
-            :disabled="isAdded"
-            @click="saveToDashboard"
-          >
-            {{ isAdded ? 'Saved to Dashboard' : 'Save to dashboard' }}
-          </v-btn>
-        </div>
-      </template>
+      <div class="d-flex align-center justify-space-between flex-wrap ga-3 mt-4">
+        <v-btn
+          variant="text"
+          class="text-none"
+          prepend-icon="plus"
+          :disabled="isAdded"
+          @click="tryNewPrompt"
+        >
+          Try new prompt
+        </v-btn>
+        <v-btn
+          color="primary"
+          variant="flat"
+          class="text-none"
+          :disabled="isAdded"
+          @click="openEditDialog"
+        >
+          {{ isAdded ? 'Saved to Dashboard' : 'Save to dashboard' }}
+        </v-btn>
+      </div>
     </v-card-text>
 
     <v-dialog v-model="expandOpen" max-width="1120" width="calc(100vw - 32px)">
-      <v-card rounded="xl" border class="dv-widget-draft-card__dialog">
+      <v-card flat rounded="xl" border class="dv-widget-draft-card__dialog">
         <div class="dv-widget-draft-card__dialog-header">
           <div>
             <div class="dv-widget-draft-card__eyebrow">Expanded preview</div>
@@ -232,6 +177,44 @@ function tryNewPrompt() {
             preview
           />
         </div>
+      </v-card>
+    </v-dialog>
+
+    <v-dialog
+      v-model="editDialogOpen"
+      max-width="880"
+      width="calc(100vw - 32px)"
+      scrollable
+    >
+      <v-card flat rounded="xl" border class="dv-widget-draft-card__edit-dialog">
+        <div class="dv-widget-draft-card__dialog-header">
+          <div>
+            <div class="dv-widget-draft-card__eyebrow">Edit widget</div>
+            <div class="text-subtitle-1 font-weight-bold">Tweak the title or chart type</div>
+          </div>
+          <v-btn icon="x" variant="text" size="small" aria-label="Close edit dialog" @click="editDialogOpen = false" />
+        </div>
+        <v-card-text class="dv-widget-draft-card__edit-dialog-body pa-5">
+          <WidgetEditStep
+            :draft="localDraft"
+            :account-id="effectiveAccountId"
+            :filters="effectiveFilters"
+            @update:draft="localDraft = $event"
+          />
+        </v-card-text>
+        <v-divider />
+        <v-card-actions class="d-flex align-center justify-end ga-2 px-5 py-3">
+          <v-btn variant="text" class="text-none" @click="editDialogOpen = false">Cancel</v-btn>
+          <v-btn
+            color="primary"
+            variant="flat"
+            class="text-none"
+            :disabled="isAdded"
+            @click="saveToDashboard"
+          >
+            {{ isAdded ? 'Saved to Dashboard' : 'Save to dashboard' }}
+          </v-btn>
+        </v-card-actions>
       </v-card>
     </v-dialog>
   </v-card>
@@ -280,8 +263,9 @@ function tryNewPrompt() {
   background: rgb(var(--v-theme-surface)) !important;
 }
 
-.dv-widget-draft-card__edit {
-  padding-top: 4px;
+.dv-widget-draft-card__edit-dialog-body {
+  max-height: calc(100vh - 220px);
+  overflow-y: auto;
 }
 
 .dv-widget-draft-card__eyebrow {

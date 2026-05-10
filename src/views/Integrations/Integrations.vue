@@ -30,10 +30,6 @@ const filteredApps = computed(() => {
     <MpPageHeader
       title="App Directory"
       :subtitle="`${apps.filter(a => a.connected).length} connected · ${apps.length} available`"
-      :breadcrumbs="[
-        { title: 'Home', to: '/dashboard' },
-        { title: 'Integrations', disabled: true },
-      ]"
     />
 
     <v-card variant="flat" border rounded="xl" class="flex-shrink-0">

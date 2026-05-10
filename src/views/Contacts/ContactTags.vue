@@ -25,11 +25,6 @@ const tags = [
     <MpPageHeader
       title="Contact Tags"
       :subtitle="`${tags.length} tags`"
-      :breadcrumbs="[
-        { title: 'Home', to: '/dashboard' },
-        { title: 'Contacts', to: '/contacts' },
-        { title: 'Contact Tags', disabled: true },
-      ]"
     >
       <template #actions>
         <v-btn color="primary" variant="flat" prepend-icon="plus" class="text-none">Create Tag</v-btn>

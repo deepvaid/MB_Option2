@@ -46,11 +46,6 @@ const filteredTests = computed(() =>
     <MpPageHeader
       title="A/B Campaign Reports"
       :subtitle="`${abTests.length} A/B tests`"
-      :breadcrumbs="[
-        { title: 'Home', to: '/dashboard' },
-        { title: 'Analytics', to: '/analytics/reports/monthly_totals' },
-        { title: 'A/B Campaign Reports', disabled: true },
-      ]"
     >
       <template #actions>
         <v-btn variant="outlined" prepend-icon="download" class="text-none">Export CSV</v-btn>

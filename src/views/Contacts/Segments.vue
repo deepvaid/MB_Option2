@@ -20,11 +20,6 @@ const headers = [
     <MpPageHeader
       title="Segments"
       :subtitle="`${store.segments.length} segments`"
-      :breadcrumbs="[
-        { title: 'Home', to: '/dashboard' },
-        { title: 'Contacts', to: '/contacts' },
-        { title: 'Segments', disabled: true },
-      ]"
     >
       <template #actions>
         <v-btn color="primary" variant="flat" prepend-icon="plus" class="text-none">Create Segment</v-btn>

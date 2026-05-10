@@ -24,11 +24,6 @@ const footers = ref([
     <MpPageHeader
       title="Footer Management"
       :subtitle="`${footers.length} footers`"
-      :breadcrumbs="[
-        { title: 'Home', to: '/dashboard' },
-        { title: 'Marketing', disabled: true },
-        { title: 'Footer Management', disabled: true },
-      ]"
     >
       <template #actions>
         <v-btn color="primary" variant="flat" prepend-icon="plus" class="text-none">New Footer</v-btn>

@@ -93,11 +93,6 @@ const statusColor = (s: string) => ({ Active:'success', Expired:'error', 'Maxed 
     <MpPageHeader
       title="Coupons & Discounts"
       :subtitle="`${store.coupons.filter(c => c.status==='Active').length} active codes · ${store.coupons.reduce((a,c)=>a+c.usage,0).toLocaleString()} total uses`"
-      :breadcrumbs="[
-        { title: 'Home', to: '/dashboard' },
-        { title: 'Commerce', to: '/commerce/orders' },
-        { title: 'Coupons', disabled: true },
-      ]"
     >
       <template #actions>
         <v-btn class="text-none mp-btn-dark" variant="flat" prepend-icon="download">Export</v-btn>

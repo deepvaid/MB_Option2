@@ -7,11 +7,6 @@ import MpPageHeader from '@/components/MpPageHeader.vue'
     <MpPageHeader
       title="Signup Forms (Legacy)"
       subtitle="Legacy signup form management"
-      :breadcrumbs="[
-        { title: 'Home', to: '/dashboard' },
-        { title: 'Marketing', disabled: true },
-        { title: 'Signup Forms', disabled: true },
-      ]"
     />
 
     <v-alert type="info" variant="tonal" rounded="xl">

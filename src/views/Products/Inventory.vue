@@ -68,11 +68,6 @@ const headers = [
     <MpPageHeader
       title="Inventory"
       subtitle="14,204 total stock items across all locations"
-      :breadcrumbs="[
-        { title: 'Home', to: '/dashboard' },
-        { title: 'Products', to: '/commerce/products' },
-        { title: 'Inventory', disabled: true },
-      ]"
     >
       <template #actions>
         <v-btn variant="outlined" prepend-icon="download" class="text-none">Export</v-btn>

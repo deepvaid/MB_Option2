@@ -25,11 +25,6 @@ const transReports = store.campaigns.slice(0, 15).map(c => ({
     <MpPageHeader
       title="Transactional Email Reports"
       :subtitle="`${transReports.length} transactional flows`"
-      :breadcrumbs="[
-        { title: 'Home', to: '/dashboard' },
-        { title: 'Analytics', to: '/analytics/reports/monthly_totals' },
-        { title: 'Transactional Reports', disabled: true },
-      ]"
     >
       <template #actions>
         <v-btn variant="outlined" prepend-icon="download" class="text-none">Export CSV</v-btn>

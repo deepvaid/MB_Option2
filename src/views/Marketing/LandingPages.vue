@@ -53,11 +53,6 @@ function clearAllFilters() {
     <MpPageHeader
       title="Landing Pages"
       :subtitle="`${items.length} pages`"
-      :breadcrumbs="[
-        { title: 'Home', to: '/dashboard' },
-        { title: 'Marketing', disabled: true },
-        { title: 'Landing Pages', disabled: true },
-      ]"
     >
       <template #actions>
         <v-btn color="primary" variant="flat" prepend-icon="plus" class="text-none">Create Page</v-btn>

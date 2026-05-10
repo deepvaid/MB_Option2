@@ -24,11 +24,6 @@ const items = ref([
     <MpPageHeader
       title="Dynamic Content"
       :subtitle="`${items.length} content blocks`"
-      :breadcrumbs="[
-        { title: 'Home', to: '/dashboard' },
-        { title: 'Marketing', disabled: true },
-        { title: 'Dynamic Content', disabled: true },
-      ]"
     >
       <template #actions>
         <v-btn color="primary" variant="flat" prepend-icon="plus" class="text-none">New Block</v-btn>

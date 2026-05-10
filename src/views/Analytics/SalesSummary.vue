@@ -12,11 +12,6 @@ const { accountMetrics } = storeToRefs(store)
     <MpPageHeader
       title="Sales Summary"
       subtitle="Revenue attribution and channel performance overview"
-      :breadcrumbs="[
-        { title: 'Home', to: '/dashboard' },
-        { title: 'Analytics', to: '/analytics/reports/monthly_totals' },
-        { title: 'Sales Summary', disabled: true },
-      ]"
     >
       <template #actions>
         <v-btn variant="outlined" prepend-icon="download" class="text-none">Export Report</v-btn>

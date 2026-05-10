@@ -27,11 +27,6 @@ const fields = [
     <MpPageHeader
       title="Custom Fields"
       :subtitle="`${fields.length} fields defined`"
-      :breadcrumbs="[
-        { title: 'Home', to: '/dashboard' },
-        { title: 'Contacts', to: '/contacts' },
-        { title: 'Custom Fields', disabled: true },
-      ]"
     >
       <template #actions>
         <v-btn color="primary" variant="flat" prepend-icon="plus" class="text-none">Add Field</v-btn>

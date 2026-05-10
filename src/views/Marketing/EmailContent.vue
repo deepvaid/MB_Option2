@@ -13,11 +13,6 @@ const items = [
     <MpPageHeader
       title="Email Content"
       :subtitle="`${items.length} templates`"
-      :breadcrumbs="[
-        { title: 'Home', to: '/dashboard' },
-        { title: 'Marketing', disabled: true },
-        { title: 'Email Content', disabled: true },
-      ]"
     >
       <template #actions>
         <v-btn color="primary" variant="flat" prepend-icon="plus" class="text-none">Create Content</v-btn>

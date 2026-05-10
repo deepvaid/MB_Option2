@@ -173,7 +173,7 @@ export const maropostDefaults = {
     `,
   },
   VCard: {
-    variant: 'outlined',
+    variant: 'flat',
     rounded: 'lg',
   },
   VTextField: {
@@ -181,7 +181,7 @@ export const maropostDefaults = {
     density: 'comfortable',
     hideDetails: 'auto',
     color: 'primary',
-    baseColor: 'outline-variant',
+    baseColor: 'on-surface-variant',
     style: `border-radius: ${mp_component_input_radius_default};`,
   },
   VSelect: {
@@ -189,7 +189,7 @@ export const maropostDefaults = {
     density: 'comfortable',
     hideDetails: 'auto',
     color: 'primary',
-    baseColor: 'outline-variant',
+    baseColor: 'on-surface-variant',
     style: `border-radius: ${mp_component_input_radius_default};`,
   },
   VAutocomplete: {
@@ -197,7 +197,7 @@ export const maropostDefaults = {
     density: 'comfortable',
     hideDetails: 'auto',
     color: 'primary',
-    baseColor: 'outline-variant',
+    baseColor: 'on-surface-variant',
     style: `border-radius: ${mp_component_input_radius_default};`,
   },
   VCombobox: {
@@ -205,7 +205,7 @@ export const maropostDefaults = {
     density: 'comfortable',
     hideDetails: 'auto',
     color: 'primary',
-    baseColor: 'outline-variant',
+    baseColor: 'on-surface-variant',
     style: `border-radius: ${mp_component_input_radius_default};`,
   },
   VTextarea: {
@@ -213,7 +213,7 @@ export const maropostDefaults = {
     density: 'comfortable',
     hideDetails: 'auto',
     color: 'primary',
-    baseColor: 'outline-variant',
+    baseColor: 'on-surface-variant',
     style: `border-radius: ${mp_component_input_radius_default};`,
   },
   VAlert: {

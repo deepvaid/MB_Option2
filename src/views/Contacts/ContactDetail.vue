@@ -49,11 +49,6 @@ const initials = computed(() => {
   return `${contact.value.firstName[0] ?? ''}${ln[0] ?? ''}`
 })
 
-const breadcrumbs = computed(() => [
-  { title: 'Contacts', to: `/accounts/${route.params.accountId}/contacts` },
-  { title: fullName.value, disabled: true },
-])
-
 const emailCampaigns = computed(() => detail.value?.campaigns.filter(c => c.type === 'email') ?? [])
 const smsCampaigns = computed(() => detail.value?.campaigns.filter(c => c.type === 'sms') ?? [])
 
@@ -105,7 +100,7 @@ const cartHeaders = [
   <div v-if="contact && detail" class="contact-detail-page">
 
     <!-- ── Page Header ────────────────────────────────────────────────────── -->
-    <MpPageHeader :title="fullName" :breadcrumbs="breadcrumbs" :backTo="`/accounts/${route.params.accountId}/contacts`">
+    <MpPageHeader :title="fullName" :backTo="`/accounts/${route.params.accountId}/contacts`">
       <template #actions>
         <v-btn variant="outlined" prepend-icon="pencil" @click="openEditDrawer">Edit Contact</v-btn>
         <v-menu>

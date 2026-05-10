@@ -52,11 +52,6 @@ function clearAllFilters() {
     <MpPageHeader
       title="Content Feeds"
       :subtitle="`${feeds.length} feeds configured`"
-      :breadcrumbs="[
-        { title: 'Home', to: '/dashboard' },
-        { title: 'Marketing', disabled: true },
-        { title: 'Content Feeds', disabled: true },
-      ]"
     >
       <template #actions>
         <v-btn color="primary" variant="flat" prepend-icon="plus" class="text-none">Add Feed</v-btn>

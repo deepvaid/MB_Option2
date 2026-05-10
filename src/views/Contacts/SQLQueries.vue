@@ -24,11 +24,6 @@ const headers = [
     <MpPageHeader
       title="SQL Queries"
       :subtitle="`${queries.length} saved queries`"
-      :breadcrumbs="[
-        { title: 'Home', to: '/dashboard' },
-        { title: 'Contacts', to: '/contacts' },
-        { title: 'SQL Queries', disabled: true },
-      ]"
     >
       <template #actions>
         <v-btn color="primary" variant="flat" prepend-icon="plus" class="text-none">New Query</v-btn>

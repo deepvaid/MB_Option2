@@ -64,7 +64,6 @@ export interface DaVinciCardConfig {
 defineProps<{
   title: string
   description?: string
-  breadcrumbs?: Array<{ title: string; to?: string; disabled?: boolean }>
   primaryActions?: PrimaryAction[]
   quickActions?: QuickAction[]
   childPages: ChildPage[]
@@ -76,7 +75,7 @@ defineProps<{
 
 <template>
   <div class="module-landing">
-    <MpPageHeader :title="title" :subtitle="description" :breadcrumbs="breadcrumbs">
+    <MpPageHeader :title="title" :subtitle="description">
       <template v-if="primaryActions?.length" #actions>
         <v-btn
           v-for="(action, idx) in primaryActions"

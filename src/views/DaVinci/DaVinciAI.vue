@@ -7,11 +7,6 @@ import MpPageHeader from '@/components/MpPageHeader.vue'
     <MpPageHeader
       title="DaVinci AI Settings"
       subtitle="Configure AI-powered features and predictive models"
-      :breadcrumbs="[
-        { title: 'Home', to: '/dashboard' },
-        { title: 'DaVinci', disabled: true },
-        { title: 'AI Settings', disabled: true },
-      ]"
     >
       <template #actions>
         <v-btn color="primary" variant="flat" class="text-none" prepend-icon="save">Save AI Preferences</v-btn>

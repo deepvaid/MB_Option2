@@ -396,7 +396,7 @@ function focusComposer() {
                   v-else-if="comp.type === 'widgetDraft'"
                   v-bind="comp.props"
                   @saved="onWidgetSaved"
-                  @try-new-prompt="focusComposer"
+                  @try-new-prompt="newChat"
                 />
               </template>
             </div>

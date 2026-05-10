@@ -41,11 +41,6 @@ const filteredCampaigns = computed(() =>
     <MpPageHeader
       title="Campaign Reports"
       :subtitle="`${store.campaigns.length} campaigns`"
-      :breadcrumbs="[
-        { title: 'Home', to: '/dashboard' },
-        { title: 'Analytics', to: '/analytics/reports/monthly_totals' },
-        { title: 'Campaign Reports', disabled: true },
-      ]"
     >
       <template #actions>
         <v-btn variant="outlined" prepend-icon="download" class="text-none">Export CSV</v-btn>

@@ -112,11 +112,6 @@ const statusColor = (s: string) => ({Open:'primary','Invoice Sent':'success'})[s
     <MpPageHeader
       title="Draft Orders"
       :subtitle="`${store.draftOrders?.length ?? 0} drafts · Create manual orders on behalf of customers`"
-      :breadcrumbs="[
-        { title: 'Home', to: '/dashboard' },
-        { title: 'Commerce', to: '/commerce/orders' },
-        { title: 'Draft Orders', disabled: true },
-      ]"
     >
       <template #actions>
         <v-btn class="text-none mp-btn-dark" variant="flat" prepend-icon="download">Export</v-btn>

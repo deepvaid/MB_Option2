@@ -17,11 +17,6 @@ const channelIcon = (type: string) => type === 'Retail' ? 'store' : type === 'Ma
     <MpPageHeader
       title="Sales Channels"
       :subtitle="`${channels.filter(c => c.status === 'Connected').length} channels connected`"
-      :breadcrumbs="[
-        { title: 'Home', to: '/dashboard' },
-        { title: 'Commerce', to: '/commerce/orders' },
-        { title: 'Sales Channels', disabled: true },
-      ]"
     >
       <template #actions>
         <v-btn color="primary" variant="flat" prepend-icon="plus" class="text-none">Add Channel</v-btn>

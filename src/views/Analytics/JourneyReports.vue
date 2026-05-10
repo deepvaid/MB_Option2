@@ -38,11 +38,6 @@ const filteredJourneys = computed(() =>
     <MpPageHeader
       title="Journey Reports"
       :subtitle="`${store.journeys.length} journeys`"
-      :breadcrumbs="[
-        { title: 'Home', to: '/dashboard' },
-        { title: 'Analytics', to: '/analytics/reports/monthly_totals' },
-        { title: 'Journey Reports', disabled: true },
-      ]"
     >
       <template #actions>
         <v-btn variant="outlined" prepend-icon="download" class="text-none">Export CSV</v-btn>

@@ -7,11 +7,6 @@ import MpPageHeader from '@/components/MpPageHeader.vue'
     <MpPageHeader
       title="Web Tracking"
       subtitle="Embed the tracking script to capture website activity from your contacts."
-      :breadcrumbs="[
-        { title: 'Home', to: '/dashboard' },
-        { title: 'Contacts', to: '/contacts' },
-        { title: 'Web Tracking', disabled: true },
-      ]"
     >
       <template #actions>
         <v-btn variant="outlined" prepend-icon="copy" class="text-none">Copy Script</v-btn>

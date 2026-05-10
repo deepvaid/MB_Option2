@@ -26,11 +26,6 @@ const lists = [
     <MpPageHeader
       title="Contact Lists"
       :subtitle="`${lists.length} lists`"
-      :breadcrumbs="[
-        { title: 'Home', to: '/dashboard' },
-        { title: 'Contacts', to: '/contacts' },
-        { title: 'Contact Lists', disabled: true },
-      ]"
     >
       <template #actions>
         <v-btn color="primary" variant="flat" prepend-icon="plus" class="text-none">Create List</v-btn>

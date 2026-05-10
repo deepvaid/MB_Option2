@@ -7,10 +7,6 @@ import MpPageHeader from '@/components/MpPageHeader.vue'
     <MpPageHeader
       title="eRFM Report"
       subtitle="Enhanced Recency, Frequency & Monetary analysis"
-      :breadcrumbs="[
-        { title: 'Analytics', to: '/accounts/2000290/analytics/monthly_totals' },
-        { title: 'eRFM Report' }
-      ]"
     />
     <v-card flat border rounded="lg" class="pa-6 mt-4">
       <div class="d-flex flex-column align-center justify-center" style="min-height: 300px;">

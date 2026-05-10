@@ -52,11 +52,6 @@ function toggleStatus(journey: typeof store.journeys[0]) {
     <MpPageHeader
       title="Automation Journeys"
       :subtitle="`${store.journeys.filter(j => j.status === 'Active').length} active · ${store.journeys.reduce((a, j) => a + j.enrolled, 0).toLocaleString()} total enrolled`"
-      :breadcrumbs="[
-        { title: 'Home', to: '/dashboard' },
-        { title: 'Marketing', disabled: true },
-        { title: 'Journeys', disabled: true },
-      ]"
     >
       <template #actions>
         <v-btn color="primary" variant="flat" prepend-icon="plus" class="text-none">New Journey</v-btn>

@@ -23,11 +23,6 @@ const invoices = [
     <MpPageHeader
       title="Billing & Usage"
       subtitle="Manage your subscription, usage, and invoices"
-      :breadcrumbs="[
-        { title: 'Home', to: '/dashboard' },
-        { title: 'Settings', to: '/settings' },
-        { title: 'Billing', disabled: true },
-      ]"
     />
 
     <v-row class="flex-shrink-0">

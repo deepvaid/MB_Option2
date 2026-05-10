@@ -26,11 +26,6 @@ const testReports = store.campaigns.slice(20, 30).map(c => ({
     <MpPageHeader
       title="Test Campaign Reports"
       :subtitle="`${testReports.length} test scenarios`"
-      :breadcrumbs="[
-        { title: 'Home', to: '/dashboard' },
-        { title: 'Analytics', to: '/analytics/reports/monthly_totals' },
-        { title: 'Test Campaign Reports', disabled: true },
-      ]"
     >
       <template #actions>
         <v-btn variant="outlined" prepend-icon="download" class="text-none">Export CSV</v-btn>

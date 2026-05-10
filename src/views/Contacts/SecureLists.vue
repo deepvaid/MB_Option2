@@ -23,11 +23,6 @@ const headers = [
     <MpPageHeader
       title="Secure Lists"
       :subtitle="`${lists.length} secure lists`"
-      :breadcrumbs="[
-        { title: 'Home', to: '/dashboard' },
-        { title: 'Contacts', to: '/contacts' },
-        { title: 'Secure Lists', disabled: true },
-      ]"
     >
       <template #actions>
         <v-btn color="primary" variant="flat" prepend-icon="plus" class="text-none">New Secure List</v-btn>

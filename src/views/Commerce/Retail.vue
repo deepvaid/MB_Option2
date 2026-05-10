@@ -7,10 +7,6 @@ import MpPageHeader from '@/components/MpPageHeader.vue'
     <MpPageHeader
       title="Retail"
       subtitle="Manage your retail operations and point-of-sale"
-      :breadcrumbs="[
-        { title: 'Commerce' },
-        { title: 'Retail' }
-      ]"
     />
     <v-card flat border rounded="lg" class="pa-6 mt-4">
       <div class="d-flex flex-column align-center justify-center" style="min-height: 300px;">

@@ -52,11 +52,6 @@ function clearAllFilters() {
     <MpPageHeader
       title="Surveys"
       :subtitle="`${items.length} surveys`"
-      :breadcrumbs="[
-        { title: 'Home', to: '/dashboard' },
-        { title: 'Marketing', disabled: true },
-        { title: 'Surveys', disabled: true },
-      ]"
     >
       <template #actions>
         <v-btn color="primary" variant="flat" prepend-icon="plus" class="text-none">Create Survey</v-btn>

@@ -74,11 +74,6 @@ const submitCampaign = () => {
     <MpPageHeader
       title="Email Campaigns"
       :subtitle="`${store.campaigns.length} campaigns · $${totalRevenue.toLocaleString('en-US', {minimumFractionDigits: 0})} total attributed revenue`"
-      :breadcrumbs="[
-        { title: 'Home', to: '/dashboard' },
-        { title: 'Marketing', disabled: true },
-        { title: 'Email Campaigns', disabled: true },
-      ]"
     >
       <template #actions>
         <v-btn class="text-none mp-btn-dark" variant="flat" prepend-icon="folder">Manage Folders</v-btn>

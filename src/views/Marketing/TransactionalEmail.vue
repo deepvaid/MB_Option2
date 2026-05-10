@@ -23,11 +23,6 @@ const flows = store.campaigns.filter(c => c.id % 2 === 0)
     <MpPageHeader
       title="Transactional Email"
       :subtitle="`${flows.length} transactional flows`"
-      :breadcrumbs="[
-        { title: 'Home', to: '/dashboard' },
-        { title: 'Marketing', disabled: true },
-        { title: 'Transactional Email', disabled: true },
-      ]"
     >
       <template #actions>
         <v-btn color="primary" variant="flat" prepend-icon="plus" class="text-none">New Flow</v-btn>

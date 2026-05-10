@@ -74,11 +74,6 @@ const statusColor = (s: string) => s === 'In Stock' ? 'success' : s === 'Low Sto
     <MpPageHeader
       title="Products"
       :subtitle="`${filteredProducts.length} products`"
-      :breadcrumbs="[
-        { title: 'Home', to: '/dashboard' },
-        { title: 'Products', to: '/commerce/products' },
-        { title: 'All Products', disabled: true },
-      ]"
     >
       <template #actions>
         <v-btn variant="outlined" prepend-icon="upload" class="text-none">Import</v-btn>

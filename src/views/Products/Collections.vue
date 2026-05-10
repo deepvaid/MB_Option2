@@ -7,10 +7,6 @@ import MpPageHeader from '@/components/MpPageHeader.vue'
     <MpPageHeader
       title="Collections"
       subtitle="Manage product collections and groupings"
-      :breadcrumbs="[
-        { title: 'Products', to: '/commerce/2000290/products' },
-        { title: 'Collections' }
-      ]"
     />
     <v-card flat border rounded="lg" class="pa-6 mt-4">
       <div class="d-flex flex-column align-center justify-center" style="min-height: 300px;">

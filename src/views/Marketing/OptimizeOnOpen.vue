@@ -23,11 +23,6 @@ const groups = ref([
     <MpPageHeader
       title="Optimize on Open"
       :subtitle="`${groups.length} image groups`"
-      :breadcrumbs="[
-        { title: 'Home', to: '/dashboard' },
-        { title: 'Marketing', disabled: true },
-        { title: 'Optimize on Open', disabled: true },
-      ]"
     >
       <template #actions>
         <v-btn color="primary" variant="flat" prepend-icon="plus" class="text-none">Create Image Group</v-btn>

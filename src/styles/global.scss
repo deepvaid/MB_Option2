@@ -155,7 +155,17 @@ a {
 }
 
 .v-field--variant-outlined {
-  background: rgba(var(--v-theme-surface), 0.96);
+  background: rgb(var(--v-theme-surface));
+}
+
+/* VCard variant="outlined" (the global default) is transparent in Vuetify 3.
+   Force solid surface background on all cards/sheets/steppers/MbCard rendered
+   inside overlays/dialogs so dialogs and menus never appear see-through. */
+.v-overlay__content .v-card,
+.v-overlay__content .v-sheet,
+.v-overlay__content .v-stepper,
+.v-overlay__content .mb-card {
+  background: rgb(var(--v-theme-surface)) !important;
 }
 
 .v-field--focused {

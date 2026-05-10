@@ -263,10 +263,6 @@ function handleDashboardCreated(dashboardId: string) {
       :title="`Dashboards`"
       :subtitle="`Browse, organize, and personalize every dashboard for ${account?.name ?? 'this workspace'}.`"
       size="md"
-      :breadcrumbs="[
-        { label: account?.name ?? 'Workspace' },
-        { label: 'Dashboards' },
-      ]"
     >
       <template #actions>
         <v-btn

@@ -40,11 +40,6 @@ function clearAllFilters() {
     <MpPageHeader
       title="Dispatched Orders"
       :subtitle="`${dispatchedOrders.length} dispatched orders`"
-      :breadcrumbs="[
-        { title: 'Home', to: '/dashboard' },
-        { title: 'Analytics', to: '/analytics/reports/monthly_totals' },
-        { title: 'Dispatched Orders', disabled: true },
-      ]"
     >
       <template #actions>
         <v-btn variant="outlined" prepend-icon="download" class="text-none">Export CSV</v-btn>

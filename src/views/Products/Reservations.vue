@@ -39,11 +39,6 @@ const filteredItems = computed(() =>
     <MpPageHeader
       title="Inventory Reservations"
       :subtitle="`${items.filter(i => i.status === 'Active Hold').length} active holds`"
-      :breadcrumbs="[
-        { title: 'Home', to: '/dashboard' },
-        { title: 'Products', to: '/commerce/products' },
-        { title: 'Reservations', disabled: true },
-      ]"
     />
 
     <v-card variant="flat" border rounded="xl" class="flex-grow-1 d-flex flex-column overflow-hidden">

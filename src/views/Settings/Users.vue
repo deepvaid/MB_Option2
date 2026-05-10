@@ -25,11 +25,6 @@ const users = ref([
     <MpPageHeader
       title="Users & Permissions"
       :subtitle="`${users.length} team members`"
-      :breadcrumbs="[
-        { title: 'Home', to: '/dashboard' },
-        { title: 'Settings', to: '/settings' },
-        { title: 'Users', disabled: true },
-      ]"
     >
       <template #actions>
         <v-btn color="primary" variant="flat" prepend-icon="plus" class="text-none">Invite User</v-btn>

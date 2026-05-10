@@ -78,11 +78,6 @@ function sendReply() {
     <MpPageHeader
       title="Support Tickets"
       :subtitle="`Manage customer inquiries and support requests · ${store.tickets.filter(t=>t.status==='Open').length} open`"
-      :breadcrumbs="[
-        { title: 'Home', to: '/dashboard' },
-        { title: 'Service', disabled: true },
-        { title: 'Support Tickets', disabled: true },
-      ]"
     >
       <template #actions>
         <v-btn color="primary" variant="flat" prepend-icon="plus" class="text-none" @click="newTicketDrawer=true">New Ticket</v-btn>

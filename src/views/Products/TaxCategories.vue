@@ -25,11 +25,6 @@ const headers = [
     <MpPageHeader
       title="Tax Categories"
       :subtitle="`${categories.length} categories`"
-      :breadcrumbs="[
-        { title: 'Home', to: '/dashboard' },
-        { title: 'Products', to: '/commerce/products' },
-        { title: 'Tax Categories', disabled: true },
-      ]"
     >
       <template #actions>
         <v-btn color="primary" variant="flat" prepend-icon="plus" class="text-none">New Tax Category</v-btn>

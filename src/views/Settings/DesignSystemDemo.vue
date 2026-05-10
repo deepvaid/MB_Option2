@@ -86,11 +86,6 @@ function toggleSelect(id: string) {
     <MpPageHeader
       title="Design System Demo"
       subtitle="Live Figma token sync demo for stakeholders"
-      :breadcrumbs="[
-        { title: 'Home', to: '/dashboard' },
-        { title: 'Settings', to: '/settings' },
-        { title: 'Design System Demo', disabled: true },
-      ]"
     >
       <template #actions>
         <v-btn color="primary" prepend-icon="file-text" @click="drawerOpen = true">Token Brief</v-btn>

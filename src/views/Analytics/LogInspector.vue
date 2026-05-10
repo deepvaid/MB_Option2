@@ -42,11 +42,6 @@ const filteredLogs = computed(() =>
     <MpPageHeader
       title="Log Inspector"
       subtitle="System service execution logs"
-      :breadcrumbs="[
-        { title: 'Home', to: '/dashboard' },
-        { title: 'Analytics', to: '/analytics/reports/monthly_totals' },
-        { title: 'Log Inspector', disabled: true },
-      ]"
     >
       <template #actions>
         <v-btn variant="outlined" prepend-icon="download" class="text-none">Export Logs</v-btn>

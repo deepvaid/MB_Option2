@@ -21,11 +21,6 @@ const headers = [
     <MpPageHeader
       title="Monthly Analytics"
       subtitle="High-level overview of revenue and audience growth over time."
-      :breadcrumbs="[
-        { title: 'Home', to: '/dashboard' },
-        { title: 'Analytics', to: '/analytics/reports/monthly_totals' },
-        { title: 'Monthly Totals', disabled: true },
-      ]"
     >
       <template #actions>
         <v-btn variant="outlined" prepend-icon="calendar-range" class="text-none">Select Date Range</v-btn>

@@ -45,11 +45,6 @@ const filteredItems = computed(() =>
     <MpPageHeader
       title="Recurring Campaign Reports"
       :subtitle="`${recurringItems.length} recurring campaigns`"
-      :breadcrumbs="[
-        { title: 'Home', to: '/dashboard' },
-        { title: 'Analytics', to: '/analytics/reports/monthly_totals' },
-        { title: 'Recurring Reports', disabled: true },
-      ]"
     >
       <template #actions>
         <v-btn variant="outlined" prepend-icon="download" class="text-none">Export CSV</v-btn>

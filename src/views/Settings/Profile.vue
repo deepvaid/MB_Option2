@@ -13,11 +13,6 @@ const userAvatarUrl = 'https://maropost.com/hubfs/Maropost%20website/leadership/
     <MpPageHeader
       title="My Profile"
       subtitle="Manage your personal information and preferences"
-      :breadcrumbs="[
-        { title: 'Home', to: '/dashboard' },
-        { title: 'Settings', to: '/settings' },
-        { title: 'Profile', disabled: true },
-      ]"
     />
 
     <v-row>
