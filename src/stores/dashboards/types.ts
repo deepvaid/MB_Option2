@@ -1,7 +1,7 @@
 export type DashboardKind = 'system' | 'custom'
 export type DashboardWidgetType = 'kpi' | 'timeseries' | 'bar' | 'pie' | 'table' | 'activity'
 export type DashboardChartVariant = 'horizontal' | 'vertical' | 'area' | 'line'
-export type DashboardDataSource = 'commerce' | 'marketing' | 'analytics' | 'contacts' | 'service'
+export type DashboardDataSource = 'commerce' | 'marketing' | 'analytics' | 'contacts' | 'service' | 'neto'
 export type DashboardDatePreset =
   | 'today'
   | 'yesterday'
@@ -93,6 +93,7 @@ export interface DashboardWidget {
   filters?: DashboardWidgetFilter[]
   drilldown: DashboardWidgetDrilldown
   aiProvenance?: DashboardAiProvenance
+  lastRefreshedAt?: string
 }
 
 export interface DashboardFilterState {
@@ -144,6 +145,7 @@ export interface DashboardWidgetDraft {
   drilldown: DashboardWidgetDrilldown
   layout?: Partial<DashboardLayout>
   aiProvenance?: DashboardAiProvenance
+  lastRefreshedAt?: string
 }
 
 export interface DashboardWidgetLibraryEntry {

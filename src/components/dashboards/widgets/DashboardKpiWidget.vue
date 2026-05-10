@@ -1,6 +1,8 @@
 <script setup lang="ts">
-import { computed, useId } from 'vue'
-import type { DashboardKpiData } from '@/stores/dashboards/types'
+import { computed, toRef, useId } from 'vue'
+import { useLiveAgo } from '@/composables/useRelativeTime'
+import MpSourceCloudChip from '@/components/MpSourceCloudChip.vue'
+import type { DashboardDataSource, DashboardKpiData } from '@/stores/dashboards/types'
 
 const sparkFillId = useId()
 
@@ -12,6 +14,8 @@ const props = withDefaults(defineProps<{
   comparisonLabel?: string
   icon?: string
   aiGenerated?: boolean
+  dataSource?: DashboardDataSource
+  lastRefreshedAt?: string
 }>(), {
   compact: false,
   title: '',
@@ -19,7 +23,12 @@ const props = withDefaults(defineProps<{
   comparisonLabel: '',
   icon: '',
   aiGenerated: false,
+  dataSource: undefined,
+  lastRefreshedAt: undefined,
 })
+
+const lastRefreshedAt = toRef(() => props.lastRefreshedAt)
+const updatedLabel = useLiveAgo(lastRefreshedAt)
 
 const trendPositive = computed(() => props.data.delta == null || props.data.delta >= 0)
 const trendIcon = computed(() => (trendPositive.value ? 'chevron-up' : 'chevron-down'))
@@ -112,6 +121,14 @@ const sparklinePoints = computed(() => {
         </svg>
       </div>
     </div>
+
+    <footer v-if="dataSource" class="dashboard-kpi-widget__foot">
+      <MpSourceCloudChip :data-source="dataSource" size="sm" :icon-only="compact" />
+      <span v-if="updatedLabel" class="dashboard-kpi-widget__updated">
+        <v-icon size="11">clock</v-icon>
+        Updated {{ updatedLabel }}
+      </span>
+    </footer>
   </div>
 </template>
 
@@ -346,5 +363,38 @@ const sparklinePoints = computed(() => {
 
 .dashboard-kpi-widget--compact .dashboard-kpi-widget__period {
   font-size: 10.5px;
+}
+
+.dashboard-kpi-widget__foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin: 12px -18px -16px;
+  padding: 8px 18px;
+  border-top: 1px solid var(--hairline);
+  background: var(--surface-1);
+  min-height: 36px;
+  flex-shrink: 0;
+}
+
+.dashboard-kpi-widget--compact .dashboard-kpi-widget__foot {
+  margin: 10px -16px -14px;
+  padding: 6px 16px;
+  min-height: 32px;
+}
+
+.dashboard-kpi-widget__updated {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--muted);
+  white-space: nowrap;
+}
+
+.dashboard-kpi-widget__updated :deep(.v-icon) {
+  color: var(--muted);
 }
 </style>

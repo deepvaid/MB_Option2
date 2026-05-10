@@ -323,8 +323,10 @@ function handleExpandWidget(widgetId: string) {
 }
 
 function handleRefreshWidget(widgetId: string) {
-  const widget = activeDashboard.value?.widgets.find((candidate) => candidate.id === widgetId)
-  showDashboardNotice(`${widget?.title ?? 'Widget'} refreshed for this prototype session.`)
+  if (!activeDashboard.value) return
+  const widget = activeDashboard.value.widgets.find((candidate) => candidate.id === widgetId)
+  dashboardsStore.refreshWidget(accountId.value, activeDashboard.value.id, widgetId)
+  showDashboardNotice(`${widget?.title ?? 'Widget'} refreshed.`)
 }
 
 function handleEditWidget(widgetId: string) {

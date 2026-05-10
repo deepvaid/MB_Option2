@@ -125,10 +125,20 @@ function normalizeDashboardFilters(filters: unknown): Dashboard['filters'] {
   }
 }
 
+function seededRefreshedAt(): string {
+  // Spread seeded widgets across the last 0-180 minutes so the dashboard
+  // doesn't show "Updated just now" on every card after a fresh load.
+  const minutesAgo = Math.floor(Math.random() * 180)
+  return new Date(Date.now() - minutesAgo * 60_000).toISOString()
+}
+
 function normalizePersistedDashboard(dashboard: Dashboard): Dashboard {
   return {
     ...dashboard,
     filters: normalizeDashboardFilters(dashboard.filters),
+    widgets: dashboard.widgets.map((widget) =>
+      widget.lastRefreshedAt ? widget : { ...widget, lastRefreshedAt: seededRefreshedAt() },
+    ),
   }
 }
 
@@ -160,6 +170,7 @@ function makeWidget(
       minH: layout.minH ?? preset.minH,
     },
     drilldown: metric.drilldown,
+    lastRefreshedAt: seededRefreshedAt(),
   }
 }
 
@@ -770,12 +781,23 @@ export const useDashboardsStore = defineStore('dashboards', () => {
       filters: draft.filters,
       drilldown: draft.drilldown ?? metric.drilldown,
       aiProvenance: draft.aiProvenance,
+      lastRefreshedAt: nowIso(),
     }
 
     dashboard.widgets.push(widget)
     dashboard.updatedAt = nowIso()
     writeState()
     return widget
+  }
+
+  function refreshWidget(accountId: string, dashboardId: string, widgetId: string) {
+    const dashboard = getDashboardById(accountId, dashboardId)
+    if (!dashboard) return
+    const widget = dashboard.widgets.find((entry) => entry.id === widgetId)
+    if (!widget) return
+    widget.lastRefreshedAt = nowIso()
+    dashboard.updatedAt = nowIso()
+    writeState()
   }
 
   function updateWidget(accountId: string, draft: DashboardWidgetDraft) {
@@ -936,6 +958,7 @@ export const useDashboardsStore = defineStore('dashboards', () => {
         prompt,
         summary: `Da Vinci mapped your prompt to ${bestMatch.label} as a ${type} widget.`,
       },
+      lastRefreshedAt: nowIso(),
     }
   }
 
@@ -963,6 +986,7 @@ export const useDashboardsStore = defineStore('dashboards', () => {
     addWidget,
     updateWidget,
     removeWidget,
+    refreshWidget,
     resizeWidget,
     updateLayout,
     openWidgetEditor,

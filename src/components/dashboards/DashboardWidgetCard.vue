@@ -1,10 +1,12 @@
 <script setup lang="ts">
-import { computed, ref } from 'vue'
+import { computed, ref, toRef } from 'vue'
 import { useRouter } from 'vue-router'
 import { useWidgetData } from '@/composables/useWidgetData'
 import { useElementSize } from '@/composables/useElementSize'
-import { getMetricDescriptor } from '@/stores/dashboards/metricCatalog'
+import { useLiveAgo } from '@/composables/useRelativeTime'
+import { DASHBOARD_SOURCE_META, getMetricDescriptor } from '@/stores/dashboards/metricCatalog'
 import type { DashboardFilterState, DashboardWidget } from '@/stores/dashboards/types'
+import MpSourceCloudChip from '@/components/MpSourceCloudChip.vue'
 import {
   WIDGET_SIZES,
   detectSize,
@@ -107,6 +109,10 @@ const isDataEmpty = computed(() => {
   if (data.value.kind === 'series') return data.value.labels.length === 0 || data.value.series.every((series) => series.data.length === 0)
   return false
 })
+
+const sourceMeta = computed(() => DASHBOARD_SOURCE_META[props.widget.dataSource])
+const lastRefreshedAt = toRef(() => props.widget.lastRefreshedAt)
+const updatedLabel = useLiveAgo(lastRefreshedAt)
 
 function openDrilldown() {
   router.push({
@@ -240,10 +246,24 @@ function openSettings() {
       class="dashboard-widget-card__body"
     >
       <div v-if="isDataEmpty" class="dashboard-widget-card__empty">
-        <v-icon size="42" color="medium-emphasis">scan-search</v-icon>
-        <div class="text-body-2 text-medium-emphasis mt-3">
-          There is no data to show in this time frame. Try changing the date range.
+        <div class="dashboard-widget-card__empty-icon">
+          <v-icon size="22">{{ sourceMeta.icon }}</v-icon>
         </div>
+        <div class="dashboard-widget-card__empty-title">
+          No {{ sourceMeta.label.toLowerCase() }} data available
+        </div>
+        <div class="dashboard-widget-card__empty-sub">
+          {{ widget.title }} has nothing to display for the selected range. Try a different period or refresh.
+        </div>
+        <v-btn
+          variant="tonal"
+          size="small"
+          prepend-icon="refresh-cw"
+          class="dashboard-widget-card__empty-cta"
+          @click="emit('refresh', widget.id)"
+        >
+          Refresh
+        </v-btn>
       </div>
       <DashboardKpiWidget
         v-else-if="data.kind === 'kpi'"
@@ -254,6 +274,8 @@ function openSettings() {
         :comparison-label="kpiComparisonLabel"
         :icon="metricIcon"
         :ai-generated="!!widget.aiProvenance"
+        :data-source="widget.dataSource"
+        :last-refreshed-at="widget.lastRefreshedAt"
       />
       <DashboardPieWidget
         v-else-if="data.kind === 'series' && widget.type === 'pie'"
@@ -276,6 +298,14 @@ function openSettings() {
         :data="data"
       />
     </div>
+
+    <footer v-if="!isKpiWidget" class="dashboard-widget-card__foot">
+      <MpSourceCloudChip :data-source="widget.dataSource" size="md" />
+      <span v-if="updatedLabel" class="dashboard-widget-card__updated">
+        <v-icon size="12">clock</v-icon>
+        Updated {{ updatedLabel }}
+      </span>
+    </footer>
   </v-card>
 </template>
 
@@ -418,7 +448,7 @@ function openSettings() {
   flex: 1 1 auto;
   min-height: 0;
   overflow: hidden;
-  padding: 0 20px 20px;
+  padding: 0 20px 12px;
 }
 
 .dashboard-widget-card--kpi .dashboard-widget-card__body {
@@ -434,5 +464,62 @@ function openSettings() {
   flex-direction: column;
   text-align: center;
   padding: 24px;
+  gap: 6px;
+}
+
+.dashboard-widget-card__empty-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 9999px;
+  background: var(--surface-2);
+  color: var(--muted);
+  margin-bottom: 4px;
+}
+
+.dashboard-widget-card__empty-title {
+  font-size: 13.5px;
+  font-weight: 600;
+  color: var(--ink);
+}
+
+.dashboard-widget-card__empty-sub {
+  font-size: 12.5px;
+  color: var(--muted);
+  max-width: 280px;
+  line-height: 1.4;
+}
+
+.dashboard-widget-card__empty-cta {
+  margin-top: 8px;
+  text-transform: none;
+}
+
+.dashboard-widget-card__foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 10px 16px;
+  border-top: 1px solid var(--hairline);
+  background: var(--surface-1);
+  min-height: 40px;
+  flex-shrink: 0;
+}
+
+.dashboard-widget-card__updated {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 11.5px;
+  font-weight: 500;
+  color: var(--muted);
+  white-space: nowrap;
+}
+
+.dashboard-widget-card__updated :deep(.v-icon) {
+  color: var(--muted);
 }
 </style>

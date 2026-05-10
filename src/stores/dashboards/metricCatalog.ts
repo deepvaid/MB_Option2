@@ -66,6 +66,12 @@ export const DASHBOARD_SOURCE_META: Record<DashboardDataSource, DashboardSourceM
     icon: 'headset',
     requires: 'service',
   },
+  neto: {
+    id: 'neto',
+    label: 'Neto',
+    description: 'Neto storefront orders, products, and inventory.',
+    icon: 'store',
+  },
 }
 
 const metricCatalog: Record<DashboardDataSource, DashboardMetricDescriptor[]> = {
@@ -529,6 +535,7 @@ const metricCatalog: Record<DashboardDataSource, DashboardMetricDescriptor[]> = 
       aiKeywords: ['tickets by type', 'ticket types', 'issue type'],
     },
   ],
+  neto: [],
 }
 
 export function getMetricDescriptor(metricId: DashboardMetricId): DashboardMetricDescriptor | undefined {

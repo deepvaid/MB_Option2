@@ -1,4 +1,5 @@
 import { computed, ref } from 'vue'
+import { formatAgo } from '@/composables/useRelativeTime'
 
 export interface DaVinciHistoryItem {
   id: string
@@ -100,26 +101,6 @@ const groupedItems = computed<GroupedHistory>(() => {
   void now
   return groups
 })
-
-const relativeFormatter =
-  typeof Intl !== 'undefined' && typeof Intl.RelativeTimeFormat === 'function'
-    ? new Intl.RelativeTimeFormat('en', { numeric: 'auto' })
-    : null
-
-function formatAgo(timestamp: number): string {
-  const diff = Date.now() - timestamp
-  const minutes = Math.round(diff / 60_000)
-  const hours = Math.round(diff / 3_600_000)
-  const days = Math.round(diff / 86_400_000)
-  if (!relativeFormatter) {
-    if (minutes < 60) return `${minutes}m ago`
-    if (hours < 24) return `${hours}h ago`
-    return `${days}d ago`
-  }
-  if (minutes < 60) return relativeFormatter.format(-minutes, 'minute')
-  if (hours < 24) return relativeFormatter.format(-hours, 'hour')
-  return relativeFormatter.format(-days, 'day')
-}
 
 function addItem(payload: {
   title: string
