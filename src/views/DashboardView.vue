@@ -903,7 +903,7 @@ function performConfirm() {
 }
 
 .dashboard-widget-expand__body :deep(.dashboard-widget-card) {
-  min-height: 100%;
+  height: 100%;
 }
 
 .dashboard-page-bar {

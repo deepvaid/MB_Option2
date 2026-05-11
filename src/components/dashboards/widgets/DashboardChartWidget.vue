@@ -118,7 +118,7 @@ const chartOptions = computed<ApexOptions>(() => {
       ...base.chart,
       sparkline: { enabled: false },
       zoom: { enabled: false },
-      redrawOnParentResize: true,
+      redrawOnParentResize: false,
     },
     stroke: {
       curve: 'smooth',

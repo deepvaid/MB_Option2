@@ -67,6 +67,9 @@
   --mp-color-light-borderDividerMuted: rgba(26, 24, 20, 0.06);
   --mp-color-light-textPrimary: #1a1814;
   --mp-color-light-textMuted: #7a7466;
+  --mp-color-light-daVinci-iconFrom: #7c3aed;
+  --mp-color-light-daVinci-iconTo: #6366f1;
+  --mp-color-light-daVinci-text: #634fda;
   --mp-color-blue-50: #EBF8FE;
   --mp-color-blue-100: #D6EEFB;
   --mp-color-blue-200: #A8DDF1;
@@ -122,6 +125,9 @@
   --mp-color-dark-borderDividerMuted: rgba(234, 240, 255, 0.12);
   --mp-color-dark-textPrimary: #f1ece2;
   --mp-color-dark-textMuted: #b3aa97;
+  --mp-color-dark-daVinci-iconFrom: #a78bfa;
+  --mp-color-dark-daVinci-iconTo: #818cf8;
+  --mp-color-dark-daVinci-text: #c4b5fd;
   --mp-color-sidebar-bg: #fdfbf7;
   --mp-color-sidebar-surface: #fdfbf7;
   --mp-color-sidebar-border: #e6dfd1;
@@ -135,12 +141,18 @@
   --mp-color-chart-light-series4: #16A34A;
   --mp-color-chart-light-series5: #B45309;
   --mp-color-chart-light-series6: #475569;
+  --mp-color-chart-light-series7: #7c3aed;
+  --mp-color-chart-light-series8: #ec4899;
+  --mp-color-chart-light-series9: #f59e0b;
   --mp-color-chart-dark-series1: #60A5FA;
   --mp-color-chart-dark-series2: #38BDF8;
   --mp-color-chart-dark-series3: #2DD4BF;
   --mp-color-chart-dark-series4: #4ADE80;
   --mp-color-chart-dark-series5: #FBBF24;
   --mp-color-chart-dark-series6: #94A3B8;
+  --mp-color-chart-dark-series7: #a78bfa;
+  --mp-color-chart-dark-series8: #f472b6;
+  --mp-color-chart-dark-series9: #fbbf24;
   --mp-typography-fontFamily-base: Inter, system-ui, -apple-system, sans-serif;
   --mp-typography-fontFamily-mono: 'JetBrains Mono', 'Fira Code', monospace;
   --mp-typography-fontSize-xs: 11px;

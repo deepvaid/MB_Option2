@@ -212,15 +212,15 @@ function handleLayoutUpdate(nextLayout: Array<{ i: string; x: number; y: number;
 }
 
 .dashboard-grid__mobile-item {
-  min-height: 360px;
+  height: 360px;
 }
 
 .dashboard-grid__mobile-item--kpi {
-  min-height: 214px;
+  height: 214px;
 }
 
 .dashboard-grid__mobile-item--table {
-  min-height: 340px;
+  height: 340px;
 }
 
 .dashboard-grid__layout--editing {

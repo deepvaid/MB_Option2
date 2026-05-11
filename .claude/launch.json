@@ -19,6 +19,12 @@
       "runtimeExecutable": "npm",
       "runtimeArgs": ["run", "design-kit:dev"],
       "port": 5174
+    },
+    {
+      "name": "Widget Library",
+      "runtimeExecutable": "npx",
+      "runtimeArgs": ["serve", "-p", "5175", "."],
+      "port": 5175
     }
   ]
 }
