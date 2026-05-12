@@ -38,12 +38,14 @@ interface MpDaVinciBotProps {
   initialChatMode?: boolean
   initialMessages?: ChatMessage[]
   subtitle?: string
+  headerless?: boolean
 }
 
 const props = withDefaults(defineProps<MpDaVinciBotProps>(), {
   initialChatMode: false,
   initialMessages: () => [],
   subtitle: 'Intelligent AI assistant',
+  headerless: false,
 })
 
 const emit = defineEmits<{
@@ -368,11 +370,29 @@ function getInsightProps(msg: ChatMessage): { headline: string; description: str
 }
 
 function handleOpenInTab() {
-  pushToast({ title: 'Da Vinci opened in new tab' })
-}
-
-function handlePin() {
-  pushToast({ title: 'Pinned to dashboard' })
+  const snapshot = {
+    conversationId: currentConversationId.value ?? makeId('c'),
+    messages: messages.value,
+    accountId: targetAccountId.value ?? accountsStore.activeId ?? '',
+    dashboardId: targetDashboard.value?.id ?? null,
+    snapshotAt: Date.now(),
+  }
+  try {
+    window.localStorage.setItem(
+      'davinci-active-conversation-v1',
+      JSON.stringify(snapshot),
+    )
+  } catch {
+    // localStorage quota / private mode — navigate anyway, full-screen view starts fresh
+  }
+  emit('close')
+  router.push({
+    name: 'DaVinciCopilot',
+    params: {
+      accountId: snapshot.accountId,
+      conversationId: snapshot.conversationId,
+    },
+  })
 }
 
 function handleClearAll() {
@@ -393,7 +413,7 @@ function onComposerKeydown(event: KeyboardEvent) {
 <template>
   <div class="dv-panel">
     <!-- ═══ HEADER ═══ -->
-    <header class="dv-panel__header">
+    <header v-if="!headerless" class="dv-panel__header">
       <div class="dv-panel__avatar">
         <v-icon color="white" size="22">sparkles</v-icon>
       </div>
@@ -424,12 +444,8 @@ function onComposerKeydown(event: KeyboardEvent) {
         </template>
         <v-list density="compact" class="dv-panel__menu">
           <v-list-item @click="handleOpenInTab">
-            <template #prepend><v-icon size="18">external-link</v-icon></template>
-            <v-list-item-title>Open in new tab</v-list-item-title>
-          </v-list-item>
-          <v-list-item @click="handlePin">
-            <template #prepend><v-icon size="18">pin</v-icon></template>
-            <v-list-item-title>Pin to dashboard</v-list-item-title>
+            <template #prepend><v-icon size="18">maximize-2</v-icon></template>
+            <v-list-item-title>Open full screen</v-list-item-title>
           </v-list-item>
           <v-divider />
           <v-list-item class="dv-panel__menu-danger" @click="handleClearAll">

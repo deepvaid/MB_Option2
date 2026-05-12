@@ -99,6 +99,11 @@ const routes: RouteRecordRaw[] = [
   // 8. Da Vinci
   { path: '/accounts/:accountId/da-vinci', name: 'DaVinciAI', component: () => import('@/views/DaVinci/DaVinciAI.vue') },
   { path: '/accounts/:accountId/da-vinci/dashboard', name: 'DaVinciDashboard', component: () => import('@/views/DaVinci/DaVinciDashboard.vue') },
+  {
+    path: '/accounts/:accountId/da-vinci/copilot/:conversationId?',
+    name: 'DaVinciCopilot',
+    component: () => import('@/views/DaVinci/DaVinciCopilot.vue'),
+  },
 
   // 9. App Store (formerly Integrations)
   { path: '/accounts/:accountId/app_store', name: 'AppStore', component: () => import('@/views/Integrations/Integrations.vue') },

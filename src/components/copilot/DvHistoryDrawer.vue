@@ -5,6 +5,7 @@ import { useDaVinciHistory, type DaVinciHistoryItem, type GroupedHistory } from 
 const props = defineProps<{
   open: boolean
   activeId?: string
+  mode?: 'overlay' | 'rail'
 }>()
 
 const emit = defineEmits<{
@@ -13,7 +14,12 @@ const emit = defineEmits<{
   newChat: []
 }>()
 
-const { groupedItems, formatAgo } = useDaVinciHistory()
+const { groupedItems, formatAgo, removeItem } = useDaVinciHistory()
+
+function handleDelete(id: string, event: MouseEvent) {
+  event.stopPropagation()
+  removeItem(id)
+}
 
 const search = ref('')
 
@@ -51,10 +57,14 @@ function buildSub(item: DaVinciHistoryItem): string {
 </script>
 
 <template>
-  <div class="dv-history" :class="{ 'is-open': open }" :aria-hidden="!open">
+  <div
+    class="dv-history"
+    :class="[{ 'is-open': open }, `dv-history--${mode ?? 'overlay'}`]"
+    :aria-hidden="mode !== 'rail' && !open"
+  >
     <header class="dv-history__head">
       <span class="dv-eyebrow">Conversation history</span>
-      <v-btn icon size="32" variant="text" aria-label="Close history" @click="emit('close')">
+      <v-btn v-if="mode !== 'rail'" icon size="32" variant="text" aria-label="Close history" @click="emit('close')">
         <v-icon size="16">x</v-icon>
       </v-btn>
     </header>
@@ -70,20 +80,30 @@ function buildSub(item: DaVinciHistoryItem): string {
           <div class="dv-history__label">
             {{ key === 'today' ? 'Today' : key === 'yesterday' ? 'Yesterday' : key === 'lastWeek' ? 'Last 7 days' : 'Older' }}
           </div>
-          <button
+          <div
             v-for="item in group"
             :key="item.id"
-            type="button"
+            role="button"
+            tabindex="0"
             class="dv-history__item"
             :class="{ 'is-active': item.id === activeId }"
             @click="emit('select', item.id)"
+            @keydown.enter.space.prevent="emit('select', item.id)"
           >
             <v-icon size="18">{{ item.icon }}</v-icon>
             <div class="dv-history__text">
               <div class="dv-history__title">{{ item.title }}</div>
               <div class="dv-history__sub">{{ buildSub(item) }}</div>
             </div>
-          </button>
+            <button
+              type="button"
+              class="dv-history__delete"
+              :aria-label="`Delete ${item.title}`"
+              @click="handleDelete(item.id, $event)"
+            >
+              <v-icon size="14">trash-2</v-icon>
+            </button>
+          </div>
         </section>
       </template>
 
@@ -241,6 +261,32 @@ function buildSub(item: DaVinciHistoryItem): string {
   margin-top: 2px;
 }
 
+.dv-history__delete {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  flex-shrink: 0;
+  border: none;
+  background: transparent;
+  border-radius: 6px;
+  color: rgb(var(--v-theme-on-surface-variant));
+  cursor: pointer;
+  opacity: 0;
+  transition: opacity 120ms ease, background 120ms ease, color 120ms ease;
+}
+
+.dv-history__item:hover .dv-history__delete,
+.dv-history__item:focus-within .dv-history__delete {
+  opacity: 1;
+}
+
+.dv-history__delete:hover {
+  background: rgba(var(--v-theme-error), 0.12);
+  color: rgb(var(--v-theme-error));
+}
+
 .dv-history__empty {
   display: flex;
   flex-direction: column;
@@ -294,5 +340,17 @@ function buildSub(item: DaVinciHistoryItem): string {
 
 .dv-history__newchat:hover {
   filter: brightness(1.05);
+}
+
+/* ─── Rail mode overrides ───────────────────────────────────────────── */
+.dv-history--rail {
+  position: relative;
+  inset: unset;
+  transform: none !important;
+  transition: none;
+  width: 100%;
+  height: 100%;
+  z-index: auto;
+  border-bottom: none;
 }
 </style>
