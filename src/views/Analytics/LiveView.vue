@@ -440,7 +440,7 @@ const recentActivity = computed(() => [
             </v-btn>
           </template>
         </v-tooltip>
-        <v-btn variant="flat" icon="maximize" rounded="lg" / color="surface">
+        <v-btn variant="flat" icon="maximize" rounded="lg" color="surface" />
       </div>
     </div>
 

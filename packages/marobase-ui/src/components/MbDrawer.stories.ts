@@ -33,7 +33,7 @@ const meta: Meta<MbDrawerProps> = {
       return { args, open };
     },
     template: `
-      <div style="display:grid;align-items:stretch;justify-items:stretch;padding:0;width:100%;min-height:720px;background:#f7f3ec;">
+      <div style="display:grid;align-items:stretch;justify-items:stretch;padding:0;width:100%;min-height:720px;background:#f7f7f8;">
         <MbDrawer v-bind="args" :model-value="open" @update:modelValue="open = $event">
           <form class="mb-drawer__form" @submit.prevent>
             <label class="mb-drawer__field">
@@ -106,7 +106,7 @@ export const DataSourceFlyout: Story = {
       return { open };
     },
     template: `
-      <div style="display:grid;align-items:stretch;justify-items:stretch;padding:0;width:100%;min-height:720px;background:#f7f3ec;">
+      <div style="display:grid;align-items:stretch;justify-items:stretch;padding:0;width:100%;min-height:720px;background:#f7f7f8;">
         <MbDrawer
           v-model="open"
           title="New data source"

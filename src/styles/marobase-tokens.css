@@ -1,19 +1,19 @@
 /* =====================================================================
    Design Kit — Vuetify-style tokens
-   Palette: warm cream (Variation B)
+   Palette: neutral grey (ChatGPT-style)
    ===================================================================== */
 :root {
   /* Surfaces */
-  --v-theme-background:        #f7f3ec;
-  --v-theme-surface:           #fdfbf7;
-  --v-theme-surface-variant:   #f1ece2;
+  --v-theme-background:        #f7f7f8;
+  --v-theme-surface:           #ffffff;
+  --v-theme-surface-variant:   #f0f0f0;
   --v-theme-surface-bright:    #ffffff;
-  --v-theme-surface-light:     #faf6ef;
+  --v-theme-surface-light:     #fafafa;
 
   /* On-* */
   --v-theme-on-background:     #1a1814;
   --v-theme-on-surface:        #1a1814;
-  --v-theme-on-surface-variant:#7a7466;
+  --v-theme-on-surface-variant:#737373;
 
   /* Brand & semantic */
   --v-theme-primary:           #1ab7ea;
@@ -40,8 +40,8 @@
   --v-theme-info-container:    #d6eefb;
 
   /* Outlines */
-  --v-theme-outline:           #d8d0bf;
-  --v-theme-outline-variant:   #e6dfd1;
+  --v-theme-outline:           #d4d4d4;
+  --v-theme-outline-variant:   #e5e5e5;
 
   /* Shadow keys */
   --v-shadow-key-umbra:        rgba(26, 24, 20, 0.10);
@@ -82,16 +82,16 @@
    ===================================================================== */
 [data-theme="dark"] {
   /* Surfaces */
-  --v-theme-background:        #14110d;
-  --v-theme-surface:            #1c1814;
-  --v-theme-surface-variant:    #2a2520;
-  --v-theme-surface-bright:     #2f2a24;
-  --v-theme-surface-light:      #221d18;
+  --v-theme-background:        #1a1714;
+  --v-theme-surface:            #222019;
+  --v-theme-surface-variant:    #2e2b25;
+  --v-theme-surface-bright:     #333028;
+  --v-theme-surface-light:      #2a2820;
 
   /* On-* */
-  --v-theme-on-background:      #f1ece2;
-  --v-theme-on-surface:         #f1ece2;
-  --v-theme-on-surface-variant: #b3aa97;
+  --v-theme-on-background:      #f0f0f0;
+  --v-theme-on-surface:         #f0f0f0;
+  --v-theme-on-surface-variant: #a3a3a3;
 
   /* Brand & semantic — slightly lifted for AA on dark */
   --v-theme-primary:            #4ec8f2;

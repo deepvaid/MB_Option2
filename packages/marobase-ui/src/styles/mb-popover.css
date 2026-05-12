@@ -8,7 +8,7 @@
 
 .mb-pop__content {
   background: var(--mb-pop-surface);
-  border: 1px solid var(--mb-pop-arrow-border, #e6dfd1);
+  border: 1px solid var(--mb-pop-arrow-border, #e5e5e5);
   border-radius: var(--mb-pop-radius);
   box-shadow: var(--mb-pop-shadow);
   overflow: hidden;

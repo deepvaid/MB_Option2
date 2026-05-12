@@ -14,7 +14,7 @@
 
 .mb-drawer__panel {
   background: var(--mb-drawer-surface);
-  border: 1px solid var(--mb-drawer-border-color, #e6dfd1);
+  border: 1px solid var(--mb-drawer-border-color, #e5e5e5);
   border-radius: 12px 0 0 12px;
   display: flex;
   flex-direction: column;

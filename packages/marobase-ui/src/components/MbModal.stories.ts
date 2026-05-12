@@ -40,8 +40,8 @@ const meta: Meta<MbModalProps> = {
       return { args, open };
     },
     template: `
-      <div style="display:grid;gap:16px;align-items:start;justify-items:start;padding:24px;width:100%;min-height:520px;background:#f7f3ec;">
-        <button style="height:36px;border-radius:999px;border:1px solid #e6dfd1;background:#fdfbf7;color:#1a1814;padding:0 14px;font:600 13px/1 Inter, sans-serif;" @click="open = true">Open modal</button>
+      <div style="display:grid;gap:16px;align-items:start;justify-items:start;padding:24px;width:100%;min-height:520px;background:#f7f7f8;">
+        <button style="height:36px;border-radius:999px;border:1px solid #e5e5e5;background:#ffffff;color:#1a1814;padding:0 14px;font:600 13px/1 Inter, sans-serif;" @click="open = true">Open modal</button>
         <MbModal v-bind="args" :model-value="open" @update:modelValue="open = $event" />
       </div>
     `
@@ -74,7 +74,7 @@ export const AddDataSourceForm: Story = {
       return { open };
     },
     template: `
-      <div style="display:grid;gap:16px;align-items:start;justify-items:start;padding:24px;width:100%;min-height:620px;background:#f7f3ec;">
+      <div style="display:grid;gap:16px;align-items:start;justify-items:start;padding:24px;width:100%;min-height:620px;background:#f7f7f8;">
         <button style="height:36px;border-radius:999px;border:1px solid #1ab7ea;background:#1ab7ea;color:#fff;padding:0 14px;font:600 13px/1 Inter, sans-serif;" @click="open = true">Add data source</button>
         <MbModal
           v-model="open"
@@ -91,7 +91,7 @@ export const AddDataSourceForm: Story = {
             <v-text-field label="API key" type="password" placeholder="sk-..." />
           </div>
           <template #footer>
-            <button style="height:36px;border:0;background:transparent;color:#7a7466;padding:0 14px;font:600 13px/1 Inter, sans-serif;" @click="open = false">Cancel</button>
+            <button style="height:36px;border:0;background:transparent;color:#737373;padding:0 14px;font:600 13px/1 Inter, sans-serif;" @click="open = false">Cancel</button>
             <button style="height:36px;border-radius:999px;border:1px solid #1ab7ea;background:#1ab7ea;color:#fff;padding:0 16px;font:600 13px/1 Inter, sans-serif;" @click="open = false">Connect</button>
           </template>
         </MbModal>
