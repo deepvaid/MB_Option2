@@ -67,7 +67,7 @@ function selectAll() {
       :subtitle="`${store.fulfillments.filter(f => f.status !== 'Shipped').length} orders awaiting fulfillment`"
     >
       <template #actions>
-        <v-btn variant="outlined" prepend-icon="printer" class="text-none">Print Packing Slips</v-btn>
+        <v-btn variant="flat" prepend-icon="printer" class="text-none" color="surface">Print Packing Slips</v-btn>
         <v-btn color="primary" variant="flat" prepend-icon="truck" class="text-none" :disabled="selected.length === 0">Mark Shipped{{ selected.length > 0 ? ` (${selected.length})` : '' }}</v-btn>
       </template>
     </MpPageHeader>
@@ -109,8 +109,8 @@ function selectAll() {
           </div>
         </template>
         <template #bulk-actions>
-          <v-btn size="small" variant="outlined" color="success" class="text-none" prepend-icon="truck" rounded="lg">Mark Shipped</v-btn>
-          <v-btn size="small" variant="outlined" color="secondary" class="text-none" prepend-icon="printer" rounded="lg">Print Labels</v-btn>
+          <v-btn size="small" variant="flat" color="success" class="text-none" prepend-icon="truck" rounded="lg">Mark Shipped</v-btn>
+          <v-btn size="small" variant="flat" color="secondary" class="text-none" prepend-icon="printer" rounded="lg">Print Labels</v-btn>
         </template>
       </MpDataTableToolbar>
 

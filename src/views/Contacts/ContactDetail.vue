@@ -102,7 +102,7 @@ const cartHeaders = [
     <!-- ── Page Header ────────────────────────────────────────────────────── -->
     <MpPageHeader :title="fullName" :backTo="`/accounts/${route.params.accountId}/contacts`">
       <template #actions>
-        <v-btn variant="outlined" prepend-icon="pencil" @click="openEditDrawer">Edit Contact</v-btn>
+        <v-btn variant="flat" prepend-icon="pencil" @click="openEditDrawer" color="surface">Edit Contact</v-btn>
         <v-menu>
           <template v-slot:activator="{ props }">
             <v-btn v-bind="props" icon="more-vertical" variant="text" />
@@ -206,7 +206,7 @@ const cartHeaders = [
             <v-chip v-for="tag in contact.tags" :key="tag" size="small" variant="tonal" color="secondary">{{ tag }}</v-chip>
           </div>
           <div v-else class="text-body-2 text-medium-emphasis mb-4">No contact tags to show.</div>
-          <v-btn variant="outlined" size="small" prepend-icon="plus">Add Contact Tags</v-btn>
+          <v-btn variant="flat" size="small" prepend-icon="plus" color="surface">Add Contact Tags</v-btn>
         </v-card>
 
         <!-- Card 3: Lists & Subscriptions -->
@@ -487,7 +487,7 @@ const cartHeaders = [
                     </div>
                   </div>
                   <div class="text-caption text-medium-emphasis text-no-wrap mr-3">{{ c.sentDate }}</div>
-                  <v-btn variant="outlined" size="small">Re-send Campaign</v-btn>
+                  <v-btn variant="flat" size="small" color="surface">Re-send Campaign</v-btn>
                   <v-btn variant="tonal" size="small">Details</v-btn>
                 </v-card>
               </div>
@@ -504,7 +504,7 @@ const cartHeaders = [
                     </div>
                   </div>
                   <div class="text-caption text-medium-emphasis text-no-wrap mr-3">{{ c.sentDate }}</div>
-                  <v-btn variant="outlined" size="small">Re-send</v-btn>
+                  <v-btn variant="flat" size="small" color="surface">Re-send</v-btn>
                   <v-btn variant="tonal" size="small">Details</v-btn>
                 </v-card>
               </div>

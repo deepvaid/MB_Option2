@@ -172,7 +172,7 @@ function finish() { saveSnack.value = true; setTimeout(() => router.push('/marke
             {title:'Every 7 days', value:'every_7d'},
           ]" item-title="title" item-value="value" variant="outlined" density="compact"></v-select>
           <div class="d-flex justify-space-between mt-6">
-            <v-btn variant="outlined" class="text-none" @click="step=1">Back</v-btn>
+            <v-btn variant="flat" class="text-none" @click="step=1" color="surface">Back</v-btn>
             <v-btn color="primary" variant="elevated" class="text-none" append-icon="arrow-right" @click="step=3">Continue to Design</v-btn>
           </div>
         </v-card>
@@ -245,7 +245,7 @@ function finish() { saveSnack.value = true; setTimeout(() => router.push('/marke
             </template>
           </div>
           <div class="pa-3 border-t d-flex gap-2">
-            <v-btn variant="outlined" class="text-none flex-grow-1" size="small" @click="step=2">Back</v-btn>
+            <v-btn variant="flat" class="text-none flex-grow-1" size="small" @click="step=2" color="surface">Back</v-btn>
             <v-btn color="primary" variant="elevated" class="text-none flex-grow-1" size="small" @click="step=4">Next</v-btn>
           </div>
         </div>
@@ -335,7 +335,7 @@ function finish() { saveSnack.value = true; setTimeout(() => router.push('/marke
             </v-list>
             <v-divider class="my-4"></v-divider>
             <div class="d-flex gap-3 justify-end">
-              <v-btn variant="outlined" class="text-none" @click="step=3">Back to Design</v-btn>
+              <v-btn variant="flat" class="text-none" @click="step=3" color="surface">Back to Design</v-btn>
               <v-btn color="success" variant="elevated" class="text-none" prepend-icon="check" @click="finish()">Publish Form</v-btn>
             </div>
           </v-card>

@@ -57,7 +57,7 @@ function handleAdd() {
       <v-divider />
 
       <footer class="dv-expand__foot">
-        <v-btn variant="outlined" class="text-none" @click="close">Close</v-btn>
+        <v-btn variant="flat" class="text-none" @click="close" color="surface">Close</v-btn>
         <v-btn
           color="primary"
           variant="flat"

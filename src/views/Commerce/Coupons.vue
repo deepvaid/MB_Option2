@@ -95,7 +95,7 @@ const statusColor = (s: string) => ({ Active:'success', Expired:'error', 'Maxed 
       :subtitle="`${store.coupons.filter(c => c.status==='Active').length} active codes · ${store.coupons.reduce((a,c)=>a+c.usage,0).toLocaleString()} total uses`"
     >
       <template #actions>
-        <v-btn variant="outlined" prepend-icon="download" class="text-none">Export</v-btn>
+        <v-btn variant="flat" prepend-icon="download" class="text-none" color="surface">Export</v-btn>
         <v-btn color="primary" variant="flat" prepend-icon="plus" class="text-none" @click="createDialog=true;step=1">Create Coupon</v-btn>
       </template>
     </MpPageHeader>
@@ -130,8 +130,8 @@ const statusColor = (s: string) => ({ Active:'success', Expired:'error', 'Maxed 
           </div>
         </template>
         <template #bulk-actions>
-          <v-btn size="small" variant="outlined" color="warning" class="text-none" prepend-icon="pause" rounded="lg">Deactivate</v-btn>
-          <v-btn size="small" variant="outlined" color="error" class="text-none" prepend-icon="trash-2" rounded="lg">Delete</v-btn>
+          <v-btn size="small" variant="flat" color="warning" class="text-none" prepend-icon="pause" rounded="lg">Deactivate</v-btn>
+          <v-btn size="small" variant="flat" color="error" class="text-none" prepend-icon="trash-2" rounded="lg">Delete</v-btn>
         </template>
       </MpDataTableToolbar>
 
@@ -198,7 +198,7 @@ const statusColor = (s: string) => ({ Active:'success', Expired:'error', 'Maxed 
           <div class="d-flex gap-3 mb-5">
             <v-text-field v-model="coupon.code" label="Coupon Code" variant="outlined" density="comfortable"
               placeholder="e.g. SUMMER20" class="flex-grow-1" hint="Leave blank to auto-generate" persistent-hint></v-text-field>
-            <v-btn variant="outlined" color="primary" class="text-none mt-1 coupon-code-btn" prepend-icon="refresh-cw" @click="generateCode">Auto-Generate</v-btn>
+            <v-btn variant="flat" color="primary" class="text-none mt-1 coupon-code-btn" prepend-icon="refresh-cw" @click="generateCode">Auto-Generate</v-btn>
           </div>
           <div class="text-subtitle-2 font-weight-bold mb-3 text-uppercase text-medium-emphasis">Discount Type</div>
           <v-row dense class="mb-4">

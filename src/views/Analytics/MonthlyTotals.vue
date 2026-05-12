@@ -23,8 +23,8 @@ const headers = [
       subtitle="High-level overview of revenue and audience growth over time."
     >
       <template #actions>
-        <v-btn variant="outlined" prepend-icon="calendar-range" class="text-none">Select Date Range</v-btn>
-        <v-btn variant="outlined" prepend-icon="download" class="text-none">Export CSV</v-btn>
+        <v-btn variant="flat" prepend-icon="calendar-range" class="text-none" color="surface">Select Date Range</v-btn>
+        <v-btn variant="flat" prepend-icon="download" class="text-none" color="surface">Export CSV</v-btn>
       </template>
     </MpPageHeader>
 

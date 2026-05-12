@@ -42,7 +42,7 @@ const emit = defineEmits<{
         <v-btn color="teal" variant="flat" size="small" class="text-none flex-grow-1" prepend-icon="save" @click="emit('save')">
           Save Segment
         </v-btn>
-        <v-btn variant="outlined" size="small" class="text-none" @click="emit('preview')">
+        <v-btn variant="flat" size="small" class="text-none" @click="emit('preview')" color="surface">
           Preview
         </v-btn>
       </div>

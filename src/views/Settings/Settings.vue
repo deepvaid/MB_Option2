@@ -293,7 +293,7 @@ function save() { saveSnack.value = true }
               <v-icon color="primary" size="32">credit-card</v-icon>
               <div><div class="font-weight-bold text-body-2">Visa ending in 4242</div><div class="text-caption text-medium-emphasis">Expires 12/2028</div></div>
               <v-spacer></v-spacer>
-              <v-btn variant="outlined" size="small" color="primary" class="text-none">Change Card</v-btn>
+              <v-btn variant="flat" size="small" color="primary" class="text-none">Change Card</v-btn>
             </v-card>
             <div class="settings-section-heading">Recent Invoices</div>
             <v-table density="compact" class="rounded-xl">
@@ -364,7 +364,7 @@ function save() { saveSnack.value = true }
                   </v-img>
                 </v-avatar>
                 <div>
-                  <v-btn variant="outlined" color="primary" class="text-none mb-1" prepend-icon="camera" size="small">Change Photo</v-btn>
+                  <v-btn variant="flat" color="primary" class="text-none mb-1" prepend-icon="camera" size="small">Change Photo</v-btn>
                   <div class="text-caption text-medium-emphasis">JPG or PNG. Max 2MB.</div>
                 </div>
               </div>
@@ -588,7 +588,7 @@ function save() { saveSnack.value = true }
               <div class="settings-section-divider"></div>
               <div class="d-flex align-center justify-space-between mb-3">
                 <div class="settings-section-heading" style="margin-bottom: 0;">Reply Templates</div>
-                <v-btn size="small" variant="outlined" prepend-icon="plus" class="text-none">Add Template</v-btn>
+                <v-btn size="small" variant="flat" prepend-icon="plus" class="text-none" color="surface">Add Template</v-btn>
               </div>
               <v-card v-for="t in replyTemplates" :key="t.id" variant="flat" rounded="xl" class="settings-panel-card pa-4 mb-3">
                 <div class="d-flex align-center justify-space-between">

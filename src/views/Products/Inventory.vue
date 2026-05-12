@@ -70,7 +70,7 @@ const headers = [
       subtitle="14,204 total stock items across all locations"
     >
       <template #actions>
-        <v-btn variant="outlined" prepend-icon="download" class="text-none">Export</v-btn>
+        <v-btn variant="flat" prepend-icon="download" class="text-none" color="surface">Export</v-btn>
       </template>
     </MpPageHeader>
 

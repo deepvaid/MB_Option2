@@ -161,7 +161,7 @@ function close() {
       <v-divider />
 
       <footer class="dv-refine__foot">
-        <v-btn variant="outlined" class="text-none" @click="close">Cancel</v-btn>
+        <v-btn variant="flat" class="text-none" @click="close" color="surface">Cancel</v-btn>
         <v-btn color="primary" variant="flat" class="text-none" @click="handleApply">
           <v-icon size="16" start>check</v-icon>
           Apply changes

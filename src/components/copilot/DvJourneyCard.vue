@@ -62,7 +62,7 @@ const stepColors: Record<string, string> = {
         <v-btn color="deep-purple" variant="flat" size="small" class="text-none flex-grow-1" prepend-icon="play" @click="emit('activate')">
           Activate Journey
         </v-btn>
-        <v-btn variant="outlined" size="small" class="text-none" @click="emit('edit')">
+        <v-btn variant="flat" size="small" class="text-none" @click="emit('edit')" color="surface">
           Customize
         </v-btn>
       </div>

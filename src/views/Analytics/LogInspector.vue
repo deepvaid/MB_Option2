@@ -44,7 +44,7 @@ const filteredLogs = computed(() =>
       subtitle="System service execution logs"
     >
       <template #actions>
-        <v-btn variant="outlined" prepend-icon="download" class="text-none">Export Logs</v-btn>
+        <v-btn variant="flat" prepend-icon="download" class="text-none" color="surface">Export Logs</v-btn>
       </template>
     </MpPageHeader>
 

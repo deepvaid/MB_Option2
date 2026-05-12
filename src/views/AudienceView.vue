@@ -39,7 +39,7 @@ function saveEdit(contact: any) {
         <p class="text-medium-emphasis">Manage contacts, lists, and segments.</p>
       </div>
       <div class="d-flex gap-4">
-        <v-btn variant="outlined" prepend-icon="share">Export</v-btn>
+        <v-btn variant="flat" prepend-icon="share" color="surface">Export</v-btn>
         <v-btn color="primary" prepend-icon="user-plus" class="ml-4">Add Contact</v-btn>
       </div>
     </div>

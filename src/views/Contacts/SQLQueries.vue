@@ -41,8 +41,8 @@ const headers = [
         HAVING SUM(p.amount) > 500;
       </div>
       <div class="d-flex gap-2 mt-3">
-        <v-btn variant="outlined" prepend-icon="play" class="text-none" size="small">Run Query</v-btn>
-        <v-btn variant="outlined" prepend-icon="save" class="text-none" size="small">Save</v-btn>
+        <v-btn variant="flat" prepend-icon="play" class="text-none" size="small" color="surface">Run Query</v-btn>
+        <v-btn variant="flat" prepend-icon="save" class="text-none" size="small" color="surface">Save</v-btn>
       </div>
     </v-card>
 

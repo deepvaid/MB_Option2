@@ -31,7 +31,7 @@ const items = [
             <div class="text-caption text-medium-emphasis">Last updated: {{ item.lastUpdated }}</div>
           </v-card-text>
           <v-card-actions class="px-4 pb-4 pt-0">
-            <v-btn variant="outlined" size="small" class="text-none">Edit</v-btn>
+            <v-btn variant="flat" size="small" class="text-none" color="surface">Edit</v-btn>
             <v-btn variant="text" size="small" class="text-none">Clone</v-btn>
           </v-card-actions>
         </v-card>

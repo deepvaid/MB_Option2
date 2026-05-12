@@ -9,7 +9,7 @@ import MpPageHeader from '@/components/MpPageHeader.vue'
       subtitle="Embed the tracking script to capture website activity from your contacts."
     >
       <template #actions>
-        <v-btn variant="outlined" prepend-icon="copy" class="text-none">Copy Script</v-btn>
+        <v-btn variant="flat" prepend-icon="copy" class="text-none" color="surface">Copy Script</v-btn>
       </template>
     </MpPageHeader>
 

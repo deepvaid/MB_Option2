@@ -151,7 +151,7 @@ function toggleSelect(id: string) {
         @select-all="selected = filteredRows.map(r => r.id)"
       >
         <template #actions>
-          <v-btn variant="outlined" prepend-icon="refresh-cw">Refresh preview</v-btn>
+          <v-btn variant="flat" prepend-icon="refresh-cw" color="surface">Refresh preview</v-btn>
         </template>
       </MpDataTableToolbar>
 

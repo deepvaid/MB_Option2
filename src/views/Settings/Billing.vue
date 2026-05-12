@@ -31,7 +31,7 @@ const invoices = [
           <div class="text-caption text-medium-emphasis font-weight-bold text-uppercase mb-2">Current Plan</div>
           <div class="text-h5 text-primary font-weight-bold mb-1">Enterprise Plus</div>
           <div class="text-medium-emphasis mb-4">$5,400 / month</div>
-          <v-btn variant="outlined" class="text-none" block>Change Plan</v-btn>
+          <v-btn variant="flat" class="text-none" block color="surface">Change Plan</v-btn>
         </v-card>
       </v-col>
 
@@ -62,7 +62,7 @@ const invoices = [
         title="Invoice History"
       >
         <template #actions>
-          <v-btn variant="outlined" prepend-icon="download" size="small" class="text-none">Download All</v-btn>
+          <v-btn variant="flat" prepend-icon="download" size="small" class="text-none" color="surface">Download All</v-btn>
         </template>
       </MpDataTableToolbar>
       <v-data-table :headers="headers" :items="invoices" :search="search" hover density="comfortable" :items-per-page="10" fixed-header class="flex-grow-1">

@@ -100,7 +100,7 @@ function selectAll() {
       :subtitle="`${store.orders.length} orders total · $${store.orders.reduce((a,o) => a + parseFloat(o.total), 0).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} lifetime revenue`"
     >
       <template #actions>
-        <v-btn variant="outlined" prepend-icon="download" class="text-none">Export</v-btn>
+        <v-btn variant="flat" prepend-icon="download" class="text-none" color="surface">Export</v-btn>
         <v-btn color="primary" variant="flat" prepend-icon="plus" class="text-none">Create Draft Order</v-btn>
       </template>
       <template #tabs>
@@ -139,9 +139,9 @@ function selectAll() {
           </div>
         </template>
         <template #bulk-actions>
-          <v-btn size="small" variant="outlined" color="success" prepend-icon="package-check" class="text-none" rounded="lg">Mark Fulfilled</v-btn>
-          <v-btn size="small" variant="outlined" color="secondary" prepend-icon="printer" class="text-none" rounded="lg">Print Labels</v-btn>
-          <v-btn size="small" variant="outlined" color="error" prepend-icon="ban" class="text-none" rounded="lg">Cancel Orders</v-btn>
+          <v-btn size="small" variant="flat" color="success" prepend-icon="package-check" class="text-none" rounded="lg">Mark Fulfilled</v-btn>
+          <v-btn size="small" variant="flat" color="secondary" prepend-icon="printer" class="text-none" rounded="lg">Print Labels</v-btn>
+          <v-btn size="small" variant="flat" color="error" prepend-icon="ban" class="text-none" rounded="lg">Cancel Orders</v-btn>
         </template>
       </MpDataTableToolbar>
 

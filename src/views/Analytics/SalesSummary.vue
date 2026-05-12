@@ -14,7 +14,7 @@ const { accountMetrics } = storeToRefs(store)
       subtitle="Revenue attribution and channel performance overview"
     >
       <template #actions>
-        <v-btn variant="outlined" prepend-icon="download" class="text-none">Export Report</v-btn>
+        <v-btn variant="flat" prepend-icon="download" class="text-none" color="surface">Export Report</v-btn>
       </template>
     </MpPageHeader>
 

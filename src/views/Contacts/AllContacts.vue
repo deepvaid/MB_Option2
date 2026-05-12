@@ -126,8 +126,8 @@ function handleContactRowClick(event: MouseEvent, payload: { item: unknown }) {
       :subtitle="`${store.contacts.length.toLocaleString()} total contacts · ${store.contacts.filter(c => c.status === 'Active').length.toLocaleString()} active`"
     >
       <template #actions>
-        <v-btn variant="outlined" prepend-icon="upload" class="text-none" @click="startImport">Import</v-btn>
-        <v-btn variant="outlined" prepend-icon="share" class="text-none" @click="startImport">Export</v-btn>
+        <v-btn variant="flat" prepend-icon="upload" class="text-none" @click="startImport" color="surface">Import</v-btn>
+        <v-btn variant="flat" prepend-icon="share" class="text-none" @click="startImport" color="surface">Export</v-btn>
         <v-btn color="primary" variant="flat" prepend-icon="plus" class="text-none" @click="addDrawer=true;addStep=1">Add Contact</v-btn>
       </template>
     </MpPageHeader>
@@ -166,11 +166,11 @@ function handleContactRowClick(event: MouseEvent, payload: { item: unknown }) {
           </div>
         </template>
         <template #bulk-actions>
-          <v-btn variant="outlined" size="small" class="text-none" prepend-icon="share" rounded="lg">Export</v-btn>
-          <v-btn variant="outlined" size="small" class="text-none" prepend-icon="copy" rounded="lg">Duplicate</v-btn>
+          <v-btn variant="flat" size="small" class="text-none" prepend-icon="share" rounded="lg" color="surface">Export</v-btn>
+          <v-btn variant="flat" size="small" class="text-none" prepend-icon="copy" rounded="lg" color="surface">Duplicate</v-btn>
           <v-menu>
             <template v-slot:activator="{ props }">
-              <v-btn v-bind="props" variant="outlined" size="small" class="text-none" append-icon="chevron-down" rounded="lg">More Actions</v-btn>
+              <v-btn v-bind="props" variant="flat" size="small" class="text-none" append-icon="chevron-down" rounded="lg" color="surface">More Actions</v-btn>
             </template>
             <v-list density="compact" rounded="lg" elevation="3" class="py-1">
               <v-list-item prepend-icon="playlist-plus" title="Add to List" />
@@ -314,7 +314,7 @@ function handleContactRowClick(event: MouseEvent, payload: { item: unknown }) {
                 <v-icon size="48" color="primary" class="mb-3">cloud-upload</v-icon>
                 <div class="text-body-1 font-weight-medium mb-1">Drag & drop file here</div>
                 <div class="text-caption text-medium-emphasis mb-4">or click to browse</div>
-                <v-btn variant="outlined" color="primary" class="text-none" prepend-icon="folder-open">Browse File</v-btn>
+                <v-btn variant="flat" color="primary" class="text-none" prepend-icon="folder-open">Browse File</v-btn>
               </v-card>
               <v-select v-model="importList" label="Import into list" :items="['Newsletter Subscribers','VIP Customer Circle','Win-Back Segment']" variant="outlined" density="comfortable" class="mt-4" />
             </div>

@@ -48,7 +48,7 @@ const filteredTests = computed(() =>
       :subtitle="`${abTests.length} A/B tests`"
     >
       <template #actions>
-        <v-btn variant="outlined" prepend-icon="download" class="text-none">Export CSV</v-btn>
+        <v-btn variant="flat" prepend-icon="download" class="text-none" color="surface">Export CSV</v-btn>
       </template>
     </MpPageHeader>
 

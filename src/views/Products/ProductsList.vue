@@ -76,7 +76,7 @@ const statusColor = (s: string) => s === 'In Stock' ? 'success' : s === 'Low Sto
       :subtitle="`${filteredProducts.length} products`"
     >
       <template #actions>
-        <v-btn variant="outlined" prepend-icon="upload" class="text-none">Import</v-btn>
+        <v-btn variant="flat" prepend-icon="upload" class="text-none" color="surface">Import</v-btn>
         <v-btn color="primary" variant="flat" prepend-icon="plus" class="text-none">Add Product</v-btn>
       </template>
     </MpPageHeader>

@@ -19,7 +19,7 @@ import MpPageHeader from '@/components/MpPageHeader.vue'
           <v-card-text class="pa-5">
             <div class="text-subtitle-1 font-weight-bold mb-1">Saved Custom Report {{ i }}</div>
             <p class="text-medium-emphasis text-body-2 mb-4">Last run: 2 days ago</p>
-            <v-btn variant="outlined" block class="text-none">Run Report</v-btn>
+            <v-btn variant="flat" block class="text-none" color="surface">Run Report</v-btn>
           </v-card-text>
         </v-card>
       </v-col>

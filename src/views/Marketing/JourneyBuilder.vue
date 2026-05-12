@@ -106,7 +106,7 @@ const typeBadgeColor = (t: NodeType) => ({ trigger:'secondary', email:'primary',
           </template>
         </v-tooltip>
         <v-divider vertical class="mx-1" style="height:24px;"></v-divider>
-        <v-btn variant="outlined" size="small" class="text-none" @click="saveSnack=true">Save Draft</v-btn>
+        <v-btn variant="flat" size="small" class="text-none" @click="saveSnack=true" color="surface">Save Draft</v-btn>
         <v-btn color="success" variant="elevated" size="small" class="text-none" prepend-icon="play" @click="journeyStatus='Active';saveSnack=true">Activate</v-btn>
       </div>
     </div>
@@ -191,7 +191,7 @@ const typeBadgeColor = (t: NodeType) => ({ trigger:'secondary', email:'primary',
                 <div style="width:2px;height:24px;background:rgba(var(--v-border-color),0.5);"></div>
                 <v-menu :close-on-content-click="false" location="right">
                   <template v-slot:activator="{ props }">
-                    <v-btn v-bind="props" icon="plus" size="x-small" variant="outlined" color="primary" class="add-btn"></v-btn>
+                    <v-btn v-bind="props" icon="plus" size="x-small" variant="flat" color="primary" class="add-btn"></v-btn>
                   </template>
                   <v-card rounded="xl" elevation="8" width="200" class="py-2">
                     <div class="px-3 py-1 text-caption text-medium-emphasis font-weight-bold text-uppercase border-b mb-1">Add Step</div>

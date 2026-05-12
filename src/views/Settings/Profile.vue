@@ -27,7 +27,7 @@ const userAvatarUrl = 'https://maropost.com/hubfs/Maropost%20website/leadership/
           </v-avatar>
           <div class="text-h5 font-weight-bold mb-1">{{ userName }}</div>
           <div class="text-medium-emphasis mb-4">{{ userRole }}</div>
-          <v-btn variant="outlined" class="text-none">Change Avatar</v-btn>
+          <v-btn variant="flat" class="text-none" color="surface">Change Avatar</v-btn>
         </v-card>
       </v-col>
       <v-col cols="12" md="8">

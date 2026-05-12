@@ -43,7 +43,7 @@ const filteredCampaigns = computed(() =>
       :subtitle="`${store.campaigns.length} campaigns`"
     >
       <template #actions>
-        <v-btn variant="outlined" prepend-icon="download" class="text-none">Export CSV</v-btn>
+        <v-btn variant="flat" prepend-icon="download" class="text-none" color="surface">Export CSV</v-btn>
       </template>
     </MpPageHeader>
 

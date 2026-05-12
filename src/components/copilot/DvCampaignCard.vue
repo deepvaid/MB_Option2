@@ -60,7 +60,7 @@ const emit = defineEmits<{
         <v-btn color="primary" variant="flat" size="small" class="text-none flex-grow-1" prepend-icon="rocket" @click="emit('launch')">
           Launch Campaign
         </v-btn>
-        <v-btn variant="outlined" size="small" class="text-none" @click="emit('edit')">
+        <v-btn variant="flat" size="small" class="text-none" @click="emit('edit')" color="surface">
           Edit
         </v-btn>
       </div>

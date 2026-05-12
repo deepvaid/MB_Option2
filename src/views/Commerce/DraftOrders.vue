@@ -114,7 +114,7 @@ const statusColor = (s: string) => ({Open:'primary','Invoice Sent':'success'})[s
       :subtitle="`${store.draftOrders?.length ?? 0} drafts · Create manual orders on behalf of customers`"
     >
       <template #actions>
-        <v-btn variant="outlined" prepend-icon="download" class="text-none">Export</v-btn>
+        <v-btn variant="flat" prepend-icon="download" class="text-none" color="surface">Export</v-btn>
         <v-btn color="primary" variant="flat" prepend-icon="plus" class="text-none" @click="createDrawer=true;draftStep=1">Create Draft Order</v-btn>
       </template>
     </MpPageHeader>
@@ -152,8 +152,8 @@ const statusColor = (s: string) => ({Open:'primary','Invoice Sent':'success'})[s
           </div>
         </template>
         <template #bulk-actions>
-          <v-btn size="small" variant="outlined" color="primary" class="text-none" prepend-icon="send" rounded="lg">Send Invoice</v-btn>
-          <v-btn size="small" variant="outlined" color="error" class="text-none" prepend-icon="trash-2" rounded="lg">Delete Drafts</v-btn>
+          <v-btn size="small" variant="flat" color="primary" class="text-none" prepend-icon="send" rounded="lg">Send Invoice</v-btn>
+          <v-btn size="small" variant="flat" color="error" class="text-none" prepend-icon="trash-2" rounded="lg">Delete Drafts</v-btn>
         </template>
       </MpDataTableToolbar>
 
@@ -327,7 +327,7 @@ const statusColor = (s: string) => ({Open:'primary','Invoice Sent':'success'})[s
         <div class="pa-5 border-t d-flex justify-space-between align-center" style="flex-shrink:0;">
           <v-btn variant="text" class="text-none" @click="draftStep>1?draftStep--:createDrawer=false">{{ draftStep===1?'Cancel':'← Back' }}</v-btn>
           <div class="d-flex gap-2">
-            <v-btn v-if="draftStep===3" variant="outlined" color="primary" class="text-none" @click="saveDraft">Save Draft</v-btn>
+            <v-btn v-if="draftStep===3" variant="flat" color="primary" class="text-none" @click="saveDraft">Save Draft</v-btn>
             <v-btn v-if="draftStep<3" color="primary" variant="elevated" class="text-none" :disabled="draftStep===1&&draft.items.length===0" @click="draftStep++">Continue →</v-btn>
             <v-btn v-else color="success" variant="elevated" class="text-none" prepend-icon="send" @click="saveDraft">Send Invoice</v-btn>
           </div>

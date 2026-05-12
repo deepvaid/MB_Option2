@@ -76,7 +76,7 @@ const submitCampaign = () => {
       :subtitle="`${store.campaigns.length} campaigns · $${totalRevenue.toLocaleString('en-US', {minimumFractionDigits: 0})} total attributed revenue`"
     >
       <template #actions>
-        <v-btn variant="outlined" prepend-icon="folder" class="text-none">Manage Folders</v-btn>
+        <v-btn variant="flat" prepend-icon="folder" class="text-none" color="surface">Manage Folders</v-btn>
         <v-btn color="primary" variant="flat" prepend-icon="plus" class="text-none" @click="openCreator">New Campaign</v-btn>
       </template>
     </MpPageHeader>
@@ -212,7 +212,7 @@ const submitCampaign = () => {
             <div class="font-weight-bold mb-1">Open Visual Editor</div>
             <div class="text-caption text-medium-emphasis">Use the drag-and-drop email builder</div>
           </v-card>
-          <v-btn color="primary" class="text-none mr-2" @click="creatorStep = 3" variant="outlined">Skip for now</v-btn>
+          <v-btn color="primary" class="text-none mr-2" @click="creatorStep = 3" variant="flat">Skip for now</v-btn>
         </v-stepper-item>
 
         <v-stepper-item title="Review & Send" value="3" color="primary">

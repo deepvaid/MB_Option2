@@ -27,7 +27,7 @@ const webData = Array.from({ length: 15 }, (_, i) => ({
       subtitle="Page-level traffic and engagement analytics"
     >
       <template #actions>
-        <v-btn variant="outlined" prepend-icon="download" class="text-none">Export CSV</v-btn>
+        <v-btn variant="flat" prepend-icon="download" class="text-none" color="surface">Export CSV</v-btn>
       </template>
     </MpPageHeader>
 

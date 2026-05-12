@@ -22,7 +22,7 @@ import MpPageHeader from '@/components/MpPageHeader.vue'
           </div>
           <div class="d-flex align-center gap-3">
             <v-chip color="primary" size="small">Active & Default</v-chip>
-            <v-btn variant="outlined" class="text-none" size="small">Edit Design</v-btn>
+            <v-btn variant="flat" class="text-none" size="small" color="surface">Edit Design</v-btn>
           </div>
         </div>
       </v-card-text>
