@@ -697,6 +697,8 @@ const recentActivity = computed(() => [
 .live-spark {
   margin-left: -8px;
   margin-right: -8px;
+  overflow: hidden;
+  width: calc(100% + 16px);
 }
 
 .funnel {
