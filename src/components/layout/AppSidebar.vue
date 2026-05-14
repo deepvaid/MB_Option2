@@ -441,17 +441,9 @@ watch(
     width="248"
     class="mp-sidebar"
   >
-    <!-- Brand + collapse toggle -->
+    <!-- Brand + anchored toggle -->
     <div class="sidebar-header" :class="{ 'sidebar-header--rail': localRail }">
       <template v-if="!localRail">
-        <button
-          type="button"
-          class="sidebar-menu-btn"
-          aria-label="Collapse sidebar"
-          @click.stop="localRail = true"
-        >
-          <v-icon size="18">menu</v-icon>
-        </button>
         <button
           type="button"
           class="sidebar-brand"
@@ -471,21 +463,21 @@ watch(
         >
           <div class="rail-brand-box">M</div>
         </button>
-
-        <v-tooltip location="end" text="Expand sidebar">
-          <template #activator="{ props: tipProps }">
-            <button
-              v-bind="tipProps"
-              type="button"
-              class="sidebar-rail-expand-btn"
-              aria-label="Expand sidebar"
-              @click.stop="localRail = false"
-            >
-              <v-icon size="14">chevron-right</v-icon>
-            </button>
-          </template>
-        </v-tooltip>
       </template>
+
+      <v-tooltip location="end" :text="localRail ? 'Expand sidebar' : 'Collapse sidebar'">
+        <template #activator="{ props: tipProps }">
+          <button
+            v-bind="tipProps"
+            type="button"
+            class="sidebar-toggle-pill sidebar-toggle-pill--anchored"
+            :aria-label="localRail ? 'Expand sidebar' : 'Collapse sidebar'"
+            @click.stop="localRail = !localRail"
+          >
+            <v-icon size="14">{{ localRail ? 'chevron-right' : 'chevron-left' }}</v-icon>
+          </button>
+        </template>
+      </v-tooltip>
     </div>
 
     <!-- Navigation List -->
@@ -903,10 +895,11 @@ watch(
 .mp-sidebar :deep(.v-navigation-drawer__content) {
   display: flex;
   flex-direction: column;
-  overflow: hidden;
+  overflow: visible;
 }
 
 .sidebar-header {
+  position: relative;
   display: flex;
   align-items: center;
   gap: 10px;
@@ -916,61 +909,63 @@ watch(
 }
 
 .sidebar-header--rail {
-  flex-direction: column;
   justify-content: center;
-  align-items: center;
-  gap: 8px;
   padding: 12px 8px;
 }
 
-.sidebar-rail-expand-btn {
+.sidebar-toggle-pill {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 28px;
-  height: 22px;
-  border: 1px solid var(--sidebar-divider);
-  border-radius: var(--sidebar-radius-sm);
-  background: transparent;
-  color: var(--sidebar-text);
-  cursor: pointer;
-  transition: background 120ms ease, border-color 120ms ease, color 120ms ease;
-}
-
-.sidebar-rail-expand-btn:hover {
-  background: var(--sidebar-hover-bg);
-  border-color: var(--sidebar-active-text);
-  color: var(--sidebar-active-text);
-}
-
-.sidebar-rail-expand-btn:focus-visible {
-  outline: none;
-  box-shadow: 0 0 0 3px var(--sidebar-focus-ring);
-}
-
-.sidebar-menu-btn {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 32px;
-  height: 32px;
-  border: 0;
-  border-radius: var(--sidebar-radius-sm);
-  background: transparent;
-  color: var(--sidebar-muted);
+  width: 24px;
+  height: 24px;
+  border: 1px solid color-mix(in oklch, var(--sidebar-text) 28%, transparent);
+  border-radius: 999px;
+  background: var(--sidebar-bg);
   cursor: pointer;
   flex-shrink: 0;
-  transition: var(--sidebar-transition);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.30), 0 1px 2px rgba(0, 0, 0, 0.16);
+  transition: background 120ms ease, border-color 120ms ease, box-shadow 120ms ease;
 }
 
-.sidebar-menu-btn:hover {
-  background: var(--sidebar-hover-bg);
-  color: var(--sidebar-active-text);
+.sidebar-toggle-pill :deep(.v-icon) {
+  color: var(--sidebar-text) !important;
+  opacity: 0.95;
+  transition: opacity 120ms ease;
 }
 
-.sidebar-menu-btn:focus-visible {
+.sidebar-toggle-pill:hover {
+  background: color-mix(in oklch, var(--sidebar-bg) 86%, var(--sidebar-text));
+  border-color: color-mix(in oklch, var(--sidebar-text) 50%, transparent);
+  box-shadow: 0 3px 12px rgba(0, 0, 0, 0.40), 0 1px 4px rgba(0, 0, 0, 0.20);
+}
+
+.sidebar-toggle-pill:hover :deep(.v-icon) {
+  opacity: 1;
+}
+
+.sidebar-toggle-pill:focus-visible {
   outline: none;
-  box-shadow: 0 0 0 3px var(--sidebar-focus-ring);
+  box-shadow: 0 0 0 3px var(--sidebar-focus-ring),
+              0 2px 8px rgba(0, 0, 0, 0.35);
+}
+
+/* Anchored variant — sits half-outside the header's right edge */
+.sidebar-toggle-pill--anchored {
+  position: absolute;
+  top: 50%;
+  right: -12px;
+  transform: translateY(-50%);
+  z-index: 1010;
+  transition: top 0.2s cubic-bezier(0.4, 0, 0.2, 1),
+              background 120ms ease,
+              border-color 120ms ease,
+              box-shadow 120ms ease;
+}
+
+/* Rail state — drop the pill to overlap the divider below the brand */
+.sidebar-header--rail .sidebar-toggle-pill--anchored {
+  top: 100%;
 }
 
 .sidebar-brand {
