@@ -99,8 +99,14 @@ const cartHeaders = [
 <template>
   <div v-if="contact && detail" class="contact-detail-page">
 
+    <!-- ── Back nav ──────────────────────────────────────────────────────── -->
+    <RouterLink :to="`/accounts/${route.params.accountId}/contacts`" class="back-nav">
+      <v-icon size="16">chevron-left</v-icon>
+      Back to all contacts
+    </RouterLink>
+
     <!-- ── Page Header ────────────────────────────────────────────────────── -->
-    <MpPageHeader :title="fullName" :backTo="`/accounts/${route.params.accountId}/contacts`">
+    <MpPageHeader :title="fullName">
       <template #actions>
         <v-btn variant="flat" prepend-icon="pencil" @click="openEditDrawer" color="surface">Edit Contact</v-btn>
         <v-menu>
@@ -283,10 +289,10 @@ const cartHeaders = [
       </div>
 
       <!-- ═══ RIGHT CONTENT AREA ════════════════════════════════════════════ -->
-      <div class="flex-grow-1 d-flex flex-column overflow-hidden">
+      <div class="flex-grow-1 d-flex flex-column overflow-hidden right-content">
 
         <!-- Tab bar -->
-        <v-tabs v-model="activeTab" density="comfortable" color="primary" class="mb-4 flex-shrink-0">
+        <v-tabs v-model="activeTab" density="comfortable" color="primary" show-arrows class="mb-4 flex-shrink-0">
           <v-tab value="overview">Overview</v-tab>
           <v-tab value="campaigns">
             Campaigns
@@ -304,39 +310,19 @@ const cartHeaders = [
           <v-window-item value="overview">
             <div class="d-flex flex-column gap-4 pa-1">
 
-              <!-- KPI Row 1: Response & Revenue -->
-              <v-row dense>
-                <v-col cols="3">
-                  <MpKpiCard label="Response Rate" :value="detail.responseRate.email" icon="mail" color="error">
-                    <div class="text-body-2 text-medium-emphasis mt-1">{{ detail.responseRate.sms }} SMS</div>
-                  </MpKpiCard>
-                </v-col>
-                <v-col cols="3">
-                  <MpKpiCard label="Ideal Response Time" :value="detail.idealResponseTime" icon="clock" color="info" />
-                </v-col>
-                <v-col cols="3">
-                  <MpKpiCard label="Lifetime Value" :value="`$${detail.lifetimeValue.toLocaleString()}`" icon="banknote" color="success" sub-stat="vs. average $310.0M" />
-                </v-col>
-                <v-col cols="3">
-                  <MpKpiCard label="Number of Orders" :value="contact.orders" icon="shopping-cart" color="warning" :sub-stat="`vs. average ${detail.avgOrders} Orders`" />
-                </v-col>
-              </v-row>
-
-              <!-- KPI Row 2: Tickets -->
-              <v-row dense>
-                <v-col cols="3">
-                  <MpKpiCard label="Total Tickets" :value="detail.engagement.tickets.total" icon="ticket" color="primary" />
-                </v-col>
-                <v-col cols="3">
-                  <MpKpiCard label="Open Tickets" :value="detail.engagement.tickets.open" icon="ticket-check" color="info" />
-                </v-col>
-                <v-col cols="3">
-                  <MpKpiCard label="Solved Tickets" :value="detail.engagement.tickets.solved" icon="circle-check" color="success" />
-                </v-col>
-                <v-col cols="3">
-                  <MpKpiCard label="On-hold Tickets" :value="detail.engagement.tickets.onHold" icon="circle-pause" color="error" />
-                </v-col>
-              </v-row>
+              <!-- KPI Grid (8 cards, auto-fit 4→3→2→1 columns) -->
+              <div class="kpi-grid">
+                <MpKpiCard label="Response Rate" :value="detail.responseRate.email" icon="mail" color="error">
+                  <div class="text-body-2 text-medium-emphasis mt-1">{{ detail.responseRate.sms }} SMS</div>
+                </MpKpiCard>
+                <MpKpiCard label="Ideal Response Time" :value="detail.idealResponseTime" icon="clock" color="info" />
+                <MpKpiCard label="Lifetime Value" :value="`$${detail.lifetimeValue.toLocaleString()}`" icon="banknote" color="success" sub-stat="vs. average $310.0M" />
+                <MpKpiCard label="Number of Orders" :value="contact.orders" icon="shopping-cart" color="warning" :sub-stat="`vs. average ${detail.avgOrders} Orders`" />
+                <MpKpiCard label="Total Tickets" :value="detail.engagement.tickets.total" icon="ticket" color="primary" />
+                <MpKpiCard label="Open Tickets" :value="detail.engagement.tickets.open" icon="ticket-check" color="info" />
+                <MpKpiCard label="Solved Tickets" :value="detail.engagement.tickets.solved" icon="circle-check" color="success" />
+                <MpKpiCard label="On-hold Tickets" :value="detail.engagement.tickets.onHold" icon="circle-pause" color="error" />
+              </div>
 
               <!-- Customer Engagement Section -->
               <v-card flat border rounded="lg" class="pa-5">
@@ -346,7 +332,7 @@ const cartHeaders = [
                   </template>
                 </MpSectionHeader>
 
-                <v-tabs v-model="engagementSubTab" density="compact" color="primary" class="mb-4">
+                <v-tabs v-model="engagementSubTab" density="compact" color="primary" show-arrows class="mb-4">
                   <v-tab value="emails">Emails</v-tab>
                   <v-tab value="orders">Orders</v-tab>
                   <v-tab value="sms">SMS</v-tab>
@@ -470,7 +456,7 @@ const cartHeaders = [
           <!-- ─── CAMPAIGNS TAB ─────────────────────────────────────────── -->
           <v-window-item value="campaigns">
             <div class="pa-1">
-              <v-tabs v-model="campaignSubTab" density="compact" color="primary" class="mb-4">
+              <v-tabs v-model="campaignSubTab" density="compact" color="primary" show-arrows class="mb-4">
                 <v-tab value="email">Email Campaigns ({{ emailCampaigns.length }})</v-tab>
                 <v-tab value="sms">SMS Campaigns ({{ smsCampaigns.length }})</v-tab>
               </v-tabs>
@@ -643,6 +629,24 @@ const cartHeaders = [
   gap: 20px;
 }
 
+/* ── Back navigation link ───────────────────────────── */
+.back-nav {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--muted);
+  text-decoration: none;
+  margin-bottom: -8px;
+  padding: 4px 0;
+  transition: color 120ms ease;
+}
+
+.back-nav:hover {
+  color: var(--ink);
+}
+
 /* Ensure all cards use the design kit's subtle border and white background */
 .v-card:not(.bg-transparent) {
   border-color: var(--hairline) !important;
@@ -742,6 +746,27 @@ const cartHeaders = [
 .contact-sidebar::-webkit-scrollbar-thumb {
   background: rgba(var(--v-border-color), 0.3);
   border-radius: 4px;
+}
+
+.right-content {
+  min-width: 0;
+}
+
+@media (max-width: 1100px) {
+  .content-area {
+    flex-direction: column;
+    height: auto;
+    overflow: visible;
+    gap: 16px;
+  }
+
+  .contact-sidebar {
+    width: 100%;
+    min-width: 0;
+    max-height: none;
+    overflow: visible;
+    padding-bottom: 0;
+  }
 }
 
 /* ── Detail rows v2 (icon + label + value) ──────────── */
@@ -929,5 +954,54 @@ const cartHeaders = [
 
 .timeline-entry:last-child {
   border-bottom: none;
+}
+
+/* ── KPI adaptive grid ──────────────────────────────── */
+.kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 12px;
+}
+
+/* Tighten MbStatCard density — default 28px / 160px is sized for
+   full-width dashboard rows, not the narrower two-column context */
+:deep(.mp-kpi-card .mb-stat-card) {
+  padding: 16px 18px;
+  min-height: 124px;
+  gap: 10px;
+}
+
+:deep(.mp-kpi-card .mb-stat-card__value-row) {
+  min-width: 0;
+}
+
+:deep(.mp-kpi-card .mb-stat-card__value) {
+  font-size: 22px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  min-width: 0;
+}
+
+:deep(.mp-kpi-card .mb-stat-card__label) {
+  font-size: 11px;
+  white-space: normal;
+  color: rgba(var(--v-theme-on-surface), 0.72);
+}
+
+:deep(.mp-kpi-card .mb-stat-card__icon) {
+  width: 30px;
+  height: 30px;
+  font-size: 16px;
+}
+
+:deep(.mp-kpi-card .mb-stat-card__caption) {
+  color: rgba(var(--v-theme-on-surface), 0.62);
+  line-height: 1.35;
+}
+
+/* ── Detail row contrast lift ───────────────────────── */
+.detail-row-v2__label {
+  color: rgba(var(--v-theme-on-surface), 0.66);
 }
 </style>

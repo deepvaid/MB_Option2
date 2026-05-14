@@ -412,16 +412,16 @@ function keepParentExpanded(group: NavGroup, subgroup?: NavSubGroup) {
 }
 
 function syncExpansionWithRoute() {
-  const activeGroup = navGroups.value.find((group) => group.items.length && isModuleActive(group))
-  if (!activeGroup) {
+  // Only collapse — never auto-expand. If a section was explicitly opened
+  // by the chevron, keep it open as long as it's still the active module.
+  // If the user navigated to a different module, collapse.
+  if (!expandedParentKey.value) return
+
+  const expandedGroup = navGroups.value.find((group) => group.title === expandedParentKey.value)
+  if (!expandedGroup || !isModuleActive(expandedGroup)) {
     expandedParentKey.value = null
     expandedSubKey.value = null
-    return
   }
-
-  expandedParentKey.value = activeGroup.title
-  const activeSubGroup = activeSubGroupForGroup(activeGroup)
-  expandedSubKey.value = activeSubGroup ? subGroupKey(activeGroup, activeSubGroup) : null
 }
 
 watch(
@@ -573,37 +573,98 @@ watch(
           class="sidebar-parent"
           :class="{ 'sidebar-parent--active': isModuleActive(group) }"
         >
-          <div class="sidebar-parent-row">
-            <v-list-item
-              :to="group.singleRoute"
-              @click="setExpandedParent(group)"
-              :prepend-icon="group.icon"
-              :title="group.title"
-              rounded="lg"
-              class="sidebar-text sidebar-parent-row__label"
-              :class="{ 'sidebar-parent-row__label--expanded': isParentExpanded(group) }"
-            >
-              <template #append>
-                <v-tooltip v-if="isLocked(group)" location="end" text="Upgrade to unlock">
-                  <template #activator="{ props: tipProps }">
-                    <v-icon v-bind="tipProps" size="14" class="ml-2 sidebar-lock">lock</v-icon>
+          <v-menu
+            location="end"
+            open-on-hover
+            :open-delay="0"
+            :close-delay="120"
+            offset="8"
+            :close-on-content-click="false"
+            @update:model-value="(v: boolean) => { if (!v) railHoveredSubGroup = null }"
+          >
+            <template #activator="{ props: menuProps, isActive: menuOpen }">
+              <div class="sidebar-parent-row" v-bind="menuProps">
+                <v-list-item
+                  :to="group.singleRoute"
+                  @click="group.singleRoute && goTo(group.singleRoute)"
+                  :prepend-icon="group.icon"
+                  :title="group.title"
+                  rounded="lg"
+                  class="sidebar-text sidebar-parent-row__label"
+                  :class="{
+                    'sidebar-parent-row__label--expanded': isParentExpanded(group),
+                    'rail-icon-hovered': menuOpen,
+                  }"
+                >
+                  <template #append>
+                    <v-tooltip v-if="isLocked(group)" location="end" text="Upgrade to unlock">
+                      <template #activator="{ props: tipProps }">
+                        <v-icon v-bind="tipProps" size="14" class="ml-2 sidebar-lock">lock</v-icon>
+                      </template>
+                    </v-tooltip>
                   </template>
-                </v-tooltip>
-              </template>
-            </v-list-item>
+                </v-list-item>
 
-            <button
-              type="button"
-              class="sidebar-parent-row__chevron"
-              :aria-expanded="isParentExpanded(group)"
-              :aria-label="`${isParentExpanded(group) ? 'Collapse' : 'Expand'} ${group.title}`"
-              @click.stop.prevent="toggleParent(group)"
-              @keydown.enter.stop.prevent="toggleParent(group)"
-              @keydown.space.stop.prevent="toggleParent(group)"
-            >
-              <v-icon size="14">{{ isParentExpanded(group) ? 'chevron-up' : 'chevron-down' }}</v-icon>
-            </button>
-          </div>
+                <button
+                  type="button"
+                  class="sidebar-parent-row__chevron"
+                  :aria-expanded="isParentExpanded(group)"
+                  :aria-label="`${isParentExpanded(group) ? 'Collapse' : 'Expand'} ${group.title}`"
+                  @click.stop.prevent="toggleParent(group)"
+                  @keydown.enter.stop.prevent="toggleParent(group)"
+                  @keydown.space.stop.prevent="toggleParent(group)"
+                >
+                  <v-icon size="14">{{ isParentExpanded(group) ? 'chevron-up' : 'chevron-down' }}</v-icon>
+                </button>
+              </div>
+            </template>
+
+            <!-- Hover flyout — single card (no sub-groups) -->
+            <div v-if="!hasSubGroups(group)" class="rail-flyout-card">
+              <div class="rail-flyout-card__header">{{ group.title }}</div>
+              <div
+                v-for="item in group.items"
+                :key="item.title"
+                class="rail-flyout-item"
+                :class="{ 'rail-flyout-item--active': ('route' in item) && route.path.startsWith((item as NavItem).route) }"
+                @click="('route' in item) && goTo((item as NavItem).route)"
+              >{{ ('route' in item) ? (item as NavItem).title : '' }}</div>
+            </div>
+
+            <!-- Hover flyout — cascade (groups with sub-groups) -->
+            <div v-else class="rail-cascade-wrap">
+              <div class="rail-flyout-card">
+                <div class="rail-flyout-card__header">{{ group.title }}</div>
+                <div
+                  v-for="flat in railFlatItems(group)"
+                  :key="flat.title"
+                  class="rail-flyout-item"
+                  :class="{ 'rail-flyout-item--active': route.path.startsWith(flat.route) }"
+                  @click="goTo(flat.route)"
+                >{{ flat.title }}</div>
+                <div
+                  v-for="sub in railSubGroups(group)"
+                  :key="sub.title"
+                  class="rail-flyout-item rail-flyout-item--has-sub"
+                  :class="{ 'rail-flyout-item--active': railHoveredSubGroup === sub.title }"
+                  @mouseenter="railHoveredSubGroup = sub.title"
+                >
+                  <span>{{ sub.title }}</span>
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m9 6 6 6-6 6"/></svg>
+                </div>
+              </div>
+              <div v-if="railHoveredSubGroup && activeRailSubGroupItems(group).length" class="rail-flyout-card">
+                <div class="rail-flyout-card__header">{{ railHoveredSubGroup }}</div>
+                <div
+                  v-for="child in activeRailSubGroupItems(group)"
+                  :key="child.title"
+                  class="rail-flyout-item"
+                  :class="{ 'rail-flyout-item--active': route.path.startsWith(child.route) }"
+                  @click="goTo(child.route)"
+                >{{ child.title }}</div>
+              </div>
+            </div>
+          </v-menu>
 
           <v-expand-transition>
             <div v-show="isParentExpanded(group)" class="sidebar-parent__children">
@@ -1541,32 +1602,33 @@ watch(
   --sidebar-hover-bg: color-mix(in oklch, var(--sidebar-text) 5%, transparent);
   --sidebar-active-bg: color-mix(in oklch, var(--sidebar-text) 9%, transparent);
   --sidebar-active-text: var(--sidebar-text);
-  --sidebar-radius: 12px;
+  --sidebar-radius: 8px;
   background: var(--surface-1);
   border: 1px solid var(--sidebar-border);
   border-radius: var(--sidebar-radius);
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.10), 0 1px 4px rgba(0, 0, 0, 0.06);
-  padding: 8px;
-  min-width: 220px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.07), 0 1px 2px rgba(0, 0, 0, 0.04);
+  padding: 4px;
+  min-width: 160px;
 }
 
 .rail-flyout-card__header {
-  padding: 8px 12px 6px;
-  font-size: 11px;
+  padding: 5px 8px 4px;
+  font-size: 10px;
   font-weight: 600;
   line-height: 1;
   color: var(--sidebar-muted);
   text-transform: uppercase;
-  letter-spacing: 1px;
+  letter-spacing: 0.8px;
 }
 
 .rail-flyout-item {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 9px 12px;
+  min-height: 28px;
+  padding: 5px 8px;
   border-radius: var(--sidebar-radius);
-  font-size: 13.5px;
+  font-size: 12px;
   font-weight: 500;
   color: var(--sidebar-text);
   cursor: pointer;
@@ -1586,13 +1648,15 @@ watch(
 
 .rail-flyout-item svg {
   flex-shrink: 0;
+  width: 11px;
+  height: 11px;
   opacity: 0.45;
 }
 
 /* Rail cascade — two cards side by side */
 .rail-cascade-wrap {
   display: flex;
-  gap: 8px;
+  gap: 4px;
   align-items: flex-start;
 }
 </style>
