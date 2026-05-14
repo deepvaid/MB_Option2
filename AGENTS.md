@@ -249,7 +249,6 @@ Rail (collapsed) brand mark: a `<div class="rail-brand-box">M</div>` — white "
 Do **not** replace with an SVG or img tag.
 
 ### AppBar — `src/components/layout/AppBar.vue`
-- LINE messenger icon button added after the Settings icon (inline SVG, links to https://line.me in new tab)
 - User avatar uses `https://i.pravatar.cc/128?img=12` (deterministic male portrait) — pill size 26px, dropdown card size 56px
 
 ### Contact avatars — `src/stores/useContacts.ts`

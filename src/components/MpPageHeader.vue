@@ -19,7 +19,7 @@ defineProps<{
         custom
       >
         <a
-          class="mp-page-header__back text-medium-emphasis"
+          class="mp-page-header__back"
           :href="href"
           aria-label="Back"
           @click.prevent="navigate"
@@ -53,11 +53,11 @@ defineProps<{
   border-radius: 999px;
   padding: 6px;
   text-decoration: none;
-  color: var(--mb-color-text-muted, rgba(0, 0, 0, 0.55));
+  color: rgb(var(--v-theme-on-surface-variant));
 }
 
 .mp-page-header__back:hover {
-  background: var(--mb-color-surface-subtle, rgba(0, 0, 0, 0.06));
-  color: var(--mb-color-text, inherit);
+  background: rgba(var(--v-theme-on-surface), 0.06);
+  color: rgb(var(--v-theme-on-surface));
 }
 </style>

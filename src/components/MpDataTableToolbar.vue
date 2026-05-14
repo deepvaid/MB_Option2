@@ -165,7 +165,7 @@ function hiddenCount(filters: Array<{ key: string; label: string }>) {
   <v-expand-transition>
     <div
       v-if="activeFilters?.length"
-      class="px-4 pb-3 d-flex align-center ga-2 flex-wrap"
+      class="px-6 pb-4 d-flex align-center ga-2 flex-wrap"
     >
       <span class="text-caption text-medium-emphasis font-weight-medium mr-1">Filter by:</span>
       <MbChip
@@ -193,7 +193,7 @@ function hiddenCount(filters: Array<{ key: string; label: string }>) {
   </v-expand-transition>
 
   <v-expand-transition>
-    <div v-if="selectedCount && selectedCount > 0" class="px-4 pb-3">
+    <div v-if="selectedCount && selectedCount > 0" class="px-6 pb-4">
       <div class="mp-toolbar-bulk d-flex align-center ga-3 pa-3 rounded-lg bg-surface-variant">
         <span class="text-body-2 font-weight-bold">
           {{ selectedCount }}
@@ -257,11 +257,6 @@ function hiddenCount(filters: Array<{ key: string; label: string }>) {
 }
 .mp-filter-btn {
   height: 40px;
-  background: rgb(var(--v-theme-surface));
-  border-color: var(--mp-border-subtle) !important;
-}
-.mp-filter-btn:hover {
-  background: rgba(var(--v-theme-surface-variant), 0.72);
 }
 .mp-toolbar-search {
   width: 300px;
@@ -305,11 +300,48 @@ function hiddenCount(filters: Array<{ key: string; label: string }>) {
   }
 }
 
-:deep(.mp-filter-btn .mb-btn) {
-  border-color: var(--mp-border-subtle);
+/* Neutral outline: merged classes on MbButton root — avoid `.mp-filter-btn .mb-btn` (non-matching) */
+:deep(.mb-btn.mp-filter-btn[data-style-type='outline']) {
+  --mb-btn-text-outline-default: rgb(var(--v-theme-on-surface-variant));
+  --mb-btn-text-outline-hover: rgb(var(--v-theme-on-surface-variant));
+  --mb-btn-text-outline-active: rgb(var(--v-theme-on-surface));
+  --mb-btn-text-outline-focus: rgb(var(--v-theme-on-surface-variant));
+  --mb-btn-text-outline-loading: rgb(var(--v-theme-on-surface-variant));
+
+  --mb-btn-border-outline-default: var(--mp-border-subtle);
+  --mb-btn-border-outline-hover: rgb(var(--v-theme-outline));
+  --mb-btn-border-outline-active: rgb(var(--v-theme-outline));
+  --mb-btn-border-outline-focus: rgb(var(--v-theme-outline));
+  --mb-btn-border-outline-disabled: var(--mp-border-subtle);
+  --mb-btn-border-outline-loading: var(--mp-border-subtle);
+
+  --mb-btn-bg-outline-default: rgb(var(--v-theme-surface));
+  --mb-btn-bg-outline-hover: rgba(var(--v-theme-on-surface), 0.06);
+  --mb-btn-bg-outline-active: rgba(var(--v-theme-on-surface), 0.1);
+  --mb-btn-bg-outline-focus: rgb(var(--v-theme-surface));
+  --mb-btn-bg-outline-disabled: rgb(var(--v-theme-surface));
+  --mb-btn-bg-outline-loading: rgb(var(--v-theme-surface));
 }
 
 :deep(.mp-toolbar-search .mb-if__control) {
   background: rgb(var(--v-theme-surface));
+}
+
+@media (max-width: 959px) {
+  .mp-toolbar-row {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .mp-toolbar-row > .d-flex.align-center.flex-wrap {
+    width: 100%;
+    justify-content: flex-start;
+  }
+
+  .mp-toolbar-search {
+    width: 100%;
+    min-width: 0;
+    max-width: none;
+  }
 }
 </style>

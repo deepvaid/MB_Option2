@@ -36,7 +36,7 @@ interface LayoutItem {
 }
 
 const layout = ref<LayoutItem[]>([])
-const { smAndDown } = useDisplay()
+const { mdAndDown } = useDisplay()
 
 function normalizeLayout(items: Array<{ i: string; x: number; y: number; w: number; h: number }>): LayoutItem[] {
   return [...items]
@@ -128,7 +128,7 @@ function handleLayoutUpdate(nextLayout: Array<{ i: string; x: number; y: number;
     />
 
     <GridLayout
-      v-else-if="!smAndDown"
+      v-else-if="!mdAndDown"
       v-model:layout="layout"
       :col-num="12"
       :row-height="44"
@@ -211,12 +211,23 @@ function handleLayoutUpdate(nextLayout: Array<{ i: string; x: number; y: number;
   gap: 14px;
 }
 
+@media (min-width: 640px) {
+  .dashboard-grid__mobile-list {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .dashboard-grid__mobile-item:not(.dashboard-grid__mobile-item--kpi) {
+    grid-column: 1 / -1;
+  }
+}
+
 .dashboard-grid__mobile-item {
   height: 360px;
 }
 
 .dashboard-grid__mobile-item--kpi {
-  height: 214px;
+  height: auto;
+  min-height: 168px;
 }
 
 .dashboard-grid__mobile-item--table {

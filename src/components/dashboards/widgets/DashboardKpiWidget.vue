@@ -139,14 +139,32 @@ const sparklinePoints = computed(() => {
   container-type: inline-size;
 }
 
-@container (max-width: 240px) {
+@container (max-width: 300px) {
   .dashboard-kpi-widget__icon-chip {
     display: none;
   }
+
   .dashboard-kpi-widget__sparkline-col {
-    flex: 0 1 32%;
-    max-width: 35%;
-    min-width: 60px;
+    flex: 0 1 30%;
+    max-width: 32%;
+  }
+
+  .dashboard-kpi-widget__value {
+    font-size: 24px;
+  }
+}
+
+@container (max-width: 240px) {
+  .dashboard-kpi-widget__sparkline-col {
+    display: none;
+  }
+
+  .dashboard-kpi-widget__value {
+    font-size: 22px;
+  }
+
+  .dashboard-kpi-widget__title {
+    -webkit-line-clamp: 2;
   }
 }
 

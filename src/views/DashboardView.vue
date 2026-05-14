@@ -1217,6 +1217,19 @@ function performConfirm() {
   background: color-mix(in oklch, var(--pos) 10%, transparent);
 }
 
+@media (max-width: 1100px) {
+  .setup-strip__tasks {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 6px;
+  }
+
+  .setup-task {
+    flex: initial;
+    min-width: 0;
+  }
+}
+
 @media (max-width: 960px) {
   .dashboard-page-bar {
     flex-direction: column;
@@ -1247,15 +1260,6 @@ function performConfirm() {
 
   .setup-strip {
     gap: 12px;
-  }
-
-  .setup-strip__tasks {
-    flex-wrap: wrap;
-  }
-
-  .setup-task {
-    flex: 1 1 calc(50% - 3px);
-    min-width: 0;
   }
 }
 
@@ -1321,8 +1325,8 @@ function performConfirm() {
 }
 
 @media (max-width: 480px) {
-  .setup-task {
-    flex: 1 1 100%;
+  .setup-strip__tasks {
+    grid-template-columns: 1fr;
   }
 }
 </style>

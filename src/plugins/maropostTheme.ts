@@ -238,7 +238,6 @@ export const maropostDefaults = {
   },
   VDialog: {
     rounded: 'xl',
-    style: 'border-radius: 28px;',
   },
   VDivider: {
     opacity: 0.72,

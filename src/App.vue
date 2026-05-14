@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { ref, computed, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import { useDisplay } from 'vuetify'
 import AppSidebar from '@/components/layout/AppSidebar.vue'
@@ -16,10 +16,28 @@ const route = useRoute()
 const drawer = ref(true)
 const rail = ref(false)
 const copilot = useCopilotStore()
-const { smAndDown } = useDisplay()
+const { width } = useDisplay()
+
+// Auto-rail when crossing the 1180px threshold, but respect user's
+// explicit toggle until the next threshold crossing.
+watch(
+  width,
+  (w, prevW) => {
+    const wasNarrow = prevW === undefined ? !rail.value : prevW < 1180
+    const isNarrow = w < 1180
+    if (prevW === undefined || wasNarrow !== isNarrow) {
+      rail.value = isNarrow
+    }
+  },
+  { immediate: true },
+)
 
 const isFullPage = computed(() => !!route.meta?.fullPage)
-const sidebarRail = computed(() => smAndDown.value || rail.value)
+const sidebarRail = computed(() => rail.value)
+const copilotDrawerWidth = computed(() => {
+  const target = copilot.isExpanded ? 880 : 480
+  return Math.min(target, Math.max(320, width.value - 32))
+})
 </script>
 
 <template>
@@ -39,7 +57,7 @@ const sidebarRail = computed(() => smAndDown.value || rail.value)
       id="main-content"
       role="main"
       tabindex="-1"
-      :style="{ background: 'rgb(var(--v-theme-background))' }"
+      class="bg-background"
     >
       <v-container v-if="!isFullPage" fluid class="mp-main-shell">
         <router-view />
@@ -52,7 +70,7 @@ const sidebarRail = computed(() => smAndDown.value || rail.value)
       v-if="!isFullPage"
       v-model="copilot.isOpen"
       location="right"
-      :width="copilot.isExpanded ? 880 : 480"
+      :width="copilotDrawerWidth"
       class="copilot-drawer"
     >
       <MpDaVinciBot

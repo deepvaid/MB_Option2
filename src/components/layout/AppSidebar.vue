@@ -466,11 +466,25 @@ watch(
         <button
           type="button"
           class="sidebar-brand sidebar-brand--rail"
-          aria-label="Expand sidebar"
-          @click.stop="localRail = false"
+          aria-label="Go to dashboard"
+          @click.stop="goTo(`/accounts/${resolvedAccountId}/dashboard`)"
         >
           <div class="rail-brand-box">M</div>
         </button>
+
+        <v-tooltip location="end" text="Expand sidebar">
+          <template #activator="{ props: tipProps }">
+            <button
+              v-bind="tipProps"
+              type="button"
+              class="sidebar-rail-expand-btn"
+              aria-label="Expand sidebar"
+              @click.stop="localRail = false"
+            >
+              <v-icon size="14">chevron-right</v-icon>
+            </button>
+          </template>
+        </v-tooltip>
       </template>
     </div>
 
@@ -841,8 +855,36 @@ watch(
 }
 
 .sidebar-header--rail {
+  flex-direction: column;
   justify-content: center;
-  padding: 14px 8px;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 8px;
+}
+
+.sidebar-rail-expand-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 22px;
+  border: 1px solid var(--sidebar-divider);
+  border-radius: var(--sidebar-radius-sm);
+  background: transparent;
+  color: var(--sidebar-text);
+  cursor: pointer;
+  transition: background 120ms ease, border-color 120ms ease, color 120ms ease;
+}
+
+.sidebar-rail-expand-btn:hover {
+  background: var(--sidebar-hover-bg);
+  border-color: var(--sidebar-active-text);
+  color: var(--sidebar-active-text);
+}
+
+.sidebar-rail-expand-btn:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px var(--sidebar-focus-ring);
 }
 
 .sidebar-menu-btn {
