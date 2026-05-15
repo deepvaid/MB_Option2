@@ -38,6 +38,14 @@ const sortedFilteredAccounts = computed(() => {
   return sorted.filter((a) => a.name.toLowerCase().includes(query))
 })
 
+const switchAccountOpen = ref(false)
+const activeAccount = computed(() => accountsStore.activeAccount)
+
+function toggleSwitchAccount() {
+  switchAccountOpen.value = !switchAccountOpen.value
+  if (!switchAccountOpen.value) accountSearch.value = ''
+}
+
 type ThemeMode = 'light' | 'dark' | 'auto'
 const STORAGE_KEY = 'mp-theme-mode'
 
@@ -88,6 +96,8 @@ onUnmounted(() => {
 
 function switchAccount(id: string) {
   accountsStore.switchTo(id)
+  switchAccountOpen.value = false
+  accountSearch.value = ''
 }
 
 const searchSources = computed(() => [
@@ -482,34 +492,60 @@ function handleCreateMenuKeydown(event: KeyboardEvent) {
             <!-- SWITCH ACCOUNT -->
             <div class="um-section">
               <div class="um-subheader">Switch Account</div>
-              <div class="um-account-search">
-                <v-icon size="16" class="um-account-search__icon">search</v-icon>
-                <input
-                  v-model="accountSearch"
-                  type="text"
-                  class="um-account-search__input"
-                  placeholder="Search accounts…"
-                  aria-label="Filter accounts"
-                />
+
+              <div
+                v-if="!switchAccountOpen"
+                class="um-item um-account-trigger"
+                @click="toggleSwitchAccount"
+              >
+                <v-avatar size="28" variant="tonal" color="primary" class="flex-shrink-0 um-item__avatar">
+                  {{ activeAccount.name.slice(0, 2).toUpperCase() }}
+                </v-avatar>
+                <div class="um-item__body">
+                  <div class="um-item__title">{{ activeAccount.name }}</div>
+                  <div class="um-item__sub">Account #{{ activeAccount.id }}</div>
+                </div>
+                <v-icon size="16" class="um-item__chevron">chevron-down</v-icon>
               </div>
-              <div class="um-account-list">
-                <div
-                  v-for="account in sortedFilteredAccounts"
-                  :key="account.id"
-                  class="um-item"
-                  :class="{ 'um-item--active': account.id === activeAccountId }"
-                  @click="switchAccount(account.id)"
+
+              <template v-else>
+                <div class="um-account-search">
+                  <v-icon size="16" class="um-account-search__icon">search</v-icon>
+                  <input
+                    v-model="accountSearch"
+                    type="text"
+                    class="um-account-search__input"
+                    placeholder="Search accounts…"
+                    aria-label="Filter accounts"
+                  />
+                </div>
+                <div class="um-account-list">
+                  <div
+                    v-for="account in sortedFilteredAccounts"
+                    :key="account.id"
+                    class="um-item"
+                    :class="{ 'um-item--active': account.id === activeAccountId }"
+                    @click="switchAccount(account.id)"
+                  >
+                    <v-avatar size="28" variant="tonal" :color="account.id === activeAccountId ? 'primary' : undefined" class="flex-shrink-0 um-item__avatar">
+                      {{ account.name.slice(0, 2).toUpperCase() }}
+                    </v-avatar>
+                    <div class="um-item__body"><div class="um-item__title">{{ account.name }}</div></div>
+                    <v-icon v-if="account.id === activeAccountId" size="16" color="primary" class="ml-auto">check-circle-2</v-icon>
+                  </div>
+                  <div v-if="sortedFilteredAccounts.length === 0" class="um-account-empty">
+                    No accounts match "{{ accountSearch.trim() }}"
+                  </div>
+                </div>
+                <button
+                  type="button"
+                  class="um-account-collapse"
+                  @click="toggleSwitchAccount"
                 >
-                  <v-avatar size="28" variant="tonal" :color="account.id === activeAccountId ? 'primary' : undefined" class="flex-shrink-0 um-item__avatar">
-                    {{ account.name.slice(0, 2).toUpperCase() }}
-                  </v-avatar>
-                  <div class="um-item__body"><div class="um-item__title">{{ account.name }}</div></div>
-                  <v-icon v-if="account.id === activeAccountId" size="16" color="primary" class="ml-auto">check-circle-2</v-icon>
-                </div>
-                <div v-if="sortedFilteredAccounts.length === 0" class="um-account-empty">
-                  No accounts match "{{ accountSearch.trim() }}"
-                </div>
-              </div>
+                  <v-icon size="14">chevron-up</v-icon>
+                  <span>Collapse</span>
+                </button>
+              </template>
             </div>
 
             <div class="um-divider" />
@@ -534,7 +570,7 @@ function handleCreateMenuKeydown(event: KeyboardEvent) {
 <style scoped lang="scss">
 .mp-appbar {
   border-bottom: 1px solid var(--hairline);
-  background: var(--surface-1) !important;
+  background: rgb(240, 247, 248) !important;
 }
 
 .mp-appbar-shell {
@@ -598,7 +634,7 @@ function handleCreateMenuKeydown(event: KeyboardEvent) {
   padding: 6px 14px;
   border: 1px solid var(--hairline);
   border-radius: var(--r-pill);
-  background: transparent;
+  background: #fff;
   color: var(--ink);
   font: inherit;
   appearance: none;
@@ -635,7 +671,7 @@ function handleCreateMenuKeydown(event: KeyboardEvent) {
   padding: 4px 8px;
   border: 1px solid var(--hairline);
   border-radius: var(--r-pill);
-  background: transparent;
+  background: #fff;
   cursor: pointer;
   font: inherit;
   appearance: none;
@@ -1043,7 +1079,7 @@ function handleCreateMenuKeydown(event: KeyboardEvent) {
   height: 36px;
   border: 1px solid var(--hairline);
   border-radius: 50%;
-  background: transparent;
+  background: #fff;
   color: var(--muted);
   font: inherit;
   appearance: none;
@@ -1182,6 +1218,38 @@ function handleCreateMenuKeydown(event: KeyboardEvent) {
   text-align: center;
   font-size: 12.5px;
   color: rgb(var(--v-theme-on-surface-variant));
+}
+
+.um-account-trigger {
+  cursor: pointer;
+}
+
+.um-item__chevron {
+  color: rgb(var(--v-theme-on-surface-variant));
+  margin-left: auto;
+  flex-shrink: 0;
+}
+
+.um-account-collapse {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  width: 100%;
+  padding: 8px;
+  border: 0;
+  border-radius: 8px;
+  background: transparent;
+  color: rgb(var(--v-theme-on-surface-variant));
+  font: inherit;
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 100ms ease;
+}
+
+.um-account-collapse:hover {
+  background: rgb(var(--v-theme-surface-variant));
 }
 
 .appbar-create-kbd {
