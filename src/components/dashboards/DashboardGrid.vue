@@ -6,6 +6,7 @@ import MpEmptyState from '@/components/MpEmptyState.vue'
 import type { DashboardFilterState, DashboardWidget } from '@/stores/dashboards/types'
 import { getDefaultPreset, type WidgetSize } from './widgetSizePresets'
 import DashboardWidgetCard from './DashboardWidgetCard.vue'
+import DashboardSetupGuide, { type SetupGuideTask } from './DashboardSetupGuide.vue'
 
 const props = defineProps<{
   accountId: string
@@ -13,6 +14,9 @@ const props = defineProps<{
   widgets: DashboardWidget[]
   filters: DashboardFilterState
   editMode: boolean
+  setupTasks?: SetupGuideTask[]
+  setupCompleted?: number
+  setupProgress?: number
 }>()
 
 const emit = defineEmits<{
@@ -23,6 +27,7 @@ const emit = defineEmits<{
   resizeWidget: [payload: { widgetId: string; size: WidgetSize }]
   updateLayout: [layout: Array<{ i: string; x: number; y: number; w: number; h: number }>]
   addWidget: []
+  selectSetupTask: [task: SetupGuideTask]
 }>()
 
 interface LayoutItem {
@@ -132,7 +137,7 @@ function handleLayoutUpdate(nextLayout: Array<{ i: string; x: number; y: number;
       v-model:layout="layout"
       :col-num="12"
       :row-height="44"
-      :margin="[14, 14]"
+      :margin="[18, 18]"
       :is-draggable="editMode"
       :is-resizable="editMode"
       :vertical-compact="true"
@@ -152,18 +157,28 @@ function handleLayoutUpdate(nextLayout: Array<{ i: string; x: number; y: number;
         :min-w="item.minW"
         :min-h="item.minH"
       >
-        <DashboardWidgetCard
-          v-if="widgetsById.get(item.i)"
-          :account-id="accountId"
-          :widget="widgetsById.get(item.i)!"
-          :filters="filters"
-          :editable="editMode"
-          @expand="emit('expandWidget', $event)"
-          @edit="emit('editWidget', $event)"
-          @refresh="emit('refreshWidget', $event)"
-          @remove="emit('removeWidget', $event)"
-          @resize="emit('resizeWidget', $event)"
-        />
+        <template v-if="widgetsById.get(item.i)">
+          <DashboardSetupGuide
+            v-if="widgetsById.get(item.i)!.type === 'setup'"
+            :tasks="setupTasks ?? []"
+            :completed-count="setupCompleted ?? 0"
+            :progress="setupProgress ?? 0"
+            :editable="editMode"
+            @select-task="emit('selectSetupTask', $event)"
+          />
+          <DashboardWidgetCard
+            v-else
+            :account-id="accountId"
+            :widget="widgetsById.get(item.i)!"
+            :filters="filters"
+            :editable="editMode"
+            @expand="emit('expandWidget', $event)"
+            @edit="emit('editWidget', $event)"
+            @refresh="emit('refreshWidget', $event)"
+            @remove="emit('removeWidget', $event)"
+            @resize="emit('resizeWidget', $event)"
+          />
+        </template>
       </GridItem>
     </GridLayout>
 
@@ -177,7 +192,16 @@ function handleLayoutUpdate(nextLayout: Array<{ i: string; x: number; y: number;
           'dashboard-grid__mobile-item--table': widget.type === 'table',
         }"
       >
+        <DashboardSetupGuide
+          v-if="widget.type === 'setup'"
+          :tasks="setupTasks ?? []"
+          :completed-count="setupCompleted ?? 0"
+          :progress="setupProgress ?? 0"
+          :editable="editMode"
+          @select-task="emit('selectSetupTask', $event)"
+        />
         <DashboardWidgetCard
+          v-else
           :account-id="accountId"
           :widget="widget"
           :filters="filters"

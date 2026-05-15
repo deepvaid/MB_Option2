@@ -43,7 +43,7 @@ interface PersistedDashboardStateV3 {
 
 type AnyPersistedDashboardState = PersistedDashboardStateV1 | PersistedDashboardStateV2 | PersistedDashboardStateV3
 
-const STORAGE_KEY = 'mp.dashboard-hub.v5'
+const STORAGE_KEY = 'mp.dashboard-hub.v8'
 const LEGACY_STORAGE_KEY_V1 = 'mp.dashboard-hub.v1'
 const MAX_WIDGETS_PER_DASHBOARD = 24
 const PERSIST_DEBOUNCE_MS = 250
@@ -174,6 +174,23 @@ function makeWidget(
   }
 }
 
+function makeSetupWidget(layout: DashboardLayout): DashboardWidget {
+  const preset = getDefaultPreset('setup')
+  return {
+    id: createWidgetId(),
+    type: 'setup',
+    title: 'Setup guide',
+    dataSource: 'analytics',
+    metricId: 'contacts_total' as DashboardWidget['metricId'],
+    drilldown: { routeName: 'dashboard-detail', label: 'Setup guide' },
+    layout: {
+      ...layout,
+      minW: layout.minW ?? preset.minW,
+      minH: layout.minH ?? preset.minH,
+    },
+  }
+}
+
 function buildHomeWidgets(account: Account): DashboardWidget[] {
   const widgets: DashboardWidget[] = []
 
@@ -183,13 +200,14 @@ function buildHomeWidgets(account: Account): DashboardWidget[] {
       makeWidget('Orders', 'commerce_orders', 'kpi', createLayout(3, 0, 3, 4)),
       makeWidget('Open Rate', 'marketing_open_rate', 'kpi', createLayout(6, 0, 3, 4)),
       makeWidget('Total Contacts', 'contacts_total', 'kpi', createLayout(9, 0, 3, 4)),
-      makeWidget('Revenue Over Time', 'commerce_revenue_over_time', 'timeseries', createLayout(0, 4, 7, 8)),
-      makeWidget('Live activity', 'marketing_live_activity', 'activity', createLayout(7, 4, 5, 8)),
-      makeWidget('Top Campaigns', 'marketing_top_campaigns', 'table', createLayout(0, 12, 12, 7)),
-      makeWidget('Recent Orders', 'commerce_recent_orders', 'table', createLayout(0, 11, 7, 7)),
-      makeWidget('Revenue by Channel', 'commerce_revenue_by_channel', 'bar', createLayout(7, 11, 5, 7)),
-      makeWidget('Email Volume', 'marketing_email_volume', 'timeseries', createLayout(0, 18, 6, 7)),
-      makeWidget('Email Address by Domain', 'contacts_by_domain', 'bar', createLayout(6, 18, 6, 7)),
+      makeSetupWidget(createLayout(0, 4, 4, 8)),
+      makeWidget('Revenue Over Time', 'commerce_revenue_over_time', 'timeseries', createLayout(4, 4, 8, 8)),
+      makeWidget('Live activity', 'marketing_live_activity', 'activity', createLayout(0, 12, 6, 8)),
+      makeWidget('Top Campaigns', 'marketing_top_campaigns', 'table', createLayout(6, 12, 6, 7)),
+      makeWidget('Recent Orders', 'commerce_recent_orders', 'table', createLayout(0, 20, 7, 7)),
+      makeWidget('Revenue by Channel', 'commerce_revenue_by_channel', 'bar', createLayout(7, 20, 5, 7)),
+      makeWidget('Email Volume', 'marketing_email_volume', 'timeseries', createLayout(0, 27, 6, 7)),
+      makeWidget('Email Address by Domain', 'contacts_by_domain', 'bar', createLayout(6, 27, 6, 7)),
     )
   } else {
     widgets.push(
@@ -197,12 +215,13 @@ function buildHomeWidgets(account: Account): DashboardWidget[] {
       makeWidget('Open Rate', 'marketing_open_rate', 'kpi', createLayout(3, 0, 3, 4)),
       makeWidget('Active Subscribers', 'analytics_active_subscribers', 'kpi', createLayout(6, 0, 3, 4)),
       makeWidget('Total Contacts', 'contacts_total', 'kpi', createLayout(9, 0, 3, 4)),
-      makeWidget('Sends Over Time', 'analytics_sends_over_time', 'timeseries', createLayout(0, 4, 7, 7)),
-      makeWidget('Top Campaigns', 'marketing_top_campaigns', 'table', createLayout(7, 4, 5, 7)),
-      makeWidget('Contact Growth', 'contacts_growth', 'timeseries', createLayout(0, 11, 7, 7)),
-      makeWidget('Campaign Revenue', 'marketing_campaign_revenue', 'bar', createLayout(7, 11, 5, 7)),
-      makeWidget('Email Volume', 'marketing_email_volume', 'timeseries', createLayout(0, 18, 6, 7)),
-      makeWidget('Subscriber Summary', 'contacts_subscriber_summary', 'table', createLayout(6, 18, 6, 7)),
+      makeSetupWidget(createLayout(0, 4, 4, 8)),
+      makeWidget('Sends Over Time', 'analytics_sends_over_time', 'timeseries', createLayout(4, 4, 8, 8)),
+      makeWidget('Top Campaigns', 'marketing_top_campaigns', 'table', createLayout(4, 12, 5, 7)),
+      makeWidget('Contact Growth', 'contacts_growth', 'timeseries', createLayout(0, 19, 7, 7)),
+      makeWidget('Campaign Revenue', 'marketing_campaign_revenue', 'bar', createLayout(7, 19, 5, 7)),
+      makeWidget('Email Volume', 'marketing_email_volume', 'timeseries', createLayout(0, 26, 6, 7)),
+      makeWidget('Subscriber Summary', 'contacts_subscriber_summary', 'table', createLayout(6, 26, 6, 7)),
     )
   }
 

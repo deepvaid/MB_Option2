@@ -46,6 +46,12 @@ export const SIZE_PRESETS: Record<DashboardWidgetType, Record<WidgetSize, Widget
     L: { w: 6, h: 10, minW: 3, minH: 4 },
     XL: { w: 8, h: 12, minW: 3, minH: 4 },
   },
+  setup: {
+    S: { w: 3, h: 7, minW: 3, minH: 6 },
+    M: { w: 4, h: 8, minW: 3, minH: 6 },
+    L: { w: 4, h: 10, minW: 3, minH: 6 },
+    XL: { w: 5, h: 11, minW: 3, minH: 6 },
+  },
 }
 
 export const WIDGET_SIZES: WidgetSize[] = ['S', 'M', 'L', 'XL']

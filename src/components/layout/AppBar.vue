@@ -38,13 +38,34 @@ const sortedFilteredAccounts = computed(() => {
   return sorted.filter((a) => a.name.toLowerCase().includes(query))
 })
 
-const switchAccountOpen = ref(false)
 const activeAccount = computed(() => accountsStore.activeAccount)
 
-function toggleSwitchAccount() {
-  switchAccountOpen.value = !switchAccountOpen.value
-  if (!switchAccountOpen.value) accountSearch.value = ''
+const userMenuOpen = ref(false)
+type UserMenuView = 'main' | 'switch'
+const userMenuView = ref<UserMenuView>('main')
+
+function closeUserMenu() {
+  userMenuOpen.value = false
+  userMenuView.value = 'main'
+  accountSearch.value = ''
 }
+
+function openSwitchAccountView() {
+  userMenuView.value = 'switch'
+  accountSearch.value = ''
+}
+
+function backToMainView() {
+  userMenuView.value = 'main'
+  accountSearch.value = ''
+}
+
+watch(userMenuOpen, (open) => {
+  if (!open) {
+    userMenuView.value = 'main'
+    accountSearch.value = ''
+  }
+})
 
 type ThemeMode = 'light' | 'dark' | 'auto'
 const STORAGE_KEY = 'mp-theme-mode'
@@ -96,8 +117,7 @@ onUnmounted(() => {
 
 function switchAccount(id: string) {
   accountsStore.switchTo(id)
-  switchAccountOpen.value = false
-  accountSearch.value = ''
+  closeUserMenu()
 }
 
 const searchSources = computed(() => [
@@ -229,7 +249,7 @@ function handleCreateMenuKeydown(event: KeyboardEvent) {
 </script>
 
 <template>
-  <v-app-bar height="60" color="surface" flat class="mp-appbar">
+  <v-app-bar height="52" color="surface" flat class="mp-appbar">
     <div class="mp-appbar-shell w-100 d-flex align-center px-4 gap-2">
       <div class="appbar-search-group">
         <v-menu v-model="searchOpen" location="bottom start" offset="8" :close-on-content-click="false">
@@ -387,7 +407,7 @@ function handleCreateMenuKeydown(event: KeyboardEvent) {
 
       <span class="appbar-divider" aria-hidden="true"></span>
 
-      <v-menu location="bottom end" offset="8">
+      <v-menu v-model="userMenuOpen" location="bottom end" offset="8" :close-on-content-click="false">
         <template #activator="{ props }">
           <button
             v-bind="props"
@@ -410,153 +430,154 @@ function handleCreateMenuKeydown(event: KeyboardEvent) {
           </button>
         </template>
           <div class="user-menu-card">
-            <!-- Header block -->
-            <div class="um-header">
-              <v-avatar size="56" class="flex-shrink-0">
-                <v-img :src="userAvatarUrl" :alt="userName" cover>
-                  <template #placeholder>
-                    <div class="user-avatar-fallback user-avatar-fallback--lg">{{ userInitials }}</div>
-                  </template>
-                  <template #error>
-                    <div class="user-avatar-fallback user-avatar-fallback--lg">{{ userInitials }}</div>
-                  </template>
-                </v-img>
-              </v-avatar>
-              <div class="um-header__info">
-                <div class="um-header__name">{{ userName }}</div>
-                <div class="um-header__email">{{ userEmail }}</div>
-                <v-chip size="x-small" variant="tonal" color="primary" class="mt-1">{{ userRole }}</v-chip>
-              </div>
-            </div>
-
-            <div class="um-divider" />
-
-            <!-- PERSONAL -->
-            <div class="um-section">
-              <div class="um-subheader">Personal</div>
-              <div class="um-item" @click="$router.push(profileRoute)">
-                <v-icon class="um-item__icon" size="20">user</v-icon>
-                <div class="um-item__body">
-                  <div class="um-item__title">My Profile</div>
-                  <div class="um-item__sub">View and edit your info</div>
-                </div>
-              </div>
-              <div class="um-item">
-                <v-icon class="um-item__icon" size="20">sun-moon</v-icon>
-                <div class="um-item__body">
-                  <div class="um-item__title">Theme</div>
-                  <div class="um-item__sub">Toggle light or dark mode</div>
-                </div>
-                <v-btn-toggle
-                  v-model="themeToggleValue"
-                  density="comfortable"
-                  mandatory
-                  class="theme-segment ml-auto"
-                >
-                  <v-btn value="light" icon="sun" variant="text" aria-label="Light theme" />
-                  <v-btn value="dark" icon="moon" variant="text" aria-label="Dark theme" />
-                  <v-btn value="auto" icon="monitor" variant="text" aria-label="Match system theme" />
-                </v-btn-toggle>
-              </div>
-            </div>
-
-            <div class="um-divider" />
-
-            <!-- ACCOUNT -->
-            <div class="um-section">
-              <div class="um-subheader">Account</div>
-              <div class="um-item" @click="$router.push(settingsRoute)">
-                <v-icon class="um-item__icon" size="20">settings</v-icon>
-                <div class="um-item__body"><div class="um-item__title">Account Settings</div><div class="um-item__sub">Company, users, permissions</div></div>
-              </div>
-              <div class="um-item" @click="openStub('Billing')">
-                <v-icon class="um-item__icon" size="20">credit-card</v-icon>
-                <div class="um-item__body"><div class="um-item__title">Billing</div><div class="um-item__sub">Plan, usage, invoices</div></div>
-              </div>
-              <div class="um-item" @click="openStub('Galaxy')">
-                <v-icon class="um-item__icon" size="20">target</v-icon>
-                <div class="um-item__body"><div class="um-item__title">Galaxy</div><div class="um-item__sub">Cross-product workspace</div></div>
-              </div>
-              <div class="um-item" @click="openStub('Roadmap')">
-                <v-icon class="um-item__icon" size="20">route</v-icon>
-                <div class="um-item__body"><div class="um-item__title">Roadmap</div><div class="um-item__sub">Planned product work</div></div>
-              </div>
-              <div class="um-item" @click="openStub('System Status')">
-                <v-icon class="um-item__icon" size="20">shield-check</v-icon>
-                <div class="um-item__body"><div class="um-item__title">System Status</div><div class="um-item__sub">Trust and availability</div></div>
-              </div>
-            </div>
-
-            <div class="um-divider" />
-
-            <!-- SWITCH ACCOUNT -->
-            <div class="um-section">
-              <div class="um-subheader">Switch Account</div>
-
-              <div
-                v-if="!switchAccountOpen"
-                class="um-item um-account-trigger"
-                @click="toggleSwitchAccount"
-              >
-                <v-avatar size="28" variant="tonal" color="primary" class="flex-shrink-0 um-item__avatar">
-                  {{ activeAccount.name.slice(0, 2).toUpperCase() }}
+            <!-- MAIN VIEW -->
+            <template v-if="userMenuView === 'main'">
+              <div class="um-header">
+                <v-avatar size="56" class="flex-shrink-0">
+                  <v-img :src="userAvatarUrl" :alt="userName" cover>
+                    <template #placeholder>
+                      <div class="user-avatar-fallback user-avatar-fallback--lg">{{ userInitials }}</div>
+                    </template>
+                    <template #error>
+                      <div class="user-avatar-fallback user-avatar-fallback--lg">{{ userInitials }}</div>
+                    </template>
+                  </v-img>
                 </v-avatar>
-                <div class="um-item__body">
-                  <div class="um-item__title">{{ activeAccount.name }}</div>
-                  <div class="um-item__sub">Account #{{ activeAccount.id }}</div>
+                <div class="um-header__info">
+                  <div class="um-header__name">{{ userName }}</div>
+                  <div class="um-header__email">{{ userEmail }}</div>
+                  <v-chip size="x-small" variant="tonal" color="primary" class="mt-1">{{ userRole }}</v-chip>
                 </div>
-                <v-icon size="16" class="um-item__chevron">chevron-down</v-icon>
               </div>
 
-              <template v-else>
-                <div class="um-account-search">
-                  <v-icon size="16" class="um-account-search__icon">search</v-icon>
-                  <input
-                    v-model="accountSearch"
-                    type="text"
-                    class="um-account-search__input"
-                    placeholder="Search accounts…"
-                    aria-label="Filter accounts"
-                  />
+              <div class="um-divider" />
+
+              <!-- PERSONAL -->
+              <div class="um-section">
+                <div class="um-subheader">Personal</div>
+                <div class="um-item" @click="$router.push(profileRoute); closeUserMenu()">
+                  <v-icon class="um-item__icon" size="20">user</v-icon>
+                  <div class="um-item__body">
+                    <div class="um-item__title">My Profile</div>
+                    <div class="um-item__sub">View and edit your info</div>
+                  </div>
                 </div>
-                <div class="um-account-list">
-                  <div
-                    v-for="account in sortedFilteredAccounts"
-                    :key="account.id"
-                    class="um-item"
-                    :class="{ 'um-item--active': account.id === activeAccountId }"
-                    @click="switchAccount(account.id)"
+                <div class="um-item">
+                  <v-icon class="um-item__icon" size="20">sun-moon</v-icon>
+                  <div class="um-item__body">
+                    <div class="um-item__title">Theme</div>
+                    <div class="um-item__sub">Toggle light or dark mode</div>
+                  </div>
+                  <v-btn-toggle
+                    v-model="themeToggleValue"
+                    density="comfortable"
+                    mandatory
+                    class="theme-segment ml-auto"
                   >
-                    <v-avatar size="28" variant="tonal" :color="account.id === activeAccountId ? 'primary' : undefined" class="flex-shrink-0 um-item__avatar">
-                      {{ account.name.slice(0, 2).toUpperCase() }}
-                    </v-avatar>
-                    <div class="um-item__body"><div class="um-item__title">{{ account.name }}</div></div>
-                    <v-icon v-if="account.id === activeAccountId" size="16" color="primary" class="ml-auto">check-circle-2</v-icon>
-                  </div>
-                  <div v-if="sortedFilteredAccounts.length === 0" class="um-account-empty">
-                    No accounts match "{{ accountSearch.trim() }}"
-                  </div>
+                    <v-btn value="light" icon="sun" variant="text" aria-label="Light theme" />
+                    <v-btn value="dark" icon="moon" variant="text" aria-label="Dark theme" />
+                    <v-btn value="auto" icon="monitor" variant="text" aria-label="Match system theme" />
+                  </v-btn-toggle>
                 </div>
-                <button
-                  type="button"
-                  class="um-account-collapse"
-                  @click="toggleSwitchAccount"
-                >
-                  <v-icon size="14">chevron-up</v-icon>
-                  <span>Collapse</span>
-                </button>
-              </template>
-            </div>
-
-            <div class="um-divider" />
-
-            <!-- Sign out -->
-            <div class="um-section um-section--last">
-              <div class="um-item um-item--danger" @click="openStub('Sign out')">
-                <v-icon class="um-item__icon" size="20">log-out</v-icon>
-                <div class="um-item__body"><div class="um-item__title">Sign Out</div></div>
               </div>
-            </div>
+
+              <div class="um-divider" />
+
+              <!-- ACCOUNT -->
+              <div class="um-section">
+                <div class="um-subheader">Account</div>
+                <div class="um-item" @click="$router.push(settingsRoute); closeUserMenu()">
+                  <v-icon class="um-item__icon" size="20">settings</v-icon>
+                  <div class="um-item__body"><div class="um-item__title">Account Settings</div><div class="um-item__sub">Company, users, permissions</div></div>
+                </div>
+                <div class="um-item" @click="openStub('Billing'); closeUserMenu()">
+                  <v-icon class="um-item__icon" size="20">credit-card</v-icon>
+                  <div class="um-item__body"><div class="um-item__title">Billing</div><div class="um-item__sub">Plan, usage, invoices</div></div>
+                </div>
+                <div class="um-item" @click="openStub('Galaxy'); closeUserMenu()">
+                  <v-icon class="um-item__icon" size="20">target</v-icon>
+                  <div class="um-item__body"><div class="um-item__title">Galaxy</div><div class="um-item__sub">Cross-product workspace</div></div>
+                </div>
+                <div class="um-item" @click="openStub('Roadmap'); closeUserMenu()">
+                  <v-icon class="um-item__icon" size="20">route</v-icon>
+                  <div class="um-item__body"><div class="um-item__title">Roadmap</div><div class="um-item__sub">Planned product work</div></div>
+                </div>
+                <div class="um-item" @click="openStub('System Status'); closeUserMenu()">
+                  <v-icon class="um-item__icon" size="20">shield-check</v-icon>
+                  <div class="um-item__body"><div class="um-item__title">System Status</div><div class="um-item__sub">Trust and availability</div></div>
+                </div>
+              </div>
+
+              <div class="um-divider" />
+
+              <!-- SWITCH ACCOUNT trigger -->
+              <div class="um-section">
+                <div class="um-subheader">Switch Account</div>
+                <div class="um-item um-account-trigger" @click="openSwitchAccountView">
+                  <v-avatar size="28" variant="tonal" color="primary" class="flex-shrink-0 um-item__avatar">
+                    {{ activeAccount.name.slice(0, 2).toUpperCase() }}
+                  </v-avatar>
+                  <div class="um-item__body">
+                    <div class="um-item__title">{{ activeAccount.name }}</div>
+                    <div class="um-item__sub">Account #{{ activeAccount.id }}</div>
+                  </div>
+                  <v-icon size="16" class="um-item__chevron">chevron-right</v-icon>
+                </div>
+              </div>
+
+              <div class="um-divider" />
+
+              <!-- Sign out -->
+              <div class="um-section um-section--last">
+                <div class="um-item um-item--danger" @click="openStub('Sign out'); closeUserMenu()">
+                  <v-icon class="um-item__icon" size="20">log-out</v-icon>
+                  <div class="um-item__body"><div class="um-item__title">Sign Out</div></div>
+                </div>
+              </div>
+            </template>
+
+            <!-- SWITCH ACCOUNT VIEW -->
+            <template v-else>
+              <div class="um-switch-header">
+                <button type="button" class="um-icon-btn" aria-label="Back" @click="backToMainView">
+                  <v-icon size="18">arrow-left</v-icon>
+                </button>
+                <div class="um-switch-title">Switch account</div>
+                <button type="button" class="um-icon-btn" aria-label="Close" @click="closeUserMenu">
+                  <v-icon size="18">x</v-icon>
+                </button>
+              </div>
+
+              <div class="um-switch-search">
+                <v-icon size="16" class="um-account-search__icon">search</v-icon>
+                <input
+                  v-model="accountSearch"
+                  type="text"
+                  class="um-account-search__input"
+                  placeholder="Search accounts…"
+                  aria-label="Filter accounts"
+                />
+              </div>
+
+              <div class="um-switch-list">
+                <div
+                  v-for="account in sortedFilteredAccounts"
+                  :key="account.id"
+                  class="um-item"
+                  :class="{ 'um-item--active': account.id === activeAccountId }"
+                  @click="switchAccount(account.id)"
+                >
+                  <v-avatar size="28" variant="tonal" :color="account.id === activeAccountId ? 'primary' : undefined" class="flex-shrink-0 um-item__avatar">
+                    {{ account.name.slice(0, 2).toUpperCase() }}
+                  </v-avatar>
+                  <div class="um-item__body"><div class="um-item__title">{{ account.name }}</div></div>
+                  <v-icon v-if="account.id === activeAccountId" size="16" color="primary" class="ml-auto">check-circle-2</v-icon>
+                </div>
+                <div v-if="sortedFilteredAccounts.length === 0" class="um-account-empty">
+                  No accounts match "{{ accountSearch.trim() }}"
+                </div>
+              </div>
+            </template>
           </div>
       </v-menu>
     </div>
@@ -599,8 +620,8 @@ function handleCreateMenuKeydown(event: KeyboardEvent) {
 }
 
 .appbar-utilities :deep(.appbar-action-btn) {
-  width: 36px;
-  height: 36px;
+  width: 32px;
+  height: 32px;
   border-radius: var(--r-pill);
   color: var(--ink);
   opacity: 0.82;
@@ -613,7 +634,7 @@ function handleCreateMenuKeydown(event: KeyboardEvent) {
 }
 
 .appbar-utilities :deep(.appbar-action-btn .v-icon) {
-  font-size: 20px;
+  font-size: 18px;
 }
 
 .appbar-divider {
@@ -629,9 +650,9 @@ function handleCreateMenuKeydown(event: KeyboardEvent) {
 .assistant-pill {
   display: inline-flex;
   align-items: center;
-  gap: 8px;
-  height: 36px;
-  padding: 6px 14px;
+  gap: 6px;
+  height: 32px;
+  padding: 5px 12px;
   border: 1px solid var(--hairline);
   border-radius: var(--r-pill);
   background: #fff;
@@ -667,8 +688,9 @@ function handleCreateMenuKeydown(event: KeyboardEvent) {
 .user-pill {
   display: inline-flex;
   align-items: center;
-  gap: 8px;
-  padding: 4px 8px;
+  gap: 6px;
+  height: 32px;
+  padding: 3px 8px 3px 4px;
   border: 1px solid var(--hairline);
   border-radius: var(--r-pill);
   background: #fff;
@@ -730,10 +752,10 @@ function handleCreateMenuKeydown(event: KeyboardEvent) {
 /* ── Profile dropdown ───────────────────────────── */
 .user-menu-card {
   width: 360px;
-  background: rgb(var(--v-theme-surface));
-  border: 1px solid var(--hairline);
-  border-radius: 12px;
-  box-shadow: 0 4px 20px rgba(0,0,0,0.10), 0 1px 4px rgba(0,0,0,0.06);
+  background: #fff;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  border-radius: 14px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12), 0 2px 8px rgba(0, 0, 0, 0.06);
   overflow: hidden;
   max-height: 90vh;
   overflow-y: auto;
@@ -743,8 +765,8 @@ function handleCreateMenuKeydown(event: KeyboardEvent) {
   display: flex;
   align-items: flex-start;
   gap: 14px;
-  padding: 18px;
-  background: rgb(var(--v-theme-surface-variant));
+  padding: 20px;
+  background: linear-gradient(135deg, #f0f7ff 0%, #f7f0ff 100%);
 }
 
 .um-header__info {
@@ -755,38 +777,38 @@ function handleCreateMenuKeydown(event: KeyboardEvent) {
 }
 
 .um-header__name {
-  font-size: 16px;
-  font-weight: 600;
+  font-size: 17px;
+  font-weight: 700;
   line-height: 1.2;
-  color: rgb(var(--v-theme-on-surface));
+  color: #111827;
 }
 
 .um-header__email {
   font-size: 13px;
-  color: rgb(var(--v-theme-on-surface-variant));
+  color: #6b7280;
 }
 
 .um-divider {
   height: 1px;
-  background: rgb(var(--v-theme-outline-variant));
+  background: rgba(0, 0, 0, 0.06);
 }
 
 .um-section {
-  padding: 8px;
+  padding: 6px 8px;
 }
 
 .um-section--last {
-  padding-bottom: 12px;
+  padding-bottom: 10px;
 }
 
 .um-subheader {
-  padding: 8px 12px 4px;
-  font-size: 11px;
-  font-weight: 600;
+  padding: 10px 12px 4px;
+  font-size: 10.5px;
+  font-weight: 700;
   line-height: 1;
-  color: rgb(var(--v-theme-on-surface-variant));
+  color: #9ca3af;
   text-transform: uppercase;
-  letter-spacing: 1px;
+  letter-spacing: 1.2px;
 }
 
 .um-item {
@@ -794,36 +816,44 @@ function handleCreateMenuKeydown(event: KeyboardEvent) {
   align-items: center;
   gap: 12px;
   padding: 10px 12px;
-  border-radius: 8px;
+  border-radius: 10px;
   cursor: pointer;
-  transition: background 100ms ease;
+  transition: background 120ms ease, transform 80ms ease;
 }
 
 .um-item:hover {
-  background: rgb(var(--v-theme-surface-variant));
+  background: #f3f4f6;
+}
+
+.um-item:active {
+  transform: scale(0.99);
 }
 
 .um-item--active {
-  background: rgb(var(--v-theme-primary-container));
+  background: rgba(26, 86, 219, 0.08);
 }
 
 .um-item--active:hover {
-  background: rgb(var(--v-theme-primary-container));
+  background: rgba(26, 86, 219, 0.12);
 }
 
 .um-item--active .um-item__title {
-  color: rgb(var(--v-theme-on-primary-container));
-  font-weight: 600;
+  color: #1a56db;
+  font-weight: 700;
 }
 
 .um-item__icon {
-  color: rgb(var(--v-theme-on-surface-variant));
+  color: #6b7280;
   flex-shrink: 0;
+}
+
+.um-item:hover .um-item__icon {
+  color: #374151;
 }
 
 .um-item__avatar {
   font-size: 11px;
-  font-weight: 600;
+  font-weight: 700;
 }
 
 .um-item__body {
@@ -833,16 +863,16 @@ function handleCreateMenuKeydown(event: KeyboardEvent) {
 
 .um-item__title {
   font-size: 14px;
-  font-weight: 500;
+  font-weight: 600;
   line-height: 1.3;
-  color: rgb(var(--v-theme-on-surface));
+  color: #1f2937;
 }
 
 .um-item__sub {
-  font-size: 12.5px;
+  font-size: 12px;
   line-height: 1.3;
-  color: rgb(var(--v-theme-on-surface-variant));
-  margin-top: 2px;
+  color: #9ca3af;
+  margin-top: 1px;
 }
 
 .um-item--danger .um-item__title,
@@ -852,6 +882,116 @@ function handleCreateMenuKeydown(event: KeyboardEvent) {
 
 .um-item--danger:hover {
   background: rgba(var(--v-theme-error), 0.06);
+}
+
+.um-account-trigger {
+  cursor: pointer;
+}
+
+.um-item__chevron {
+  color: #9ca3af;
+  margin-left: auto;
+  flex-shrink: 0;
+}
+
+/* ── Switch Account view (two-level) ────────────── */
+.um-switch-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 14px 14px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+  background: #fff;
+  position: sticky;
+  top: 0;
+  z-index: 1;
+}
+
+.um-switch-title {
+  flex: 1;
+  text-align: center;
+  font-size: 15px;
+  font-weight: 700;
+  color: #1f2937;
+}
+
+.um-icon-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  color: #6b7280;
+  cursor: pointer;
+  font: inherit;
+  appearance: none;
+  transition: background 100ms ease, color 100ms ease;
+}
+
+.um-icon-btn:hover {
+  background: #f3f4f6;
+  color: #374151;
+}
+
+.um-switch-search {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0 10px;
+  margin: 10px 12px 6px;
+  height: 36px;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  border-radius: 10px;
+  background: #f9fafb;
+  position: sticky;
+  top: 57px;
+  z-index: 1;
+  transition: border-color 120ms ease, box-shadow 120ms ease;
+}
+
+.um-switch-search:focus-within {
+  border-color: rgba(26, 86, 219, 0.4);
+  box-shadow: 0 0 0 3px rgba(26, 86, 219, 0.08);
+}
+
+.um-account-search__icon {
+  color: #9ca3af;
+  flex-shrink: 0;
+}
+
+.um-account-search__input {
+  flex: 1;
+  min-width: 0;
+  border: none;
+  outline: none;
+  background: transparent;
+  font-size: 13px;
+  font-weight: 500;
+  font-family: inherit;
+  color: #1f2937;
+  line-height: 1.3;
+}
+
+.um-account-search__input::placeholder {
+  color: #9ca3af;
+}
+
+.um-switch-list {
+  max-height: 380px;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding: 6px 8px 12px;
+}
+
+.um-account-empty {
+  padding: 16px 12px;
+  text-align: center;
+  font-size: 13px;
+  font-weight: 500;
+  color: #9ca3af;
 }
 
 .theme-segment.v-btn-group {
@@ -1075,8 +1215,8 @@ function handleCreateMenuKeydown(event: KeyboardEvent) {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 36px;
-  height: 36px;
+  width: 32px;
+  height: 32px;
   border: 1px solid var(--hairline);
   border-radius: 50%;
   background: #fff;
@@ -1171,85 +1311,6 @@ function handleCreateMenuKeydown(event: KeyboardEvent) {
   margin-top: 2px;
   color: var(--muted);
   font-size: 11.5px;
-}
-
-/* ── Switch Account search + scroll ─────────────── */
-.um-account-search {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  margin: 4px 4px 6px;
-  padding: 0 10px;
-  height: 34px;
-  border: 1px solid rgb(var(--v-theme-outline-variant));
-  border-radius: 8px;
-  background: rgb(var(--v-theme-surface));
-}
-
-.um-account-search__icon {
-  color: rgb(var(--v-theme-on-surface-variant));
-  flex-shrink: 0;
-}
-
-.um-account-search__input {
-  flex: 1;
-  min-width: 0;
-  border: none;
-  outline: none;
-  background: transparent;
-  font-size: 13px;
-  font-family: inherit;
-  color: rgb(var(--v-theme-on-surface));
-  line-height: 1.3;
-}
-
-.um-account-search__input::placeholder {
-  color: rgb(var(--v-theme-on-surface-variant));
-}
-
-.um-account-list {
-  max-height: 240px;
-  overflow-y: auto;
-  overscroll-behavior: contain;
-}
-
-.um-account-empty {
-  padding: 12px;
-  text-align: center;
-  font-size: 12.5px;
-  color: rgb(var(--v-theme-on-surface-variant));
-}
-
-.um-account-trigger {
-  cursor: pointer;
-}
-
-.um-item__chevron {
-  color: rgb(var(--v-theme-on-surface-variant));
-  margin-left: auto;
-  flex-shrink: 0;
-}
-
-.um-account-collapse {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 6px;
-  width: 100%;
-  padding: 8px;
-  border: 0;
-  border-radius: 8px;
-  background: transparent;
-  color: rgb(var(--v-theme-on-surface-variant));
-  font: inherit;
-  font-size: 12px;
-  font-weight: 500;
-  cursor: pointer;
-  transition: background 100ms ease;
-}
-
-.um-account-collapse:hover {
-  background: rgb(var(--v-theme-surface-variant));
 }
 
 .appbar-create-kbd {

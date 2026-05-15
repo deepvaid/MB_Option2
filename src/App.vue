@@ -14,7 +14,7 @@ setAccent(accent.value)
 
 const route = useRoute()
 const drawer = ref(true)
-const rail = ref(false)
+const rail = ref(true)
 const copilot = useCopilotStore()
 const { width } = useDisplay()
 
@@ -100,18 +100,18 @@ const copilotDrawerWidth = computed(() => {
 }
 
 .mp-main-shell {
-  padding: 28px 32px !important;
+  padding: 32px 36px !important;
 }
 
 @media (max-width: 1024px) {
   .mp-main-shell {
-    padding: 24px !important;
+    padding: 28px !important;
   }
 }
 
 @media (max-width: 640px) {
   .mp-main-shell {
-    padding: 20px !important;
+    padding: 22px !important;
   }
 }
 

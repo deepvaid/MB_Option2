@@ -331,7 +331,7 @@ function openSettings() {
   align-items: start;
   gap: 12px;
   min-height: 56px;
-  padding: 18px 20px 12px;
+  padding: 20px 22px 14px;
 }
 
 .dashboard-widget-card__header-copy {
@@ -448,7 +448,7 @@ function openSettings() {
   flex: 1 1 auto;
   min-height: 0;
   overflow: hidden;
-  padding: 0 20px 12px;
+  padding: 0 22px 14px;
 }
 
 .dashboard-widget-card--kpi .dashboard-widget-card__body {

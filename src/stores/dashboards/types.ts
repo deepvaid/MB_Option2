@@ -1,5 +1,5 @@
 export type DashboardKind = 'system' | 'custom'
-export type DashboardWidgetType = 'kpi' | 'timeseries' | 'bar' | 'pie' | 'table' | 'activity'
+export type DashboardWidgetType = 'kpi' | 'timeseries' | 'bar' | 'pie' | 'table' | 'activity' | 'setup'
 export type DashboardChartVariant = 'horizontal' | 'vertical' | 'area' | 'line'
 export type DashboardDataSource = 'commerce' | 'marketing' | 'analytics' | 'contacts' | 'service' | 'neto'
 export type DashboardDatePreset =
