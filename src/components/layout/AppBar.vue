@@ -29,6 +29,15 @@ const appsRoute = computed(() => ({ name: 'AppStore' as const, params: { account
 
 const accounts = computed(() => accountsStore.accounts)
 const activeAccountId = computed(() => accountsStore.activeId)
+
+const accountSearch = ref('')
+const sortedFilteredAccounts = computed(() => {
+  const sorted = [...accounts.value].sort((a, b) => a.name.localeCompare(b.name))
+  const query = accountSearch.value.trim().toLowerCase()
+  if (!query) return sorted
+  return sorted.filter((a) => a.name.toLowerCase().includes(query))
+})
+
 type ThemeMode = 'light' | 'dark' | 'auto'
 const STORAGE_KEY = 'mp-theme-mode'
 
@@ -129,86 +138,201 @@ function openStub(label: string) {
   showAppbarNotice(`${label} is represented as a prototype action.`)
 }
 
+const createOpen = ref(false)
+
+type CreateItem = {
+  key: string
+  icon: string
+  title: string
+  sub: string
+  kbd: string
+  action: () => void
+}
+
+const createItems = computed<CreateItem[]>(() => [
+  {
+    key: 'dashboard',
+    icon: 'layout-dashboard',
+    title: 'Dashboard',
+    sub: 'Start from a blank or template',
+    kbd: 'D',
+    action: () => router.push({ name: 'DashboardsList', params: { accountId: currentAccountId.value } }),
+  },
+  {
+    key: 'widget',
+    icon: 'blocks',
+    title: 'Widget',
+    sub: 'Add to the current dashboard',
+    kbd: 'W',
+    action: () => openStub('Add widget'),
+  },
+  {
+    key: 'campaign',
+    icon: 'mail',
+    title: 'Email campaign',
+    sub: 'One-off or A/B broadcast',
+    kbd: 'E',
+    action: () => router.push({ name: 'EmailCampaigns', params: { accountId: currentAccountId.value } }),
+  },
+  {
+    key: 'segment',
+    icon: 'user-round',
+    title: 'Segment',
+    sub: 'Build from CDP traits',
+    kbd: 'S',
+    action: () => router.push({ name: 'Segments', params: { accountId: currentAccountId.value } }),
+  },
+  {
+    key: 'automation',
+    icon: 'git-branch',
+    title: 'Automation',
+    sub: 'Multi-step journey',
+    kbd: 'A',
+    action: () => router.push({ name: 'Journeys', params: { accountId: currentAccountId.value } }),
+  },
+  {
+    key: 'list',
+    icon: 'list-checks',
+    title: 'Contact list',
+    sub: 'Upload or filter',
+    kbd: 'L',
+    action: () => router.push({ name: 'ContactLists', params: { accountId: currentAccountId.value } }),
+  },
+])
+
+function runCreateItem(item: CreateItem) {
+  createOpen.value = false
+  item.action()
+}
+
+function handleCreateMenuKeydown(event: KeyboardEvent) {
+  if (event.metaKey || event.ctrlKey || event.altKey) return
+  const target = event.target as HTMLElement | null
+  if (target && (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA' || target.isContentEditable)) return
+  const key = event.key.toLowerCase()
+  const match = createItems.value.find((item) => item.kbd.toLowerCase() === key)
+  if (!match) return
+  event.preventDefault()
+  runCreateItem(match)
+}
+
 </script>
 
 <template>
   <v-app-bar height="60" color="surface" flat class="mp-appbar">
     <div class="mp-appbar-shell w-100 d-flex align-center px-4 gap-2">
-      <v-menu v-model="searchOpen" location="bottom start" offset="8" :close-on-content-click="false">
-        <template #activator="{ props }">
-          <v-text-field
-            v-bind="props"
-            v-model="searchQuery"
-            density="compact"
-            variant="outlined"
-            hide-details
-            prepend-inner-icon="sparkles"
-            placeholder="Ask Da Vinci or search"
-            aria-label="Universal AI search"
-            rounded="lg"
-            class="appbar-search"
-            bg-color="surface"
-            clearable
-            @focus="searchOpen = true"
-            @keydown.enter.prevent="askDaVinciFromSearch"
-          >
-            <template #append-inner>
-              <kbd class="appbar-search-cmd">⌘K</kbd>
-            </template>
-          </v-text-field>
-        </template>
-        <v-card width="620" max-width="calc(100vw - 32px)" rounded="lg" flat border class="appbar-search-menu">
-          <div class="appbar-search-menu__hero">
-            <v-icon size="20" color="secondary">sparkles</v-icon>
-            <div class="min-width-0">
-              <div class="text-subtitle-2 font-weight-bold">Ask Da Vinci</div>
-              <div class="text-body-2 text-medium-emphasis text-truncate">
-                {{ searchQuery.trim() ? `Search and answer “${searchQuery.trim()}” across this workspace` : 'Search dashboards, apps, orders, contacts, campaigns, and settings.' }}
+      <div class="appbar-search-group">
+        <v-menu v-model="searchOpen" location="bottom start" offset="8" :close-on-content-click="false">
+          <template #activator="{ props }">
+            <v-text-field
+              v-bind="props"
+              v-model="searchQuery"
+              density="compact"
+              variant="outlined"
+              hide-details
+              prepend-inner-icon="search"
+              placeholder="Find or Ask"
+              aria-label="Universal AI search"
+              rounded="lg"
+              class="appbar-search"
+              bg-color="surface"
+              clearable
+              @focus="searchOpen = true"
+              @keydown.enter.prevent="askDaVinciFromSearch"
+            >
+              <template #append-inner>
+                <kbd class="appbar-search-cmd">⌘K</kbd>
+              </template>
+            </v-text-field>
+          </template>
+          <v-card width="620" max-width="calc(100vw - 32px)" rounded="lg" flat border class="appbar-search-menu">
+            <div class="appbar-search-menu__hero">
+              <v-icon size="20" color="secondary">sparkles</v-icon>
+              <div class="min-width-0">
+                <div class="text-subtitle-2 font-weight-bold">Ask Da Vinci</div>
+                <div class="text-body-2 text-medium-emphasis text-truncate">
+                  {{ searchQuery.trim() ? `Search and answer "${searchQuery.trim()}" across this workspace` : 'Search dashboards, apps, orders, contacts, campaigns, and settings.' }}
+                </div>
+              </div>
+              <v-btn size="small" color="secondary" variant="flat" class="text-none" @click="askDaVinciFromSearch">
+                Ask
+              </v-btn>
+            </div>
+            <v-divider />
+            <div v-if="filteredSearchGroups.length" class="appbar-search-menu__results">
+              <div v-for="[group, items] in filteredSearchGroups" :key="group" class="appbar-search-group-results">
+                <div class="appbar-search-group__label">{{ group }}</div>
+                <button
+                  v-for="item in items"
+                  :key="`${group}-${item.title}`"
+                  type="button"
+                  class="appbar-search-result"
+                  @click="navigateToRoute(item.route)"
+                >
+                  <v-avatar size="30" variant="tonal" color="primary">
+                    <v-icon size="17">{{ item.icon }}</v-icon>
+                  </v-avatar>
+                  <span class="min-width-0">
+                    <strong>{{ item.title }}</strong>
+                    <small>{{ item.subtitle }}</small>
+                  </span>
+                  <v-icon size="16">arrow-right</v-icon>
+                </button>
               </div>
             </div>
-            <v-btn size="small" color="secondary" variant="flat" class="text-none" @click="askDaVinciFromSearch">
-              Ask
-            </v-btn>
-          </div>
-          <v-divider />
-          <div v-if="filteredSearchGroups.length" class="appbar-search-menu__results">
-            <div v-for="[group, items] in filteredSearchGroups" :key="group" class="appbar-search-group">
-              <div class="appbar-search-group__label">{{ group }}</div>
+            <div v-else class="pa-5 text-center text-body-2 text-medium-emphasis">
+              No local prototype results. Ask Da Vinci to explore this request.
+            </div>
+          </v-card>
+        </v-menu>
+
+        <v-menu v-model="createOpen" location="bottom end" offset="8" :close-on-content-click="false">
+          <template #activator="{ props }">
+            <button
+              v-bind="props"
+              type="button"
+              class="appbar-create-btn"
+              :class="{ 'appbar-create-btn--open': createOpen }"
+              aria-label="Quick create"
+              aria-haspopup="menu"
+              :aria-expanded="createOpen"
+            >
+              <v-icon size="18">plus</v-icon>
+            </button>
+          </template>
+          <v-card
+            width="340"
+            rounded="lg"
+            flat
+            border
+            class="appbar-create-menu"
+            tabindex="-1"
+            @keydown="handleCreateMenuKeydown"
+          >
+            <div class="appbar-create-menu__label">Create new</div>
+            <div class="appbar-create-menu__list">
               <button
-                v-for="item in items"
-                :key="`${group}-${item.title}`"
+                v-for="item in createItems"
+                :key="item.key"
                 type="button"
-                class="appbar-search-result"
-                @click="navigateToRoute(item.route)"
+                class="appbar-create-row"
+                @click="runCreateItem(item)"
               >
-                <v-avatar size="30" variant="tonal" color="primary">
-                  <v-icon size="17">{{ item.icon }}</v-icon>
-                </v-avatar>
-                <span class="min-width-0">
+                <v-icon size="20" class="appbar-create-row__icon">{{ item.icon }}</v-icon>
+                <span class="appbar-create-row__body min-width-0">
                   <strong>{{ item.title }}</strong>
-                  <small>{{ item.subtitle }}</small>
+                  <small>{{ item.sub }}</small>
                 </span>
-                <v-icon size="16">arrow-right</v-icon>
+                <kbd class="appbar-create-kbd">{{ item.kbd }}</kbd>
               </button>
             </div>
-          </div>
-          <div v-else class="pa-5 text-center text-body-2 text-medium-emphasis">
-            No local prototype results. Ask Da Vinci to explore this request.
-          </div>
-        </v-card>
-      </v-menu>
+          </v-card>
+        </v-menu>
+      </div>
 
       <v-spacer />
 
       <div class="appbar-utilities">
-        <v-tooltip text="Da Vinci AI" location="bottom">
-          <template #activator="{ props }">
-            <v-btn v-bind="props" icon variant="text" class="appbar-action-btn" aria-label="Da Vinci AI" @click="copilot.toggle()">
-              <v-icon>sparkles</v-icon>
-            </v-btn>
-          </template>
-        </v-tooltip>
-
         <v-tooltip text="Notifications" location="bottom">
           <template #activator="{ props }">
             <v-btn
@@ -240,6 +364,16 @@ function openStub(label: string) {
           </template>
         </v-tooltip>
       </div>
+
+      <button
+        type="button"
+        class="assistant-pill"
+        aria-label="AI Assistant"
+        @click="copilot.toggle()"
+      >
+        <v-icon size="16">sparkles</v-icon>
+        <span class="assistant-pill__label">Da Vinci</span>
+      </button>
 
       <span class="appbar-divider" aria-hidden="true"></span>
 
@@ -348,18 +482,33 @@ function openStub(label: string) {
             <!-- SWITCH ACCOUNT -->
             <div class="um-section">
               <div class="um-subheader">Switch Account</div>
-              <div
-                v-for="account in accounts"
-                :key="account.id"
-                class="um-item"
-                :class="{ 'um-item--active': account.id === activeAccountId }"
-                @click="switchAccount(account.id)"
-              >
-                <v-avatar size="28" variant="tonal" :color="account.id === activeAccountId ? 'primary' : undefined" class="flex-shrink-0 um-item__avatar">
-                  {{ account.name.slice(0, 2).toUpperCase() }}
-                </v-avatar>
-                <div class="um-item__body"><div class="um-item__title">{{ account.name }}</div></div>
-                <v-icon v-if="account.id === activeAccountId" size="16" color="primary" class="ml-auto">check-circle-2</v-icon>
+              <div class="um-account-search">
+                <v-icon size="16" class="um-account-search__icon">search</v-icon>
+                <input
+                  v-model="accountSearch"
+                  type="text"
+                  class="um-account-search__input"
+                  placeholder="Search accounts…"
+                  aria-label="Filter accounts"
+                />
+              </div>
+              <div class="um-account-list">
+                <div
+                  v-for="account in sortedFilteredAccounts"
+                  :key="account.id"
+                  class="um-item"
+                  :class="{ 'um-item--active': account.id === activeAccountId }"
+                  @click="switchAccount(account.id)"
+                >
+                  <v-avatar size="28" variant="tonal" :color="account.id === activeAccountId ? 'primary' : undefined" class="flex-shrink-0 um-item__avatar">
+                    {{ account.name.slice(0, 2).toUpperCase() }}
+                  </v-avatar>
+                  <div class="um-item__body"><div class="um-item__title">{{ account.name }}</div></div>
+                  <v-icon v-if="account.id === activeAccountId" size="16" color="primary" class="ml-auto">check-circle-2</v-icon>
+                </div>
+                <div v-if="sortedFilteredAccounts.length === 0" class="um-account-empty">
+                  No accounts match "{{ accountSearch.trim() }}"
+                </div>
               </div>
             </div>
 
@@ -398,6 +547,15 @@ function openStub(label: string) {
   min-width: 0;
 }
 
+.appbar-search-group {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex: 1 1 460px;
+  max-width: 600px;
+  min-width: 260px;
+}
+
 .appbar-utilities {
   display: flex;
   align-items: center;
@@ -431,6 +589,45 @@ function openStub(label: string) {
   flex-shrink: 0;
 }
 
+/* ── Assistant pill ─────────────────────────────── */
+.assistant-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  height: 36px;
+  padding: 6px 14px;
+  border: 1px solid var(--hairline);
+  border-radius: var(--r-pill);
+  background: transparent;
+  color: var(--ink);
+  font: inherit;
+  appearance: none;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: background 120ms ease, border-color 120ms ease;
+}
+
+.assistant-pill:hover {
+  background: var(--surface-2);
+}
+
+.assistant-pill:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px color-mix(in oklch, var(--accent) 18%, transparent);
+}
+
+.assistant-pill :deep(.v-icon) {
+  color: rgb(var(--v-theme-secondary));
+}
+
+.assistant-pill__label {
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1.15;
+  white-space: nowrap;
+}
+
+/* ── User pill ──────────────────────────────────── */
 .user-pill {
   display: inline-flex;
   align-items: center;
@@ -685,9 +882,8 @@ function openStub(label: string) {
 }
 
 .appbar-search {
-  flex: 1 1 460px;
-  max-width: 560px;
-  min-width: 260px;
+  flex: 1 1 auto;
+  min-width: 200px;
 }
 
 :deep(.appbar-search .v-field) {
@@ -724,7 +920,7 @@ function openStub(label: string) {
 }
 
 :deep(.appbar-search .v-field__prepend-inner .v-icon) {
-  color: var(--accent);
+  color: var(--muted);
 }
 
 .appbar-search-cmd {
@@ -762,7 +958,7 @@ function openStub(label: string) {
   padding: 8px;
 }
 
-.appbar-search-group + .appbar-search-group {
+.appbar-search-group-results + .appbar-search-group-results {
   margin-top: 8px;
 }
 
@@ -833,8 +1029,175 @@ function openStub(label: string) {
 }
 
 @media (max-width: 1180px) {
-  .appbar-search {
+  .appbar-search-group {
     max-width: 420px;
   }
+}
+
+/* ── Quick Create button + menu ─────────────────── */
+.appbar-create-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border: 1px solid var(--hairline);
+  border-radius: 50%;
+  background: transparent;
+  color: var(--muted);
+  font: inherit;
+  appearance: none;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: background 120ms ease, border-color 120ms ease, color 120ms ease;
+}
+
+.appbar-create-btn:hover,
+.appbar-create-btn--open {
+  background: var(--surface-2);
+  color: var(--ink);
+}
+
+.appbar-create-btn:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px color-mix(in oklch, var(--accent) 18%, transparent);
+}
+
+.appbar-create-menu {
+  border-color: var(--hairline);
+  padding: 8px;
+  overflow: hidden;
+}
+
+.appbar-create-menu__label {
+  padding: 8px 8px 6px;
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+.appbar-create-menu__list {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.appbar-create-row {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  min-height: 52px;
+  padding: 8px 10px;
+  border: 0;
+  border-radius: var(--r-chip);
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
+  font: inherit;
+  text-align: left;
+}
+
+.appbar-create-row:hover,
+.appbar-create-row:focus-visible {
+  background: var(--surface-2);
+}
+
+.appbar-create-row:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px color-mix(in oklch, var(--accent) 18%, transparent);
+}
+
+.appbar-create-row__icon {
+  color: var(--ink);
+  flex-shrink: 0;
+}
+
+.appbar-create-row__body strong,
+.appbar-create-row__body small {
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.appbar-create-row__body strong {
+  font-size: 13.5px;
+  font-weight: 600;
+  line-height: 1.3;
+  color: var(--ink);
+}
+
+.appbar-create-row__body small {
+  margin-top: 2px;
+  color: var(--muted);
+  font-size: 11.5px;
+}
+
+/* ── Switch Account search + scroll ─────────────── */
+.um-account-search {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 4px 4px 6px;
+  padding: 0 10px;
+  height: 34px;
+  border: 1px solid rgb(var(--v-theme-outline-variant));
+  border-radius: 8px;
+  background: rgb(var(--v-theme-surface));
+}
+
+.um-account-search__icon {
+  color: rgb(var(--v-theme-on-surface-variant));
+  flex-shrink: 0;
+}
+
+.um-account-search__input {
+  flex: 1;
+  min-width: 0;
+  border: none;
+  outline: none;
+  background: transparent;
+  font-size: 13px;
+  font-family: inherit;
+  color: rgb(var(--v-theme-on-surface));
+  line-height: 1.3;
+}
+
+.um-account-search__input::placeholder {
+  color: rgb(var(--v-theme-on-surface-variant));
+}
+
+.um-account-list {
+  max-height: 240px;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
+.um-account-empty {
+  padding: 12px;
+  text-align: center;
+  font-size: 12.5px;
+  color: rgb(var(--v-theme-on-surface-variant));
+}
+
+.appbar-create-kbd {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 22px;
+  height: 22px;
+  padding: 0 6px;
+  border: 1px solid var(--hairline);
+  border-radius: 6px;
+  background: var(--surface-2);
+  color: var(--muted);
+  font-family: ui-monospace, "SF Mono", monospace;
+  font-size: 11px;
+  font-weight: 600;
+  line-height: 1;
 }
 </style>

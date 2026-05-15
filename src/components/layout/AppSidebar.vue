@@ -61,6 +61,7 @@ function buildNavGroups(accountId: string): NavGroup[] {
       icon: 'layout-dashboard',
       singleRoute: `/accounts/${accountId}/dashboard`,
       items: [
+        { title: 'Home', route: `/accounts/${accountId}/dashboard` },
         { title: 'Manage', route: `/accounts/${accountId}/dashboards` },
         { title: 'Live', route: `/accounts/${accountId}/analytics/live_view` },
       ],
