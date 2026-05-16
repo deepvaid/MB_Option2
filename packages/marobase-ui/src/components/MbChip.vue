@@ -50,6 +50,9 @@ function onDismiss(event: MouseEvent) {
       :aria-label="ariaLabel ?? label"
       @click="onClick"
     >
+      <span v-if="$slots.prepend" class="mb-chip__prepend" aria-hidden="true">
+        <slot name="prepend" />
+      </span>
       <span class="mb-chip__label">{{ label }}</span>
     </button>
 

@@ -56,7 +56,7 @@ const trendSymbol = computed(() => {
   --mb-stat-bg: var(--mb-color-surface);
   --mb-stat-border: var(--mb-color-border-subtle);
   --mb-stat-label-color: var(--mb-color-text-muted);
-  --mb-stat-value-color: var(--mb-color-text);
+  --mb-stat-value-color: #0f172a;
   --mb-stat-unit-color: var(--mb-color-text-muted);
 
   display: flex;

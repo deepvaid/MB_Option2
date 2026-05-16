@@ -655,11 +655,16 @@ const cartHeaders = [
 }
 
 /* Match KPI cards to the main dashboard's white-on-linen style.
-   MbStatCard's tone="soft"/"warm" props would otherwise paint pale-cyan or
-   cream fills which look inconsistent with the unified palette. */
+   MbStatCard's tone="soft"/"warm"/"inverse" props would otherwise paint pale-cyan,
+   cream, or dark-blue fills which look inconsistent with the unified palette. We
+   also reset the text/label colors so cards mapped from `color="error"`
+   (tone="inverse") don't end up rendering white text on the forced-white surface. */
 :deep(.mb-stat-card) {
   --mb-stat-bg: rgb(var(--v-theme-surface)) !important;
   --mb-stat-border: rgb(var(--v-theme-outline-variant)) !important;
+  --mb-stat-value-color: #0f172a !important;
+  --mb-stat-label-color: rgba(var(--v-theme-on-surface), 0.72) !important;
+  --mb-stat-unit-color: rgba(var(--v-theme-on-surface), 0.62) !important;
 }
 
 .v-card.bg-transparent {

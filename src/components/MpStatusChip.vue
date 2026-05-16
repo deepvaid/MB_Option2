@@ -85,18 +85,41 @@ const tone = computed<MbChipTone>(() => {
   }
   return 'brand'
 })
+
+const iconPx = computed(() => (props.size === 'x-small' ? 11 : props.size === 'small' ? 12 : 13))
 </script>
 
 <template>
-  <span class="mp-status-chip d-inline-flex align-center ga-1">
-    <v-icon v-if="chipIcon" size="12" class="mp-status-chip__icon">{{ chipIcon }}</v-icon>
-    <MbChip :label="status" :tone="tone" :dismissible="false" />
-  </span>
+  <MbChip
+    :label="status"
+    :tone="tone"
+    :dismissible="false"
+    :class="['mp-status-chip', `mp-status-chip--size-${size}`]"
+  >
+    <template v-if="chipIcon" #prepend>
+      <v-icon :size="iconPx" class="mp-status-chip__icon">{{ chipIcon }}</v-icon>
+    </template>
+  </MbChip>
 </template>
 
 <style scoped>
 .mp-status-chip__icon {
-  color: var(--mb-color-text-muted, rgba(0, 0, 0, 0.5));
+  color: currentColor;
   flex-shrink: 0;
+}
+
+.mp-status-chip--size-x-small {
+  --mb-chip-padding-x: 8px;
+  --mb-chip-padding-y: 2px;
+  --mb-chip-font-size: 11px;
+  --mb-chip-line-height: 14px;
+  --mb-chip-letter-spacing: 0.02em;
+}
+
+.mp-status-chip--size-small {
+  --mb-chip-padding-x: 10px;
+  --mb-chip-padding-y: 4px;
+  --mb-chip-font-size: 12px;
+  --mb-chip-line-height: 16px;
 }
 </style>

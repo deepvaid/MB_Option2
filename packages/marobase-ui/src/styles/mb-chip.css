@@ -21,12 +21,22 @@
 }
 
 .mb-chip__main {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
   border: 0;
   background: transparent;
   color: inherit;
   font: inherit;
   cursor: pointer;
   padding: 0;
+}
+
+.mb-chip__prepend {
+  display: inline-flex;
+  align-items: center;
+  flex-shrink: 0;
+  color: inherit;
 }
 
 .mb-chip[data-tone='brand'] {
