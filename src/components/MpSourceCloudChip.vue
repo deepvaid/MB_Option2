@@ -19,7 +19,11 @@ const iconSize = computed(() => (props.size === 'sm' ? 12 : 13))
 <template>
   <span
     class="mp-source-cloud-chip"
-    :class="[`mp-source-cloud-chip--${size}`, { 'mp-source-cloud-chip--icon-only': iconOnly }]"
+    :class="[
+      `mp-source-cloud-chip--${size}`,
+      `mp-source-cloud-chip--${dataSource}`,
+      { 'mp-source-cloud-chip--icon-only': iconOnly },
+    ]"
     :title="iconOnly ? meta.label : undefined"
     :aria-label="meta.label"
   >
@@ -37,7 +41,7 @@ const iconSize = computed(() => (props.size === 'sm' ? 12 : 13))
   padding: 0 9px;
   height: 22px;
   border-radius: 999px;
-  background: var(--surface-2);
+  background: var(--surface-1);
   border: 1px solid var(--hairline);
   color: var(--ink);
   font-size: 11px;
@@ -46,6 +50,14 @@ const iconSize = computed(() => (props.size === 'sm' ? 12 : 13))
   white-space: nowrap;
   cursor: default;
 }
+
+.mp-source-cloud-chip--commerce { color: #166534; }
+.mp-source-cloud-chip--marketing { color: #5b21b6; }
+.mp-source-cloud-chip--analytics { color: #1d4ed8; }
+.mp-source-cloud-chip--contacts { color: #155e75; }
+.mp-source-cloud-chip--service { color: #c2410c; }
+.mp-source-cloud-chip--neto { color: var(--ink); }
+.mp-source-cloud-chip--retail { color: #0f766e; }
 
 .mp-source-cloud-chip--sm {
   height: 20px;
@@ -67,7 +79,8 @@ const iconSize = computed(() => (props.size === 'sm' ? 12 : 13))
 }
 
 .mp-source-cloud-chip :deep(.v-icon) {
-  color: var(--muted);
+  color: currentColor;
+  opacity: 0.9;
 }
 
 .mp-source-cloud-chip__label {

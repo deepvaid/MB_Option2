@@ -276,6 +276,8 @@ function openSettings() {
         :ai-generated="!!widget.aiProvenance"
         :data-source="widget.dataSource"
         :last-refreshed-at="widget.lastRefreshedAt"
+        :show-view-report="widget.dataSource === 'retail'"
+        @view-report="openDrilldown"
       />
       <DashboardPieWidget
         v-else-if="data.kind === 'series' && widget.type === 'pie'"
@@ -312,17 +314,18 @@ function openSettings() {
 <style scoped lang="scss">
 .dashboard-widget-card {
   position: relative;
-  border-color: var(--hairline) !important;
+  border-color: color-mix(in oklch, var(--ink) 7%, transparent) !important;
   border-radius: var(--r-section) !important;
   background: var(--surface-1) !important;
   overflow: hidden;
   min-height: 0;
-  box-shadow: none;
-  transition: border-color 0.15s ease;
+  box-shadow: 0 1px 0 rgba(15, 23, 42, 0.02), 0 1px 2px rgba(15, 23, 42, 0.04);
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
 }
 
 .dashboard-widget-card:hover {
-  border-color: color-mix(in oklch, var(--ink) 16%, transparent) !important;
+  border-color: color-mix(in oklch, var(--ink) 18%, transparent) !important;
+  box-shadow: 0 1px 0 rgba(15, 23, 42, 0.04), 0 4px 12px rgba(15, 23, 42, 0.06);
 }
 
 .dashboard-widget-card__header {

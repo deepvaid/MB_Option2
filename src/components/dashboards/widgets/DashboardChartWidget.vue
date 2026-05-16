@@ -112,7 +112,7 @@ const chartOptions = computed<ApexOptions>(() => {
   return {
     ...base,
     colors: isPrev
-      ? [accentHex.value, 'rgba(160,160,180,0.55)']
+      ? [accentHex.value, 'rgba(124, 58, 237, 0.55)']
       : [accentHex.value, ...chartPalette.slice(1)],
     chart: {
       ...base.chart,

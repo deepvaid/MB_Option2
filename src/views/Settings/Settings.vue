@@ -713,7 +713,12 @@ function save() { saveSnack.value = true }
 
 /* ── Panel cards ───────────────────────────────── */
 .settings-panel-card {
-  background: rgba(var(--v-theme-surface-variant), 0.25);
+  background: rgb(var(--v-theme-surface));
+}
+
+.settings-card-body .settings-panel-card {
+  background: rgb(var(--v-theme-surface));
+  border: 1px solid rgba(var(--v-border-color), var(--v-border-opacity));
 }
 
 /* ── Card headers ──────────────────────────────── */

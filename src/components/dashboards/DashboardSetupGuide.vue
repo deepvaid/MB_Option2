@@ -102,7 +102,15 @@ function toggle() {
 .setup-guide-widget {
   padding: 18px 22px 8px;
   background: var(--surface-1);
+  border-color: color-mix(in oklch, var(--ink) 7%, transparent) !important;
+  box-shadow: 0 1px 0 rgba(15, 23, 42, 0.02), 0 1px 2px rgba(15, 23, 42, 0.04);
   overflow: hidden;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.setup-guide-widget:hover {
+  border-color: color-mix(in oklch, var(--ink) 18%, transparent) !important;
+  box-shadow: 0 1px 0 rgba(15, 23, 42, 0.04), 0 4px 12px rgba(15, 23, 42, 0.06);
 }
 
 .setup-guide-widget__header {

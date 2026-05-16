@@ -10,7 +10,7 @@ defineProps<{
 </script>
 
 <template>
-  <div class="mp-page-header mb-4">
+  <div class="mp-page-header mb-2">
     <div class="mp-page-header__top d-flex align-start ga-3">
       <RouterLink
         v-if="backTo"
@@ -48,7 +48,7 @@ defineProps<{
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  margin-top: 6px;
+  margin-top: 2px;
   flex-shrink: 0;
   border-radius: 999px;
   padding: 6px;

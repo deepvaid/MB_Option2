@@ -16,6 +16,7 @@ const props = withDefaults(defineProps<{
   aiGenerated?: boolean
   dataSource?: DashboardDataSource
   lastRefreshedAt?: string
+  showViewReport?: boolean
 }>(), {
   compact: false,
   title: '',
@@ -25,7 +26,12 @@ const props = withDefaults(defineProps<{
   aiGenerated: false,
   dataSource: undefined,
   lastRefreshedAt: undefined,
+  showViewReport: false,
 })
+
+const emit = defineEmits<{
+  viewReport: []
+}>()
 
 const lastRefreshedAt = toRef(() => props.lastRefreshedAt)
 const updatedLabel = useLiveAgo(lastRefreshedAt)
@@ -68,7 +74,11 @@ const sparklinePoints = computed(() => {
       <div class="dashboard-kpi-widget__text-stack">
         <!-- Icon chip + label + period caption -->
         <div class="dashboard-kpi-widget__header-row">
-          <div v-if="icon" class="dashboard-kpi-widget__icon-chip">
+          <div
+            v-if="icon"
+            class="dashboard-kpi-widget__icon-chip"
+            :class="dataSource && `dashboard-kpi-widget__icon-chip--${dataSource}`"
+          >
             <v-icon :size="compact ? 13 : 14">{{ icon }}</v-icon>
           </div>
           <div class="dashboard-kpi-widget__header-text">
@@ -101,6 +111,11 @@ const sparklinePoints = computed(() => {
           </span>
           <span v-if="comparisonLabel" class="dashboard-kpi-widget__comparison">{{ comparisonLabel }}</span>
         </div>
+
+        <div v-if="data.location" class="dashboard-kpi-widget__location-chip">
+          <v-icon size="11">map-pin</v-icon>
+          {{ data.location }}
+        </div>
       </div>
 
       <!-- Side sparkline -->
@@ -124,7 +139,16 @@ const sparklinePoints = computed(() => {
 
     <footer v-if="dataSource" class="dashboard-kpi-widget__foot">
       <MpSourceCloudChip :data-source="dataSource" size="sm" :icon-only="compact" />
-      <span v-if="updatedLabel" class="dashboard-kpi-widget__updated">
+      <button
+        v-if="showViewReport"
+        type="button"
+        class="dashboard-kpi-widget__view-report"
+        @click="emit('viewReport')"
+      >
+        View Report
+        <v-icon size="12">arrow-up-right</v-icon>
+      </button>
+      <span v-else-if="updatedLabel" class="dashboard-kpi-widget__updated">
         <v-icon size="11">clock</v-icon>
         Updated {{ updatedLabel }}
       </span>
@@ -211,6 +235,36 @@ const sparklinePoints = computed(() => {
   border-radius: var(--r-chip);
   background: var(--accent-soft);
   color: var(--accent-ink);
+}
+
+.dashboard-kpi-widget__icon-chip--commerce {
+  background: color-mix(in oklch, #16a34a 12%, transparent);
+  color: #166534;
+}
+
+.dashboard-kpi-widget__icon-chip--marketing {
+  background: color-mix(in oklch, #7c3aed 12%, transparent);
+  color: #5b21b6;
+}
+
+.dashboard-kpi-widget__icon-chip--analytics {
+  background: color-mix(in oklch, #2563eb 12%, transparent);
+  color: #1d4ed8;
+}
+
+.dashboard-kpi-widget__icon-chip--contacts {
+  background: color-mix(in oklch, #0891b2 12%, transparent);
+  color: #155e75;
+}
+
+.dashboard-kpi-widget__icon-chip--service {
+  background: color-mix(in oklch, #ea580c 12%, transparent);
+  color: #c2410c;
+}
+
+.dashboard-kpi-widget__icon-chip--retail {
+  background: color-mix(in oklch, #0d9488 12%, transparent);
+  color: #0f766e;
 }
 
 .dashboard-kpi-widget__title-row {
@@ -318,6 +372,31 @@ const sparklinePoints = computed(() => {
   text-overflow: ellipsis;
 }
 
+.dashboard-kpi-widget__location-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  margin-top: 6px;
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: color-mix(in oklch, var(--ink) 5%, var(--surface-1));
+  border: 1px solid var(--hairline);
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 500;
+  line-height: 1;
+  align-self: flex-start;
+  white-space: nowrap;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.dashboard-kpi-widget__location-chip :deep(.v-icon) {
+  color: currentColor;
+  opacity: 0.85;
+}
+
 .dashboard-kpi-widget__sparkline-col {
   display: flex;
   align-items: flex-end;
@@ -414,5 +493,31 @@ const sparklinePoints = computed(() => {
 
 .dashboard-kpi-widget__updated :deep(.v-icon) {
   color: var(--muted);
+}
+
+.dashboard-kpi-widget__view-report {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: none;
+  border: 0;
+  padding: 0;
+  font: inherit;
+  font-size: 11.5px;
+  font-weight: 600;
+  color: #0f766e;
+  cursor: pointer;
+  letter-spacing: 0.01em;
+  white-space: nowrap;
+}
+
+.dashboard-kpi-widget__view-report:hover {
+  color: #0d6260;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.dashboard-kpi-widget__view-report :deep(.v-icon) {
+  color: currentColor;
 }
 </style>

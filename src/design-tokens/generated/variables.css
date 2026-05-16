@@ -27,7 +27,7 @@
   --mp-shadow-lg: 0 8px 32px -12px rgba(11, 53, 88, 0.1);
   --mp-transition-fast: 0.15s ease;
   --mp-transition-base: 0.2s ease;
-  --mp-color-light-background: #f7f7f8;
+  --mp-color-light-background: #f4f6fa;
   --mp-color-light-surface: #ffffff;
   --mp-color-light-surfaceVariant: #ececec;
   --mp-color-light-surfaceTint: #eef0ff;
@@ -60,13 +60,13 @@
   --mp-color-light-onError: #FFFFFF;
   --mp-color-light-onWarning: #FFFFFF;
   --mp-color-light-border: #e5e5e5;
-  --mp-color-light-borderSubtle: #e5e5e5;
+  --mp-color-light-borderSubtle: #e2e8f0;
   --mp-color-light-borderTableRow: rgba(26, 24, 20, 0.06);
   --mp-color-light-borderTableHeader: #e5e5e5;
   --mp-color-light-borderTableFooterDivider: rgba(26, 24, 20, 0.04);
   --mp-color-light-borderDividerMuted: rgba(26, 24, 20, 0.06);
   --mp-color-light-textPrimary: #1a1814;
-  --mp-color-light-textMuted: #737373;
+  --mp-color-light-textMuted: #5a6573;
   --mp-color-light-daVinci-iconFrom: #7c3aed;
   --mp-color-light-daVinci-iconTo: #6366f1;
   --mp-color-light-daVinci-text: #634fda;

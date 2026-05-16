@@ -18,19 +18,14 @@ const rail = ref(true)
 const copilot = useCopilotStore()
 const { width } = useDisplay()
 
-// Auto-rail when crossing the 1180px threshold, but respect user's
-// explicit toggle until the next threshold crossing.
-watch(
-  width,
-  (w, prevW) => {
-    const wasNarrow = prevW === undefined ? !rail.value : prevW < 1180
-    const isNarrow = w < 1180
-    if (prevW === undefined || wasNarrow !== isNarrow) {
-      rail.value = isNarrow
-    }
-  },
-  { immediate: true },
-)
+watch(width, (w, prevW) => {
+  if (prevW === undefined) return
+  const isNarrow = w < 1180
+  const wasNarrow = prevW < 1180
+  if (!wasNarrow && isNarrow && !rail.value) {
+    rail.value = true
+  }
+})
 
 const isFullPage = computed(() => !!route.meta?.fullPage)
 const sidebarRail = computed(() => rail.value)

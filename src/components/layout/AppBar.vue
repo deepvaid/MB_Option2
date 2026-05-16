@@ -624,17 +624,21 @@ function handleCreateMenuKeydown(event: KeyboardEvent) {
   height: 32px;
   border-radius: var(--r-pill);
   color: var(--ink);
-  opacity: 0.82;
-  transition: background 120ms ease, opacity 120ms ease;
+  opacity: 1;
+  transition: background 120ms ease, color 120ms ease;
 }
 
 .appbar-utilities :deep(.appbar-action-btn:hover) {
   background: var(--surface-2);
-  opacity: 1;
+  color: var(--ink);
 }
 
 .appbar-utilities :deep(.appbar-action-btn .v-icon) {
-  font-size: 18px;
+  font-size: 20px;
+}
+
+.appbar-utilities :deep(.appbar-action-btn svg) {
+  stroke-width: 2.25;
 }
 
 .appbar-divider {
@@ -1091,8 +1095,9 @@ function handleCreateMenuKeydown(event: KeyboardEvent) {
 }
 
 :deep(.appbar-search input::placeholder) {
-  color: var(--muted);
+  color: color-mix(in oklch, var(--muted) 70%, var(--ink) 30%);
   font-weight: 500;
+  opacity: 1;
 }
 
 :deep(.appbar-search .v-field__prepend-inner .v-icon) {

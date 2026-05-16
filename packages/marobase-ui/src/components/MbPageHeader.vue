@@ -65,8 +65,8 @@ const activeCrumbId = computed(() => {
 .mb-page-header {
   display: flex;
   flex-direction: column;
-  gap: 16px;
-  padding-block: 24px 28px;
+  gap: 10px;
+  padding-block: 12px 14px;
 }
 
 .mb-page-header[data-align='center'] {
@@ -120,7 +120,7 @@ const activeCrumbId = computed(() => {
 .mb-page-header__text {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 4px;
   min-width: 0;
   flex: 1 1 auto;
 }
@@ -170,7 +170,7 @@ const activeCrumbId = computed(() => {
 }
 
 .mb-page-header__aside {
-  margin-top: 8px;
+  margin-top: 4px;
 }
 
 .mb-page-header__breadcrumbs {

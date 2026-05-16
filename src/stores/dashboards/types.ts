@@ -1,7 +1,7 @@
 export type DashboardKind = 'system' | 'custom'
 export type DashboardWidgetType = 'kpi' | 'timeseries' | 'bar' | 'pie' | 'table' | 'activity' | 'setup'
 export type DashboardChartVariant = 'horizontal' | 'vertical' | 'area' | 'line'
-export type DashboardDataSource = 'commerce' | 'marketing' | 'analytics' | 'contacts' | 'service' | 'neto'
+export type DashboardDataSource = 'commerce' | 'marketing' | 'analytics' | 'contacts' | 'service' | 'neto' | 'retail'
 export type DashboardDatePreset =
   | 'today'
   | 'yesterday'
@@ -54,6 +54,14 @@ export type DashboardMetricId =
   | 'contacts_by_domain'
   | 'contacts_subscriber_summary'
   | 'marketing_live_activity'
+  | 'retail_revenue'
+  | 'retail_sale_count'
+  | 'retail_customer_count'
+  | 'retail_gross_profit'
+  | 'retail_discounted'
+  | 'retail_discounted_pct'
+  | 'retail_avg_sale_value'
+  | 'retail_avg_items_per_sale'
 
 export interface DashboardLayout {
   x: number
@@ -152,7 +160,7 @@ export interface DashboardWidgetLibraryEntry {
   id: string
   title: string
   description: string
-  category: 'commerce' | 'marketing' | 'service' | 'davinci'
+  category: 'commerce' | 'marketing' | 'service' | 'davinci' | 'retail'
   type: DashboardWidgetType
   icon: string
   recommended?: boolean
@@ -176,6 +184,7 @@ export interface DashboardKpiData {
   delta: number | null
   deltaLabel: string
   helperText: string
+  location?: string
 }
 
 export interface DashboardSeriesData {

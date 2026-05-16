@@ -929,20 +929,24 @@ function toggleFavoriteActive() {
 }
 
 .dashboard-page-header {
-  margin: -32px -36px 0;
+  margin: -32px -36px 12px;
   border-bottom: 1px solid var(--hairline);
   background: #fff;
 }
 
+:deep(.dashboard-grid) {
+  margin-top: -8px;
+}
+
 @media (max-width: 1024px) {
   .dashboard-page-header {
-    margin: -28px -28px 0;
+    margin: -28px -28px 10px;
   }
 }
 
 @media (max-width: 640px) {
   .dashboard-page-header {
-    margin: -22px -22px 0;
+    margin: -22px -22px 8px;
   }
 }
 

@@ -43,7 +43,7 @@ interface PersistedDashboardStateV3 {
 
 type AnyPersistedDashboardState = PersistedDashboardStateV1 | PersistedDashboardStateV2 | PersistedDashboardStateV3
 
-const STORAGE_KEY = 'mp.dashboard-hub.v8'
+const STORAGE_KEY = 'mp.dashboard-hub.v10'
 const LEGACY_STORAGE_KEY_V1 = 'mp.dashboard-hub.v1'
 const MAX_WIDGETS_PER_DASHBOARD = 24
 const PERSIST_DEBOUNCE_MS = 250
@@ -174,6 +174,14 @@ function makeWidget(
   }
 }
 
+function makeRetailKpi(
+  title: string,
+  metricId: DashboardWidget['metricId'],
+  layout: DashboardLayout,
+): DashboardWidget {
+  return makeWidget(title, metricId, 'kpi', layout)
+}
+
 function makeSetupWidget(layout: DashboardLayout): DashboardWidget {
   const preset = getDefaultPreset('setup')
   return {
@@ -299,6 +307,29 @@ function buildSeedDashboards(account: Account): Dashboard[] {
           makeWidget('Recent Sent Campaigns', 'marketing_recent_campaigns', 'table', createLayout(0, 10, 12, 7)),
           makeWidget('Campaign Revenue by Folder', 'marketing_campaign_revenue', 'bar', createLayout(0, 17, 6, 7)),
           makeWidget('Open Rate Trend', 'marketing_open_rate_over_time', 'timeseries', createLayout(6, 17, 6, 7)),
+        ],
+        filters: createDefaultFilters(),
+        createdAt,
+        updatedAt: createdAt,
+      },
+      {
+        id: createDashboardId(account.id, 'retail'),
+        accountId: account.id,
+        kind: 'system',
+        name: 'Retail',
+        description: 'Lightspeed Retail (X-Series) point-of-sale overview.',
+        icon: 'shopping-bag',
+        accent: 'success',
+        isDefault: false,
+        widgets: [
+          makeRetailKpi('Revenue', 'retail_revenue', createLayout(0, 0, 3, 5)),
+          makeRetailKpi('Sale Count', 'retail_sale_count', createLayout(3, 0, 3, 5)),
+          makeRetailKpi('Customer Count', 'retail_customer_count', createLayout(6, 0, 3, 5)),
+          makeRetailKpi('Gross Profit', 'retail_gross_profit', createLayout(9, 0, 3, 5)),
+          makeRetailKpi('Discounted', 'retail_discounted', createLayout(0, 5, 3, 5)),
+          makeRetailKpi('Discounted (%)', 'retail_discounted_pct', createLayout(3, 5, 3, 5)),
+          makeRetailKpi('Avg Sale Value', 'retail_avg_sale_value', createLayout(6, 5, 3, 5)),
+          makeRetailKpi('Avg Items / Sale', 'retail_avg_items_per_sale', createLayout(9, 5, 3, 5)),
         ],
         filters: createDefaultFilters(),
         createdAt,
